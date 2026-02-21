@@ -9,14 +9,8 @@ import { ShopPage } from './pages/ShopPage';
 import { ReservationPage } from './pages/ReservationPage';
 import { SplashScreen } from './components/SplashScreen';
 
-function App() {
-  const [showSplash, setShowSplash] = useState(() => {
-    // Vérifier si l'utilisateur a déjà vu le splash screen
-    if (typeof window !== 'undefined') {
-      return !localStorage.getItem('splashScreenSeen');
-    }
-    return true;
-  });
+function AppContent() {
+  const [showSplash, setShowSplash] = useState(true);
   const [isSplashFading, setIsSplashFading] = useState(false);
 
   useEffect(() => {
@@ -28,8 +22,6 @@ function App() {
 
     const hideTimer = window.setTimeout(() => {
       setShowSplash(false);
-      // Marquer que l'utilisateur a vu le splash screen
-      localStorage.setItem('splashScreenSeen', 'true');
     }, 2200);
 
     return () => {
@@ -40,37 +32,43 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
-        <div className="min-h-screen bg-background text-foreground" style={{ fontFamily: 'var(--font-body)' }}>
-          <Navbar />
+      <div className="min-h-screen bg-background text-foreground" style={{ fontFamily: 'var(--font-body)' }}>
+        <Navbar />
 
-          <main>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/menu" element={<MenuPage />} />
-              <Route path="/boutique" element={<ShopPage />} />
-              <Route path="/reservation" element={<ReservationPage />} />
-            </Routes>
-          </main>
+        <main>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/menu" element={<MenuPage />} />
+            <Route path="/boutique" element={<ShopPage />} />
+            <Route path="/reservation" element={<ReservationPage />} />
+          </Routes>
+        </main>
 
-          <Footer />
+        <Footer />
 
-          <Toaster
-            position="top-right"
-            richColors
-            toastOptions={{
-              style: {
-                background: 'var(--card)',
-                color: 'var(--foreground)',
-                border: '1px solid var(--border)',
-              },
-            }}
-          />
-        </div>
-      </BrowserRouter>
+        <Toaster
+          position="top-right"
+          richColors
+          toastOptions={{
+            style: {
+              background: 'var(--card)',
+              color: 'var(--foreground)',
+              border: '1px solid var(--border)',
+            },
+          }}
+        />
+      </div>
 
       {showSplash && <SplashScreen isFading={isSplashFading} />}
     </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }
 

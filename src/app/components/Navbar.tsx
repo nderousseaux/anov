@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 
@@ -8,6 +8,7 @@ export function Navbar() {
   const [isOnHero, setIsOnHero] = useState(false);
   const logoUrl = `${import.meta.env.BASE_URL}assets/img-logo.png`;
   const location = useLocation();
+  const navigate = useNavigate();
   const isHomePage = location.pathname === '/';
 
   useEffect(() => {
@@ -46,13 +47,25 @@ export function Navbar() {
     };
   }, [isHomePage]);
 
+  useEffect(() => {
+    if (location.pathname !== '/' || !location.hash) return;
+
+    const sectionId = location.hash.replace('#', '');
+    const element = document.getElementById(sectionId);
+    if (!element) return;
+
+    const yOffset = -80;
+    const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }, [location.pathname, location.hash]);
+
   const scrollToSection = (sectionId: string) => {
     // Close mobile menu
     setMobileMenuOpen(false);
 
     // If not on home page, navigate to home first
     if (location.pathname !== '/') {
-      window.location.href = `/#${sectionId}`;
+      navigate(`/#${sectionId}`);
       return;
     }
 

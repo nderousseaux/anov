@@ -10,23 +10,33 @@ import { ReservationPage } from './pages/ReservationPage';
 import { SplashScreen } from './components/SplashScreen';
 
 function App() {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    // Vérifier si l'utilisateur a déjà vu le splash screen
+    if (typeof window !== 'undefined') {
+      return !localStorage.getItem('splashScreenSeen');
+    }
+    return true;
+  });
   const [isSplashFading, setIsSplashFading] = useState(false);
 
   useEffect(() => {
+    if (!showSplash) return;
+
     const fadeTimer = window.setTimeout(() => {
       setIsSplashFading(true);
     }, 1500);
 
     const hideTimer = window.setTimeout(() => {
       setShowSplash(false);
+      // Marquer que l'utilisateur a vu le splash screen
+      localStorage.setItem('splashScreenSeen', 'true');
     }, 2200);
 
     return () => {
       window.clearTimeout(fadeTimer);
       window.clearTimeout(hideTimer);
     };
-  }, []);
+  }, [showSplash]);
 
   return (
     <>

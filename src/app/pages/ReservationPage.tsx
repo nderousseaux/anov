@@ -54,7 +54,7 @@ export function ReservationPage() {
             alt="Réservation"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/60 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/60 to-card" />
         </div>
         <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
           <h1
@@ -78,67 +78,8 @@ export function ReservationPage() {
         </div>
       </div>
 
-      {/* Benefits Section */}
-      <section className="py-20 px-4 bg-card">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            <div className="bg-secondary p-8 rounded-lg border border-primary/30 text-center">
-              <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check className="text-primary-foreground" size={32} />
-              </div>
-              <h3
-                className="text-2xl text-primary mb-3"
-                style={{ fontFamily: 'var(--font-display)' }}
-              >
-                Confirmation Immédiate
-              </h3>
-              <p
-                className="text-muted-foreground"
-                style={{ fontFamily: 'var(--font-body)' }}
-              >
-                Recevez votre confirmation par email instantanément
-              </p>
-            </div>
-            <div className="bg-secondary p-8 rounded-lg border border-primary/30 text-center">
-              <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="text-primary-foreground" size={32} />
-              </div>
-              <h3
-                className="text-2xl text-primary mb-3"
-                style={{ fontFamily: 'var(--font-display)' }}
-              >
-                Tables Privées
-              </h3>
-              <p
-                className="text-muted-foreground"
-                style={{ fontFamily: 'var(--font-body)' }}
-              >
-                Espaces privatisables pour vos événements spéciaux
-              </p>
-            </div>
-            <div className="bg-secondary p-8 rounded-lg border border-primary/30 text-center">
-              <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Calendar className="text-primary-foreground" size={32} />
-              </div>
-              <h3
-                className="text-2xl text-primary mb-3"
-                style={{ fontFamily: 'var(--font-display)' }}
-              >
-                Annulation Flexible
-              </h3>
-              <p
-                className="text-muted-foreground"
-                style={{ fontFamily: 'var(--font-body)' }}
-              >
-                Modifiez ou annulez jusqu'à 24h avant
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Reservation Form */}
-      <section className="py-20 px-4 bg-background">
+      <section className="py-16 md:py-20 px-4 bg-background">
         <div className="max-w-4xl mx-auto">
           <form onSubmit={handleSubmit} className="bg-card p-8 md:p-12 rounded-lg border border-primary/30">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -268,7 +209,7 @@ export function ReservationPage() {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg mt-8 transition-all duration-300 transform hover:scale-105"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 text-base mt-8 transition-all duration-300"
               style={{ fontFamily: 'var(--font-body)' }}
             >
               Confirmer la réservation
@@ -285,16 +226,16 @@ export function ReservationPage() {
       </section>
 
       {/* Contact Info */}
-      <section className="py-20 px-4 bg-card">
+      <section className="py-16 md:py-20 px-4 bg-card">
         <div className="max-w-4xl mx-auto text-center">
           <h2
-            className="text-4xl sm:text-5xl mb-8 text-primary"
+            className="text-3xl sm:text-4xl mb-6 text-primary"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             Une question ?
           </h2>
           <p
-            className="text-lg text-foreground mb-8"
+            className="text-base text-foreground mb-6"
             style={{ fontFamily: 'var(--font-body)' }}
           >
             Notre équipe est à votre disposition pour toute demande particulière

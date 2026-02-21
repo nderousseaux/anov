@@ -1,9 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { Button } from './ui/button';
 import { ChevronDown } from 'lucide-react';
 
 export function Hero() {
+  const heroImageUrl = `${import.meta.env.BASE_URL}assets/hero/6.jpg`;
+  const [isArrowVisible, setIsArrowVisible] = useState(true);
+
+  useEffect(() => {
+    const hideAfterScrollY = 64;
+
+    const updateScrollState = () => {
+      setIsArrowVisible(window.scrollY < hideAfterScrollY);
+    };
+
+    updateScrollState();
+    window.addEventListener('scroll', updateScrollState, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', updateScrollState);
+    };
+  }, []);
+
   const scrollToHistory = () => {
     const element = document.getElementById('history');
     if (element) {
@@ -14,12 +32,12 @@ export function Hero() {
   };
 
   return (
-    <section className="relative h-screen flex items-center justify-center">
+    <section id="hero" className="relative h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1768697358705-c1b60333da35?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjByZXN0YXVyYW50JTIwaW50ZXJpb3IlMjBlbGVnYW50JTIwZGluaW5nfGVufDF8fHx8MTc3MTUwOTU3N3ww&ixlib=rb-4.1.0&q=80&w=1080"
-          alt="Restaurant élégant"
+          src={heroImageUrl}
+          alt="Ambiance restaurant"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/80" />
@@ -44,14 +62,14 @@ export function Hero() {
           <span className="h-px w-10 sm:w-14 bg-primary/80" />
         </div>
         <p
-          className="text-base sm:text-lg md:text-xl mb-12 text-muted-foreground max-w-2xl mx-auto"
+          className="text-base sm:text-lg md:text-xl mb-12 text-foreground/85 max-w-2xl mx-auto"
           style={{ fontFamily: 'var(--font-body)' }}
         >
           Où chaque plat raconte une histoire, où chaque saveur éveille les sens
         </p>
         <Link to="/reservation">
           <Button
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg transition-all duration-300 transform hover:scale-105"
+            className="rounded-full border-2 border-primary/90 bg-background/35 backdrop-blur-sm text-primary px-9 py-6 text-lg tracking-[0.03em] shadow-md transition-all duration-300 ease-out hover:scale-[1.01] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-lg"
             style={{ fontFamily: 'var(--font-body)' }}
           >
             Réserver une table
@@ -62,7 +80,9 @@ export function Hero() {
       {/* Scroll Indicator */}
       <button
         onClick={scrollToHistory}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce cursor-pointer"
+        className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce cursor-pointer transition-opacity duration-500 ${
+          isArrowVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
       >
         <ChevronDown className="text-primary" size={32} />
       </button>

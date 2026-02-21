@@ -2,6 +2,8 @@ import React from 'react';
 import { Facebook, Instagram, Youtube, Star } from 'lucide-react';
 
 export function Footer() {
+  const logoUrl = `${import.meta.env.BASE_URL}assets/logo.png`;
+
   const socialLinks = [
     { name: 'Facebook', icon: Facebook, url: '#' },
     { name: 'Instagram', icon: Instagram, url: '#' },
@@ -22,9 +24,9 @@ export function Footer() {
           {/* Logo & Description */}
           <div>
             <img
-              src="/assets/logo.png"
+              src={logoUrl}
               alt="Logo l’Anøv"
-              className="h-20 w-auto mb-4"
+              className="h-30 w-auto"
             />
             <p
               className="text-muted-foreground mb-6"

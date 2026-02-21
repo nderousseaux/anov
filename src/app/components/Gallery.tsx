@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export function Gallery() {
   const galleryImages = [
@@ -42,25 +42,33 @@ export function Gallery() {
 
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
+  useEffect(() => {
+    if (selectedImage !== null) {
+      document.documentElement.classList.add('overflow-hidden');
+    } else {
+      document.documentElement.classList.remove('overflow-hidden');
+    }
+  }, [selectedImage]);
+
   return (
-    <section id="gallery" className="py-40 px-4 bg-card">
+    <section id="gallery" className="py-28 md:py-32 px-4 bg-card">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-20">
+        <div className="text-center mb-14 md:mb-16">
           <h3
-            className="text-5xl sm:text-6xl md:text-7xl mb-8 text-primary"
+            className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             Galerie
           </h3>
           <p
-            className="text-xl sm:text-2xl text-muted-foreground"
+            className="text-base sm:text-lg text-muted-foreground"
             style={{ fontFamily: 'var(--font-body)' }}
           >
             Découvrez l'univers de l’Anøv en images
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {galleryImages.map((image, index) => (
             <div
               key={index}
@@ -70,12 +78,12 @@ export function Gallery() {
               <img
                 src={image.url}
                 alt={image.caption}
-                className="w-full h-96 object-cover transform group-hover:scale-110 transition-transform duration-500"
+                className="w-full h-80 object-cover transform group-hover:scale-110 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="absolute bottom-0 left-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <p
-                  className="text-foreground text-lg"
+                  className="text-foreground text-base"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
                   {image.caption}
@@ -104,18 +112,53 @@ export function Gallery() {
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
-          <div className="max-w-6xl max-h-[90vh] w-full">
-            <img
-              src={galleryImages[selectedImage].url}
-              alt={galleryImages[selectedImage].caption}
-              className="w-full h-full object-contain rounded-lg"
-            />
-            <p
-              className="text-center text-foreground text-xl mt-6"
-              style={{ fontFamily: 'var(--font-body)' }}
+
+          <div className="flex items-center justify-center gap-6 max-w-6xl w-full">
+            {/* Previous Button */}
+            <button
+              className="text-primary hover:text-primary/90 transition-colors p-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedImage((prev) => (prev === 0 ? galleryImages.length - 1 : prev! - 1));
+              }}
             >
-              {galleryImages[selectedImage].caption}
-            </p>
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+
+            <div className="flex flex-col items-center gap-4 flex-1">
+              <img
+                src={galleryImages[selectedImage].url}
+                alt={galleryImages[selectedImage].caption}
+                className="w-full h-auto max-h-[70vh] object-contain rounded-lg"
+              />
+              <p
+                className="text-center text-foreground text-lg"
+                style={{ fontFamily: 'var(--font-body)' }}
+              >
+                {galleryImages[selectedImage].caption}
+              </p>
+              <p
+                className="text-center text-muted-foreground text-sm"
+                style={{ fontFamily: 'var(--font-body)' }}
+              >
+                {selectedImage + 1} / {galleryImages.length}
+              </p>
+            </div>
+
+            {/* Next Button */}
+            <button
+              className="text-primary hover:text-primary/90 transition-colors p-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedImage((prev) => (prev === galleryImages.length - 1 ? 0 : prev! + 1));
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
           </div>
         </div>
       )}

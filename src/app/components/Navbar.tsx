@@ -1,11 +1,50 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isOnHero, setIsOnHero] = useState(false);
+  const logoUrl = `${import.meta.env.BASE_URL}assets/img-logo.png`;
   const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!isHomePage) {
+      setIsOnHero(false);
+      return;
+    }
+
+    const updateHeroState = () => {
+      const heroSection =
+        document.getElementById('hero') ??
+        document.querySelector('main section');
+      if (!heroSection) {
+        setIsOnHero(false);
+        return;
+      }
+
+      const heroHeight = heroSection.getBoundingClientRect().height;
+      const transitionThreshold = heroHeight * 0.25;
+      setIsOnHero(window.scrollY < transitionThreshold);
+    };
+
+    updateHeroState();
+    const frameId = window.requestAnimationFrame(updateHeroState);
+    window.addEventListener('scroll', updateHeroState, { passive: true });
+    window.addEventListener('resize', updateHeroState);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.removeEventListener('scroll', updateHeroState);
+      window.removeEventListener('resize', updateHeroState);
+    };
+  }, [isHomePage]);
 
   const scrollToSection = (sectionId: string) => {
     // Close mobile menu
@@ -30,63 +69,73 @@ export function Navbar() {
     return location.pathname === path;
   };
 
+  const menuItemClass =
+    'relative inline-flex items-center text-[0.95rem] tracking-[0.01em] text-foreground transition-all duration-300 ease-out hover:text-primary focus-visible:outline-none after:absolute after:left-0 after:-bottom-1 after:h-px after:w-full after:origin-center after:scale-x-0 after:bg-primary/80 after:transition-transform after:duration-300 hover:after:scale-x-100';
+
+  const activeMenuItemClass = 'text-primary after:scale-x-100';
+
+  const reservationButtonClass =
+    'rounded-full border-2 border-primary/80 bg-transparent text-primary px-6 py-2.5 tracking-[0.03em] shadow-sm transition-all duration-300 ease-out hover:scale-[1.01] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-md';
+
+  const isTransparent = isHomePage && isOnHero && !mobileMenuOpen;
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-primary/20">
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isTransparent
+          ? 'bg-transparent border-b border-transparent'
+          : 'bg-background/95 backdrop-blur-sm border-b border-primary/20'
+        }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link
             to="/"
-            className="cursor-pointer flex items-center"
+            className={`cursor-pointer flex items-center transition-opacity duration-300 ${isTransparent ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+            aria-hidden={isTransparent}
           >
             <img
-              src="/assets/logo.png"
+              src={logoUrl}
               alt="Logo l’anøv"
-              className="h-12 sm:h-14 w-auto"
+              className="h-12 sm:h-14 w-auto -translate-y-2"
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-10">
             {/* Links to page sections */}
             <button
               onClick={() => scrollToSection('history')}
-              className="text-foreground hover:text-primary transition-colors duration-300"
+              className={menuItemClass}
               style={{ fontFamily: 'var(--font-body)' }}
             >
               Notre Histoire
             </button>
             <button
               onClick={() => scrollToSection('gallery')}
-              className="text-foreground hover:text-primary transition-colors duration-300"
+              className={menuItemClass}
               style={{ fontFamily: 'var(--font-body)' }}
             >
               Galerie
             </button>
             <span
-              className="text-primary/80 text-lg"
-              style={{ fontFamily: 'var(--font-logo)' }}
+              className="text-primary/80 text-base"
+              aria-hidden="true"
             >
-              Ø
+              |
             </span>
 
             {/* Links to other pages */}
             <Link
               to="/menu"
-              className={`transition-colors duration-300 ${isActive('/menu')
-                  ? 'text-primary'
-                  : 'text-foreground hover:text-primary'
-                }`}
+              className={`${menuItemClass} ${isActive('/menu') ? activeMenuItemClass : ''}`}
               style={{ fontFamily: 'var(--font-body)' }}
             >
               La Carte
             </Link>
             <Link
               to="/boutique"
-              className={`transition-colors duration-300 ${isActive('/boutique')
-                  ? 'text-primary'
-                  : 'text-foreground hover:text-primary'
-                }`}
+              className={`${menuItemClass} ${isActive('/boutique') ? activeMenuItemClass : ''}`}
               style={{ fontFamily: 'var(--font-body)' }}
             >
               Boutique
@@ -95,7 +144,7 @@ export function Navbar() {
             {/* CTA Button - Highlighted */}
             <Link to="/reservation">
               <Button
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 transition-all duration-300 transform hover:scale-105"
+                className={reservationButtonClass}
                 style={{ fontFamily: 'var(--font-body)' }}
               >
                 Réserver
@@ -157,7 +206,7 @@ export function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Button
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 transition-all duration-300"
+                  className="w-full rounded-full border-2 border-primary/80 bg-transparent text-primary py-3 tracking-[0.03em] shadow-sm transition-all duration-300 ease-out hover:scale-[1.01] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-md"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
                   Réserver

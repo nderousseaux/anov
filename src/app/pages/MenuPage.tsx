@@ -143,7 +143,7 @@ export function MenuPage() {
             alt="Carte gastronomique"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/60 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/60 to-card" />
         </div>
         <div className="relative z-10 text-center px-4">
           <h1
@@ -162,10 +162,10 @@ export function MenuPage() {
       </div>
 
       {/* Menu Content */}
-      <section className="py-20 px-4 bg-card">
+      <section className="py-16 md:py-20 px-4 bg-card">
         <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="entrees" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 mb-12 bg-secondary border border-primary/30">
+            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 mb-10 bg-secondary border border-primary/30">
               <TabsTrigger
                 value="entrees"
                 className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-foreground"
@@ -197,7 +197,7 @@ export function MenuPage() {
             </TabsList>
 
             <TabsContent value="entrees">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                 {menuWeek.map((dish, index) => (
                   <div
                     key={index}
@@ -205,13 +205,13 @@ export function MenuPage() {
                   >
                     <div className="flex justify-between items-start mb-3">
                       <h3
-                        className="text-xl text-primary"
+                        className="text-lg text-primary"
                         style={{ fontFamily: 'var(--font-display)' }}
                       >
                         {dish.name}
                       </h3>
                       <span
-                        className="text-lg text-primary/90"
+                        className="text-base text-primary/90"
                         style={{ fontFamily: 'var(--font-body)' }}
                       >
                         {dish.price}
@@ -229,7 +229,7 @@ export function MenuPage() {
             </TabsContent>
 
             <TabsContent value="plats">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                 {mainCourses.map((dish, index) => (
                   <div
                     key={index}
@@ -237,13 +237,13 @@ export function MenuPage() {
                   >
                     <div className="flex justify-between items-start mb-3">
                       <h3
-                        className="text-xl text-primary"
+                        className="text-lg text-primary"
                         style={{ fontFamily: 'var(--font-display)' }}
                       >
                         {dish.name}
                       </h3>
                       <span
-                        className="text-lg text-primary/90"
+                        className="text-base text-primary/90"
                         style={{ fontFamily: 'var(--font-body)' }}
                       >
                         {dish.price}
@@ -261,13 +261,13 @@ export function MenuPage() {
 
               <div className="mt-12 bg-secondary p-8 rounded-lg border border-primary/30 text-center">
                 <h3
-                  className="text-3xl text-primary mb-4"
+                  className="text-2xl text-primary mb-3"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   Menu Dégustation
                 </h3>
                 <p
-                  className="text-foreground mb-2 text-lg"
+                  className="text-foreground mb-2 text-base"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
                   7 plats de saison composés par le Chef
@@ -279,7 +279,7 @@ export function MenuPage() {
                   Accord mets et vins inclus
                 </p>
                 <span
-                  className="text-4xl text-primary/90"
+                  className="text-3xl text-primary/90"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   125€
@@ -288,7 +288,7 @@ export function MenuPage() {
             </TabsContent>
 
             <TabsContent value="desserts">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                 {desserts.map((dessert, index) => (
                   <div
                     key={index}
@@ -296,13 +296,13 @@ export function MenuPage() {
                   >
                     <div className="flex justify-between items-start mb-3">
                       <h3
-                        className="text-xl text-primary"
+                        className="text-lg text-primary"
                         style={{ fontFamily: 'var(--font-display)' }}
                       >
                         {dessert.name}
                       </h3>
                       <span
-                        className="text-lg text-primary/90"
+                        className="text-base text-primary/90"
                         style={{ fontFamily: 'var(--font-body)' }}
                       >
                         {dessert.price}
@@ -328,9 +328,9 @@ export function MenuPage() {
             </TabsContent>
 
             <TabsContent value="boissons">
-              <div className="mb-16">
+              <div className="mb-12">
                 <h3
-                  className="text-3xl text-primary mb-8"
+                  className="text-2xl text-primary mb-6"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   Vins

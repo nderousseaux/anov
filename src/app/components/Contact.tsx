@@ -30,17 +30,17 @@ export function Contact() {
           alt="Contact"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/60 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/60 to-card" />
         <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-16">
           <div className="max-w-7xl mx-auto text-center">
             <h2
-              className="text-5xl sm:text-6xl md:text-7xl mb-6 text-primary"
+              className="text-4xl sm:text-5xl md:text-6xl mb-5 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Contact
             </h2>
             <p
-              className="text-xl sm:text-2xl text-muted-foreground"
+              className="text-base sm:text-lg text-muted-foreground"
               style={{ fontFamily: 'var(--font-body)' }}
             >
               Nous sommes à votre écoute
@@ -49,9 +49,9 @@ export function Contact() {
         </div>
       </div>
 
-      <div className="py-20 px-4 bg-card">
+      <div className="py-16 md:py-20 px-4 bg-card">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12">
             {/* Contact Form */}
             <div>
               <form onSubmit={handleSubmit} className="bg-secondary p-8 rounded-lg border border-primary/30 space-y-6">
@@ -65,7 +65,7 @@ export function Contact() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="bg-background/30 border-primary/30 text-foreground focus:border-primary"
+                    className="bg-background/30 border-primary/30 text-foreground"
                     placeholder="Jean Dupont"
                   />
                 </div>
@@ -80,7 +80,7 @@ export function Contact() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="bg-background/30 border-primary/30 text-foreground focus:border-primary"
+                    className="bg-background/30 border-primary/30 text-foreground"
                     placeholder="jean.dupont@example.com"
                   />
                 </div>
@@ -95,7 +95,7 @@ export function Contact() {
                     required
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="bg-background/30 border-primary/30 text-foreground focus:border-primary"
+                    className="bg-background/30 border-primary/30 text-foreground"
                     placeholder="Demande d'information"
                   />
                 </div>
@@ -109,7 +109,7 @@ export function Contact() {
                     required
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full bg-background/30 border border-primary/30 text-foreground rounded-md p-3 min-h-[150px] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    className="w-full bg-background/30 border border-primary/30 text-foreground rounded-md p-3 min-h-[150px] placeholder:text-muted-foreground focus:border-primary focus:bg-background/50 focus:outline-none transition-colors duration-300"
                     placeholder="Votre message..."
                   />
                 </div>
@@ -132,7 +132,7 @@ export function Contact() {
                   <MapPin className="text-primary flex-shrink-0 mt-1" size={24} />
                   <div>
                     <h3
-                      className="text-xl text-primary mb-2"
+                      className="text-lg text-primary mb-2"
                       style={{ fontFamily: 'var(--font-display)' }}
                     >
                       Adresse
@@ -154,7 +154,7 @@ export function Contact() {
                   <Phone className="text-primary flex-shrink-0 mt-1" size={24} />
                   <div>
                     <h3
-                      className="text-xl text-primary mb-2"
+                      className="text-lg text-primary mb-2"
                       style={{ fontFamily: 'var(--font-display)' }}
                     >
                       Téléphone
@@ -175,7 +175,7 @@ export function Contact() {
                   <Mail className="text-primary flex-shrink-0 mt-1" size={24} />
                   <div>
                     <h3
-                      className="text-xl text-primary mb-2"
+                      className="text-lg text-primary mb-2"
                       style={{ fontFamily: 'var(--font-display)' }}
                     >
                       Email
@@ -196,7 +196,7 @@ export function Contact() {
                   <Clock className="text-primary flex-shrink-0 mt-1" size={24} />
                   <div>
                     <h3
-                      className="text-xl text-primary mb-2"
+                      className="text-lg text-primary mb-2"
                       style={{ fontFamily: 'var(--font-display)' }}
                     >
                       Horaires

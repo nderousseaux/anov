@@ -3,7 +3,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Gift, CreditCard, ShoppingBag, Package, Calendar } from 'lucide-react';
+import { Gift, CreditCard, ShoppingBag, Package, Calendar, Heart, UtensilsCrossed, Wine, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function ShopPage() {
@@ -15,10 +15,21 @@ export function ShopPage() {
 
   const handlePurchase = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Achat confirmé!', {
-      description: 'Le chèque cadeau sera envoyé par email dans quelques instants.',
-    });
-    setGiftCard({ amount: '', recipient: '', message: '' });
+  };
+
+  const getExperienceIcon = (type: string) => {
+    switch (type) {
+      case 'romantic':
+        return <Heart className="text-primary" size={32} />;
+      case 'cooking':
+        return <UtensilsCrossed className="text-primary" size={32} />;
+      case 'wine':
+        return <Wine className="text-primary" size={32} />;
+      case 'gastronomic':
+        return <Sparkles className="text-primary" size={32} />;
+      default:
+        return null;
+    }
   };
 
   const experiences = [
@@ -26,25 +37,25 @@ export function ShopPage() {
       name: 'Dîner Romantique',
       description: 'Menu dégustation pour 2 personnes avec champagne',
       price: '250€',
-      icon: '💝',
+      iconType: 'romantic',
     },
     {
       name: 'Atelier Cuisine',
       description: 'Cours de cuisine avec le Chef (4 heures)',
       price: '180€',
-      icon: '👨‍🍳',
+      iconType: 'cooking',
     },
     {
       name: 'Dégustation Vins',
       description: 'Soirée dégustation avec notre sommelier',
       price: '120€',
-      icon: '🍷',
+      iconType: 'wine',
     },
     {
       name: 'Menu Gastronomique',
       description: 'Menu 7 services avec accords mets et vins',
       price: '195€',
-      icon: '🌟',
+      iconType: 'gastronomic',
     },
   ];
 
@@ -88,7 +99,7 @@ export function ShopPage() {
             alt="Boutique"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/60 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/60 to-card" />
         </div>
         <div className="relative z-10 text-center px-4">
           <h1
@@ -107,18 +118,18 @@ export function ShopPage() {
       </div>
 
       {/* Gift Cards Section */}
-      <section className="py-20 px-4 bg-card">
+      <section className="py-16 md:py-20 px-4 bg-card">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <Gift className="text-primary mx-auto mb-6" size={48} />
             <h2
-              className="text-4xl sm:text-5xl mb-6 text-primary"
+              className="text-3xl sm:text-4xl mb-5 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Chèques Cadeaux
             </h2>
             <p
-              className="text-lg text-muted-foreground"
+              className="text-base text-muted-foreground"
               style={{ fontFamily: 'var(--font-body)' }}
             >
               Un cadeau élégant pour tous les moments
@@ -168,7 +179,7 @@ export function ShopPage() {
                   id="message"
                   value={giftCard.message}
                   onChange={(e) => setGiftCard({ ...giftCard, message: e.target.value })}
-                  className="w-full bg-background/30 border border-primary/30 text-foreground rounded-md p-3 min-h-[100px] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  className="w-full bg-background/30 border border-primary/30 text-foreground rounded-md p-3 min-h-[100px] focus:border-primary focus:bg-background/50 focus:outline-none transition-colors duration-300"
                   placeholder="Ajoutez un message personnalisé..."
                 />
               </div>
@@ -184,7 +195,7 @@ export function ShopPage() {
 
               <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                 <ShoppingBag size={16} />
-                <span>Paiement sécurisé • Livraison par email instantanée</span>
+                <span>Paiement sécurisé • Livraison par email </span>
               </div>
             </form>
           </div>
@@ -192,17 +203,17 @@ export function ShopPage() {
       </section>
 
       {/* Experience Vouchers */}
-      <section className="py-20 px-4 bg-background">
+      <section className="py-16 md:py-20 px-4 bg-background">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2
-              className="text-4xl sm:text-5xl mb-6 text-primary"
+              className="text-3xl sm:text-4xl mb-5 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Bons d'Expérience
             </h2>
             <p
-              className="text-lg text-muted-foreground"
+              className="text-base text-muted-foreground"
               style={{ fontFamily: 'var(--font-body)' }}
             >
               Des moments uniques à partager
@@ -217,29 +228,28 @@ export function ShopPage() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    <span className="text-4xl">{exp.icon}</span>
+                    {getExperienceIcon(exp.iconType)}
                     <h4
-                      className="text-2xl text-primary group-hover:text-primary/90 transition-colors"
+                      className="text-xl text-primary group-hover:text-primary/90 transition-colors"
                       style={{ fontFamily: 'var(--font-display)' }}
                     >
                       {exp.name}
                     </h4>
                   </div>
                   <span
-                    className="text-2xl text-primary/90"
+                    className="text-xl text-primary/90"
                     style={{ fontFamily: 'var(--font-body)' }}
                   >
                     {exp.price}
                   </span>
                 </div>
                 <p
-                  className="text-muted-foreground mb-6 text-lg"
+                  className="text-muted-foreground mb-5 text-base"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
                   {exp.description}
                 </p>
                 <Button
-                  onClick={() => toast.success('Ajouté au panier!')}
                   className="w-full bg-secondary hover:bg-primary hover:text-primary-foreground text-foreground border border-primary/30 transition-all duration-300"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
@@ -252,38 +262,38 @@ export function ShopPage() {
       </section>
 
       {/* Gift Boxes */}
-      <section className="py-20 px-4 bg-card">
+      <section className="py-16 md:py-20 px-4 bg-card">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <Package className="text-primary mx-auto mb-6" size={48} />
             <h2
-              className="text-4xl sm:text-5xl mb-6 text-primary"
+              className="text-3xl sm:text-4xl mb-5 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Coffrets Cadeaux
             </h2>
             <p
-              className="text-lg text-muted-foreground"
+              className="text-base text-muted-foreground"
               style={{ fontFamily: 'var(--font-body)' }}
             >
               Des sélections raffinées de nos meilleurs produits
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             {giftBoxes.map((box, index) => (
               <div
                 key={index}
                 className="bg-secondary p-8 rounded-lg border-2 border-primary/30 hover:border-primary transition-all duration-300"
               >
                 <h4
-                  className="text-2xl text-primary mb-4"
+                  className="text-xl text-primary mb-3"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   {box.name}
                 </h4>
                 <p
-                  className="text-foreground mb-6 text-lg"
+                  className="text-foreground mb-5 text-base"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
                   {box.description}
@@ -302,13 +312,12 @@ export function ShopPage() {
                 </ul>
                 <div className="flex items-center justify-between">
                   <span
-                    className="text-3xl text-primary/90"
+                    className="text-2xl text-primary/90"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
                     {box.price}
                   </span>
                   <Button
-                    onClick={() => toast.success('Ajouté au panier!')}
                     className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300"
                     style={{ fontFamily: 'var(--font-body)' }}
                   >
@@ -322,49 +331,49 @@ export function ShopPage() {
       </section>
 
       {/* Special Events */}
-      <section className="py-20 px-4 bg-background">
+      <section className="py-16 md:py-20 px-4 bg-background">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <Calendar className="text-primary mx-auto mb-6" size={48} />
             <h2
-              className="text-4xl sm:text-5xl mb-6 text-primary"
+              className="text-3xl sm:text-4xl mb-5 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Événements Spéciaux
             </h2>
             <p
-              className="text-lg text-muted-foreground"
+              className="text-base text-muted-foreground"
               style={{ fontFamily: 'var(--font-body)' }}
             >
               Des expériences exclusives tout au long de l'année
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {events.map((event, index) => (
               <div
                 key={index}
                 className="bg-card p-8 rounded-lg border border-primary/30 hover:border-primary/50 transition-all duration-300"
               >
                 <h4
-                  className="text-2xl text-primary mb-3"
+                  className="text-xl text-primary mb-3"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   {event.name}
                 </h4>
                 <p
-                  className="text-foreground mb-4 text-lg"
+                  className="text-foreground mb-4 text-base"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
                   {event.description}
                 </p>
                 <div className="flex items-center justify-between mb-6">
-                  <span
-                    className="text-muted-foreground"
-                    style={{ fontFamily: 'var(--font-body)' }}
-                  >
-                    📅 {event.date}
-                  </span>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar size={18} />
+                    <span style={{ fontFamily: 'var(--font-body)' }}>
+                      {event.date}
+                    </span>
+                  </div>
                   <span
                     className="text-xl text-primary/90"
                     style={{ fontFamily: 'var(--font-body)' }}
@@ -373,7 +382,6 @@ export function ShopPage() {
                   </span>
                 </div>
                 <Button
-                  onClick={() => toast.success('Nous vous contacterons pour finaliser votre réservation.')}
                   className="w-full bg-secondary hover:bg-primary hover:text-primary-foreground text-foreground border border-primary/30 transition-all duration-300"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
@@ -388,7 +396,7 @@ export function ShopPage() {
               className="text-muted-foreground text-lg"
               style={{ fontFamily: 'var(--font-body)' }}
             >
-              💳 Tous les achats sont sécurisés • Les bons et chèques cadeaux sont valables 12 mois
+              Tous les achats sont sécurisés • Les bons et chèques cadeaux sont valables 12 mois
             </p>
           </div>
         </div>

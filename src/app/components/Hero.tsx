@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router';
+import Link from 'next/link';
 import { Button } from './ui/button';
 import { ChevronDown } from 'lucide-react';
 
 export function Hero() {
-  const heroImageUrl = `${import.meta.env.BASE_URL}assets/hero/6.jpg`;
+  const heroImageUrl = '/assets/hero/6.jpg';
   const [isArrowVisible, setIsArrowVisible] = useState(true);
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export function Hero() {
         >
           Où chaque plat raconte une histoire, où chaque saveur éveille les sens
         </p>
-        <Link to="/reservation">
+        <Link href="/reservation">
           <Button
             className="rounded-full border-2 border-primary/90 bg-background/35 backdrop-blur-sm text-primary px-9 py-6 text-lg tracking-[0.03em] shadow-md transition-all duration-300 ease-out hover:scale-[1.01] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-lg"
             style={{ fontFamily: 'var(--font-body)' }}
@@ -80,9 +80,8 @@ export function Hero() {
       {/* Scroll Indicator */}
       <button
         onClick={scrollToHistory}
-        className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce cursor-pointer transition-opacity duration-500 ${
-          isArrowVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+        className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce cursor-pointer transition-opacity duration-500 ${isArrowVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
       >
         <ChevronDown className="text-primary" size={32} />
       </button>

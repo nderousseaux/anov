@@ -2,7 +2,7 @@ import React from 'react';
 import { Facebook, Instagram, Youtube, Star } from 'lucide-react';
 
 export function Footer() {
-  const logoUrl = `${import.meta.env.BASE_URL}assets/logo.png`;
+  const logoUrl = '/assets/logo.png';
 
   const socialLinks = [
     { name: 'Facebook', icon: Facebook, url: '#' },

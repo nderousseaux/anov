@@ -5,13 +5,12 @@ type SplashScreenProps = {
 };
 
 export function SplashScreen({ isFading = false }: SplashScreenProps) {
-  const logoUrl = `${import.meta.env.BASE_URL}assets/logo.png`;
+  const logoUrl = '/assets/logo.png';
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] bg-background flex items-center justify-center px-4 transition-opacity duration-700 ${
-        isFading ? 'opacity-0' : 'opacity-100'
-      }`}
+      className={`fixed inset-0 z-[9999] bg-background flex items-center justify-center px-4 transition-opacity duration-700 ${isFading ? 'opacity-0' : 'opacity-100'
+        }`}
     >
       <div className="text-center">
         <img

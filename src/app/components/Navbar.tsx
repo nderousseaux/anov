@@ -1,19 +1,22 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isOnHero, setIsOnHero] = useState(false);
-  const logoUrl = `${import.meta.env.BASE_URL}assets/img-logo.png`;
-  const location = useLocation();
-  const navigate = useNavigate();
-  const isHomePage = location.pathname === '/';
+  const logoUrl = '/assets/img-logo.png';
+  const pathname = usePathname();
+  const router = useRouter();
+  const isHomePage = pathname === '/';
 
   useEffect(() => {
     setMobileMenuOpen(false);
-  }, [location.pathname]);
+  }, [pathname]);
 
   useEffect(() => {
     if (!isHomePage) {
@@ -48,24 +51,26 @@ export function Navbar() {
   }, [isHomePage]);
 
   useEffect(() => {
-    if (location.pathname !== '/' || !location.hash) return;
+    if (pathname !== '/') return;
+    const hash = window.location.hash;
+    if (!hash) return;
 
-    const sectionId = location.hash.replace('#', '');
+    const sectionId = hash.replace('#', '');
     const element = document.getElementById(sectionId);
     if (!element) return;
 
     const yOffset = -80;
     const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
     window.scrollTo({ top: y, behavior: 'smooth' });
-  }, [location.pathname, location.hash]);
+  }, [pathname]);
 
   const scrollToSection = (sectionId: string) => {
     // Close mobile menu
     setMobileMenuOpen(false);
 
     // If not on home page, navigate to home first
-    if (location.pathname !== '/') {
-      navigate(`/#${sectionId}`);
+    if (pathname !== '/') {
+      router.push(`/#${sectionId}`);
       return;
     }
 
@@ -78,9 +83,7 @@ export function Navbar() {
     }
   };
 
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
+  const isActive = (path: string) => pathname === path;
 
   const menuItemClass =
     'relative inline-flex items-center text-[0.95rem] tracking-[0.01em] text-foreground transition-all duration-300 ease-out hover:text-primary focus-visible:outline-none after:absolute after:left-0 after:-bottom-1 after:h-px after:w-full after:origin-center after:scale-x-0 after:bg-primary/80 after:transition-transform after:duration-300 hover:after:scale-x-100';
@@ -95,15 +98,15 @@ export function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isTransparent
-          ? 'bg-transparent border-b border-transparent'
-          : 'bg-background/95 backdrop-blur-sm border-b border-primary/20'
+        ? 'bg-transparent border-b border-transparent'
+        : 'bg-background/95 backdrop-blur-sm border-b border-primary/20'
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link
-            to="/"
+            href="/"
             className={`cursor-pointer flex items-center transition-opacity duration-300 ${isTransparent ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
             aria-hidden={isTransparent}
           >
@@ -140,14 +143,14 @@ export function Navbar() {
 
             {/* Links to other pages */}
             <Link
-              to="/menu"
+              href="/menu"
               className={`${menuItemClass} ${isActive('/menu') ? activeMenuItemClass : ''}`}
               style={{ fontFamily: 'var(--font-body)' }}
             >
               La Carte
             </Link>
             <Link
-              to="/boutique"
+              href="/boutique"
               className={`${menuItemClass} ${isActive('/boutique') ? activeMenuItemClass : ''}`}
               style={{ fontFamily: 'var(--font-body)' }}
             >
@@ -155,7 +158,7 @@ export function Navbar() {
             </Link>
 
             {/* CTA Button - Highlighted */}
-            <Link to="/reservation">
+            <Link href="/reservation">
               <Button
                 className={reservationButtonClass}
                 style={{ fontFamily: 'var(--font-body)' }}
@@ -193,29 +196,29 @@ export function Navbar() {
                 Galerie
               </button>
               <Link
-                to="/menu"
+                href="/menu"
                 onClick={() => setMobileMenuOpen(false)}
                 className={`transition-colors duration-300 text-left py-2 ${isActive('/menu')
-                    ? 'text-primary'
-                    : 'text-foreground hover:text-primary'
+                  ? 'text-primary'
+                  : 'text-foreground hover:text-primary'
                   }`}
                 style={{ fontFamily: 'var(--font-body)' }}
               >
                 La Carte
               </Link>
               <Link
-                to="/boutique"
+                href="/boutique"
                 onClick={() => setMobileMenuOpen(false)}
                 className={`transition-colors duration-300 text-left py-2 ${isActive('/boutique')
-                    ? 'text-primary'
-                    : 'text-foreground hover:text-primary'
+                  ? 'text-primary'
+                  : 'text-foreground hover:text-primary'
                   }`}
                 style={{ fontFamily: 'var(--font-body)' }}
               >
                 Boutique
               </Link>
               <Link
-                to="/reservation"
+                href="/reservation"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Button

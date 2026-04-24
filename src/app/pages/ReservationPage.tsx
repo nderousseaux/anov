@@ -237,11 +237,10 @@ export function ReservationPage() {
                             key={slot}
                             type="button"
                             onClick={() => setFormData({ ...formData, time: slot })}
-                            className={`w-16 h-10 rounded border text-sm font-medium transition-all ${
-                              formData.time === slot
+                            className={`w-16 h-10 rounded border text-sm font-medium transition-all ${formData.time === slot
                                 ? 'bg-primary border-primary text-primary-foreground shadow-md'
                                 : 'bg-background/30 border-primary/30 text-foreground hover:border-primary/70 hover:bg-primary/10'
-                            }`}
+                              }`}
                           >
                             {slot}
                           </button>
@@ -260,11 +259,10 @@ export function ReservationPage() {
                             key={slot}
                             type="button"
                             onClick={() => setFormData({ ...formData, time: slot })}
-                            className={`w-16 h-10 rounded border text-sm font-medium transition-all ${
-                              formData.time === slot
+                            className={`w-16 h-10 rounded border text-sm font-medium transition-all ${formData.time === slot
                                 ? 'bg-primary border-primary text-primary-foreground shadow-md'
                                 : 'bg-background/30 border-primary/30 text-foreground hover:border-primary/70 hover:bg-primary/10'
-                            }`}
+                              }`}
                           >
                             {slot}
                           </button>

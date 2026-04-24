@@ -63,15 +63,15 @@ const STATUS_COLORS: Record<ReservationStatus, string> = {
 };
 
 const ALL_SLOTS: Record<string, string[]> = {
-  Déjeuner: ['11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30'],
-  Dîner: ['18:00','18:30','19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30'],
+  Déjeuner: ['11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30'],
+  Dîner: ['18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30'],
 };
 
 const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];
-const DAYS_SHORT: Record<number, string> = { 0:'Dim',1:'Lun',2:'Mar',3:'Mer',4:'Jeu',5:'Ven',6:'Sam' };
-const DAYS_FULL: Record<number, string> = { 0:'Dimanche',1:'Lundi',2:'Mardi',3:'Mercredi',4:'Jeudi',5:'Vendredi',6:'Samedi' };
-const MONTHS_ABBR = ['janv','févr','mars','avr','mai','juin','juil','août','sept','oct','nov','déc'];
-const MONTHS_FULL = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const DAYS_SHORT: Record<number, string> = { 0: 'Dim', 1: 'Lun', 2: 'Mar', 3: 'Mer', 4: 'Jeu', 5: 'Ven', 6: 'Sam' };
+const DAYS_FULL: Record<number, string> = { 0: 'Dimanche', 1: 'Lundi', 2: 'Mardi', 3: 'Mercredi', 4: 'Jeudi', 5: 'Vendredi', 6: 'Samedi' };
+const MONTHS_ABBR = ['janv', 'févr', 'mars', 'avr', 'mai', 'juin', 'juil', 'août', 'sept', 'oct', 'nov', 'déc'];
+const MONTHS_FULL = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function getPreviousMonday(): string {
@@ -310,9 +310,8 @@ export default function AdminReservationsPage() {
                 { id: 'list' as const, label: 'Liste', icon: List },
               ] as const).map(({ id, label, icon: Icon }) => (
                 <button key={id} onClick={() => { setActiveView(id); if (id === 'list') setSelectedDate(null); }}
-                  className={`px-3 py-1.5 text-sm flex items-center gap-1.5 transition-colors ${
-                    id !== 'calendar' ? 'border-l border-primary/20' : ''
-                  } ${activeView === id ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+                  className={`px-3 py-1.5 text-sm flex items-center gap-1.5 transition-colors ${id !== 'calendar' ? 'border-l border-primary/20' : ''
+                    } ${activeView === id ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
                   <Icon size={13} />{label}
                 </button>
               ))}
@@ -347,9 +346,8 @@ export default function AdminReservationsPage() {
                   return (
                     <button key={dow} type="button"
                       onClick={() => setEditDays((p) => p.includes(dow) ? p.filter((d) => d !== dow) : [...p, dow])}
-                      className={`px-3 py-1.5 rounded border text-xs font-medium transition-colors ${
-                        active ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                      }`}>
+                      className={`px-3 py-1.5 rounded border text-xs font-medium transition-colors ${active ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                        }`}>
                       {DAYS_SHORT[dow]}
                     </button>
                   );
@@ -373,11 +371,10 @@ export default function AdminReservationsPage() {
                 {[30, 60, 90, 120, 150, 180].map((mins) => (
                   <button key={mins} type="button"
                     onClick={() => setEditMealDuration(mins)}
-                    className={`px-3 py-1.5 rounded border text-xs font-medium transition-colors ${
-                      editMealDuration === mins
+                    className={`px-3 py-1.5 rounded border text-xs font-medium transition-colors ${editMealDuration === mins
                         ? 'bg-primary/20 border-primary/50 text-primary'
                         : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                    }`}>
+                      }`}>
                     {mins < 60 ? `${mins}min` : mins % 60 === 0 ? `${mins / 60}h` : `${Math.floor(mins / 60)}h${String(mins % 60).padStart(2, '0')}`}
                   </button>
                 ))}
@@ -395,9 +392,8 @@ export default function AdminReservationsPage() {
                     <div key={service} className="space-y-2">
                       <button type="button" onClick={() => toggleService(slots)}
                         className="flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wide hover:opacity-80 transition-opacity">
-                        <span className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${
-                          allSel ? 'bg-primary border-primary' : someSel ? 'bg-primary/40 border-primary/40' : 'border-primary/40'
-                        }`}>
+                        <span className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${allSel ? 'bg-primary border-primary' : someSel ? 'bg-primary/40 border-primary/40' : 'border-primary/40'
+                          }`}>
                           {(allSel || someSel) && <CheckSquare size={10} className="text-background" />}
                         </span>{service}
                       </button>
@@ -406,9 +402,8 @@ export default function AdminReservationsPage() {
                           const active = editSlots.includes(slot);
                           return (
                             <button key={slot} type="button" onClick={() => toggleSlot(slot)}
-                              className={`text-xs px-2 py-1.5 rounded border transition-colors ${
-                                active ? 'bg-primary/20 border-primary/50 text-primary font-medium' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                              }`}>{slot}</button>
+                              className={`text-xs px-2 py-1.5 rounded border transition-colors ${active ? 'bg-primary/20 border-primary/50 text-primary font-medium' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                                }`}>{slot}</button>
                           );
                         })}
                       </div>
@@ -429,7 +424,7 @@ export default function AdminReservationsPage() {
               </Button>
               {settings && (
                 <span className="text-xs text-muted-foreground">
-                  Actuellement : {settings.openingDays.length}j/sem &middot; {settings.maxCovers} cvrt &middot; 
+                  Actuellement : {settings.openingDays.length}j/sem &middot; {settings.maxCovers} cvrt &middot;
                   {settings.mealDuration < 60 ? `${settings.mealDuration}min` : settings.mealDuration % 60 === 0 ? `${settings.mealDuration / 60}h` : `${Math.floor(settings.mealDuration / 60)}h${String(settings.mealDuration % 60).padStart(2, '0')}`}/repas &middot;
                   {settings.openingSlots.length} créneaux
                 </span>
@@ -491,13 +486,12 @@ export default function AdminReservationsPage() {
                       return (
                         <button key={day.date} type="button"
                           onClick={() => setSelectedDate(selected ? null : day.date)}
-                          className={`relative p-2 rounded-lg border text-left transition-all min-h-[96px] flex flex-col ${
-                            selected
+                          className={`relative p-2 rounded-lg border text-left transition-all min-h-[96px] flex flex-col ${selected
                               ? 'border-primary bg-primary/10 ring-1 ring-primary/30'
                               : today
-                              ? 'border-primary/40 bg-primary/5'
-                              : 'border-primary/10 bg-card hover:border-primary/30 hover:bg-card/80'
-                          }`}>
+                                ? 'border-primary/40 bg-primary/5'
+                                : 'border-primary/10 bg-card hover:border-primary/30 hover:bg-card/80'
+                            }`}>
 
                           {/* Date */}
                           <div className="flex items-center justify-between mb-1">
@@ -557,11 +551,10 @@ export default function AdminReservationsPage() {
                     <h2 className="font-semibold capitalize" style={{ fontFamily: 'var(--font-display)' }}>
                       {formatFullDate(selectedDate)}
                     </h2>
-                    <span className={`text-xs px-2 py-0.5 rounded border ${
-                      selectedDayInfo.effectiveOpen
+                    <span className={`text-xs px-2 py-0.5 rounded border ${selectedDayInfo.effectiveOpen
                         ? 'bg-green-600/20 text-green-400 border-green-600/30'
                         : 'bg-red-600/20 text-red-400 border-red-600/30'
-                    }`}>
+                      }`}>
                       {selectedDayInfo.effectiveOpen ? 'OUVERT' : 'FERMÉ'}
                     </span>
                     {selectedDayInfo.hasOverride && (
@@ -599,11 +592,10 @@ export default function AdminReservationsPage() {
                             }
                             setOverrideMode(mode);
                           }}
-                          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm transition-colors text-left ${
-                            overrideMode === mode
+                          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm transition-colors text-left ${overrideMode === mode
                               ? 'bg-primary/15 border-primary/40 text-primary'
                               : 'border-primary/10 text-muted-foreground hover:border-primary/30 hover:text-foreground'
-                          }`}>
+                            }`}>
                           <span className="w-5 text-center text-base">{emoji}</span>{label}
                           {overrideMode === mode && <span className="ml-auto text-primary text-xs">✓</span>}
                         </button>
@@ -628,9 +620,8 @@ export default function AdminReservationsPage() {
                                 <div key={service} className="space-y-1.5">
                                   <button type="button" onClick={() => toggleOverrideService(slots)}
                                     className="flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wide hover:opacity-80">
-                                    <span className={`w-3 h-3 rounded border flex items-center justify-center ${
-                                      allSel ? 'bg-primary border-primary' : someSel ? 'bg-primary/40 border-primary/40' : 'border-primary/40'
-                                    }`}>
+                                    <span className={`w-3 h-3 rounded border flex items-center justify-center ${allSel ? 'bg-primary border-primary' : someSel ? 'bg-primary/40 border-primary/40' : 'border-primary/40'
+                                      }`}>
                                       {(allSel || someSel) && <CheckSquare size={8} className="text-background" />}
                                     </span>{service}
                                   </button>
@@ -639,9 +630,8 @@ export default function AdminReservationsPage() {
                                       const active = overrideSlots.includes(slot);
                                       return (
                                         <button key={slot} type="button" onClick={() => toggleOverrideSlot(slot)}
-                                          className={`text-xs px-1.5 py-1 rounded border transition-colors ${
-                                            active ? 'bg-primary/20 border-primary/50 text-primary font-medium' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40'
-                                          }`}>{slot}</button>
+                                          className={`text-xs px-1.5 py-1 rounded border transition-colors ${active ? 'bg-primary/20 border-primary/50 text-primary font-medium' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40'
+                                            }`}>{slot}</button>
                                       );
                                     })}
                                   </div>
@@ -785,7 +775,7 @@ export default function AdminReservationsPage() {
                 <table className="w-full text-sm">
                   <thead className="bg-card border-b border-primary/20">
                     <tr>
-                      {['Date','Heure','Client','Contact','Couverts','Tables','Statut','Acompte','Actions'].map((h) => (
+                      {['Date', 'Heure', 'Client', 'Contact', 'Couverts', 'Tables', 'Statut', 'Acompte', 'Actions'].map((h) => (
                         <th key={h} className="px-4 py-3 text-left text-muted-foreground font-medium">{h}</th>
                       ))}
                     </tr>

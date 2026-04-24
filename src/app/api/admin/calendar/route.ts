@@ -106,12 +106,12 @@ export async function GET(req: NextRequest) {
       hasOverride: override !== null,
       override: override
         ? {
-            closed: override.closed,
-            maxCovers: override.maxCovers,
-            openingSlots: override.openingSlots
-              ? (JSON.parse(override.openingSlots) as string[])
-              : null,
-          }
+          closed: override.closed,
+          maxCovers: override.maxCovers,
+          openingSlots: override.openingSlots
+            ? (JSON.parse(override.openingSlots) as string[])
+            : null,
+        }
         : null,
       effectiveOpen,
       effectiveMaxCovers,

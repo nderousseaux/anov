@@ -1,7 +1,4 @@
 {
-  "/api/admin/settings/route": "app/api/admin/settings/route.js",
-  "/api/admin/reservations/route": "app/api/admin/reservations/route.js",
-  "/api/admin/calendar/route": "app/api/admin/calendar/route.js",
-  "/admin/reservation/page": "app/admin/reservation/page.js",
-  "/reservation/page": "app/reservation/page.js"
+  "/reservation/page": "app/reservation/page.js",
+  "/admin/reservation/page": "app/admin/reservation/page.js"
 }

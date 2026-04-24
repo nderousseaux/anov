@@ -1,0 +1,8 @@
+[2mLoaded Prisma config from prisma.config.ts.
+[22m
+[2mLoaded Prisma config from prisma.config.ts.
+[22m
+[2mPrisma schema loaded from prisma/schema.prisma.[22m
+[2mPrisma schema loaded from prisma/schema.prisma.[22m
+[1m[31mError: [39m[22mThe [31mdatasource.url[39m property is required in your Prisma config file when using [32mprisma db push[39m.
+[1m[31mError: [39m[22mThe [31mdatasource.url[39m property is required in your Prisma config file when using [32mprisma db push[39m.

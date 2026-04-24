@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Modèle de table physique du restaurant ───────────────────────────────────
+model Table {
+  id       Int    @id @default(autoincrement())
+  name     String @unique // ex: "Table 1", "Terrasse A"
+  capacity Int    // nombre de couverts max
+
+  reservations ReservationTable[]
+}
+
+// ─── Réservation client ────────────────────────────────────────────────────────
+model Reservation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Coordonnées client
+  name  String
+  email String
+  phone String
+
+  // Détails de la réservation
+  date           DateTime // date + heure du repas
+  guests         Int      // nombre de convives
+  specialRequest String?  // demandes spéciales
+
+  // Options
+  wantsSmsReminder Boolean @default(false)
+
+  // Statut
+  status ReservationStatus @default(PENDING_PAYMENT)
+
+  // Acompte Stripe
+  stripePaymentIntentId String?
+  depositAmount         Int?    // montant en centimes
+  depositPaid           Boolean @default(false)
+
+  // Tables assignées
+  tables ReservationTable[]
+
+  // Rappels envoyés
+  reminderEmailSent Boolean @default(false)
+  reminderSmsSent   Boolean @default(false)
+
+  // Token d'annulation (lien dans l'email)
+  cancelToken String @unique @default(cuid())
+}
+
+enum ReservationStatus {
+  PENDING_PAYMENT  // en attente d'acompte
+  CONFIRMED        // confirmée
+  CANCELLED        // annulée
+  COMPLETED        // passée
+}
+
+// ─── Association N:N réservation <-> table ─────────────────────────────────────
+model ReservationTable {
+  reservationId String
+  tableId       Int
+
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  table       Table       @relation(fields: [tableId], references: [id])
+
+  @@id([reservationId, tableId])
+}
+
+// ─── Compte administrateur ────────────────────────────────────────────────────
+model Admin {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+// ─── Paramètres du restaurant ─────────────────────────────────────────────────
+// Singleton (id = 1 toujours)
+model RestaurantSettings {
+  id            Int    @id @default(1)
+  maxCovers     Int    @default(20)
+  mealDuration  Int    @default(90) // durée d'un repas en minutes (multiple de 30)
+  // JSON array of day-of-week numbers : 0=Dim, 1=Lun, 2=Mar, 3=Mer, 4=Jeu, 5=Ven, 6=Sam
+  openingDays   String @default("[2,3,4,5,6]")
+  // JSON array : ["12:00","12:30","13:00","13:30","19:00","19:30","20:00","20:30","21:00","21:30"]
+  openingSlots  String @default("[\"12:00\",\"12:30\",\"13:00\",\"13:30\",\"19:00\",\"19:30\",\"20:00\",\"20:30\",\"21:00\",\"21:30\"]")
+}
+
+// ─── Override pour un jour spécifique ─────────────────────────────────────────
+// Permet de fermer un jour habituellement ouvert, ou d'ouvrir/personnaliser
+// un jour avec des créneaux et/ou des couverts différents.
+model DayOverride {
+  id           Int      @id @default(autoincrement())
+  date         DateTime @unique
+  closed       Boolean  @default(false)
+  maxCovers    Int?                 // null = utiliser les paramètres globaux
+  openingSlots String?              // null = utiliser les paramètres globaux
+}

@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Button } from '@/app/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { LogOut, CalendarDays } from 'lucide-react';
 
 const navLinks = [

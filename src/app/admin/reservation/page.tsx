@@ -2,17 +2,17 @@
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { AdminNav } from '@/app/components/admin/AdminNav';
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
+import { AdminNav } from '@/components/admin/AdminNav';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/app/components/ui/select';
-import { Badge } from '@/app/components/ui/badge';
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import {
   Loader2, RefreshCw, ChevronLeft, ChevronRight,
   Settings, Save, X, CheckSquare, CalendarDays, List,

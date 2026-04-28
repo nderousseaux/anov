@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircle, Calendar, Clock, Users, Mail, Phone, XCircle } from 'lucide-react';
-import { Button } from '@/app/components/ui/button';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 type Reservation = {

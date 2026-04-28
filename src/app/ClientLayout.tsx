@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { Toaster } from '@/app/components/ui/sonner';
-import { Navbar } from '@/app/components/Navbar';
-import { Footer } from '@/app/components/Footer';
-import { SplashScreen } from '@/app/components/SplashScreen';
+import { Toaster } from '@/components/ui/sonner';
+import { Navbar } from '@/components/Navbar';
+import { Footer } from '@/components/Footer';
+import { SplashScreen } from '@/components/SplashScreen';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

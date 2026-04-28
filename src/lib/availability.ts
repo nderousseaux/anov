@@ -156,4 +156,3 @@ export async function getSlotsWithAvailability(dateStr: string): Promise<{ time:
     available: Math.max(0, effectiveMaxCovers - (guestsBySlot[slot] ?? 0)),
   }));
 }
-

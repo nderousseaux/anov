@@ -76,9 +76,7 @@ export default function ReservationSuccessPage() {
           >
             Réservation confirmée
           </h1>
-          <p className="text-muted-foreground text-lg" style={{ fontFamily: 'var(--font-body)' }}>
-            Un email de confirmation a été envoyé à {reservation.email}
-          </p>
+
         </div>
 
         <div className="bg-card border border-primary/20 rounded-lg p-8 space-y-5">
@@ -105,13 +103,6 @@ export default function ReservationSuccessPage() {
             <span style={{ fontFamily: 'var(--font-body)' }}>{reservation.phone}</span>
           </div>
         </div>
-
-        <p
-          className="text-center text-sm text-muted-foreground mt-6"
-          style={{ fontFamily: 'var(--font-body)' }}
-        >
-          Un rappel vous sera envoyé par email 48h avant votre réservation.
-        </p>
 
         <div className="text-center mt-8">
           <Link href="/">

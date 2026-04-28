@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
       orderBy: { date: 'asc' },
       skip: (page - 1) * perPage,
       take: perPage,
-      include: { tables: { include: { table: true } } },
+
     }),
   ]);
 

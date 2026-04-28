@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAvailableSlots } from '@/lib/availability';
+import { getSlotsWithAvailability } from '@/lib/availability';
 
 export async function GET(req: NextRequest) {
   const date = req.nextUrl.searchParams.get('date');
@@ -14,6 +14,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ slots: [] });
   }
 
-  const slots = await getAvailableSlots(date);
+  const slots = await getSlotsWithAvailability(date);
   return NextResponse.json({ slots });
 }

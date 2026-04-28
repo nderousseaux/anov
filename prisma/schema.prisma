@@ -7,15 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-// ─── Modèle de table physique du restaurant ───────────────────────────────────
-model Table {
-  id       Int    @id @default(autoincrement())
-  name     String @unique // ex: "Table 1", "Terrasse A"
-  capacity Int    // nombre de couverts max
-
-  reservations ReservationTable[]
-}
-
 // ─── Réservation client ────────────────────────────────────────────────────────
 model Reservation {
   id        String   @id @default(cuid())
@@ -43,9 +34,6 @@ model Reservation {
   depositAmount         Int?    // montant en centimes
   depositPaid           Boolean @default(false)
 
-  // Tables assignées
-  tables ReservationTable[]
-
   // Rappels envoyés
   reminderEmailSent Boolean @default(false)
   reminderSmsSent   Boolean @default(false)
@@ -59,17 +47,6 @@ enum ReservationStatus {
   CONFIRMED        // confirmée
   CANCELLED        // annulée
   COMPLETED        // passée
-}
-
-// ─── Association N:N réservation <-> table ─────────────────────────────────────
-model ReservationTable {
-  reservationId String
-  tableId       Int
-
-  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
-  table       Table       @relation(fields: [tableId], references: [id])
-
-  @@id([reservationId, tableId])
 }
 
 // ─── Compte administrateur ────────────────────────────────────────────────────

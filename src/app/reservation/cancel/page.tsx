@@ -38,7 +38,7 @@ export default function ReservationCancelPage() {
               Réservation annulée
             </h1>
             <p className="text-muted-foreground mb-8" style={{ fontFamily: 'var(--font-body)' }}>
-              Votre réservation a bien été annulée. Un email de confirmation vous a été envoyé.
+              Votre réservation a bien été annulée.
             </p>
           </>
         )}

@@ -24,24 +24,6 @@ async function main() {
     return createHash('sha256').update(pw).digest('hex');
   }
 
-  // Tables du restaurant (15-20 couverts max)
-  const tables = [
-    { name: 'Table 1', capacity: 2 },
-    { name: 'Table 2', capacity: 2 },
-    { name: 'Table 3', capacity: 4 },
-    { name: 'Table 4', capacity: 4 },
-    { name: 'Table 5', capacity: 4 },
-    { name: 'Table 6', capacity: 6 },
-  ];
-
-  for (const t of tables) {
-    await prisma.table.upsert({
-      where: { name: t.name },
-      update: { capacity: t.capacity },
-      create: t,
-    });
-  }
-
   // Compte admin par défaut
   const adminEmail = process.env.ADMIN_EMAIL ?? 'admin@anov.fr';
   const adminPassword = process.env.ADMIN_PASSWORD ?? 'ChangeMe123!';

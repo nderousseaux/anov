@@ -27,7 +27,6 @@ interface ReservationRow {
   date: string; guests: number; status: ReservationStatus;
   depositPaid: boolean; depositAmount: number;
   specialRequest: string | null; wantsSmsReminder: boolean;
-  tables: { table: { name: string } }[];
 }
 
 interface ApiResponse {
@@ -224,6 +223,12 @@ export default function AdminReservationsPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ maxCovers: editMaxCovers, mealDuration: editMealDuration, openingDays: editDays, openingSlots: editSlots }),
     });
+    if (res.status === 409) {
+      const data = await res.json();
+      alert(`Impossible d'enregistrer ces paramètres : des réservations actives seraient impactées.\n\n${data.message}\n\nAnnulez-les d'abord.`);
+      setSavingSettings(false);
+      return;
+    }
     if (res.ok) {
       setSettings(await res.json());
       setSettingsSaved(true);
@@ -235,6 +240,32 @@ export default function AdminReservationsPage() {
 
   const saveOverride = async () => {
     if (!selectedDate) return;
+
+    const activeReservations = dayReservations.filter(
+      (r) => r.status === 'PENDING_PAYMENT' || r.status === 'CONFIRMED'
+    );
+
+    if (overrideMode === 'closed' && activeReservations.length > 0) {
+      alert(
+        `Impossible de fermer ce jour : ${activeReservations.length} réservation(s) active(s) en cours.\nAnnulez-les d'abord.`
+      );
+      return;
+    }
+
+    if (overrideMode === 'custom' && activeReservations.length > 0) {
+      const impacted = activeReservations.filter((r) => {
+        const d = new Date(r.date);
+        const slotTime = `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
+        return !overrideSlots.includes(slotTime);
+      });
+      if (impacted.length > 0) {
+        alert(
+          `Impossible de retirer ces créneaux : ${impacted.length} réservation(s) active(s) seraient impactées.\nAnnulez-les d'abord.`
+        );
+        return;
+      }
+    }
+
     setSavingOverride(true);
     if (overrideMode === 'global') {
       await fetch(`/api/admin/overrides/${selectedDate}`, { method: 'DELETE' });
@@ -372,8 +403,8 @@ export default function AdminReservationsPage() {
                   <button key={mins} type="button"
                     onClick={() => setEditMealDuration(mins)}
                     className={`px-3 py-1.5 rounded border text-xs font-medium transition-colors ${editMealDuration === mins
-                        ? 'bg-primary/20 border-primary/50 text-primary'
-                        : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                      ? 'bg-primary/20 border-primary/50 text-primary'
+                      : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground'
                       }`}>
                     {mins < 60 ? `${mins}min` : mins % 60 === 0 ? `${mins / 60}h` : `${Math.floor(mins / 60)}h${String(mins % 60).padStart(2, '0')}`}
                   </button>
@@ -487,10 +518,10 @@ export default function AdminReservationsPage() {
                         <button key={day.date} type="button"
                           onClick={() => setSelectedDate(selected ? null : day.date)}
                           className={`relative p-2 rounded-lg border text-left transition-all min-h-[96px] flex flex-col ${selected
-                              ? 'border-primary bg-primary/10 ring-1 ring-primary/30'
-                              : today
-                                ? 'border-primary/40 bg-primary/5'
-                                : 'border-primary/10 bg-card hover:border-primary/30 hover:bg-card/80'
+                            ? 'border-primary bg-primary/10 ring-1 ring-primary/30'
+                            : today
+                              ? 'border-primary/40 bg-primary/5'
+                              : 'border-primary/10 bg-card hover:border-primary/30 hover:bg-card/80'
                             }`}>
 
                           {/* Date */}
@@ -552,8 +583,8 @@ export default function AdminReservationsPage() {
                       {formatFullDate(selectedDate)}
                     </h2>
                     <span className={`text-xs px-2 py-0.5 rounded border ${selectedDayInfo.effectiveOpen
-                        ? 'bg-green-600/20 text-green-400 border-green-600/30'
-                        : 'bg-red-600/20 text-red-400 border-red-600/30'
+                      ? 'bg-green-600/20 text-green-400 border-green-600/30'
+                      : 'bg-red-600/20 text-red-400 border-red-600/30'
                       }`}>
                       {selectedDayInfo.effectiveOpen ? 'OUVERT' : 'FERMÉ'}
                     </span>
@@ -593,8 +624,8 @@ export default function AdminReservationsPage() {
                             setOverrideMode(mode);
                           }}
                           className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm transition-colors text-left ${overrideMode === mode
-                              ? 'bg-primary/15 border-primary/40 text-primary'
-                              : 'border-primary/10 text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                            ? 'bg-primary/15 border-primary/40 text-primary'
+                            : 'border-primary/10 text-muted-foreground hover:border-primary/30 hover:text-foreground'
                             }`}>
                           <span className="w-5 text-center text-base">{emoji}</span>{label}
                           {overrideMode === mode && <span className="ml-auto text-primary text-xs">✓</span>}
@@ -694,27 +725,16 @@ export default function AdminReservationsPage() {
                               {r.specialRequest && (
                                 <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
                               )}
-                              {r.tables.length > 0 && (
-                                <div className="text-[10px] text-muted-foreground/60">
-                                  Table{r.tables.length > 1 ? 's' : ''}: {r.tables.map((t) => t.table.name).join(', ')}
-                                </div>
-                              )}
+
                             </div>
                             <div className="flex gap-1 flex-shrink-0">
-                              {r.status === 'PENDING_PAYMENT' && (
-                                <Button size="sm" variant="outline"
-                                  onClick={() => updateStatus(r.id, 'CONFIRMED', selectedDate ?? undefined)}
-                                  className="text-green-400 border-green-600/30 hover:bg-green-600/10 h-7 px-2 text-xs">&#10003;</Button>
-                              )}
-                              {r.status === 'CONFIRMED' && (
-                                <Button size="sm" variant="outline"
-                                  onClick={() => updateStatus(r.id, 'COMPLETED', selectedDate ?? undefined)}
-                                  className="text-blue-400 border-blue-600/30 hover:bg-blue-600/10 h-7 px-2 text-xs">&#10003;</Button>
-                              )}
                               {(r.status === 'PENDING_PAYMENT' || r.status === 'CONFIRMED') && (
                                 <Button size="sm" variant="outline"
-                                  onClick={() => updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined)}
-                                  className="text-red-400 border-red-600/30 hover:bg-red-600/10 h-7 px-2 text-xs">&#10005;</Button>
+                                  onClick={() => {
+                                    if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
+                                    updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined);
+                                  }}
+                                  className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs">Annuler</Button>
                               )}
                             </div>
                           </div>
@@ -775,14 +795,14 @@ export default function AdminReservationsPage() {
                 <table className="w-full text-sm">
                   <thead className="bg-card border-b border-primary/20">
                     <tr>
-                      {['Date', 'Heure', 'Client', 'Contact', 'Couverts', 'Tables', 'Statut', 'Acompte', 'Actions'].map((h) => (
+                      {['Date', 'Heure', 'Client', 'Contact', 'Couverts', 'Statut', 'Acompte', 'Actions'].map((h) => (
                         <th key={h} className="px-4 py-3 text-left text-muted-foreground font-medium">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-primary/10">
                     {listData?.data.length === 0 && (
-                      <tr><td colSpan={9} className="text-center py-12 text-muted-foreground">Aucune réservation trouvée</td></tr>
+                      <tr><td colSpan={8} className="text-center py-12 text-muted-foreground">Aucune réservation trouvée</td></tr>
                     )}
                     {listData?.data.map((r) => (
                       <tr key={r.id} className="hover:bg-card/50 transition-colors">
@@ -798,7 +818,6 @@ export default function AdminReservationsPage() {
                           <div>{r.email}</div><div className="text-muted-foreground">{r.phone}</div>
                         </td>
                         <td className="px-4 py-3 text-center">{r.guests}</td>
-                        <td className="px-4 py-3 text-muted-foreground">{r.tables.map((t) => t.table.name).join(', ') || '—'}</td>
                         <td className="px-4 py-3">
                           <span className={`inline-block px-2 py-1 rounded text-xs border ${STATUS_COLORS[r.status]}`}>{STATUS_LABELS[r.status]}</span>
                         </td>
@@ -811,20 +830,13 @@ export default function AdminReservationsPage() {
                           ) : <span className="text-muted-foreground text-xs">—</span>}
                         </td>
                         <td className="px-4 py-3">
-                          <div className="flex gap-1 flex-wrap">
-                            {r.status === 'PENDING_PAYMENT' && (
-                              <Button size="sm" variant="outline" onClick={() => updateStatus(r.id, 'CONFIRMED')}
-                                className="text-green-400 border-green-600/30 hover:bg-green-600/10 text-xs">Confirmer</Button>
-                            )}
-                            {r.status === 'CONFIRMED' && (
-                              <Button size="sm" variant="outline" onClick={() => updateStatus(r.id, 'COMPLETED')}
-                                className="text-blue-400 border-blue-600/30 hover:bg-blue-600/10 text-xs">Terminé</Button>
-                            )}
-                            {(r.status === 'PENDING_PAYMENT' || r.status === 'CONFIRMED') && (
-                              <Button size="sm" variant="outline" onClick={() => updateStatus(r.id, 'CANCELLED')}
-                                className="text-red-400 border-red-600/30 hover:bg-red-600/10 text-xs">Annuler</Button>
-                            )}
-                          </div>
+                          {(r.status === 'PENDING_PAYMENT' || r.status === 'CONFIRMED') && (
+                            <Button size="sm" variant="outline" onClick={() => {
+                              if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
+                              updateStatus(r.id, 'CANCELLED');
+                            }}
+                              className="text-red-400 border-red-600/30 hover:bg-red-600/10 text-xs">Annuler</Button>
+                          )}
                         </td>
                       </tr>
                     ))}

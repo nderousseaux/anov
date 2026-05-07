@@ -27,12 +27,7 @@ model Reservation {
   wantsSmsReminder Boolean @default(false)
 
   // Statut
-  status ReservationStatus @default(PENDING_PAYMENT)
-
-  // Acompte Stripe
-  stripePaymentIntentId String?
-  depositAmount         Int?    // montant en centimes
-  depositPaid           Boolean @default(false)
+  status ReservationStatus @default(CONFIRMED)
 
   // Rappels envoyés
   reminderEmailSent Boolean @default(false)
@@ -43,10 +38,9 @@ model Reservation {
 }
 
 enum ReservationStatus {
-  PENDING_PAYMENT  // en attente d'acompte
-  CONFIRMED        // confirmée
-  CANCELLED        // annulée
-  COMPLETED        // passée
+  CONFIRMED   // confirmée
+  CANCELLED   // annulée
+  COMPLETED   // passée
 }
 
 // ─── Compte administrateur ────────────────────────────────────────────────────

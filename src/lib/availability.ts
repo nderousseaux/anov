@@ -57,7 +57,7 @@ export async function getAvailableSlots(dateStr: string): Promise<string[]> {
   const reservations = await prisma.reservation.findMany({
     where: {
       date: { gte: dayStart, lte: dayEnd },
-      status: { in: ['PENDING_PAYMENT', 'CONFIRMED'] },
+      status: 'CONFIRMED',
     },
     select: { date: true, guests: true },
   });
@@ -138,7 +138,7 @@ export async function getSlotsWithAvailability(dateStr: string): Promise<{ time:
   const reservations = await prisma.reservation.findMany({
     where: {
       date: { gte: dayStart, lte: dayEnd },
-      status: { in: ['PENDING_PAYMENT', 'CONFIRMED'] },
+      status: 'CONFIRMED',
     },
     select: { date: true, guests: true },
   });

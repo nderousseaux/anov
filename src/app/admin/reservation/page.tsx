@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
+import { } from '@/components/ui/badge';
 import {
   Loader2, RefreshCw, ChevronLeft, ChevronRight,
   Settings, Save, X, CheckSquare, CalendarDays, List,
@@ -20,12 +20,11 @@ import {
 } from 'lucide-react';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-type ReservationStatus = 'PENDING_PAYMENT' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+type ReservationStatus = 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
 
 interface ReservationRow {
   id: string; name: string; email: string; phone: string;
   date: string; guests: number; status: ReservationStatus;
-  depositPaid: boolean; depositAmount: number;
   specialRequest: string | null; wantsSmsReminder: boolean;
 }
 
@@ -50,12 +49,11 @@ interface DayInfo {
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const STATUS_LABELS: Record<ReservationStatus, string> = {
-  PENDING_PAYMENT: 'En attente de paiement', CONFIRMED: 'Confirmé',
+  CONFIRMED: 'Confirmé',
   CANCELLED: 'Annulé', COMPLETED: 'Terminé',
 };
 
 const STATUS_COLORS: Record<ReservationStatus, string> = {
-  PENDING_PAYMENT: 'bg-yellow-600/20 text-yellow-400 border-yellow-600/30',
   CONFIRMED: 'bg-green-600/20 text-green-400 border-green-600/30',
   CANCELLED: 'bg-red-600/20 text-red-400 border-red-600/30',
   COMPLETED: 'bg-blue-600/20 text-blue-400 border-blue-600/30',
@@ -242,7 +240,7 @@ export default function AdminReservationsPage() {
     if (!selectedDate) return;
 
     const activeReservations = dayReservations.filter(
-      (r) => r.status === 'PENDING_PAYMENT' || r.status === 'CONFIRMED'
+      (r) => r.status === 'CONFIRMED'
     );
 
     if (overrideMode === 'closed' && activeReservations.length > 0) {
@@ -728,7 +726,7 @@ export default function AdminReservationsPage() {
 
                             </div>
                             <div className="flex gap-1 flex-shrink-0">
-                              {(r.status === 'PENDING_PAYMENT' || r.status === 'CONFIRMED') && (
+                              {r.status === 'CONFIRMED' && (
                                 <Button size="sm" variant="outline"
                                   onClick={() => {
                                     if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
@@ -795,7 +793,7 @@ export default function AdminReservationsPage() {
                 <table className="w-full text-sm">
                   <thead className="bg-card border-b border-primary/20">
                     <tr>
-                      {['Date', 'Heure', 'Client', 'Contact', 'Couverts', 'Statut', 'Acompte', 'Actions'].map((h) => (
+                      {['Date', 'Heure', 'Client', 'Contact', 'Couverts', 'Statut', 'Actions'].map((h) => (
                         <th key={h} className="px-4 py-3 text-left text-muted-foreground font-medium">{h}</th>
                       ))}
                     </tr>
@@ -821,16 +819,8 @@ export default function AdminReservationsPage() {
                         <td className="px-4 py-3">
                           <span className={`inline-block px-2 py-1 rounded text-xs border ${STATUS_COLORS[r.status]}`}>{STATUS_LABELS[r.status]}</span>
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          {r.depositAmount > 0 ? (
-                            <Badge variant={r.depositPaid ? 'default' : 'outline'}
-                              className={r.depositPaid ? 'bg-green-600/20 text-green-400 border-green-600/30' : 'border-yellow-600/30 text-yellow-400'}>
-                              {r.depositPaid ? `✓ ${r.depositAmount / 100} €` : `En att. ${r.depositAmount / 100} €`}
-                            </Badge>
-                          ) : <span className="text-muted-foreground text-xs">—</span>}
-                        </td>
                         <td className="px-4 py-3">
-                          {(r.status === 'PENDING_PAYMENT' || r.status === 'CONFIRMED') && (
+                          {r.status === 'CONFIRMED' && (
                             <Button size="sm" variant="outline" onClick={() => {
                               if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
                               updateStatus(r.id, 'CANCELLED');

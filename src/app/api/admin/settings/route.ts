@@ -54,7 +54,7 @@ export async function PUT(req: NextRequest) {
     const upcoming = await prisma.reservation.findMany({
       where: {
         date: { gt: now },
-        status: { in: ['PENDING_PAYMENT', 'CONFIRMED'] },
+        status: 'CONFIRMED',
       },
       select: { date: true },
     });

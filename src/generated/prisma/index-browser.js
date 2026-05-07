@@ -120,12 +120,6 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.TableScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  capacity: 'capacity'
-};
-
 exports.Prisma.ReservationScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
@@ -138,17 +132,9 @@ exports.Prisma.ReservationScalarFieldEnum = {
   specialRequest: 'specialRequest',
   wantsSmsReminder: 'wantsSmsReminder',
   status: 'status',
-  stripePaymentIntentId: 'stripePaymentIntentId',
-  depositAmount: 'depositAmount',
-  depositPaid: 'depositPaid',
   reminderEmailSent: 'reminderEmailSent',
   reminderSmsSent: 'reminderSmsSent',
   cancelToken: 'cancelToken'
-};
-
-exports.Prisma.ReservationTableScalarFieldEnum = {
-  reservationId: 'reservationId',
-  tableId: 'tableId'
 };
 
 exports.Prisma.AdminScalarFieldEnum = {
@@ -189,16 +175,13 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 exports.ReservationStatus = exports.$Enums.ReservationStatus = {
-  PENDING_PAYMENT: 'PENDING_PAYMENT',
   CONFIRMED: 'CONFIRMED',
   CANCELLED: 'CANCELLED',
   COMPLETED: 'COMPLETED'
 };
 
 exports.Prisma.ModelName = {
-  Table: 'Table',
   Reservation: 'Reservation',
-  ReservationTable: 'ReservationTable',
   Admin: 'Admin',
   RestaurantSettings: 'RestaurantSettings',
   DayOverride: 'DayOverride'

@@ -6,16 +6,8 @@ import { AdminNav } from '@/components/admin/AdminNav';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { } from '@/components/ui/badge';
-import {
   Loader2, RefreshCw, ChevronLeft, ChevronRight,
-  Settings, Save, X, CheckSquare, CalendarDays, List,
+  Settings, Save, X, CheckSquare, CalendarDays,
   RotateCcw, AlertTriangle,
 } from 'lucide-react';
 
@@ -79,11 +71,6 @@ function getPreviousMonday(): string {
   return d.toISOString().split('T')[0];
 }
 
-function shiftDate(dateStr: string, days: number): string {
-  const d = new Date(dateStr + 'T00:00:00.000Z');
-  d.setUTCDate(d.getUTCDate() + days);
-  return d.toISOString().split('T')[0];
-}
 
 function formatCardDate(dateStr: string): string {
   const d = new Date(dateStr + 'T00:00:00.000Z');
@@ -97,10 +84,6 @@ function formatFullDate(dateStr: string): string {
 
 function isToday(dateStr: string): boolean {
   return dateStr === new Date().toISOString().split('T')[0];
-}
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 function formatTime(iso: string) {
@@ -121,11 +104,24 @@ export default function AdminReservationsPage() {
   const [savingSettings, setSavingSettings] = useState(false);
   const [settingsSaved, setSettingsSaved] = useState(false);
 
-  // View
-  const [activeView, setActiveView] = useState<'calendar' | 'list'>('calendar');
-
   // Calendar
-  const [calendarStart, setCalendarStart] = useState<string>(getPreviousMonday);
+  const [currentMonth, setCurrentMonth] = useState<{ year: number; month: number }>(() => {
+    const n = new Date();
+    return { year: n.getFullYear(), month: n.getMonth() };
+  });
+  const calendarStart = useMemo(() => {
+    const first = new Date(Date.UTC(currentMonth.year, currentMonth.month, 1));
+    const dow = first.getUTCDay();
+    first.setUTCDate(first.getUTCDate() - (dow === 0 ? 6 : dow - 1));
+    return first.toISOString().split('T')[0];
+  }, [currentMonth]);
+  const calendarDaysCount = useMemo(() => {
+    const last = new Date(Date.UTC(currentMonth.year, currentMonth.month + 1, 0));
+    const dow = last.getUTCDay();
+    last.setUTCDate(last.getUTCDate() + (dow === 0 ? 0 : 7 - dow));
+    const start = new Date(calendarStart + 'T00:00:00.000Z');
+    return Math.round((last.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  }, [currentMonth, calendarStart]);
   const [calendarDays, setCalendarDays] = useState<DayInfo[]>([]);
   const [calendarLoading, setCalendarLoading] = useState(true);
 
@@ -138,13 +134,6 @@ export default function AdminReservationsPage() {
   const [overrideSlots, setOverrideSlots] = useState<string[]>([]);
   const [savingOverride, setSavingOverride] = useState(false);
   const [overrideSaved, setOverrideSaved] = useState(false);
-
-  // List view
-  const [listData, setListData] = useState<ApiResponse | null>(null);
-  const [listLoading, setListLoading] = useState(false);
-  const [filterDate, setFilterDate] = useState('');
-  const [filterStatus, setFilterStatus] = useState('');
-  const [listPage, setListPage] = useState(1);
 
   // ── Fetchers ─────────────────────────────────────────────────────────────────
   const fetchSettings = useCallback(async () => {
@@ -161,11 +150,11 @@ export default function AdminReservationsPage() {
 
   const fetchCalendar = useCallback(async () => {
     setCalendarLoading(true);
-    const res = await fetch(`/api/admin/calendar?from=${calendarStart}&days=28`);
+    const res = await fetch(`/api/admin/calendar?from=${calendarStart}&days=${calendarDaysCount}`);
     if (res.status === 401) { router.push('/admin/login'); return; }
     if (res.ok) setCalendarDays(await res.json());
     setCalendarLoading(false);
-  }, [calendarStart, router]);
+  }, [calendarStart, calendarDaysCount, router]);
 
   const fetchDayReservations = useCallback(async (date: string) => {
     setDayLoading(true);
@@ -174,22 +163,9 @@ export default function AdminReservationsPage() {
     setDayLoading(false);
   }, []);
 
-  const fetchListData = useCallback(async () => {
-    setListLoading(true);
-    const params = new URLSearchParams();
-    if (filterDate) params.set('date', filterDate);
-    if (filterStatus) params.set('status', filterStatus);
-    params.set('page', String(listPage));
-    const res = await fetch(`/api/admin/reservations?${params}`);
-    if (res.status === 401) { router.push('/admin/login'); return; }
-    if (res.ok) setListData(await res.json());
-    setListLoading(false);
-  }, [filterDate, filterStatus, listPage, router]);
-
   // ── Effects ──────────────────────────────────────────────────────────────────
   useEffect(() => { fetchSettings(); }, [fetchSettings]);
   useEffect(() => { fetchCalendar(); }, [fetchCalendar]);
-  useEffect(() => { if (activeView === 'list') fetchListData(); }, [activeView, fetchListData]);
 
   // Fetch day reservations when selected date changes
   useEffect(() => {
@@ -291,7 +267,6 @@ export default function AdminReservationsPage() {
       body: JSON.stringify({ id, status }),
     });
     if (refreshDay) { fetchDayReservations(refreshDay); fetchCalendar(); }
-    else fetchListData();
   };
 
   const toggleSlot = (slot: string) =>
@@ -318,7 +293,6 @@ export default function AdminReservationsPage() {
   }, [calendarDays]);
 
   const selectedDayInfo = calendarDays.find((d) => d.date === selectedDate) ?? null;
-  const listTotalPages = listData ? Math.ceil(listData.total / listData.pageSize) : 1;
 
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
@@ -333,18 +307,6 @@ export default function AdminReservationsPage() {
             Réservations
           </h1>
           <div className="flex items-center gap-2">
-            <div className="flex items-center border border-primary/20 rounded-lg overflow-hidden">
-              {([
-                { id: 'calendar' as const, label: 'Calendrier', icon: CalendarDays },
-                { id: 'list' as const, label: 'Liste', icon: List },
-              ] as const).map(({ id, label, icon: Icon }) => (
-                <button key={id} onClick={() => { setActiveView(id); if (id === 'list') setSelectedDate(null); }}
-                  className={`px-3 py-1.5 text-sm flex items-center gap-1.5 transition-colors ${id !== 'calendar' ? 'border-l border-primary/20' : ''
-                    } ${activeView === id ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
-                  <Icon size={13} />{label}
-                </button>
-              ))}
-            </div>
             <Button variant={showSettings ? 'default' : 'outline'} size="sm"
               onClick={() => setShowSettings((v) => !v)}
               className={showSettings ? 'bg-primary/20 text-primary border-primary/40' : 'border-primary/30 text-foreground'}>
@@ -463,389 +425,289 @@ export default function AdminReservationsPage() {
         )}
 
         {/* ══ CALENDAR VIEW ══════════════════════════════════════════════════════ */}
-        {activeView === 'calendar' && (
-          <div className="space-y-3">
+        <div className="space-y-3">
 
-            {/* Navigation */}
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={() => setCalendarStart((s) => shiftDate(s, -7))}
-                className="border-primary/30 text-foreground"><ChevronLeft size={15} /></Button>
-              <span className="text-sm text-muted-foreground min-w-[160px] text-center">
-                {calendarDays.length > 0 && `${formatCardDate(calendarDays[0].date)} → ${formatCardDate(calendarDays[calendarDays.length - 1].date)}`}
-              </span>
-              <Button variant="outline" size="sm" onClick={() => setCalendarStart((s) => shiftDate(s, 7))}
-                className="border-primary/30 text-foreground"><ChevronRight size={15} /></Button>
-              <div className="flex gap-1 ml-auto">
-                <Button variant="ghost" size="sm" onClick={() => { setCalendarStart(getPreviousMonday()); setSelectedDate(null); }}
-                  className="text-muted-foreground hover:text-foreground text-xs">
-                  <RotateCcw size={11} className="mr-1" />Aujourd&apos;hui
-                </Button>
-                <Button variant="ghost" size="sm" onClick={fetchCalendar}
-                  className="text-muted-foreground hover:text-foreground text-xs">
-                  <RefreshCw size={11} className="mr-1" />Actualiser
-                </Button>
-              </div>
+          {/* Navigation */}
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm"
+              onClick={() => setCurrentMonth((m) => m.month === 0 ? { year: m.year - 1, month: 11 } : { year: m.year, month: m.month - 1 })}
+              className="border-primary/30 text-foreground"><ChevronLeft size={15} /></Button>
+            <span className="text-sm font-medium text-foreground min-w-[160px] text-center capitalize">
+              {MONTHS_FULL[currentMonth.month]} {currentMonth.year}
+            </span>
+            <Button variant="outline" size="sm"
+              onClick={() => setCurrentMonth((m) => m.month === 11 ? { year: m.year + 1, month: 0 } : { year: m.year, month: m.month + 1 })}
+              className="border-primary/30 text-foreground"><ChevronRight size={15} /></Button>
+            <div className="flex gap-1 ml-auto">
+              <Button variant="ghost" size="sm" onClick={() => { const n = new Date(); setCurrentMonth({ year: n.getFullYear(), month: n.getMonth() }); setSelectedDate(null); }}
+                className="text-muted-foreground hover:text-foreground text-xs">
+                <RotateCcw size={11} className="mr-1" />Aujourd&apos;hui
+              </Button>
+              <Button variant="ghost" size="sm" onClick={fetchCalendar}
+                className="text-muted-foreground hover:text-foreground text-xs">
+                <RefreshCw size={11} className="mr-1" />Actualiser
+              </Button>
             </div>
+          </div>
 
-            {/* Day headers */}
-            <div className="grid grid-cols-7 gap-1">
-              {WEEK_ORDER.map((dow) => (
-                <div key={dow} className="text-center text-xs font-medium text-muted-foreground py-1">
-                  {DAYS_SHORT[dow]}
+          {/* Day headers */}
+          <div className="grid grid-cols-7 gap-1">
+            {WEEK_ORDER.map((dow) => (
+              <div key={dow} className="text-center text-xs font-medium text-muted-foreground py-1">
+                {DAYS_SHORT[dow]}
+              </div>
+            ))}
+          </div>
+
+          {/* Grid */}
+          {calendarLoading ? (
+            <div className="flex justify-center py-16"><Loader2 size={28} className="animate-spin text-primary" /></div>
+          ) : (
+            <div className="space-y-1">
+              {weeks.map((week, wi) => (
+                <div key={wi} className="grid grid-cols-7 gap-1">
+                  {week.map((day) => {
+                    const today = isToday(day.date);
+                    const selected = day.date === selectedDate;
+                    const fillPct = day.totalCapacity > 0
+                      ? Math.min(100, Math.round((day.reservedGuests / day.totalCapacity) * 100))
+                      : 0;
+                    const almostFull = fillPct >= 75;
+                    const full = fillPct >= 100;
+
+                    return (
+                      <button key={day.date} type="button"
+                        onClick={() => setSelectedDate(selected ? null : day.date)}
+                        className={`relative p-2 rounded-lg border text-left transition-all min-h-[96px] flex flex-col ${selected
+                          ? 'border-primary bg-primary/10 ring-1 ring-primary/30'
+                          : today
+                            ? 'border-primary/40 bg-primary/5'
+                            : 'border-primary/10 bg-card hover:border-primary/30 hover:bg-card/80'
+                          }`}>
+
+                        {/* Date */}
+                        <div className="flex items-center justify-between mb-1">
+                          <span className={`text-xs font-semibold ${today ? 'text-primary' : 'text-foreground/80'}`}>
+                            {formatCardDate(day.date)}
+                          </span>
+                          {day.hasOverride && (
+                            <span className="text-[9px] px-1 py-0.5 rounded bg-amber-600/20 text-amber-400 border border-amber-600/30 leading-none">&#10033;</span>
+                          )}
+                        </div>
+
+                        {/* Content */}
+                        {day.effectiveOpen ? (
+                          <div className="flex-1 space-y-0.5">
+                            {day.lunchOpen && (
+                              <div className="text-[10px] text-muted-foreground leading-tight">
+                                &#127774; {day.lunchOpen}&ndash;{day.lunchClose}
+                              </div>
+                            )}
+                            {day.dinnerOpen && (
+                              <div className="text-[10px] text-muted-foreground leading-tight">
+                                &#127769; {day.dinnerOpen}&ndash;{day.dinnerClose}
+                              </div>
+                            )}
+                            {day.totalCapacity > 0 && (
+                              <div className="mt-auto pt-1.5 space-y-0.5">
+                                <div className="w-full h-1 rounded-full bg-primary/10 overflow-hidden">
+                                  <div className={`h-full rounded-full ${full ? 'bg-red-500' : almostFull ? 'bg-amber-500' : 'bg-green-500'}`}
+                                    style={{ width: `${fillPct}%` }} />
+                                </div>
+                                <div className={`text-[10px] ${full ? 'text-red-400' : almostFull ? 'text-amber-400' : 'text-muted-foreground'}`}>
+                                  {day.reservedGuests}/{day.totalCapacity} cvrt
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="flex-1 flex items-center justify-center">
+                            <span className="text-[10px] text-muted-foreground/40 uppercase tracking-wider">Fermé</span>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               ))}
             </div>
+          )}
 
-            {/* Grid */}
-            {calendarLoading ? (
-              <div className="flex justify-center py-16"><Loader2 size={28} className="animate-spin text-primary" /></div>
-            ) : (
-              <div className="space-y-1">
-                {weeks.map((week, wi) => (
-                  <div key={wi} className="grid grid-cols-7 gap-1">
-                    {week.map((day) => {
-                      const today = isToday(day.date);
-                      const selected = day.date === selectedDate;
-                      const fillPct = day.totalCapacity > 0
-                        ? Math.min(100, Math.round((day.reservedGuests / day.totalCapacity) * 100))
-                        : 0;
-                      const almostFull = fillPct >= 75;
-                      const full = fillPct >= 100;
+          {/* ── Day detail panel ── */}
+          {selectedDate && selectedDayInfo && (
+            <div className="bg-card border border-primary/20 rounded-xl overflow-hidden mt-2">
 
-                      return (
-                        <button key={day.date} type="button"
-                          onClick={() => setSelectedDate(selected ? null : day.date)}
-                          className={`relative p-2 rounded-lg border text-left transition-all min-h-[96px] flex flex-col ${selected
-                            ? 'border-primary bg-primary/10 ring-1 ring-primary/30'
-                            : today
-                              ? 'border-primary/40 bg-primary/5'
-                              : 'border-primary/10 bg-card hover:border-primary/30 hover:bg-card/80'
-                            }`}>
+              {/* Header */}
+              <div className="px-5 py-3.5 border-b border-primary/10 flex items-center justify-between bg-card/50">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <h2 className="font-semibold capitalize" style={{ fontFamily: 'var(--font-display)' }}>
+                    {formatFullDate(selectedDate)}
+                  </h2>
+                  <span className={`text-xs px-2 py-0.5 rounded border ${selectedDayInfo.effectiveOpen
+                    ? 'bg-green-600/20 text-green-400 border-green-600/30'
+                    : 'bg-red-600/20 text-red-400 border-red-600/30'
+                    }`}>
+                    {selectedDayInfo.effectiveOpen ? 'OUVERT' : 'FERMÉ'}
+                  </span>
+                  {selectedDayInfo.hasOverride && (
+                    <span className="text-xs px-2 py-0.5 rounded border bg-amber-600/20 text-amber-400 border-amber-600/30">
+                      Override actif
+                    </span>
+                  )}
+                  {selectedDayInfo.effectiveOpen && (
+                    <span className="text-xs text-muted-foreground">
+                      {selectedDayInfo.reservedGuests} / {selectedDayInfo.totalCapacity} couverts réservés
+                    </span>
+                  )}
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => setSelectedDate(null)}
+                  className="text-muted-foreground hover:text-foreground flex-shrink-0"><X size={14} /></Button>
+              </div>
 
-                          {/* Date */}
-                          <div className="flex items-center justify-between mb-1">
-                            <span className={`text-xs font-semibold ${today ? 'text-primary' : 'text-foreground/80'}`}>
-                              {formatCardDate(day.date)}
-                            </span>
-                            {day.hasOverride && (
-                              <span className="text-[9px] px-1 py-0.5 rounded bg-amber-600/20 text-amber-400 border border-amber-600/30 leading-none">&#10033;</span>
+              <div className="grid lg:grid-cols-[360px_1fr] divide-y lg:divide-y-0 lg:divide-x divide-primary/10">
+
+                {/* ── Override panel ── */}
+                <div className="p-5 space-y-4">
+                  <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">Override du jour</h3>
+
+                  <div className="flex flex-col gap-1.5">
+                    {([
+                      { mode: 'global' as const, label: 'Suivre les paramètres globaux', emoji: '🌐' },
+                      { mode: 'closed' as const, label: 'Fermer ce jour', emoji: '🔒' },
+                      { mode: 'custom' as const, label: 'Horaires personnalisés', emoji: '✏️' },
+                    ]).map(({ mode, label, emoji }) => (
+                      <button key={mode} type="button"
+                        onClick={() => {
+                          if (mode === 'custom' && overrideMode !== 'custom') {
+                            setOverrideMaxCovers(selectedDayInfo.effectiveMaxCovers);
+                            setOverrideSlots(selectedDayInfo.effectiveSlots);
+                          }
+                          setOverrideMode(mode);
+                        }}
+                        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm transition-colors text-left ${overrideMode === mode
+                          ? 'bg-primary/15 border-primary/40 text-primary'
+                          : 'border-primary/10 text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                          }`}>
+                        <span className="w-5 text-center text-base">{emoji}</span>{label}
+                        {overrideMode === mode && <span className="ml-auto text-primary text-xs">✓</span>}
+                      </button>
+                    ))}
+                  </div>
+
+                  {overrideMode === 'custom' && (
+                    <div className="space-y-4 pt-1">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-medium">Couverts max par créneau</label>
+                        <Input type="number" min={1} max={500} value={overrideMaxCovers}
+                          onChange={(e) => setOverrideMaxCovers(Math.max(1, parseInt(e.target.value) || 1))}
+                          className="w-28 bg-background/30 border-primary/30 text-foreground h-8 text-sm" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-medium">Créneaux</label>
+                        <div className="space-y-3">
+                          {Object.entries(ALL_SLOTS).map(([service, slots]) => {
+                            const allSel = slots.every((s) => overrideSlots.includes(s));
+                            const someSel = slots.some((s) => overrideSlots.includes(s));
+                            return (
+                              <div key={service} className="space-y-1.5">
+                                <button type="button" onClick={() => toggleOverrideService(slots)}
+                                  className="flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wide hover:opacity-80">
+                                  <span className={`w-3 h-3 rounded border flex items-center justify-center ${allSel ? 'bg-primary border-primary' : someSel ? 'bg-primary/40 border-primary/40' : 'border-primary/40'
+                                    }`}>
+                                    {(allSel || someSel) && <CheckSquare size={8} className="text-background" />}
+                                  </span>{service}
+                                </button>
+                                <div className="grid grid-cols-4 gap-1">
+                                  {slots.map((slot) => {
+                                    const active = overrideSlots.includes(slot);
+                                    return (
+                                      <button key={slot} type="button" onClick={() => toggleOverrideSlot(slot)}
+                                        className={`text-xs px-1.5 py-1 rounded border transition-colors ${active ? 'bg-primary/20 border-primary/50 text-primary font-medium' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40'
+                                          }`}>{slot}</button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <p className="text-xs text-muted-foreground">{overrideSlots.length} créneau{overrideSlots.length !== 1 ? 'x' : ''}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {overrideMode === 'closed' && (
+                    <div className="flex items-start gap-2 text-xs text-red-400/80 bg-red-600/10 border border-red-600/20 rounded-lg px-3 py-2.5">
+                      <AlertTriangle size={13} className="mt-0.5 flex-shrink-0" />
+                      Ce jour sera fermé quelle que soit la configuration globale.
+                    </div>
+                  )}
+
+                  {overrideMode === 'global' && selectedDayInfo.hasOverride && (
+                    <div className="flex items-start gap-2 text-xs text-muted-foreground bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5">
+                      <RotateCcw size={13} className="mt-0.5 flex-shrink-0" />
+                      Enregistrer supprimera l&apos;override et restaurera les paramètres globaux.
+                    </div>
+                  )}
+
+                  <Button onClick={saveOverride} disabled={savingOverride}
+                    className="w-full bg-primary/20 text-primary border border-primary/40 hover:bg-primary/30" size="sm">
+                    {savingOverride ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Save size={14} className="mr-1.5" />}
+                    {overrideSaved ? 'Enregistré ✓' : 'Enregistrer'}
+                  </Button>
+                </div>
+
+                {/* ── Reservations ── */}
+                <div className="p-5 space-y-3">
+                  <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">
+                    Réservations ({selectedDayInfo.reservationCount})
+                  </h3>
+
+                  {dayLoading ? (
+                    <div className="flex justify-center py-8"><Loader2 size={22} className="animate-spin text-primary" /></div>
+                  ) : dayReservations.length === 0 ? (
+                    <p className="text-sm text-muted-foreground py-6 text-center">Aucune réservation ce jour.</p>
+                  ) : (
+                    <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+                      {dayReservations.map((r) => (
+                        <div key={r.id} className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3">
+                          <div className="text-sm font-semibold text-primary tabular-nums mt-0.5 min-w-[38px]">
+                            {formatTime(r.date)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="font-medium text-sm">{r.name}</span>
+                              <span className="text-xs text-muted-foreground">{r.guests} cvrt{r.guests > 1 ? 's' : ''}</span>
+                              <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}>
+                                {STATUS_LABELS[r.status]}
+                              </span>
+                            </div>
+                            <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
+                            {r.specialRequest && (
+                              <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
+                            )}
+
+                          </div>
+                          <div className="flex gap-1 flex-shrink-0">
+                            {r.status === 'CONFIRMED' && (
+                              <Button size="sm" variant="outline"
+                                onClick={() => {
+                                  if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
+                                  updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined);
+                                }}
+                                className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs">Annuler</Button>
                             )}
                           </div>
-
-                          {/* Content */}
-                          {day.effectiveOpen ? (
-                            <div className="flex-1 space-y-0.5">
-                              {day.lunchOpen && (
-                                <div className="text-[10px] text-muted-foreground leading-tight">
-                                  &#127774; {day.lunchOpen}&ndash;{day.lunchClose}
-                                </div>
-                              )}
-                              {day.dinnerOpen && (
-                                <div className="text-[10px] text-muted-foreground leading-tight">
-                                  &#127769; {day.dinnerOpen}&ndash;{day.dinnerClose}
-                                </div>
-                              )}
-                              {day.totalCapacity > 0 && (
-                                <div className="mt-auto pt-1.5 space-y-0.5">
-                                  <div className="w-full h-1 rounded-full bg-primary/10 overflow-hidden">
-                                    <div className={`h-full rounded-full ${full ? 'bg-red-500' : almostFull ? 'bg-amber-500' : 'bg-green-500'}`}
-                                      style={{ width: `${fillPct}%` }} />
-                                  </div>
-                                  <div className={`text-[10px] ${full ? 'text-red-400' : almostFull ? 'text-amber-400' : 'text-muted-foreground'}`}>
-                                    {day.reservedGuests}/{day.totalCapacity} cvrt
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="flex-1 flex items-center justify-center">
-                              <span className="text-[10px] text-muted-foreground/40 uppercase tracking-wider">Fermé</span>
-                            </div>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* ── Day detail panel ── */}
-            {selectedDate && selectedDayInfo && (
-              <div className="bg-card border border-primary/20 rounded-xl overflow-hidden mt-2">
-
-                {/* Header */}
-                <div className="px-5 py-3.5 border-b border-primary/10 flex items-center justify-between bg-card/50">
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <h2 className="font-semibold capitalize" style={{ fontFamily: 'var(--font-display)' }}>
-                      {formatFullDate(selectedDate)}
-                    </h2>
-                    <span className={`text-xs px-2 py-0.5 rounded border ${selectedDayInfo.effectiveOpen
-                      ? 'bg-green-600/20 text-green-400 border-green-600/30'
-                      : 'bg-red-600/20 text-red-400 border-red-600/30'
-                      }`}>
-                      {selectedDayInfo.effectiveOpen ? 'OUVERT' : 'FERMÉ'}
-                    </span>
-                    {selectedDayInfo.hasOverride && (
-                      <span className="text-xs px-2 py-0.5 rounded border bg-amber-600/20 text-amber-400 border-amber-600/30">
-                        Override actif
-                      </span>
-                    )}
-                    {selectedDayInfo.effectiveOpen && (
-                      <span className="text-xs text-muted-foreground">
-                        {selectedDayInfo.reservedGuests} / {selectedDayInfo.totalCapacity} couverts réservés
-                      </span>
-                    )}
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={() => setSelectedDate(null)}
-                    className="text-muted-foreground hover:text-foreground flex-shrink-0"><X size={14} /></Button>
-                </div>
-
-                <div className="grid lg:grid-cols-[360px_1fr] divide-y lg:divide-y-0 lg:divide-x divide-primary/10">
-
-                  {/* ── Override panel ── */}
-                  <div className="p-5 space-y-4">
-                    <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">Override du jour</h3>
-
-                    <div className="flex flex-col gap-1.5">
-                      {([
-                        { mode: 'global' as const, label: 'Suivre les paramètres globaux', emoji: '🌐' },
-                        { mode: 'closed' as const, label: 'Fermer ce jour', emoji: '🔒' },
-                        { mode: 'custom' as const, label: 'Horaires personnalisés', emoji: '✏️' },
-                      ]).map(({ mode, label, emoji }) => (
-                        <button key={mode} type="button"
-                          onClick={() => {
-                            if (mode === 'custom' && overrideMode !== 'custom') {
-                              setOverrideMaxCovers(selectedDayInfo.effectiveMaxCovers);
-                              setOverrideSlots(selectedDayInfo.effectiveSlots);
-                            }
-                            setOverrideMode(mode);
-                          }}
-                          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm transition-colors text-left ${overrideMode === mode
-                            ? 'bg-primary/15 border-primary/40 text-primary'
-                            : 'border-primary/10 text-muted-foreground hover:border-primary/30 hover:text-foreground'
-                            }`}>
-                          <span className="w-5 text-center text-base">{emoji}</span>{label}
-                          {overrideMode === mode && <span className="ml-auto text-primary text-xs">✓</span>}
-                        </button>
+                        </div>
                       ))}
                     </div>
-
-                    {overrideMode === 'custom' && (
-                      <div className="space-y-4 pt-1">
-                        <div className="space-y-1.5">
-                          <label className="text-xs font-medium">Couverts max par créneau</label>
-                          <Input type="number" min={1} max={500} value={overrideMaxCovers}
-                            onChange={(e) => setOverrideMaxCovers(Math.max(1, parseInt(e.target.value) || 1))}
-                            className="w-28 bg-background/30 border-primary/30 text-foreground h-8 text-sm" />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-xs font-medium">Créneaux</label>
-                          <div className="space-y-3">
-                            {Object.entries(ALL_SLOTS).map(([service, slots]) => {
-                              const allSel = slots.every((s) => overrideSlots.includes(s));
-                              const someSel = slots.some((s) => overrideSlots.includes(s));
-                              return (
-                                <div key={service} className="space-y-1.5">
-                                  <button type="button" onClick={() => toggleOverrideService(slots)}
-                                    className="flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wide hover:opacity-80">
-                                    <span className={`w-3 h-3 rounded border flex items-center justify-center ${allSel ? 'bg-primary border-primary' : someSel ? 'bg-primary/40 border-primary/40' : 'border-primary/40'
-                                      }`}>
-                                      {(allSel || someSel) && <CheckSquare size={8} className="text-background" />}
-                                    </span>{service}
-                                  </button>
-                                  <div className="grid grid-cols-4 gap-1">
-                                    {slots.map((slot) => {
-                                      const active = overrideSlots.includes(slot);
-                                      return (
-                                        <button key={slot} type="button" onClick={() => toggleOverrideSlot(slot)}
-                                          className={`text-xs px-1.5 py-1 rounded border transition-colors ${active ? 'bg-primary/20 border-primary/50 text-primary font-medium' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40'
-                                            }`}>{slot}</button>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                          <p className="text-xs text-muted-foreground">{overrideSlots.length} créneau{overrideSlots.length !== 1 ? 'x' : ''}</p>
-                        </div>
-                      </div>
-                    )}
-
-                    {overrideMode === 'closed' && (
-                      <div className="flex items-start gap-2 text-xs text-red-400/80 bg-red-600/10 border border-red-600/20 rounded-lg px-3 py-2.5">
-                        <AlertTriangle size={13} className="mt-0.5 flex-shrink-0" />
-                        Ce jour sera fermé quelle que soit la configuration globale.
-                      </div>
-                    )}
-
-                    {overrideMode === 'global' && selectedDayInfo.hasOverride && (
-                      <div className="flex items-start gap-2 text-xs text-muted-foreground bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5">
-                        <RotateCcw size={13} className="mt-0.5 flex-shrink-0" />
-                        Enregistrer supprimera l&apos;override et restaurera les paramètres globaux.
-                      </div>
-                    )}
-
-                    <Button onClick={saveOverride} disabled={savingOverride}
-                      className="w-full bg-primary/20 text-primary border border-primary/40 hover:bg-primary/30" size="sm">
-                      {savingOverride ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Save size={14} className="mr-1.5" />}
-                      {overrideSaved ? 'Enregistré ✓' : 'Enregistrer'}
-                    </Button>
-                  </div>
-
-                  {/* ── Reservations ── */}
-                  <div className="p-5 space-y-3">
-                    <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">
-                      Réservations ({selectedDayInfo.reservationCount})
-                    </h3>
-
-                    {dayLoading ? (
-                      <div className="flex justify-center py-8"><Loader2 size={22} className="animate-spin text-primary" /></div>
-                    ) : dayReservations.length === 0 ? (
-                      <p className="text-sm text-muted-foreground py-6 text-center">Aucune réservation ce jour.</p>
-                    ) : (
-                      <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
-                        {dayReservations.map((r) => (
-                          <div key={r.id} className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3">
-                            <div className="text-sm font-semibold text-primary tabular-nums mt-0.5 min-w-[38px]">
-                              {formatTime(r.date)}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="font-medium text-sm">{r.name}</span>
-                                <span className="text-xs text-muted-foreground">{r.guests} cvrt{r.guests > 1 ? 's' : ''}</span>
-                                <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}>
-                                  {STATUS_LABELS[r.status]}
-                                </span>
-                              </div>
-                              <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
-                              {r.specialRequest && (
-                                <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
-                              )}
-
-                            </div>
-                            <div className="flex gap-1 flex-shrink-0">
-                              {r.status === 'CONFIRMED' && (
-                                <Button size="sm" variant="outline"
-                                  onClick={() => {
-                                    if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
-                                    updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined);
-                                  }}
-                                  className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs">Annuler</Button>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* ══ LIST VIEW ═════════════════════════════════════════════════════════ */}
-        {activeView === 'list' && (
-          <div className="space-y-4">
-            <div className="flex flex-wrap items-end gap-4 bg-card border border-primary/20 rounded-lg p-4">
-              <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Date</label>
-                <Input type="date" value={filterDate}
-                  onChange={(e) => { setFilterDate(e.target.value); setListPage(1); }}
-                  className="bg-background/30 border-primary/30 text-foreground w-44" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Statut</label>
-                <Select value={filterStatus} onValueChange={(v) => { setFilterStatus(v === 'ALL' ? '' : v); setListPage(1); }}>
-                  <SelectTrigger className="bg-background/30 border-primary/30 text-foreground w-52">
-                    <SelectValue placeholder="Tous les statuts" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-secondary border-primary/30">
-                    <SelectItem value="ALL" className="text-foreground focus:bg-primary/20">Tous</SelectItem>
-                    {Object.entries(STATUS_LABELS).map(([k, v]) => (
-                      <SelectItem key={k} value={k} className="text-foreground focus:bg-primary/20">{v}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              {(filterDate || filterStatus) && (
-                <Button variant="ghost" size="sm"
-                  onClick={() => { setFilterDate(''); setFilterStatus(''); setListPage(1); }}
-                  className="text-muted-foreground hover:text-foreground">Réinitialiser</Button>
-              )}
-              <Button variant="outline" size="sm" onClick={fetchListData}
-                className="border-primary/30 text-foreground ml-auto">
-                <RefreshCw size={13} className="mr-1" />Actualiser
-              </Button>
-              {listData && (
-                <span className="text-sm text-muted-foreground">
-                  {listData.total} réservation{listData.total > 1 ? 's' : ''}
-                </span>
-              )}
             </div>
+          )}
+        </div>
 
-            {listLoading ? (
-              <div className="flex justify-center py-16"><Loader2 size={32} className="animate-spin text-primary" /></div>
-            ) : (
-              <div className="overflow-x-auto rounded-lg border border-primary/20">
-                <table className="w-full text-sm">
-                  <thead className="bg-card border-b border-primary/20">
-                    <tr>
-                      {['Date', 'Heure', 'Client', 'Contact', 'Couverts', 'Statut', 'Actions'].map((h) => (
-                        <th key={h} className="px-4 py-3 text-left text-muted-foreground font-medium">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-primary/10">
-                    {listData?.data.length === 0 && (
-                      <tr><td colSpan={8} className="text-center py-12 text-muted-foreground">Aucune réservation trouvée</td></tr>
-                    )}
-                    {listData?.data.map((r) => (
-                      <tr key={r.id} className="hover:bg-card/50 transition-colors">
-                        <td className="px-4 py-3 whitespace-nowrap">{formatDate(r.date)}</td>
-                        <td className="px-4 py-3 whitespace-nowrap">{formatTime(r.date)}</td>
-                        <td className="px-4 py-3">
-                          <div className="font-medium">{r.name}</div>
-                          {r.specialRequest && (
-                            <div className="text-xs text-muted-foreground truncate max-w-[180px]" title={r.specialRequest}>{r.specialRequest}</div>
-                          )}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div>{r.email}</div><div className="text-muted-foreground">{r.phone}</div>
-                        </td>
-                        <td className="px-4 py-3 text-center">{r.guests}</td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-block px-2 py-1 rounded text-xs border ${STATUS_COLORS[r.status]}`}>{STATUS_LABELS[r.status]}</span>
-                        </td>
-                        <td className="px-4 py-3">
-                          {r.status === 'CONFIRMED' && (
-                            <Button size="sm" variant="outline" onClick={() => {
-                              if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
-                              updateStatus(r.id, 'CANCELLED');
-                            }}
-                              className="text-red-400 border-red-600/30 hover:bg-red-600/10 text-xs">Annuler</Button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            {listTotalPages > 1 && (
-              <div className="flex items-center justify-center gap-4">
-                <Button variant="outline" size="sm" disabled={listPage <= 1} onClick={() => setListPage((p) => p - 1)}
-                  className="border-primary/30 text-foreground disabled:opacity-40"><ChevronLeft size={16} /></Button>
-                <span className="text-sm text-muted-foreground">Page {listPage} / {listTotalPages}</span>
-                <Button variant="outline" size="sm" disabled={listPage >= listTotalPages} onClick={() => setListPage((p) => p + 1)}
-                  className="border-primary/30 text-foreground disabled:opacity-40"><ChevronRight size={16} /></Button>
-              </div>
-            )}
-          </div>
-        )}
 
       </main>
     </div>

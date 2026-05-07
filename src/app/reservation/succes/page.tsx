@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircle, Calendar, Clock, Users, Mail, Phone, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,7 +38,7 @@ export default function ReservationSuccessPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-primary text-xl" style={{ fontFamily: 'var(--font-body)' }}>
+        <div className="text-primary text-xl">
           Chargement...
         </div>
       </div>
@@ -82,25 +82,25 @@ export default function ReservationSuccessPage() {
         <div className="bg-card border border-primary/20 rounded-lg p-8 space-y-5">
           <div className="flex items-center gap-3 text-foreground">
             <Calendar size={20} className="text-primary shrink-0" />
-            <span style={{ fontFamily: 'var(--font-body)' }}>{formattedDate}</span>
+            <span>{formattedDate}</span>
           </div>
           <div className="flex items-center gap-3 text-foreground">
             <Clock size={20} className="text-primary shrink-0" />
-            <span style={{ fontFamily: 'var(--font-body)' }}>{formattedTime}</span>
+            <span>{formattedTime}</span>
           </div>
           <div className="flex items-center gap-3 text-foreground">
             <Users size={20} className="text-primary shrink-0" />
-            <span style={{ fontFamily: 'var(--font-body)' }}>
+            <span>
               {reservation.guests} personne{reservation.guests > 1 ? 's' : ''}
             </span>
           </div>
           <div className="flex items-center gap-3 text-foreground">
             <Mail size={20} className="text-primary shrink-0" />
-            <span style={{ fontFamily: 'var(--font-body)' }}>{reservation.email}</span>
+            <span>{reservation.email}</span>
           </div>
           <div className="flex items-center gap-3 text-foreground">
             <Phone size={20} className="text-primary shrink-0" />
-            <span style={{ fontFamily: 'var(--font-body)' }}>{reservation.phone}</span>
+            <span>{reservation.phone}</span>
           </div>
         </div>
 
@@ -109,7 +109,6 @@ export default function ReservationSuccessPage() {
             <Button
               variant="outline"
               className="border-primary/30 text-foreground hover:bg-primary/10"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Retour à l&apos;accueil
             </Button>

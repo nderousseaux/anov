@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { XCircle, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -27,7 +27,7 @@ export default function ReservationCancelPage() {
     <div className="min-h-screen bg-background flex items-center justify-center pt-20 px-4">
       <div className="max-w-md text-center">
         {status === 'loading' && (
-          <p className="text-foreground text-xl" style={{ fontFamily: 'var(--font-body)' }}>
+          <p className="text-foreground text-xl">
             Annulation en cours...
           </p>
         )}
@@ -37,7 +37,7 @@ export default function ReservationCancelPage() {
             <h1 className="text-3xl text-primary mb-3" style={{ fontFamily: 'var(--font-display)' }}>
               Réservation annulée
             </h1>
-            <p className="text-muted-foreground mb-8" style={{ fontFamily: 'var(--font-body)' }}>
+            <p className="text-muted-foreground mb-8">
               Votre réservation a bien été annulée.
             </p>
           </>
@@ -48,7 +48,7 @@ export default function ReservationCancelPage() {
             <h1 className="text-3xl text-foreground mb-3" style={{ fontFamily: 'var(--font-display)' }}>
               Déjà annulée
             </h1>
-            <p className="text-muted-foreground mb-8" style={{ fontFamily: 'var(--font-body)' }}>
+            <p className="text-muted-foreground mb-8">
               Cette réservation a déjà été annulée.
             </p>
           </>
@@ -59,7 +59,7 @@ export default function ReservationCancelPage() {
             <h1 className="text-3xl text-foreground mb-3" style={{ fontFamily: 'var(--font-display)' }}>
               Lien invalide
             </h1>
-            <p className="text-muted-foreground mb-8" style={{ fontFamily: 'var(--font-body)' }}>
+            <p className="text-muted-foreground mb-8">
               Ce lien d&apos;annulation est invalide ou a expiré.
             </p>
           </>
@@ -68,7 +68,6 @@ export default function ReservationCancelPage() {
           <Button
             variant="outline"
             className="border-primary/30 text-foreground hover:bg-primary/10"
-            style={{ fontFamily: 'var(--font-body)' }}
           >
             Retour à l&apos;accueil
           </Button>

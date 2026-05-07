@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+'use client';
+
+import { useState, type FormEvent } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -13,7 +15,7 @@ export function Contact() {
     message: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     toast.success('Message envoyé!', {
       description: 'Nous vous répondrons dans les plus brefs délais.',
@@ -41,7 +43,6 @@ export function Contact() {
             </h2>
             <p
               className="text-base sm:text-lg text-muted-foreground"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Nous sommes à votre écoute
             </p>
@@ -117,7 +118,6 @@ export function Contact() {
                 <Button
                   type="submit"
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 transition-all duration-300"
-                  style={{ fontFamily: 'var(--font-body)' }}
                 >
                   Envoyer le message
                 </Button>
@@ -139,7 +139,6 @@ export function Contact() {
                     </h3>
                     <p
                       className="text-foreground"
-                      style={{ fontFamily: 'var(--font-body)' }}
                     >
                       15 Rue de la Gastronomie<br />
                       75008 Paris, France
@@ -161,7 +160,6 @@ export function Contact() {
                     </h3>
                     <p
                       className="text-foreground"
-                      style={{ fontFamily: 'var(--font-body)' }}
                     >
                       +33 1 45 67 89 00
                     </p>
@@ -182,7 +180,6 @@ export function Contact() {
                     </h3>
                     <p
                       className="text-foreground"
-                      style={{ fontFamily: 'var(--font-body)' }}
                     >
                       contact@lanov.fr
                     </p>
@@ -203,7 +200,6 @@ export function Contact() {
                     </h3>
                     <div
                       className="text-foreground space-y-1"
-                      style={{ fontFamily: 'var(--font-body)' }}
                     >
                       <p>Mardi - Samedi : 12h00 - 14h30, 19h00 - 22h30</p>
                       <p>Dimanche - Lundi : Fermé</p>
@@ -216,7 +212,6 @@ export function Contact() {
               <Button
                 onClick={() => window.open('https://maps.google.com', '_blank')}
                 className="w-full bg-secondary hover:bg-muted text-foreground border border-primary/30 py-6 transition-all duration-300 flex items-center justify-center gap-2"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 <MapPin size={20} />
                 Voir sur Google Maps

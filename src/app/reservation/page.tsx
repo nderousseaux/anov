@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -56,7 +56,7 @@ export default function Page() {
     if (formData.date) loadSlots(formData.date);
   }, [formData.date, loadSlots]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!formData.time) {
       toast.error('Veuillez choisir un horaire');
@@ -106,7 +106,7 @@ export default function Page() {
           >
             Réservez votre table
           </h1>
-          <p className="text-xl text-muted-foreground" style={{ fontFamily: 'var(--font-body)' }}>
+          <p className="text-xl text-muted-foreground">
             Du mardi au samedi · Service midi et soir
           </p>
         </div>
@@ -315,7 +315,6 @@ export default function Page() {
               type="submit"
               disabled={submitting || !formData.time}
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 text-base transition-all duration-300 disabled:opacity-50"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               {submitting ? (
                 <span className="flex items-center gap-2">

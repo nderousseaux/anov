@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { Toaster } from '@/components/ui/sonner';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { SplashScreen } from '@/components/SplashScreen';
 
-export default function ClientLayout({ children }: { children: React.ReactNode }) {
+export default function ClientLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/admin');
 
@@ -34,7 +34,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   if (isAdmin) {
     return (
       <>
-        <div className="min-h-screen bg-background text-foreground" style={{ fontFamily: 'var(--font-body)' }}>
+        <div className="min-h-screen bg-background text-foreground">
           {children}
         </div>
         <Toaster
@@ -54,7 +54,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   return (
     <>
-      <div className="min-h-screen bg-background text-foreground" style={{ fontFamily: 'var(--font-body)' }}>
+      <div className="min-h-screen bg-background text-foreground">
         <Navbar />
 
         <main>{children}</main>

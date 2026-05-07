@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +15,7 @@ export default function Page() {
     message: '',
   });
 
-  const handlePurchase = (e: React.FormEvent) => {
+  const handlePurchase = (e: FormEvent) => {
     e.preventDefault();
   };
 
@@ -112,7 +112,6 @@ export default function Page() {
           </h1>
           <p
             className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto"
-            style={{ fontFamily: 'var(--font-body)' }}
           >
             Offrez une expérience gastronomique inoubliable
           </p>
@@ -132,7 +131,6 @@ export default function Page() {
             </h2>
             <p
               className="text-base text-muted-foreground"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Un cadeau élégant pour tous les moments
             </p>
@@ -189,7 +187,6 @@ export default function Page() {
               <Button
                 type="submit"
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 transition-all duration-300 flex items-center justify-center gap-2"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 <CreditCard size={20} />
                 Acheter maintenant
@@ -216,7 +213,6 @@ export default function Page() {
             </h2>
             <p
               className="text-base text-muted-foreground"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Des moments uniques à partager
             </p>
@@ -240,20 +236,17 @@ export default function Page() {
                   </div>
                   <span
                     className="text-xl text-primary/90"
-                    style={{ fontFamily: 'var(--font-body)' }}
                   >
                     {exp.price}
                   </span>
                 </div>
                 <p
                   className="text-muted-foreground mb-5 text-base"
-                  style={{ fontFamily: 'var(--font-body)' }}
                 >
                   {exp.description}
                 </p>
                 <Button
                   className="w-full bg-secondary hover:bg-primary hover:text-primary-foreground text-foreground border border-primary/30 transition-all duration-300"
-                  style={{ fontFamily: 'var(--font-body)' }}
                 >
                   Sélectionner
                 </Button>
@@ -276,7 +269,6 @@ export default function Page() {
             </h2>
             <p
               className="text-base text-muted-foreground"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Des sélections raffinées de nos meilleurs produits
             </p>
@@ -296,7 +288,6 @@ export default function Page() {
                 </h4>
                 <p
                   className="text-foreground mb-5 text-base"
-                  style={{ fontFamily: 'var(--font-body)' }}
                 >
                   {box.description}
                 </p>
@@ -305,7 +296,6 @@ export default function Page() {
                     <li
                       key={i}
                       className="text-muted-foreground flex items-start gap-2"
-                      style={{ fontFamily: 'var(--font-body)' }}
                     >
                       <span className="text-primary">✓</span>
                       {item}
@@ -321,7 +311,6 @@ export default function Page() {
                   </span>
                   <Button
                     className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300"
-                    style={{ fontFamily: 'var(--font-body)' }}
                   >
                     Acheter
                   </Button>
@@ -345,7 +334,6 @@ export default function Page() {
             </h2>
             <p
               className="text-base text-muted-foreground"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Des expériences exclusives tout au long de l'année
             </p>
@@ -365,27 +353,24 @@ export default function Page() {
                 </h4>
                 <p
                   className="text-foreground mb-4 text-base"
-                  style={{ fontFamily: 'var(--font-body)' }}
                 >
                   {event.description}
                 </p>
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar size={18} />
-                    <span style={{ fontFamily: 'var(--font-body)' }}>
+                    <span>
                       {event.date}
                     </span>
                   </div>
                   <span
                     className="text-xl text-primary/90"
-                    style={{ fontFamily: 'var(--font-body)' }}
                   >
                     {event.price}
                   </span>
                 </div>
                 <Button
                   className="w-full bg-secondary hover:bg-primary hover:text-primary-foreground text-foreground border border-primary/30 transition-all duration-300"
-                  style={{ fontFamily: 'var(--font-body)' }}
                 >
                   Réserver
                 </Button>
@@ -396,7 +381,6 @@ export default function Page() {
           <div className="mt-12 bg-card p-8 rounded-lg border border-primary/30 text-center">
             <p
               className="text-muted-foreground text-lg"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Tous les achats sont sécurisés • Les bons et chèques cadeaux sont valables 12 mois
             </p>

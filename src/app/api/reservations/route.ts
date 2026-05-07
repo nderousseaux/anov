@@ -18,10 +18,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email invalide' }, { status: 400 });
     }
 
-    // Construire la date complète
-    const [hours, minutes] = time.split(':').map(Number);
-    const reservationDate = new Date(date);
-    reservationDate.setHours(hours, minutes, 0, 0);
+    // Construire la date complète (UTC pour cohérence avec getUTCHours() dans availability.ts)
+    const reservationDate = new Date(`${date}T${time}:00.000Z`);
     if (reservationDate <= new Date()) {
       return NextResponse.json({ error: 'Date invalide' }, { status: 400 });
     }

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -22,7 +21,6 @@ export function AdminNav() {
   return (
     <header
       className="sticky top-0 z-20 bg-card border-b border-primary/20 px-6 py-3 flex items-center gap-6"
-      style={{ fontFamily: 'var(--font-body)' }}
     >
       {/* Logo */}
       <span

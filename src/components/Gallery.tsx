@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export function Gallery() {
   const galleryImages = [
@@ -62,7 +65,6 @@ export function Gallery() {
           </h3>
           <p
             className="text-base sm:text-lg text-muted-foreground"
-            style={{ fontFamily: 'var(--font-body)' }}
           >
             Découvrez l'univers de l’Anøv en images
           </p>
@@ -84,7 +86,6 @@ export function Gallery() {
               <div className="absolute bottom-0 left-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <p
                   className="text-foreground text-base"
-                  style={{ fontFamily: 'var(--font-body)' }}
                 >
                   {image.caption}
                 </p>
@@ -107,10 +108,7 @@ export function Gallery() {
               setSelectedImage(null);
             }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+            <X size={32} />
           </button>
 
           <div className="flex items-center justify-center gap-6 max-w-6xl w-full">
@@ -122,9 +120,7 @@ export function Gallery() {
                 setSelectedImage((prev) => (prev === 0 ? galleryImages.length - 1 : prev! - 1));
               }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
+              <ChevronLeft size={40} />
             </button>
 
             <div className="flex flex-col items-center gap-4 flex-1">
@@ -135,13 +131,11 @@ export function Gallery() {
               />
               <p
                 className="text-center text-foreground text-lg"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 {galleryImages[selectedImage].caption}
               </p>
               <p
                 className="text-center text-muted-foreground text-sm"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 {selectedImage + 1} / {galleryImages.length}
               </p>
@@ -155,9 +149,7 @@ export function Gallery() {
                 setSelectedImage((prev) => (prev === galleryImages.length - 1 ? 0 : prev! + 1));
               }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
+              <ChevronRight size={40} />
             </button>
           </div>
         </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { AdminNav } from '@/components/admin/AdminNav';
 import { Button } from '@/components/ui/button';
@@ -296,7 +296,7 @@ export default function AdminReservationsPage() {
 
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-background text-foreground" style={{ fontFamily: 'var(--font-body)' }}>
+    <div className="min-h-screen bg-background text-foreground">
       <AdminNav />
 
       <main className="px-4 py-6 max-w-7xl mx-auto space-y-4">

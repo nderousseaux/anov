@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function History() {
   return (
     <section id="history" className="bg-background">
@@ -15,14 +13,12 @@ export function History() {
             </h2>
             <p
               className="text-lg sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed mb-6"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Une passion transmise de génération en génération, un engagement envers l'excellence,
               et une vision unique de la gastronomie moderne.
             </p>
             <p
               className="text-base sm:text-lg text-foreground max-w-3xl mx-auto leading-relaxed"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Depuis 2018, l’anøv incarne l'art de recevoir à la française,
               où chaque détail compte et où chaque instant devient un souvenir inoubliable.
@@ -49,14 +45,12 @@ export function History() {
             </h3>
             <p
               className="text-base sm:text-lg md:text-xl text-foreground mb-5 leading-relaxed"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Formé dans les plus grandes maisons étoilées de France, Antoine a parcouru le monde
               pour découvrir de nouvelles saveurs et techniques.
             </p>
             <p
               className="text-base sm:text-lg text-muted-foreground leading-relaxed"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Son retour à Paris marque le début d'une aventure unique : créer un lieu où tradition
               et innovation se rencontrent, où le respect des produits s'allie à une créativité sans limite.
@@ -81,7 +75,6 @@ export function History() {
               </h3>
               <p
                 className="text-base sm:text-lg text-foreground mb-6 leading-relaxed"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 En 2018, l’anøv ouvre ses portes dans le cœur historique de Paris.
                 L'idée ? Créer un sanctuaire gastronomique où chaque détail compte,
@@ -89,14 +82,12 @@ export function History() {
               </p>
               <p
                 className="text-base text-muted-foreground leading-relaxed mb-6"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 Notre philosophie repose sur trois piliers : le respect du produit,
                 la créativité sans compromis, et une expérience client irréprochable.
               </p>
               <p
                 className="text-base text-muted-foreground leading-relaxed"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 Ces valeurs guident chaque décision, de la sélection des ingrédients
                 au service en salle. Elles sont au cœur de notre identité et font de chaque
@@ -141,14 +132,12 @@ export function History() {
             </h3>
             <p
               className="text-base sm:text-lg md:text-xl text-foreground mb-5 leading-relaxed"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Chaque matin, nous parcourons les meilleurs marchés pour sélectionner
               les produits les plus frais et savoureux.
             </p>
             <p
               className="text-base sm:text-lg text-muted-foreground leading-relaxed"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Des légumes bio de nos maraîchers partenaires aux poissons de ligne de Bretagne,
               chaque ingrédient est choisi avec le plus grand soin. Nous privilégions les circuits courts
@@ -182,7 +171,6 @@ export function History() {
               </h3>
               <p
                 className="text-base sm:text-lg text-foreground mb-6 leading-relaxed"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 Derrière l’anøv, une équipe de passionnés travaille en parfaite harmonie.
                 Du chef de cuisine au maître d'hôtel, chacun apporte son expertise et son dévouement
@@ -190,7 +178,6 @@ export function History() {
               </p>
               <p
                 className="text-base text-muted-foreground mb-6 leading-relaxed"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 Notre brigade compte 15 personnes en cuisine et 8 en salle, tous sélectionnés
                 pour leur talent et leur attachement aux valeurs de la maison. L'esprit d'équipe
@@ -198,7 +185,6 @@ export function History() {
               </p>
               <p
                 className="text-base text-muted-foreground leading-relaxed"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 Nous formons également de jeunes talents, transmettant notre savoir-faire
                 et notre passion pour perpétuer l'excellence de la gastronomie française.
@@ -217,7 +203,6 @@ export function History() {
               </h3>
               <p
                 className="text-base sm:text-lg text-foreground mb-6 leading-relaxed"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 Notre sommelier, Pierre Lefèvre, a constitué une cave de plus de 800 références.
                 Des grands crus classés aux pépites de vignerons indépendants, chaque bouteille
@@ -225,7 +210,6 @@ export function History() {
               </p>
               <p
                 className="text-base text-muted-foreground mb-6 leading-relaxed"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 L'accord mets et vins est pour nous un art à part entière. Pierre travaille
                 en étroite collaboration avec Antoine pour créer des harmonies parfaites,
@@ -233,7 +217,6 @@ export function History() {
               </p>
               <p
                 className="text-base text-muted-foreground leading-relaxed"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 Notre cave climatisée abrite des trésors de toutes les régions viticoles françaises,
                 mais aussi des découvertes venues d'ailleurs, d'Italie au Nouveau Monde.
@@ -268,7 +251,6 @@ export function History() {
             </h3>
             <p
               className="text-base sm:text-lg md:text-xl text-foreground leading-relaxed"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               La technique au service de l'émotion, la précision au service de la créativité.
               Chaque plat est le fruit d'un savoir-faire méticuleux et d'une passion sans faille.
@@ -291,14 +273,12 @@ export function History() {
           </h3>
           <p
             className="text-lg sm:text-xl text-foreground mb-6 leading-relaxed"
-            style={{ fontFamily: 'var(--font-body)' }}
           >
             Chaque jour, nous nous efforçons de créer des moments d'exception,
             de surprendre et d'émouvoir nos convives.
           </p>
           <p
             className="text-base sm:text-lg text-muted-foreground leading-relaxed"
-            style={{ fontFamily: 'var(--font-body)' }}
           >
             Notre ambition n'est pas seulement de nourrir, mais de créer des souvenirs,
             de raconter des histoires à travers nos assiettes, et de perpétuer l'excellence

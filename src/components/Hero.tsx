@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { ChevronDown } from 'lucide-react';
@@ -26,7 +28,7 @@ export function Hero() {
     const element = document.getElementById('history');
     if (element) {
       const yOffset = -80;
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
@@ -63,14 +65,12 @@ export function Hero() {
         </div>
         <p
           className="text-base sm:text-lg md:text-xl mb-12 text-foreground/85 max-w-2xl mx-auto"
-          style={{ fontFamily: 'var(--font-body)' }}
         >
           Où chaque plat raconte une histoire, où chaque saveur éveille les sens
         </p>
         <Link href="/reservation">
           <Button
             className="rounded-full border-2 border-primary/90 bg-background/35 backdrop-blur-sm text-primary px-9 py-6 text-lg tracking-[0.03em] shadow-md transition-all duration-300 ease-out hover:scale-[1.01] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-lg"
-            style={{ fontFamily: 'var(--font-body)' }}
           >
             Réserver une table
           </Button>

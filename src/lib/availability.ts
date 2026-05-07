@@ -7,14 +7,21 @@ const DEFAULT_SLOTS = [
 
 const DEFAULT_OPENING_DAYS = [2, 3, 4, 5, 6]; // Mar–Sam
 
-/**
- * Returns a list of available time slots for a given date.
- * Respects global settings (openingDays, openingSlots, maxCovers)
- * and per-day DayOverride (closed, custom slots, custom maxCovers).
- */
-export async function getAvailableSlots(dateStr: string): Promise<string[]> {
-  const dbSettings = await prisma.restaurantSettings.findFirst({ where: { id: 1 } });
+const DEFAULT_MEAL_DURATION = 90; // minutes
+
+type EffectiveConfig = { effectiveSlots: string[]; effectiveMaxCovers: number; mealDuration: number };
+
+async function getEffectiveConfig(dateStr: string): Promise<EffectiveConfig | null> {
+  const dateObj = new Date(dateStr + 'T00:00:00.000Z');
+  const dow = dateObj.getUTCDay();
+
+  const [dbSettings, override] = await Promise.all([
+    prisma.restaurantSettings.findFirst({ where: { id: 1 } }),
+    prisma.dayOverride.findUnique({ where: { date: dateObj } }),
+  ]);
+
   const globalMaxCovers: number = dbSettings?.maxCovers ?? 20;
+  const mealDuration: number = dbSettings?.mealDuration ?? DEFAULT_MEAL_DURATION;
   const globalOpeningDays: number[] = dbSettings
     ? (JSON.parse(dbSettings.openingDays) as number[])
     : DEFAULT_OPENING_DAYS;
@@ -22,55 +29,71 @@ export async function getAvailableSlots(dateStr: string): Promise<string[]> {
     ? (JSON.parse(dbSettings.openingSlots) as string[])
     : DEFAULT_SLOTS;
 
-  // Parse date and get day-of-week
-  const dateObj = new Date(dateStr + 'T00:00:00.000Z');
-  const dow = dateObj.getUTCDay();
-
-  // Check for a per-day override
-  const override = await prisma.dayOverride.findUnique({
-    where: { date: new Date(dateStr + 'T00:00:00.000Z') },
-  });
-
-  // Determine effective open/slots/maxCovers
-  let effectiveOpen: boolean;
-  let effectiveSlots: string[];
-  let effectiveMaxCovers: number;
-
   if (override) {
-    if (override.closed) return []; // explicitly closed
-    effectiveOpen = true;
-    effectiveSlots = override.openingSlots
-      ? (JSON.parse(override.openingSlots) as string[])
-      : globalSlots;
-    effectiveMaxCovers = override.maxCovers ?? globalMaxCovers;
-  } else {
-    effectiveOpen = globalOpeningDays.includes(dow);
-    if (!effectiveOpen) return []; // closed day of week
-    effectiveSlots = globalSlots;
-    effectiveMaxCovers = globalMaxCovers;
+    if (override.closed) return null;
+    return {
+      effectiveSlots: override.openingSlots
+        ? (JSON.parse(override.openingSlots) as string[])
+        : globalSlots,
+      effectiveMaxCovers: override.maxCovers ?? globalMaxCovers,
+      mealDuration,
+    };
   }
 
-  // Count reserved guests per slot on that day
+  if (!globalOpeningDays.includes(dow)) return null;
+  return { effectiveSlots: globalSlots, effectiveMaxCovers: globalMaxCovers, mealDuration };
+}
+
+/**
+ * Converts a "HH:MM" slot string to minutes since midnight.
+ */
+function slotToMinutes(slot: string): number {
+  const [h, m] = slot.split(':').map(Number);
+  return h * 60 + m;
+}
+
+/**
+ * Builds a map of slot → total guests occupying that slot, accounting for meal duration.
+ * A reservation at time R with duration D occupies all slots S where R <= S < R + D.
+ */
+function buildCoverageMap(
+  reservations: { date: Date; guests: number }[],
+  effectiveSlots: string[],
+  mealDuration: number,
+): Record<string, number> {
+  const coverage: Record<string, number> = {};
+  for (const r of reservations) {
+    const resMin = r.date.getUTCHours() * 60 + r.date.getUTCMinutes();
+    for (const slot of effectiveSlots) {
+      const slotMin = slotToMinutes(slot);
+      if (slotMin >= resMin && slotMin < resMin + mealDuration) {
+        coverage[slot] = (coverage[slot] ?? 0) + r.guests;
+      }
+    }
+  }
+  return coverage;
+}
+
+/**
+ * Returns a list of available time slots for a given date.
+ * Respects global settings (openingDays, openingSlots, maxCovers)
+ * and per-day DayOverride (closed, custom slots, custom maxCovers).
+ */
+export async function getAvailableSlots(dateStr: string): Promise<string[]> {
+  const config = await getEffectiveConfig(dateStr);
+  if (!config) return [];
+  const { effectiveSlots, effectiveMaxCovers, mealDuration } = config;
+
   const dayStart = new Date(dateStr + 'T00:00:00.000Z');
   const dayEnd = new Date(dateStr + 'T23:59:59.999Z');
 
   const reservations = await prisma.reservation.findMany({
-    where: {
-      date: { gte: dayStart, lte: dayEnd },
-      status: 'CONFIRMED',
-    },
+    where: { date: { gte: dayStart, lte: dayEnd }, status: 'CONFIRMED' },
     select: { date: true, guests: true },
   });
 
-  const guestsBySlot: Record<string, number> = {};
-  for (const r of reservations) {
-    const h = r.date.getUTCHours().toString().padStart(2, '0');
-    const m = r.date.getUTCMinutes().toString().padStart(2, '0');
-    const slot = `${h}:${m}`;
-    guestsBySlot[slot] = (guestsBySlot[slot] ?? 0) + r.guests;
-  }
-
-  return effectiveSlots.filter((slot) => (guestsBySlot[slot] ?? 0) + 1 <= effectiveMaxCovers);
+  const coverage = buildCoverageMap(reservations, effectiveSlots, mealDuration);
+  return effectiveSlots.filter((slot) => (coverage[slot] ?? 0) + 1 <= effectiveMaxCovers);
 }
 
 /**
@@ -78,36 +101,9 @@ export async function getAvailableSlots(dateStr: string): Promise<string[]> {
  * Closed days / slots return an empty array.
  */
 export async function getSlotsWithAvailability(dateStr: string): Promise<{ time: string; available: number }[]> {
-  const dbSettings = await prisma.restaurantSettings.findFirst({ where: { id: 1 } });
-  const globalMaxCovers: number = dbSettings?.maxCovers ?? 20;
-  const globalOpeningDays: number[] = dbSettings
-    ? (JSON.parse(dbSettings.openingDays) as number[])
-    : DEFAULT_OPENING_DAYS;
-  const globalSlots: string[] = dbSettings
-    ? (JSON.parse(dbSettings.openingSlots) as string[])
-    : DEFAULT_SLOTS;
-
-  const dateObj = new Date(dateStr + 'T00:00:00.000Z');
-  const dow = dateObj.getUTCDay();
-
-  const override = await prisma.dayOverride.findUnique({
-    where: { date: new Date(dateStr + 'T00:00:00.000Z') },
-  });
-
-  let effectiveSlots: string[];
-  let effectiveMaxCovers: number;
-
-  if (override) {
-    if (override.closed) return [];
-    effectiveSlots = override.openingSlots
-      ? (JSON.parse(override.openingSlots) as string[])
-      : globalSlots;
-    effectiveMaxCovers = override.maxCovers ?? globalMaxCovers;
-  } else {
-    if (!globalOpeningDays.includes(dow)) return [];
-    effectiveSlots = globalSlots;
-    effectiveMaxCovers = globalMaxCovers;
-  }
+  const config = await getEffectiveConfig(dateStr);
+  if (!config) return [];
+  let { effectiveSlots, effectiveMaxCovers } = config;
 
   // Pour le jour J : supprimer les services déjà entamés
   const now = new Date();
@@ -136,23 +132,13 @@ export async function getSlotsWithAvailability(dateStr: string): Promise<{ time:
   const dayEnd = new Date(dateStr + 'T23:59:59.999Z');
 
   const reservations = await prisma.reservation.findMany({
-    where: {
-      date: { gte: dayStart, lte: dayEnd },
-      status: 'CONFIRMED',
-    },
+    where: { date: { gte: dayStart, lte: dayEnd }, status: 'CONFIRMED' },
     select: { date: true, guests: true },
   });
 
-  const guestsBySlot: Record<string, number> = {};
-  for (const r of reservations) {
-    const h = r.date.getUTCHours().toString().padStart(2, '0');
-    const m = r.date.getUTCMinutes().toString().padStart(2, '0');
-    const slot = `${h}:${m}`;
-    guestsBySlot[slot] = (guestsBySlot[slot] ?? 0) + r.guests;
-  }
-
+  const coverage = buildCoverageMap(reservations, effectiveSlots, config.mealDuration);
   return effectiveSlots.map((slot) => ({
     time: slot,
-    available: Math.max(0, effectiveMaxCovers - (guestsBySlot[slot] ?? 0)),
+    available: Math.max(0, effectiveMaxCovers - (coverage[slot] ?? 0)),
   }));
 }

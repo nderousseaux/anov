@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
@@ -60,7 +60,7 @@ export function Navbar() {
     if (!element) return;
 
     const yOffset = -80;
-    const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
     window.scrollTo({ top: y, behavior: 'smooth' });
   }, [pathname]);
 
@@ -78,7 +78,7 @@ export function Navbar() {
     const element = document.getElementById(sectionId);
     if (element) {
       const yOffset = -80;
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
@@ -123,14 +123,12 @@ export function Navbar() {
             <button
               onClick={() => scrollToSection('history')}
               className={menuItemClass}
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Notre Histoire
             </button>
             <button
               onClick={() => scrollToSection('gallery')}
               className={menuItemClass}
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Galerie
             </button>
@@ -145,14 +143,12 @@ export function Navbar() {
             <Link
               href="/menu"
               className={`${menuItemClass} ${isActive('/menu') ? activeMenuItemClass : ''}`}
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               La Carte
             </Link>
             <Link
               href="/boutique"
               className={`${menuItemClass} ${isActive('/boutique') ? activeMenuItemClass : ''}`}
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Boutique
             </Link>
@@ -161,7 +157,6 @@ export function Navbar() {
             <Link href="/reservation">
               <Button
                 className={reservationButtonClass}
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 Réserver
               </Button>
@@ -184,14 +179,12 @@ export function Navbar() {
               <button
                 onClick={() => scrollToSection('history')}
                 className="text-foreground hover:text-primary transition-colors duration-300 text-left py-2"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 Notre Histoire
               </button>
               <button
                 onClick={() => scrollToSection('gallery')}
                 className="text-foreground hover:text-primary transition-colors duration-300 text-left py-2"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 Galerie
               </button>
@@ -202,7 +195,6 @@ export function Navbar() {
                   ? 'text-primary'
                   : 'text-foreground hover:text-primary'
                   }`}
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 La Carte
               </Link>
@@ -213,7 +205,6 @@ export function Navbar() {
                   ? 'text-primary'
                   : 'text-foreground hover:text-primary'
                   }`}
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 Boutique
               </Link>
@@ -223,7 +214,6 @@ export function Navbar() {
               >
                 <Button
                   className="w-full rounded-full border-2 border-primary/80 bg-transparent text-primary py-3 tracking-[0.03em] shadow-sm transition-all duration-300 ease-out hover:scale-[1.01] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-md"
-                  style={{ fontFamily: 'var(--font-body)' }}
                 >
                   Réserver
                 </Button>

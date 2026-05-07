@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { type ReactNode } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Page() {
@@ -91,13 +91,13 @@ export default function Page() {
     <div className="bg-secondary p-6 rounded-lg border border-primary/20 hover:border-primary/50 transition-colors duration-300">
       <div className="flex justify-between items-start mb-3 gap-4">
         <h3 className="text-lg text-primary" style={{ fontFamily: 'var(--font-display)' }}>{name}</h3>
-        <span className="text-base text-primary/90 shrink-0" style={{ fontFamily: 'var(--font-body)' }}>{price}</span>
+        <span className="text-base text-primary/90 shrink-0">{price}</span>
       </div>
-      <p className="text-muted-foreground text-sm" style={{ fontFamily: 'var(--font-body)' }}>{description}</p>
+      <p className="text-muted-foreground text-sm">{description}</p>
     </div>
   );
 
-  const SectionTitle = ({ children }: { children: React.ReactNode }) => (
+  const SectionTitle = ({ children }: { children: ReactNode }) => (
     <h3 className="text-2xl text-primary mb-5 pb-2 border-b border-primary/20" style={{ fontFamily: 'var(--font-display)' }}>
       {children}
     </h3>
@@ -124,7 +124,6 @@ export default function Page() {
           </h1>
           <p
             className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto"
-            style={{ fontFamily: 'var(--font-body)' }}
           >
             Quatre formules, une seule promesse : une cuisine vivante, ancrée dans les saisons
           </p>
@@ -147,7 +146,6 @@ export default function Page() {
                   key={value}
                   value={value}
                   className="flex-1 basis-[calc(50%-0.25rem)] sm:basis-[calc(20%-0.25rem)] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-foreground"
-                  style={{ fontFamily: 'var(--font-body)' }}
                 >
                   {label}
                 </TabsTrigger>
@@ -156,7 +154,7 @@ export default function Page() {
 
             {/* ── Carte de la semaine ──────────────────────────────────── */}
             <TabsContent value="semaine">
-              <p className="text-muted-foreground text-sm text-center mb-10" style={{ fontFamily: 'var(--font-body)' }}>
+              <p className="text-muted-foreground text-sm text-center mb-10">
                 Renouvelée chaque semaine selon les arrivages du marché
               </p>
               <div className="mb-10">
@@ -179,29 +177,29 @@ export default function Page() {
               </div>
               <div className="bg-secondary p-8 rounded-lg border border-primary/30 text-center">
                 <h3 className="text-2xl text-primary mb-3" style={{ fontFamily: 'var(--font-display)' }}>Formule du midi</h3>
-                <p className="text-foreground mb-2" style={{ fontFamily: 'var(--font-body)' }}>Entrée + Plat ou Plat + Dessert</p>
+                <p className="text-foreground mb-2">Entrée + Plat ou Plat + Dessert</p>
                 <span className="text-3xl text-primary/90" style={{ fontFamily: 'var(--font-display)' }}>32€</span>
-                <p className="text-muted-foreground mt-2 text-sm" style={{ fontFamily: 'var(--font-body)' }}>Entrée + Plat + Dessert — 38€</p>
+                <p className="text-muted-foreground mt-2 text-sm">Entrée + Plat + Dessert — 38€</p>
               </div>
             </TabsContent>
 
             {/* ── Dimanche midi ──────────────────────────────────────────── */}
             <TabsContent value="dimanche">
               <div className="text-center mb-10">
-                <p className="text-sm text-muted-foreground uppercase tracking-widest mb-2" style={{ fontFamily: 'var(--font-body)' }}>Thème de ce dimanche</p>
+                <p className="text-sm text-muted-foreground uppercase tracking-widest mb-2">Thème de ce dimanche</p>
                 <h2 className="text-4xl text-primary mb-4" style={{ fontFamily: 'var(--font-display)' }}>{dimancheTheme}</h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>{dimancheDescription}</p>
+                <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">{dimancheDescription}</p>
               </div>
               <div className="max-w-2xl mx-auto space-y-4 mb-10">
                 {dimancheMenu.map((item, index) => (
                   <div key={index} className="bg-secondary rounded-lg border border-primary/20 hover:border-primary/40 transition-colors duration-300 overflow-hidden">
                     <div className="flex items-stretch">
                       <div className="w-24 sm:w-32 flex items-center justify-center bg-primary/10 border-r border-primary/20 px-3 py-5 shrink-0">
-                        <span className="text-primary text-sm font-medium text-center" style={{ fontFamily: 'var(--font-body)' }}>{item.course}</span>
+                        <span className="text-primary text-sm font-medium text-center">{item.course}</span>
                       </div>
                       <div className="p-5">
                         <h3 className="text-lg text-primary mb-1" style={{ fontFamily: 'var(--font-display)' }}>{item.name}</h3>
-                        <p className="text-muted-foreground text-sm" style={{ fontFamily: 'var(--font-body)' }}>{item.description}</p>
+                        <p className="text-muted-foreground text-sm">{item.description}</p>
                       </div>
                     </div>
                   </div>
@@ -209,15 +207,15 @@ export default function Page() {
               </div>
               <div className="bg-secondary p-8 rounded-lg border border-primary/30 text-center max-w-md mx-auto">
                 <h3 className="text-2xl text-primary mb-3" style={{ fontFamily: 'var(--font-display)' }}>Menu complet</h3>
-                <p className="text-muted-foreground mb-4 text-sm" style={{ fontFamily: 'var(--font-body)' }}>Entrée · Plat · Fromage · Dessert</p>
+                <p className="text-muted-foreground mb-4 text-sm">Entrée · Plat · Fromage · Dessert</p>
                 <span className="text-3xl text-primary/90" style={{ fontFamily: 'var(--font-display)' }}>68€</span>
-                <p className="text-muted-foreground mt-3 text-xs" style={{ fontFamily: 'var(--font-body)' }}>Uniquement le dimanche à partir de 12h — Réservation conseillée</p>
+                <p className="text-muted-foreground mt-3 text-xs">Uniquement le dimanche à partir de 12h — Réservation conseillée</p>
               </div>
             </TabsContent>
 
             {/* ── Carte du soir ───────────────────────────────────────────── */}
             <TabsContent value="soir">
-              <p className="text-muted-foreground text-sm text-center mb-10" style={{ fontFamily: 'var(--font-body)' }}>
+              <p className="text-muted-foreground text-sm text-center mb-10">
                 Renouvelée tous les deux mois · Actuelle depuis début {new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
               </p>
               <div className="mb-10">
@@ -240,15 +238,15 @@ export default function Page() {
               </div>
               <div className="bg-secondary p-8 rounded-lg border border-primary/30 text-center">
                 <h3 className="text-2xl text-primary mb-3" style={{ fontFamily: 'var(--font-display)' }}>Menu Dégustation</h3>
-                <p className="text-foreground mb-2" style={{ fontFamily: 'var(--font-body)' }}>7 plats de saison composés par le Chef</p>
-                <p className="text-muted-foreground mb-6 text-sm" style={{ fontFamily: 'var(--font-body)' }}>Accord mets et vins inclus — disponible uniquement le soir</p>
+                <p className="text-foreground mb-2">7 plats de saison composés par le Chef</p>
+                <p className="text-muted-foreground mb-6 text-sm">Accord mets et vins inclus — disponible uniquement le soir</p>
                 <span className="text-3xl text-primary/90" style={{ fontFamily: 'var(--font-display)' }}>125€</span>
               </div>
             </TabsContent>
 
             {/* ── Vins ────────────────────────────────────────────────────── */}
             <TabsContent value="vins">
-              <p className="text-muted-foreground text-sm text-center mb-10" style={{ fontFamily: 'var(--font-body)' }}>
+              <p className="text-muted-foreground text-sm text-center mb-10">
                 Une sélection soigneusement choisie par notre sommelier
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
@@ -257,10 +255,10 @@ export default function Page() {
                     <div className="flex justify-between items-start gap-4 mb-2">
                       <div className="flex-1">
                         <h4 className="text-lg text-primary mb-1" style={{ fontFamily: 'var(--font-display)' }}>{wine.name}</h4>
-                        <p className="text-xs text-primary/70 uppercase tracking-wide mb-2" style={{ fontFamily: 'var(--font-body)' }}>{wine.type}</p>
-                        <p className="text-sm text-muted-foreground" style={{ fontFamily: 'var(--font-body)' }}>{wine.description}</p>
+                        <p className="text-xs text-primary/70 uppercase tracking-wide mb-2">{wine.type}</p>
+                        <p className="text-sm text-muted-foreground">{wine.description}</p>
                       </div>
-                      <span className="text-lg text-primary/90 shrink-0" style={{ fontFamily: 'var(--font-body)' }}>{wine.price}</span>
+                      <span className="text-lg text-primary/90 shrink-0">{wine.price}</span>
                     </div>
                   </div>
                 ))}
@@ -271,13 +269,13 @@ export default function Page() {
                 className="w-full h-[360px] object-cover rounded-lg border-2 border-primary/30 mb-8"
               />
               <div className="bg-secondary p-6 rounded-lg border border-primary/30 text-center">
-                <p className="text-foreground" style={{ fontFamily: 'var(--font-body)' }}>Notre sommelier se fera un plaisir de vous conseiller selon vos préférences et vos plats</p>
+                <p className="text-foreground">Notre sommelier se fera un plaisir de vous conseiller selon vos préférences et vos plats</p>
               </div>
             </TabsContent>
 
             {/* ── Cocktails ───────────────────────────────────────────────── */}
             <TabsContent value="cocktails">
-              <p className="text-muted-foreground text-sm text-center mb-10" style={{ fontFamily: 'var(--font-body)' }}>
+              <p className="text-muted-foreground text-sm text-center mb-10">
                 Créations de notre bartender — servis au bar ou en table
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
@@ -285,21 +283,21 @@ export default function Page() {
                   <div key={index} className="bg-secondary p-6 rounded-lg border border-primary/20 hover:border-primary/50 transition-colors duration-300">
                     <div className="flex justify-between items-start gap-4 mb-3">
                       <h4 className="text-xl text-primary" style={{ fontFamily: 'var(--font-display)' }}>{cocktail.name}</h4>
-                      <span className="text-lg text-primary/90 shrink-0" style={{ fontFamily: 'var(--font-body)' }}>{cocktail.price}</span>
+                      <span className="text-lg text-primary/90 shrink-0">{cocktail.price}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground" style={{ fontFamily: 'var(--font-body)' }}>{cocktail.description}</p>
+                    <p className="text-sm text-muted-foreground">{cocktail.description}</p>
                   </div>
                 ))}
               </div>
               {/* Mentions légales obligatoires */}
               <div className="bg-secondary/60 rounded-lg border border-primary/20 p-6 text-center space-y-2">
-                <p className="text-foreground font-medium" style={{ fontFamily: 'var(--font-body)' }}>
+                <p className="text-foreground font-medium">
                   L&apos;abus d&apos;alcool est dangereux pour la santé — À consommer avec modération
                 </p>
-                <p className="text-muted-foreground text-sm" style={{ fontFamily: 'var(--font-body)' }}>
+                <p className="text-muted-foreground text-sm">
                   La vente d&apos;alcool aux mineurs est interdite — Loi Évin
                 </p>
-                <p className="text-muted-foreground text-xs mt-3" style={{ fontFamily: 'var(--font-body)' }}>
+                <p className="text-muted-foreground text-xs mt-3">
                   Des versions sans alcool sont disponibles sur demande
                 </p>
               </div>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Facebook, Instagram, Youtube, Star } from 'lucide-react';
 
 export function Footer() {
@@ -30,7 +29,6 @@ export function Footer() {
             />
             <p
               className="text-muted-foreground mb-6"
-              style={{ fontFamily: 'var(--font-body)' }}
             >
               Une expérience gastronomique d'exception où chaque plat raconte une histoire.
             </p>
@@ -77,7 +75,6 @@ export function Footer() {
                   <div className="flex items-center justify-between">
                     <span
                       className="text-foreground"
-                      style={{ fontFamily: 'var(--font-body)' }}
                     >
                       {platform.name}
                     </span>
@@ -85,13 +82,11 @@ export function Footer() {
                       <Star className="text-primary fill-primary" size={16} />
                       <span
                         className="text-primary/90"
-                        style={{ fontFamily: 'var(--font-body)' }}
                       >
                         {platform.rating}
                       </span>
                       <span
                         className="text-muted-foreground text-sm"
-                        style={{ fontFamily: 'var(--font-body)' }}
                       >
                         ({platform.reviews} avis)
                       </span>
@@ -109,7 +104,6 @@ export function Footer() {
             <div>
               <p
                 className="text-muted-foreground text-sm"
-                style={{ fontFamily: 'var(--font-body)' }}
               >
                 © 2026 l’Anøv <span style={{ fontFamily: 'var(--font-logo)' }}>Ø</span> Tous droits réservés.
               </p>
@@ -119,21 +113,18 @@ export function Footer() {
                 <a
                   href="#"
                   className="text-muted-foreground hover:text-primary transition-colors text-sm"
-                  style={{ fontFamily: 'var(--font-body)' }}
                 >
                   Mentions légales
                 </a>
                 <a
                   href="#"
                   className="text-muted-foreground hover:text-primary transition-colors text-sm"
-                  style={{ fontFamily: 'var(--font-body)' }}
                 >
                   Politique de confidentialité
                 </a>
                 <a
                   href="#"
                   className="text-muted-foreground hover:text-primary transition-colors text-sm"
-                  style={{ fontFamily: 'var(--font-body)' }}
                 >
                   CGV
                 </a>

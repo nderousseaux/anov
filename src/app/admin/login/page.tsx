@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +14,7 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -40,7 +40,6 @@ export default function AdminLoginPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-background px-4"
-      style={{ fontFamily: 'var(--font-body)' }}
     >
       <div className="w-full max-w-sm bg-card border border-primary/20 rounded-lg p-8 space-y-6">
         <h1

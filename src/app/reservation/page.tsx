@@ -73,7 +73,7 @@ export default function Page() {
           (data.unavailableDates ?? []).map((d: string) => new Date(d + 'T00:00:00')),
         );
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [calendarMonth]);
 
   const handleSubmit = async (e: FormEvent) => {

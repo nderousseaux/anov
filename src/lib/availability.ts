@@ -142,3 +142,81 @@ export async function getSlotsWithAvailability(dateStr: string): Promise<{ time:
     available: Math.max(0, effectiveMaxCovers - (coverage[slot] ?? 0)),
   }));
 }
+
+/**
+ * Returns the list of date strings (YYYY-MM-DD) in a given month that have no availability.
+ * Only 3 DB queries regardless of the number of days in the month.
+ */
+export async function getUnavailableDatesForMonth(monthStr: string): Promise<string[]> {
+  const [year, month] = monthStr.split('-').map(Number);
+  // new Date(year, month, 0) → last day of the 1-indexed month (JS month index is month-1, day 0 = last day of month-1)
+  const daysInMonth = new Date(year, month, 0).getDate();
+
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  const paddedMonth = String(month).padStart(2, '0');
+  const monthStart = new Date(`${year}-${paddedMonth}-01T00:00:00.000Z`);
+  const monthEnd = new Date(`${year}-${paddedMonth}-${String(daysInMonth).padStart(2, '0')}T23:59:59.999Z`);
+
+  const [dbSettings, overrides, reservations] = await Promise.all([
+    prisma.restaurantSettings.findFirst({ where: { id: 1 } }),
+    prisma.dayOverride.findMany({ where: { date: { gte: monthStart, lte: monthEnd } } }),
+    prisma.reservation.findMany({
+      where: { date: { gte: monthStart, lte: monthEnd }, status: 'CONFIRMED' },
+      select: { date: true, guests: true },
+    }),
+  ]);
+
+  const globalMaxCovers: number = dbSettings?.maxCovers ?? 20;
+  const mealDuration: number = dbSettings?.mealDuration ?? DEFAULT_MEAL_DURATION;
+  const globalOpeningDays: number[] = dbSettings
+    ? (JSON.parse(dbSettings.openingDays) as number[])
+    : DEFAULT_OPENING_DAYS;
+  const globalSlots: string[] = dbSettings
+    ? (JSON.parse(dbSettings.openingSlots) as string[])
+    : DEFAULT_SLOTS;
+
+  const overrideByDate = new Map<string, (typeof overrides)[0]>();
+  for (const o of overrides) {
+    overrideByDate.set(o.date.toISOString().split('T')[0], o);
+  }
+
+  const resByDate = new Map<string, { date: Date; guests: number }[]>();
+  for (const r of reservations) {
+    const d = r.date.toISOString().split('T')[0];
+    if (!resByDate.has(d)) resByDate.set(d, []);
+    resByDate.get(d)!.push(r);
+  }
+
+  const unavailable: string[] = [];
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${year}-${paddedMonth}-${String(day).padStart(2, '0')}`;
+    if (dateStr < todayStr) continue;
+
+    const dow = new Date(dateStr + 'T00:00:00.000Z').getUTCDay();
+    const override = overrideByDate.get(dateStr);
+
+    let effectiveSlots: string[];
+    let effectiveMaxCovers: number;
+
+    if (override) {
+      if (override.closed) { unavailable.push(dateStr); continue; }
+      effectiveSlots = override.openingSlots
+        ? (JSON.parse(override.openingSlots) as string[])
+        : globalSlots;
+      effectiveMaxCovers = override.maxCovers ?? globalMaxCovers;
+    } else {
+      if (!globalOpeningDays.includes(dow)) { unavailable.push(dateStr); continue; }
+      effectiveSlots = globalSlots;
+      effectiveMaxCovers = globalMaxCovers;
+    }
+
+    const coverage = buildCoverageMap(resByDate.get(dateStr) ?? [], effectiveSlots, mealDuration);
+    const hasAvailability = effectiveSlots.some((slot) => (coverage[slot] ?? 0) < effectiveMaxCovers);
+    if (!hasAvailability) unavailable.push(dateStr);
+  }
+
+  return unavailable;
+}

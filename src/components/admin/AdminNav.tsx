@@ -39,8 +39,8 @@ export function AdminNav() {
               key={href}
               href={href}
               className={`flex items-center gap-2 px-3 py-1.5 rounded text-sm transition-colors ${active
-                  ? 'bg-primary/15 text-primary font-medium'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
+                ? 'bg-primary/15 text-primary font-medium'
+                : 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
                 }`}
             >
               <Icon size={15} />

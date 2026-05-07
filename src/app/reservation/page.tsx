@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Clock, Users, Phone, User, MessageSquare, Loader2 } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, Users, Phone, User, MessageSquare, Loader2 } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
@@ -27,6 +29,11 @@ export default function Page() {
   const [slots, setSlots] = useState<SlotInfo[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [calendarMonth, setCalendarMonth] = useState<Date>(
+    () => { const now = new Date(); return new Date(now.getFullYear(), now.getMonth(), 1); },
+  );
+  const [unavailableDates, setUnavailableDates] = useState<Date[]>([]);
 
   const guestsNum = parseInt(formData.guests, 10);
 
@@ -56,8 +63,25 @@ export default function Page() {
     if (formData.date) loadSlots(formData.date);
   }, [formData.date, loadSlots]);
 
+  useEffect(() => {
+    const y = calendarMonth.getFullYear();
+    const m = String(calendarMonth.getMonth() + 1).padStart(2, '0');
+    fetch(`/api/reservations/availability?month=${y}-${m}`)
+      .then((r) => r.json())
+      .then((data) => {
+        setUnavailableDates(
+          (data.unavailableDates ?? []).map((d: string) => new Date(d + 'T00:00:00')),
+        );
+      })
+      .catch(() => {});
+  }, [calendarMonth]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!formData.date) {
+      toast.error('Veuillez choisir une date');
+      return;
+    }
     if (!formData.time) {
       toast.error('Veuillez choisir un horaire');
       return;
@@ -81,8 +105,6 @@ export default function Page() {
       setSubmitting(false);
     }
   };
-
-  const todayStr = new Date().toISOString().split('T')[0];
 
   const lunchSlots = slots.filter((s) => parseInt(s.time) < 15);
   const dinnerSlots = slots.filter((s) => parseInt(s.time) >= 15);
@@ -188,17 +210,57 @@ export default function Page() {
 
             {/* Date */}
             <div className="space-y-2">
-              <Label htmlFor="date" className="text-foreground flex items-center gap-2">
-                <Calendar size={16} className="text-primary" />
+              <Label className="text-foreground flex items-center gap-2">
+                <CalendarIcon size={16} className="text-primary" />
                 Date
               </Label>
-              <Input
-                id="date" type="date" required
-                value={formData.date}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="bg-background/30 border-primary/30 text-foreground"
-                min={todayStr}
-              />
+              <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="w-full flex items-center gap-2 h-10 px-3 rounded-md border border-primary/30 bg-background/30 text-sm text-left hover:border-primary/60 transition-colors"
+                  >
+                    <CalendarIcon size={14} className="text-primary shrink-0" />
+                    {formData.date ? (
+                      <span className="text-foreground">
+                        {new Date(formData.date + 'T00:00:00').toLocaleDateString('fr-FR', {
+                          weekday: 'long', day: 'numeric', month: 'long',
+                        })}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">Choisir une date</span>
+                    )}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 border-primary/30 bg-card" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.date ? new Date(formData.date + 'T00:00:00') : undefined}
+                    onSelect={(date) => {
+                      if (!date) return;
+                      const y = date.getFullYear();
+                      const mo = String(date.getMonth() + 1).padStart(2, '0');
+                      const d = String(date.getDate()).padStart(2, '0');
+                      setFormData((prev) => ({ ...prev, date: `${y}-${mo}-${d}` }));
+                      setCalendarOpen(false);
+                    }}
+                    month={calendarMonth}
+                    onMonthChange={setCalendarMonth}
+                    weekStartsOn={1}
+                    disabled={(date) => {
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      if (date < today) return true;
+                      return unavailableDates.some(
+                        (u) =>
+                          u.getFullYear() === date.getFullYear() &&
+                          u.getMonth() === date.getMonth() &&
+                          u.getDate() === date.getDate(),
+                      );
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
             {/* Créneaux */}

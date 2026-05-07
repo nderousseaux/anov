@@ -30,6 +30,13 @@ export default function Page() {
 
   const guestsNum = parseInt(formData.guests, 10);
 
+  const selectedSlot = slots.find((s) => s.time === formData.time);
+  const maxGuests = selectedSlot
+    ? selectedSlot.available
+    : slots.length > 0
+      ? Math.max(...slots.map((s) => s.available))
+      : 20;
+
   const loadSlots = useCallback(async (date: string) => {
     if (!date) return;
     setLoadingSlots(true);
@@ -170,7 +177,7 @@ export default function Page() {
                   <SelectValue placeholder="Choisir" />
                 </SelectTrigger>
                 <SelectContent className="bg-secondary border-primary/30">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20].map((n) => (
+                  {Array.from({ length: maxGuests }, (_, i) => i + 1).map((n) => (
                     <SelectItem key={n} value={String(n)} className="text-foreground focus:bg-primary/20">
                       {n} personne{n > 1 ? 's' : ''}
                     </SelectItem>
@@ -222,7 +229,11 @@ export default function Page() {
                               key={slot.time}
                               type="button"
                               disabled={disabled}
-                              onClick={() => !disabled && setFormData({ ...formData, time: slot.time })}
+                              onClick={() => {
+                                if (disabled) return;
+                                const newGuests = guestsNum > slot.available ? '' : formData.guests;
+                                setFormData({ ...formData, time: slot.time, guests: newGuests });
+                              }}
                               className={[
                                 'flex flex-col items-center justify-center w-20 h-14 rounded border text-sm font-medium transition-all',
                                 selected
@@ -255,7 +266,11 @@ export default function Page() {
                               key={slot.time}
                               type="button"
                               disabled={disabled}
-                              onClick={() => !disabled && setFormData({ ...formData, time: slot.time })}
+                              onClick={() => {
+                                if (disabled) return;
+                                const newGuests = guestsNum > slot.available ? '' : formData.guests;
+                                setFormData({ ...formData, time: slot.time, guests: newGuests });
+                              }}
                               className={[
                                 'flex flex-col items-center justify-center w-20 h-14 rounded border text-sm font-medium transition-all',
                                 selected

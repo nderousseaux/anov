@@ -173,10 +173,10 @@ export default function Page() {
               <div className="space-y-2">
                 <Label htmlFor="phone" className="text-foreground flex items-center gap-2">
                   <Phone size={16} className="text-primary" />
-                  Téléphone
+                  Téléphone <span className="text-muted-foreground text-xs">(optionnel)</span>
                 </Label>
                 <Input
-                  id="phone" type="tel" required
+                  id="phone" type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="bg-background/30 border-primary/30 text-foreground"

@@ -16,7 +16,7 @@ model Reservation {
   // Coordonnées client
   name  String
   email String
-  phone String
+  phone String?
 
   // Détails de la réservation
   date           DateTime // date + heure du repas

@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const { name, email, phone, date, time, guests, specialRequest } = body;
 
     // Validation minimale
-    if (!name || !email || !phone || !date || !time || !guests) {
+    if (!name || !email || !date || !time || !guests) {
       return NextResponse.json({ error: 'Champs manquants' }, { status: 400 });
     }
     const guestsNum = parseInt(guests, 10);
@@ -16,6 +16,9 @@ export async function POST(req: NextRequest) {
     }
     if (!/^[\w.+\-]+@[\w\-]+\.[a-z]{2,}$/i.test(email)) {
       return NextResponse.json({ error: 'Email invalide' }, { status: 400 });
+    }
+    if (phone && !/^\+?[\d\s\-().]{6,20}$/.test(phone.trim())) {
+      return NextResponse.json({ error: 'Numéro de téléphone invalide' }, { status: 400 });
     }
 
     // Construire la date complète (UTC pour cohérence avec getUTCHours() dans availability.ts)
@@ -29,7 +32,7 @@ export async function POST(req: NextRequest) {
       data: {
         name: name.trim().slice(0, 100),
         email: email.trim().toLowerCase().slice(0, 200),
-        phone: phone.trim().slice(0, 30),
+        phone: phone ? phone.trim().slice(0, 30) : null,
         date: reservationDate,
         guests: guestsNum,
         specialRequest: specialRequest?.trim().slice(0, 500) || null,

@@ -98,10 +98,12 @@ export default function ReservationSuccessPage() {
             <Mail size={20} className="text-primary shrink-0" />
             <span>{reservation.email}</span>
           </div>
-          <div className="flex items-center gap-3 text-foreground">
-            <Phone size={20} className="text-primary shrink-0" />
-            <span>{reservation.phone}</span>
-          </div>
+          {reservation.phone && (
+            <div className="flex items-center gap-3 text-foreground">
+              <Phone size={20} className="text-primary shrink-0" />
+              <span>{reservation.phone}</span>
+            </div>
+          )}
         </div>
 
         <div className="text-center mt-8">

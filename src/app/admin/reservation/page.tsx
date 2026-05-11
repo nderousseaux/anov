@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-type ReservationStatus = 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+type ReservationStatus = 'PENDING_PAYMENT' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
 
 interface ReservationRow {
   id: string; name: string; email: string; phone: string;
@@ -25,7 +25,7 @@ interface ApiResponse {
 }
 
 interface RestaurantSettings {
-  maxCovers: number; mealDuration: number; openingDays: number[]; openingSlots: string[];
+  maxCovers: number; mealDuration: number; openingDays: number[]; openingSlots: string[]; depositPerGuestCents: number;
 }
 
 interface DayInfo {
@@ -41,11 +41,13 @@ interface DayInfo {
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const STATUS_LABELS: Record<ReservationStatus, string> = {
+  PENDING_PAYMENT: 'En attente',
   CONFIRMED: 'Confirmé',
   CANCELLED: 'Annulé', COMPLETED: 'Terminé',
 };
 
 const STATUS_COLORS: Record<ReservationStatus, string> = {
+  PENDING_PAYMENT: 'bg-yellow-600/20 text-yellow-400 border-yellow-600/30',
   CONFIRMED: 'bg-green-600/20 text-green-400 border-green-600/30',
   CANCELLED: 'bg-red-600/20 text-red-400 border-red-600/30',
   COMPLETED: 'bg-blue-600/20 text-blue-400 border-blue-600/30',
@@ -87,7 +89,8 @@ function isToday(dateStr: string): boolean {
 }
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  const d = new Date(iso);
+  return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -98,6 +101,7 @@ export default function AdminReservationsPage() {
   const [showSettings, setShowSettings] = useState(false);
   const [settings, setSettings] = useState<RestaurantSettings | null>(null);
   const [editMaxCovers, setEditMaxCovers] = useState(20);
+  const [editDepositPerGuest, setEditDepositPerGuest] = useState('20'); // en euros pour l'UI, stocké en string pour permettre la saisie libre
   const [editMealDuration, setEditMealDuration] = useState(90);
   const [editSlots, setEditSlots] = useState<string[]>([]);
   const [editDays, setEditDays] = useState<number[]>([]);
@@ -142,6 +146,7 @@ export default function AdminReservationsPage() {
       const s: RestaurantSettings = await res.json();
       setSettings(s);
       setEditMaxCovers(s.maxCovers);
+      setEditDepositPerGuest(String(Math.round((s.depositPerGuestCents ?? 2000) / 100)));
       setEditMealDuration(s.mealDuration);
       setEditSlots(s.openingSlots);
       setEditDays(s.openingDays);
@@ -195,7 +200,7 @@ export default function AdminReservationsPage() {
     const res = await fetch('/api/admin/settings', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ maxCovers: editMaxCovers, mealDuration: editMealDuration, openingDays: editDays, openingSlots: editSlots }),
+      body: JSON.stringify({ maxCovers: editMaxCovers, mealDuration: editMealDuration, openingDays: editDays, openingSlots: editSlots, depositPerGuestCents: Math.max(0, parseInt(editDepositPerGuest, 10) || 0) * 100 }),
     });
     if (res.status === 409) {
       const data = await res.json();
@@ -323,7 +328,7 @@ export default function AdminReservationsPage() {
                 Paramètres globaux
               </h2>
               <Button variant="ghost" size="sm"
-                onClick={() => { if (settings) { setEditMaxCovers(settings.maxCovers); setEditMealDuration(settings.mealDuration); setEditSlots(settings.openingSlots); setEditDays(settings.openingDays); } setShowSettings(false); }}
+                onClick={() => { if (settings) { setEditMaxCovers(settings.maxCovers); setEditDepositPerGuest(String(Math.round((settings.depositPerGuestCents ?? 2000) / 100))); setEditMealDuration(settings.mealDuration); setEditSlots(settings.openingSlots); setEditDays(settings.openingDays); } setShowSettings(false); }}
                 className="text-muted-foreground hover:text-foreground"><X size={14} /></Button>
             </div>
 
@@ -353,6 +358,27 @@ export default function AdminReservationsPage() {
               <Input type="number" min={1} max={500} value={editMaxCovers}
                 onChange={(e) => setEditMaxCovers(Math.max(1, parseInt(e.target.value) || 1))}
                 className="w-32 bg-background/30 border-primary/30 text-foreground" />
+            </div>
+
+            {/* Deposit per guest */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Acompte par couvert</label>
+              <p className="text-xs text-muted-foreground">Montant en euros débité au moment de la réservation, déduit de l’addition le soir de la venue.</p>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number" min={0} max={500}
+                  value={editDepositPerGuest}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/[^0-9]/g, '');
+                    setEditDepositPerGuest(raw);
+                  }}
+                  className={`w-32 bg-background/30 border-primary/30 text-foreground${
+                    editDepositPerGuest !== '' && (isNaN(Number(editDepositPerGuest)) || Number(editDepositPerGuest) < 0 || Number(editDepositPerGuest) > 500)
+                      ? ' border-destructive'
+                      : ''
+                  }`} />
+                <span className="text-sm text-muted-foreground">€ / couvert</span>
+              </div>
             </div>
             {/* Meal duration */}
             <div className="space-y-2">
@@ -408,7 +434,7 @@ export default function AdminReservationsPage() {
             </div>
 
             <div className="flex items-center gap-3 pt-2 border-t border-primary/10">
-              <Button onClick={saveSettings} disabled={savingSettings}
+              <Button onClick={saveSettings} disabled={savingSettings || editDepositPerGuest === '' || isNaN(Number(editDepositPerGuest)) || Number(editDepositPerGuest) < 0 || Number(editDepositPerGuest) > 500}
                 className="bg-primary/20 text-primary border border-primary/40 hover:bg-primary/30" size="sm">
                 {savingSettings ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Save size={14} className="mr-1.5" />}
                 {settingsSaved ? 'Enregistré ✓' : 'Enregistrer'}

@@ -19,11 +19,41 @@ type Reservation = {
 export default function ReservationSuccessPage() {
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
+  const sessionId = searchParams.get('session_id');
   const [reservation, setReservation] = useState<Reservation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (sessionId) {
+      let attempts = 0;
+      const MAX = 6;
+      let cancelled = false;
+
+      const poll = () => {
+        fetch(`/api/reservations/by-session?session_id=${encodeURIComponent(sessionId)}`)
+          .then((r) => r.json())
+          .then((data) => {
+            if (cancelled) return;
+            if (data.error) {
+              if (++attempts < MAX) { setTimeout(poll, 2000); return; }
+              setError(data.error);
+              setLoading(false);
+            } else {
+              setReservation(data);
+              setLoading(false);
+            }
+          })
+          .catch(() => {
+            if (cancelled) return;
+            if (++attempts < MAX) { setTimeout(poll, 2000); return; }
+            setError('Erreur de chargement');
+            setLoading(false);
+          });
+      };
+      poll();
+      return () => { cancelled = true; };
+    }
     if (!id) { setError('Réservation introuvable'); setLoading(false); return; }
     fetch(`/api/reservations/${id}`)
       .then((r) => r.json())
@@ -33,7 +63,7 @@ export default function ReservationSuccessPage() {
       })
       .catch(() => setError('Erreur de chargement'))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, sessionId]);
 
   if (loading) {
     return (
@@ -61,9 +91,9 @@ export default function ReservationSuccessPage() {
 
   const d = new Date(reservation.date);
   const formattedDate = d.toLocaleDateString('fr-FR', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
   });
-  const formattedTime = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  const formattedTime = `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-16 px-4">
@@ -76,7 +106,7 @@ export default function ReservationSuccessPage() {
           >
             Réservation confirmée
           </h1>
-
+          <p className="text-muted-foreground">Votre acompte a bien été reçu. Un email de confirmation vous a été envoyé.</p>
         </div>
 
         <div className="bg-card border border-primary/20 rounded-lg p-8 space-y-5">

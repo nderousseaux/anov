@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { stripe } from '@/lib/stripe';
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,21 +28,48 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Date invalide' }, { status: 400 });
     }
 
-    // Créer la réservation en base (CONFIRMED directement)
-    const reservation = await prisma.reservation.create({
-      data: {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+
+    // Lire le montant de l'acompte depuis les paramètres du restaurant
+    const restaurantSettings = await prisma.restaurantSettings.upsert({
+      where: { id: 1 },
+      update: {},
+      create: { id: 1 },
+    });
+    const depositPerGuestCents = restaurantSettings.depositPerGuestCents;
+
+    // Créer la session Stripe Checkout (mode intégré) — aucun enregistrement en base avant paiement
+    const session = await stripe.checkout.sessions.create({
+      ui_mode: 'embedded',
+      mode: 'payment',
+      customer_email: email.trim().toLowerCase(),
+      line_items: [
+        {
+          quantity: guestsNum,
+          price_data: {
+            currency: 'eur',
+            unit_amount: depositPerGuestCents,
+            product_data: {
+              name: 'Acompte réservation — ANØV',
+              description: `Table du ${new Date(reservationDate).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })} à ${time} · ${guestsNum} couvert${guestsNum > 1 ? 's' : ''}`,
+            },
+          },
+        },
+      ],
+      // Toutes les données sont stockées dans les metadata — la réservation sera créée en base par le webhook
+      metadata: {
         name: name.trim().slice(0, 100),
         email: email.trim().toLowerCase().slice(0, 200),
-        phone: phone ? phone.trim().slice(0, 30) : null,
-        date: reservationDate,
-        guests: guestsNum,
-        specialRequest: specialRequest?.trim().slice(0, 500) || null,
-        wantsSmsReminder: false,
-        status: 'CONFIRMED',
+        phone: phone ? phone.trim().slice(0, 30) : '',
+        date: reservationDate.toISOString(),
+        guests: String(guestsNum),
+        specialRequest: specialRequest?.trim().slice(0, 490) || '',
       },
+      return_url: `${baseUrl}/reservation/succes?session_id={CHECKOUT_SESSION_ID}`,
+      expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
     });
 
-    return NextResponse.json({ status: 'confirmed', reservationId: reservation.id });
+    return NextResponse.json({ clientSecret: session.client_secret, sessionId: session.id });
   } catch (err) {
     console.error('[POST /api/reservations]', err);
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });

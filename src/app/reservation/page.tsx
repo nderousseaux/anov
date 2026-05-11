@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, type FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,12 +10,19 @@ import { Calendar as CalendarIcon, Clock, Users, Phone, User, MessageSquare, Loa
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 type SlotInfo = { time: string; available: number };
 
 export default function Page() {
+  const searchParams = useSearchParams();
   const router = useRouter();
+
+  useEffect(() => {
+    if (searchParams.get('cancelled') === '1') {
+      toast.info('Paiement annulé, votre réservation n’a pas été confirmée.');
+    }
+  }, [searchParams]);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -98,7 +106,10 @@ export default function Page() {
         toast.error(data.error ?? 'Erreur lors de la réservation');
         return;
       }
-      router.push(`/reservation/succes?id=${data.reservationId}`);
+      // Redirection vers la page de paiement intégrée
+      sessionStorage.setItem('stripe_client_secret', data.clientSecret);
+      sessionStorage.setItem('stripe_session_id', data.sessionId);
+      router.push('/reservation/paiement');
     } catch {
       toast.error('Erreur réseau, veuillez réessayer');
     } finally {

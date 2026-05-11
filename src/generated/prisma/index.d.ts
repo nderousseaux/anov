@@ -39,6 +39,7 @@ export type DayOverride = $Result.DefaultSelection<Prisma.$DayOverridePayload>
  */
 export namespace $Enums {
   export const ReservationStatus: {
+  PENDING_PAYMENT: 'PENDING_PAYMENT',
   CONFIRMED: 'CONFIRMED',
   CANCELLED: 'CANCELLED',
   COMPLETED: 'COMPLETED'
@@ -1189,6 +1190,7 @@ export namespace Prisma {
     specialRequest: string | null
     wantsSmsReminder: boolean | null
     status: $Enums.ReservationStatus | null
+    stripeSessionId: string | null
     reminderEmailSent: boolean | null
     reminderSmsSent: boolean | null
     cancelToken: string | null
@@ -1206,6 +1208,7 @@ export namespace Prisma {
     specialRequest: string | null
     wantsSmsReminder: boolean | null
     status: $Enums.ReservationStatus | null
+    stripeSessionId: string | null
     reminderEmailSent: boolean | null
     reminderSmsSent: boolean | null
     cancelToken: string | null
@@ -1223,6 +1226,7 @@ export namespace Prisma {
     specialRequest: number
     wantsSmsReminder: number
     status: number
+    stripeSessionId: number
     reminderEmailSent: number
     reminderSmsSent: number
     cancelToken: number
@@ -1250,6 +1254,7 @@ export namespace Prisma {
     specialRequest?: true
     wantsSmsReminder?: true
     status?: true
+    stripeSessionId?: true
     reminderEmailSent?: true
     reminderSmsSent?: true
     cancelToken?: true
@@ -1267,6 +1272,7 @@ export namespace Prisma {
     specialRequest?: true
     wantsSmsReminder?: true
     status?: true
+    stripeSessionId?: true
     reminderEmailSent?: true
     reminderSmsSent?: true
     cancelToken?: true
@@ -1284,6 +1290,7 @@ export namespace Prisma {
     specialRequest?: true
     wantsSmsReminder?: true
     status?: true
+    stripeSessionId?: true
     reminderEmailSent?: true
     reminderSmsSent?: true
     cancelToken?: true
@@ -1388,6 +1395,7 @@ export namespace Prisma {
     specialRequest: string | null
     wantsSmsReminder: boolean
     status: $Enums.ReservationStatus
+    stripeSessionId: string | null
     reminderEmailSent: boolean
     reminderSmsSent: boolean
     cancelToken: string
@@ -1424,6 +1432,7 @@ export namespace Prisma {
     specialRequest?: boolean
     wantsSmsReminder?: boolean
     status?: boolean
+    stripeSessionId?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
@@ -1441,6 +1450,7 @@ export namespace Prisma {
     specialRequest?: boolean
     wantsSmsReminder?: boolean
     status?: boolean
+    stripeSessionId?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
@@ -1458,6 +1468,7 @@ export namespace Prisma {
     specialRequest?: boolean
     wantsSmsReminder?: boolean
     status?: boolean
+    stripeSessionId?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
@@ -1475,12 +1486,13 @@ export namespace Prisma {
     specialRequest?: boolean
     wantsSmsReminder?: boolean
     status?: boolean
+    stripeSessionId?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
   }
 
-  export type ReservationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "name" | "email" | "phone" | "date" | "guests" | "specialRequest" | "wantsSmsReminder" | "status" | "reminderEmailSent" | "reminderSmsSent" | "cancelToken", ExtArgs["result"]["reservation"]>
+  export type ReservationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "name" | "email" | "phone" | "date" | "guests" | "specialRequest" | "wantsSmsReminder" | "status" | "stripeSessionId" | "reminderEmailSent" | "reminderSmsSent" | "cancelToken", ExtArgs["result"]["reservation"]>
 
   export type $ReservationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Reservation"
@@ -1497,6 +1509,7 @@ export namespace Prisma {
       specialRequest: string | null
       wantsSmsReminder: boolean
       status: $Enums.ReservationStatus
+      stripeSessionId: string | null
       reminderEmailSent: boolean
       reminderSmsSent: boolean
       cancelToken: string
@@ -1934,6 +1947,7 @@ export namespace Prisma {
     readonly specialRequest: FieldRef<"Reservation", 'String'>
     readonly wantsSmsReminder: FieldRef<"Reservation", 'Boolean'>
     readonly status: FieldRef<"Reservation", 'ReservationStatus'>
+    readonly stripeSessionId: FieldRef<"Reservation", 'String'>
     readonly reminderEmailSent: FieldRef<"Reservation", 'Boolean'>
     readonly reminderSmsSent: FieldRef<"Reservation", 'Boolean'>
     readonly cancelToken: FieldRef<"Reservation", 'String'>
@@ -3345,12 +3359,14 @@ export namespace Prisma {
     id: number | null
     maxCovers: number | null
     mealDuration: number | null
+    depositPerGuestCents: number | null
   }
 
   export type RestaurantSettingsSumAggregateOutputType = {
     id: number | null
     maxCovers: number | null
     mealDuration: number | null
+    depositPerGuestCents: number | null
   }
 
   export type RestaurantSettingsMinAggregateOutputType = {
@@ -3359,6 +3375,7 @@ export namespace Prisma {
     mealDuration: number | null
     openingDays: string | null
     openingSlots: string | null
+    depositPerGuestCents: number | null
   }
 
   export type RestaurantSettingsMaxAggregateOutputType = {
@@ -3367,6 +3384,7 @@ export namespace Prisma {
     mealDuration: number | null
     openingDays: string | null
     openingSlots: string | null
+    depositPerGuestCents: number | null
   }
 
   export type RestaurantSettingsCountAggregateOutputType = {
@@ -3375,6 +3393,7 @@ export namespace Prisma {
     mealDuration: number
     openingDays: number
     openingSlots: number
+    depositPerGuestCents: number
     _all: number
   }
 
@@ -3383,12 +3402,14 @@ export namespace Prisma {
     id?: true
     maxCovers?: true
     mealDuration?: true
+    depositPerGuestCents?: true
   }
 
   export type RestaurantSettingsSumAggregateInputType = {
     id?: true
     maxCovers?: true
     mealDuration?: true
+    depositPerGuestCents?: true
   }
 
   export type RestaurantSettingsMinAggregateInputType = {
@@ -3397,6 +3418,7 @@ export namespace Prisma {
     mealDuration?: true
     openingDays?: true
     openingSlots?: true
+    depositPerGuestCents?: true
   }
 
   export type RestaurantSettingsMaxAggregateInputType = {
@@ -3405,6 +3427,7 @@ export namespace Prisma {
     mealDuration?: true
     openingDays?: true
     openingSlots?: true
+    depositPerGuestCents?: true
   }
 
   export type RestaurantSettingsCountAggregateInputType = {
@@ -3413,6 +3436,7 @@ export namespace Prisma {
     mealDuration?: true
     openingDays?: true
     openingSlots?: true
+    depositPerGuestCents?: true
     _all?: true
   }
 
@@ -3508,6 +3532,7 @@ export namespace Prisma {
     mealDuration: number
     openingDays: string
     openingSlots: string
+    depositPerGuestCents: number
     _count: RestaurantSettingsCountAggregateOutputType | null
     _avg: RestaurantSettingsAvgAggregateOutputType | null
     _sum: RestaurantSettingsSumAggregateOutputType | null
@@ -3535,6 +3560,7 @@ export namespace Prisma {
     mealDuration?: boolean
     openingDays?: boolean
     openingSlots?: boolean
+    depositPerGuestCents?: boolean
   }, ExtArgs["result"]["restaurantSettings"]>
 
   export type RestaurantSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3543,6 +3569,7 @@ export namespace Prisma {
     mealDuration?: boolean
     openingDays?: boolean
     openingSlots?: boolean
+    depositPerGuestCents?: boolean
   }, ExtArgs["result"]["restaurantSettings"]>
 
   export type RestaurantSettingsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3551,6 +3578,7 @@ export namespace Prisma {
     mealDuration?: boolean
     openingDays?: boolean
     openingSlots?: boolean
+    depositPerGuestCents?: boolean
   }, ExtArgs["result"]["restaurantSettings"]>
 
   export type RestaurantSettingsSelectScalar = {
@@ -3559,9 +3587,10 @@ export namespace Prisma {
     mealDuration?: boolean
     openingDays?: boolean
     openingSlots?: boolean
+    depositPerGuestCents?: boolean
   }
 
-  export type RestaurantSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "maxCovers" | "mealDuration" | "openingDays" | "openingSlots", ExtArgs["result"]["restaurantSettings"]>
+  export type RestaurantSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "maxCovers" | "mealDuration" | "openingDays" | "openingSlots" | "depositPerGuestCents", ExtArgs["result"]["restaurantSettings"]>
 
   export type $RestaurantSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "RestaurantSettings"
@@ -3572,6 +3601,7 @@ export namespace Prisma {
       mealDuration: number
       openingDays: string
       openingSlots: string
+      depositPerGuestCents: number
     }, ExtArgs["result"]["restaurantSettings"]>
     composites: {}
   }
@@ -4000,6 +4030,7 @@ export namespace Prisma {
     readonly mealDuration: FieldRef<"RestaurantSettings", 'Int'>
     readonly openingDays: FieldRef<"RestaurantSettings", 'String'>
     readonly openingSlots: FieldRef<"RestaurantSettings", 'String'>
+    readonly depositPerGuestCents: FieldRef<"RestaurantSettings", 'Int'>
   }
     
 
@@ -5435,6 +5466,7 @@ export namespace Prisma {
     specialRequest: 'specialRequest',
     wantsSmsReminder: 'wantsSmsReminder',
     status: 'status',
+    stripeSessionId: 'stripeSessionId',
     reminderEmailSent: 'reminderEmailSent',
     reminderSmsSent: 'reminderSmsSent',
     cancelToken: 'cancelToken'
@@ -5458,7 +5490,8 @@ export namespace Prisma {
     maxCovers: 'maxCovers',
     mealDuration: 'mealDuration',
     openingDays: 'openingDays',
-    openingSlots: 'openingSlots'
+    openingSlots: 'openingSlots',
+    depositPerGuestCents: 'depositPerGuestCents'
   };
 
   export type RestaurantSettingsScalarFieldEnum = (typeof RestaurantSettingsScalarFieldEnum)[keyof typeof RestaurantSettingsScalarFieldEnum]
@@ -5599,6 +5632,7 @@ export namespace Prisma {
     specialRequest?: StringNullableFilter<"Reservation"> | string | null
     wantsSmsReminder?: BoolFilter<"Reservation"> | boolean
     status?: EnumReservationStatusFilter<"Reservation"> | $Enums.ReservationStatus
+    stripeSessionId?: StringNullableFilter<"Reservation"> | string | null
     reminderEmailSent?: BoolFilter<"Reservation"> | boolean
     reminderSmsSent?: BoolFilter<"Reservation"> | boolean
     cancelToken?: StringFilter<"Reservation"> | string
@@ -5616,6 +5650,7 @@ export namespace Prisma {
     specialRequest?: SortOrderInput | SortOrder
     wantsSmsReminder?: SortOrder
     status?: SortOrder
+    stripeSessionId?: SortOrderInput | SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -5623,6 +5658,7 @@ export namespace Prisma {
 
   export type ReservationWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    stripeSessionId?: string
     cancelToken?: string
     AND?: ReservationWhereInput | ReservationWhereInput[]
     OR?: ReservationWhereInput[]
@@ -5639,7 +5675,7 @@ export namespace Prisma {
     status?: EnumReservationStatusFilter<"Reservation"> | $Enums.ReservationStatus
     reminderEmailSent?: BoolFilter<"Reservation"> | boolean
     reminderSmsSent?: BoolFilter<"Reservation"> | boolean
-  }, "id" | "cancelToken">
+  }, "id" | "stripeSessionId" | "cancelToken">
 
   export type ReservationOrderByWithAggregationInput = {
     id?: SortOrder
@@ -5653,6 +5689,7 @@ export namespace Prisma {
     specialRequest?: SortOrderInput | SortOrder
     wantsSmsReminder?: SortOrder
     status?: SortOrder
+    stripeSessionId?: SortOrderInput | SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -5678,6 +5715,7 @@ export namespace Prisma {
     specialRequest?: StringNullableWithAggregatesFilter<"Reservation"> | string | null
     wantsSmsReminder?: BoolWithAggregatesFilter<"Reservation"> | boolean
     status?: EnumReservationStatusWithAggregatesFilter<"Reservation"> | $Enums.ReservationStatus
+    stripeSessionId?: StringNullableWithAggregatesFilter<"Reservation"> | string | null
     reminderEmailSent?: BoolWithAggregatesFilter<"Reservation"> | boolean
     reminderSmsSent?: BoolWithAggregatesFilter<"Reservation"> | boolean
     cancelToken?: StringWithAggregatesFilter<"Reservation"> | string
@@ -5741,6 +5779,7 @@ export namespace Prisma {
     mealDuration?: IntFilter<"RestaurantSettings"> | number
     openingDays?: StringFilter<"RestaurantSettings"> | string
     openingSlots?: StringFilter<"RestaurantSettings"> | string
+    depositPerGuestCents?: IntFilter<"RestaurantSettings"> | number
   }
 
   export type RestaurantSettingsOrderByWithRelationInput = {
@@ -5749,6 +5788,7 @@ export namespace Prisma {
     mealDuration?: SortOrder
     openingDays?: SortOrder
     openingSlots?: SortOrder
+    depositPerGuestCents?: SortOrder
   }
 
   export type RestaurantSettingsWhereUniqueInput = Prisma.AtLeast<{
@@ -5760,6 +5800,7 @@ export namespace Prisma {
     mealDuration?: IntFilter<"RestaurantSettings"> | number
     openingDays?: StringFilter<"RestaurantSettings"> | string
     openingSlots?: StringFilter<"RestaurantSettings"> | string
+    depositPerGuestCents?: IntFilter<"RestaurantSettings"> | number
   }, "id">
 
   export type RestaurantSettingsOrderByWithAggregationInput = {
@@ -5768,6 +5809,7 @@ export namespace Prisma {
     mealDuration?: SortOrder
     openingDays?: SortOrder
     openingSlots?: SortOrder
+    depositPerGuestCents?: SortOrder
     _count?: RestaurantSettingsCountOrderByAggregateInput
     _avg?: RestaurantSettingsAvgOrderByAggregateInput
     _max?: RestaurantSettingsMaxOrderByAggregateInput
@@ -5784,6 +5826,7 @@ export namespace Prisma {
     mealDuration?: IntWithAggregatesFilter<"RestaurantSettings"> | number
     openingDays?: StringWithAggregatesFilter<"RestaurantSettings"> | string
     openingSlots?: StringWithAggregatesFilter<"RestaurantSettings"> | string
+    depositPerGuestCents?: IntWithAggregatesFilter<"RestaurantSettings"> | number
   }
 
   export type DayOverrideWhereInput = {
@@ -5852,6 +5895,7 @@ export namespace Prisma {
     specialRequest?: string | null
     wantsSmsReminder?: boolean
     status?: $Enums.ReservationStatus
+    stripeSessionId?: string | null
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: string
@@ -5869,6 +5913,7 @@ export namespace Prisma {
     specialRequest?: string | null
     wantsSmsReminder?: boolean
     status?: $Enums.ReservationStatus
+    stripeSessionId?: string | null
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: string
@@ -5886,6 +5931,7 @@ export namespace Prisma {
     specialRequest?: NullableStringFieldUpdateOperationsInput | string | null
     wantsSmsReminder?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
@@ -5903,6 +5949,7 @@ export namespace Prisma {
     specialRequest?: NullableStringFieldUpdateOperationsInput | string | null
     wantsSmsReminder?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
@@ -5920,6 +5967,7 @@ export namespace Prisma {
     specialRequest?: string | null
     wantsSmsReminder?: boolean
     status?: $Enums.ReservationStatus
+    stripeSessionId?: string | null
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: string
@@ -5937,6 +5985,7 @@ export namespace Prisma {
     specialRequest?: NullableStringFieldUpdateOperationsInput | string | null
     wantsSmsReminder?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
@@ -5954,6 +6003,7 @@ export namespace Prisma {
     specialRequest?: NullableStringFieldUpdateOperationsInput | string | null
     wantsSmsReminder?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
@@ -6011,6 +6061,7 @@ export namespace Prisma {
     mealDuration?: number
     openingDays?: string
     openingSlots?: string
+    depositPerGuestCents?: number
   }
 
   export type RestaurantSettingsUncheckedCreateInput = {
@@ -6019,6 +6070,7 @@ export namespace Prisma {
     mealDuration?: number
     openingDays?: string
     openingSlots?: string
+    depositPerGuestCents?: number
   }
 
   export type RestaurantSettingsUpdateInput = {
@@ -6027,6 +6079,7 @@ export namespace Prisma {
     mealDuration?: IntFieldUpdateOperationsInput | number
     openingDays?: StringFieldUpdateOperationsInput | string
     openingSlots?: StringFieldUpdateOperationsInput | string
+    depositPerGuestCents?: IntFieldUpdateOperationsInput | number
   }
 
   export type RestaurantSettingsUncheckedUpdateInput = {
@@ -6035,6 +6088,7 @@ export namespace Prisma {
     mealDuration?: IntFieldUpdateOperationsInput | number
     openingDays?: StringFieldUpdateOperationsInput | string
     openingSlots?: StringFieldUpdateOperationsInput | string
+    depositPerGuestCents?: IntFieldUpdateOperationsInput | number
   }
 
   export type RestaurantSettingsCreateManyInput = {
@@ -6043,6 +6097,7 @@ export namespace Prisma {
     mealDuration?: number
     openingDays?: string
     openingSlots?: string
+    depositPerGuestCents?: number
   }
 
   export type RestaurantSettingsUpdateManyMutationInput = {
@@ -6051,6 +6106,7 @@ export namespace Prisma {
     mealDuration?: IntFieldUpdateOperationsInput | number
     openingDays?: StringFieldUpdateOperationsInput | string
     openingSlots?: StringFieldUpdateOperationsInput | string
+    depositPerGuestCents?: IntFieldUpdateOperationsInput | number
   }
 
   export type RestaurantSettingsUncheckedUpdateManyInput = {
@@ -6059,6 +6115,7 @@ export namespace Prisma {
     mealDuration?: IntFieldUpdateOperationsInput | number
     openingDays?: StringFieldUpdateOperationsInput | string
     openingSlots?: StringFieldUpdateOperationsInput | string
+    depositPerGuestCents?: IntFieldUpdateOperationsInput | number
   }
 
   export type DayOverrideCreateInput = {
@@ -6195,6 +6252,7 @@ export namespace Prisma {
     specialRequest?: SortOrder
     wantsSmsReminder?: SortOrder
     status?: SortOrder
+    stripeSessionId?: SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -6216,6 +6274,7 @@ export namespace Prisma {
     specialRequest?: SortOrder
     wantsSmsReminder?: SortOrder
     status?: SortOrder
+    stripeSessionId?: SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -6233,6 +6292,7 @@ export namespace Prisma {
     specialRequest?: SortOrder
     wantsSmsReminder?: SortOrder
     status?: SortOrder
+    stripeSessionId?: SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -6361,12 +6421,14 @@ export namespace Prisma {
     mealDuration?: SortOrder
     openingDays?: SortOrder
     openingSlots?: SortOrder
+    depositPerGuestCents?: SortOrder
   }
 
   export type RestaurantSettingsAvgOrderByAggregateInput = {
     id?: SortOrder
     maxCovers?: SortOrder
     mealDuration?: SortOrder
+    depositPerGuestCents?: SortOrder
   }
 
   export type RestaurantSettingsMaxOrderByAggregateInput = {
@@ -6375,6 +6437,7 @@ export namespace Prisma {
     mealDuration?: SortOrder
     openingDays?: SortOrder
     openingSlots?: SortOrder
+    depositPerGuestCents?: SortOrder
   }
 
   export type RestaurantSettingsMinOrderByAggregateInput = {
@@ -6383,12 +6446,14 @@ export namespace Prisma {
     mealDuration?: SortOrder
     openingDays?: SortOrder
     openingSlots?: SortOrder
+    depositPerGuestCents?: SortOrder
   }
 
   export type RestaurantSettingsSumOrderByAggregateInput = {
     id?: SortOrder
     maxCovers?: SortOrder
     mealDuration?: SortOrder
+    depositPerGuestCents?: SortOrder
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {

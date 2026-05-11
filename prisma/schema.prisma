@@ -27,7 +27,10 @@ model Reservation {
   wantsSmsReminder Boolean @default(false)
 
   // Statut
-  status ReservationStatus @default(CONFIRMED)
+  status ReservationStatus @default(PENDING_PAYMENT)
+
+  // Paiement Stripe
+  stripeSessionId String? @unique
 
   // Rappels envoyés
   reminderEmailSent Boolean @default(false)
@@ -38,9 +41,10 @@ model Reservation {
 }
 
 enum ReservationStatus {
-  CONFIRMED   // confirmée
-  CANCELLED   // annulée
-  COMPLETED   // passée
+  PENDING_PAYMENT // en attente de paiement
+  CONFIRMED       // confirmée
+  CANCELLED       // annulée
+  COMPLETED       // passée
 }
 
 // ─── Compte administrateur ────────────────────────────────────────────────────
@@ -61,6 +65,8 @@ model RestaurantSettings {
   openingDays   String @default("[2,3,4,5,6]")
   // JSON array : ["12:00","12:30","13:00","13:30","19:00","19:30","20:00","20:30","21:00","21:30"]
   openingSlots  String @default("[\"12:00\",\"12:30\",\"13:00\",\"13:30\",\"19:00\",\"19:30\",\"20:00\",\"20:30\",\"21:00\",\"21:30\"]")
+  // Acompte en centimes par couvert (ex: 2000 = 20€)
+  depositPerGuestCents Int @default(2000)
 }
 
 // ─── Override pour un jour spécifique ─────────────────────────────────────────

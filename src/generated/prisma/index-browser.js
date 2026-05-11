@@ -132,6 +132,7 @@ exports.Prisma.ReservationScalarFieldEnum = {
   specialRequest: 'specialRequest',
   wantsSmsReminder: 'wantsSmsReminder',
   status: 'status',
+  stripeSessionId: 'stripeSessionId',
   reminderEmailSent: 'reminderEmailSent',
   reminderSmsSent: 'reminderSmsSent',
   cancelToken: 'cancelToken'
@@ -149,7 +150,8 @@ exports.Prisma.RestaurantSettingsScalarFieldEnum = {
   maxCovers: 'maxCovers',
   mealDuration: 'mealDuration',
   openingDays: 'openingDays',
-  openingSlots: 'openingSlots'
+  openingSlots: 'openingSlots',
+  depositPerGuestCents: 'depositPerGuestCents'
 };
 
 exports.Prisma.DayOverrideScalarFieldEnum = {
@@ -175,6 +177,7 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 exports.ReservationStatus = exports.$Enums.ReservationStatus = {
+  PENDING_PAYMENT: 'PENDING_PAYMENT',
   CONFIRMED: 'CONFIRMED',
   CANCELLED: 'CANCELLED',
   COMPLETED: 'COMPLETED'

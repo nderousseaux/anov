@@ -372,11 +372,10 @@ export default function AdminReservationsPage() {
                     const raw = e.target.value.replace(/[^0-9]/g, '');
                     setEditDepositPerGuest(raw);
                   }}
-                  className={`w-32 bg-background/30 border-primary/30 text-foreground${
-                    editDepositPerGuest !== '' && (isNaN(Number(editDepositPerGuest)) || Number(editDepositPerGuest) < 0 || Number(editDepositPerGuest) > 500)
+                  className={`w-32 bg-background/30 border-primary/30 text-foreground${editDepositPerGuest !== '' && (isNaN(Number(editDepositPerGuest)) || Number(editDepositPerGuest) < 0 || Number(editDepositPerGuest) > 500)
                       ? ' border-destructive'
                       : ''
-                  }`} />
+                    }`} />
                 <span className="text-sm text-muted-foreground">€ / couvert</span>
               </div>
             </div>

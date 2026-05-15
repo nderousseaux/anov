@@ -4,4 +4,11 @@ node_modules
 ./src/generated/prisma
 dist
 .env
+.env.local
+.env.preview.local
+.env.production.local
+.env.*.local
+!.env.local.example
+!.env.preview.local.example
+!.env.production.local.example
 .next

@@ -146,21 +146,21 @@ export function Navbar() {
             >
               La Carte
             </Link>
-            <Link
+            {/* <Link
               href="/boutique"
               className={`${menuItemClass} ${isActive('/boutique') ? activeMenuItemClass : ''}`}
             >
               Boutique
-            </Link>
+            </Link> */}
 
             {/* CTA Button - Highlighted */}
-            <Link href="/reservation">
+            {/* <Link href="/reservation">
               <Button
                 className={reservationButtonClass}
               >
                 Réserver
               </Button>
-            </Link>
+            </Link> */}
           </div>
 
           {/* Mobile Menu Button */}

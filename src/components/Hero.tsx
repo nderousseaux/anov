@@ -5,8 +5,13 @@ import Link from 'next/link';
 import { Button } from './ui/button';
 import { ChevronDown } from 'lucide-react';
 
-export function Hero() {
-  const heroImageUrl = '/assets/hero/6.jpg';
+interface HeroProps {
+  subtitle?: string;
+  image?: string;
+}
+
+export function Hero({ subtitle = 'Où chaque plat raconte une histoire, où chaque saveur éveille les sens', image }: HeroProps) {
+  const heroImageUrl = image ?? '/assets/hero/6.jpg';
   const [isArrowVisible, setIsArrowVisible] = useState(true);
 
   useEffect(() => {
@@ -66,7 +71,7 @@ export function Hero() {
         <p
           className="text-base sm:text-lg md:text-xl mb-12 text-foreground/85 max-w-2xl mx-auto"
         >
-          Où chaque plat raconte une histoire, où chaque saveur éveille les sens
+          {subtitle}
         </p>
         <Link href="/reservation">
           <Button

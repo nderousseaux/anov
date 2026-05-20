@@ -1,0 +1,14 @@
+description: "Une expérience gastronomique d'exception où chaque plat raconte une histoire."
+facebookUrl: "#"
+instagramUrl: "#"
+youtubeUrl: "#"
+reviews:
+  - name: TripAdvisor
+    rating: "5.0"
+    reviewCount: "248"
+  - name: Google
+    rating: "4.9"
+    reviewCount: "312"
+  - name: La Fourchette
+    rating: "9.8"
+    reviewCount: "189"

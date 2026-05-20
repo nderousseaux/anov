@@ -30,12 +30,16 @@ function resolveEnvFile() {
 config({ path: resolveEnvFile() });
 import { defineConfig } from "prisma/config";
 
+function expandEnv(value: string): string {
+  return value.replace(/\$\{([^}]+)\}/g, (_, name) => process.env[name] ?? "");
+}
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"] as string,
+    url: expandEnv(process.env["DATABASE_URL"] as string),
   },
 });

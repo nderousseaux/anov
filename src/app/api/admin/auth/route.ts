@@ -9,12 +9,12 @@ function hashPassword(password: string): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
-    if (!email || !password) {
+    const { username, password } = await req.json();
+    if (!username || !password) {
       return NextResponse.json({ error: 'Champs manquants' }, { status: 400 });
     }
 
-    const admin = await prisma.admin.findUnique({ where: { email: email.toLowerCase() } });
+    const admin = await prisma.admin.findUnique({ where: { email: username.toLowerCase() } });
     if (!admin) {
       // Délai constant pour éviter timing attack
       timingSafeEqual(Buffer.alloc(32), Buffer.alloc(32));

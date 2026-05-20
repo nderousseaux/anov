@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-export function Gallery() {
-  const galleryImages = [
+export function Gallery({ images }: { images?: Array<{ image: string | null; caption: string }> | null }) {
+  const fallbackImages = [
     {
       url: "https://images.unsplash.com/photo-1768162125985-1cdc0e091b62?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwa2l0Y2hlbiUyMGNvb2tpbmclMjBjaGVmJTIwYWN0aW9ufGVufDF8fHx8MTc3MTUxNDYwMHww&ixlib=rb-4.1.0&q=80&w=1080",
       caption: "Notre cuisine en action"
@@ -42,6 +42,7 @@ export function Gallery() {
       caption: "Notre équipe passionnée"
     },
   ];
+  const galleryImages = images?.filter(img => img.image).map(img => ({ url: img.image!, caption: img.caption })) ?? fallbackImages;
 
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 

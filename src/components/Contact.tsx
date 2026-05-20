@@ -7,7 +7,20 @@ import { Label } from './ui/label';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
-export function Contact() {
+interface ContactContent {
+  image?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  hoursLine1?: string | null;
+  hoursLine2?: string | null;
+  mapsUrl?: string | null;
+}
+
+export function Contact({ content }: { content?: ContactContent | null }) {
+  const c = content ?? {};
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -28,7 +41,7 @@ export function Contact() {
       {/* Hero avec image */}
       <div className="relative h-[50vh]">
         <img
-          src="https://images.unsplash.com/photo-1758612798971-a8adb6cba7eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwaW50ZXJpb3IlMjBhdG1vc3BoZXJlJTIwbGlnaHRpbmd8ZW58MXx8fHwxNzcxNTE0NjAwfDA&ixlib=rb-4.1.0&q=80&w=1080"
+          src={c.image ?? "https://images.unsplash.com/photo-1758612798971-a8adb6cba7eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwaW50ZXJpb3IlMjBhdG1vc3BoZXJlJTIwbGlnaHRpbmd8ZW58MXx8fHwxNzcxNTE0NjAwfDA&ixlib=rb-4.1.0&q=80&w=1080"}
           alt="Contact"
           className="w-full h-full object-cover"
         />
@@ -39,12 +52,12 @@ export function Contact() {
               className="text-4xl sm:text-5xl md:text-6xl mb-5 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              Contact
+              {c.title ?? 'Contact'}
             </h2>
             <p
               className="text-base sm:text-lg text-muted-foreground"
             >
-              Nous sommes à votre écoute
+              {c.subtitle ?? 'Nous sommes à votre écoute'}
             </p>
           </div>
         </div>
@@ -139,9 +152,9 @@ export function Contact() {
                     </h3>
                     <p
                       className="text-foreground"
+                      style={{ whiteSpace: 'pre-line' }}
                     >
-                      15 Rue de la Gastronomie<br />
-                      75008 Paris, France
+                      {c.address ?? '15 Rue de la Gastronomie\n75008 Paris, France'}
                     </p>
                   </div>
                 </div>
@@ -161,7 +174,7 @@ export function Contact() {
                     <p
                       className="text-foreground"
                     >
-                      +33 1 45 67 89 00
+                      {c.phone ?? '+33 1 45 67 89 00'}
                     </p>
                   </div>
                 </div>
@@ -181,7 +194,7 @@ export function Contact() {
                     <p
                       className="text-foreground"
                     >
-                      contact@lanov.fr
+                      {c.email ?? 'contact@lanov.fr'}
                     </p>
                   </div>
                 </div>
@@ -201,8 +214,8 @@ export function Contact() {
                     <div
                       className="text-foreground space-y-1"
                     >
-                      <p>Mardi - Samedi : 12h00 - 14h30, 19h00 - 22h30</p>
-                      <p>Dimanche - Lundi : Fermé</p>
+                      <p>{c.hoursLine1 ?? 'Mardi - Samedi : 12h00 - 14h30, 19h00 - 22h30'}</p>
+                      <p>{c.hoursLine2 ?? 'Dimanche - Lundi : Fermé'}</p>
                     </div>
                   </div>
                 </div>
@@ -210,7 +223,7 @@ export function Contact() {
 
               {/* Map Link */}
               <Button
-                onClick={() => window.open('https://maps.google.com', '_blank')}
+                onClick={() => window.open(c.mapsUrl ?? 'https://maps.google.com', '_blank')}
                 className="w-full bg-secondary hover:bg-muted text-foreground border border-primary/30 py-6 transition-all duration-300 flex items-center justify-center gap-2"
               >
                 <MapPin size={20} />

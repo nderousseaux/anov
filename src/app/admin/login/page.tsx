@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -9,10 +9,19 @@ import { Loader2 } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const searchParams = useSearchParams();
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const nextPath = (() => {
+    const next = searchParams.get('next');
+    if (!next) return '/admin/reservation';
+    if (!(next.startsWith('/admin') || next.startsWith('/keystatic'))) return '/admin/reservation';
+    if (next.startsWith('/admin/login')) return '/admin/reservation';
+    return next;
+  })();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -22,10 +31,10 @@ export default function AdminLoginPage() {
       const res = await fetch('/api/admin/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
       });
       if (res.ok) {
-        router.push('/admin/reservation');
+        router.push(nextPath);
       } else {
         const data = await res.json();
         setError(data.error ?? 'Identifiants incorrects');
@@ -51,16 +60,16 @@ export default function AdminLoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-foreground">Email</Label>
+            <Label htmlFor="username" className="text-foreground">Identifiant</Label>
             <Input
-              id="email"
-              type="email"
+              id="username"
+              type="text"
               required
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="bg-background/30 border-primary/30 text-foreground"
-              placeholder="admin@anov.fr"
+              placeholder="Identifiant"
             />
           </div>
           <div className="space-y-2">

@@ -15,7 +15,8 @@ async function main() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error('DATABASE_URL is not set');
 
-  const adapter = new PrismaPg({ connectionString: url });
+  const expandedUrl = url.replace(/\$\{([^}]+)\}/g, (_, name) => process.env[name] ?? '');
+  const adapter = new PrismaPg({ connectionString: expandedUrl });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const prisma = new PrismaClient({ adapter } as any);
 
@@ -26,16 +27,16 @@ async function main() {
   // Compte admin par défaut (email fixe, mot de passe via ADMIN_PASSWORD)
   const adminPassword = process.env.ADMIN_PASSWORD ?? 'ChangeMe123!';
   await prisma.admin.upsert({
-    where: { email: 'admin@anov.fr' },
+    where: { email: 'admin' },
     update: {},
     create: {
-      email: 'admin@anov.fr',
+      email: 'admin',
       passwordHash: hashPassword(adminPassword),
     },
   });
 
   console.log('✅ Seed terminé');
-  console.log(`   Admin: admin@anov.fr / ${adminPassword}`);
+  console.log(`   Admin: admin / ${adminPassword}`);
 
   await prisma.$disconnect();
 }

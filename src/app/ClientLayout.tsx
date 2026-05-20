@@ -4,12 +4,12 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { Toaster } from '@/components/ui/sonner';
 import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
+import { Footer, type FooterContent } from '@/components/Footer';
 import { SplashScreen } from '@/components/SplashScreen';
 
-export default function ClientLayout({ children }: { children: ReactNode }) {
+export default function ClientLayout({ children, footerContent }: { children: ReactNode; footerContent?: FooterContent | null }) {
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith('/admin');
+  const isAdmin = pathname.startsWith('/admin') || pathname.startsWith('/keystatic');
 
   const [showSplash, setShowSplash] = useState(!isAdmin);
   const [isSplashFading, setIsSplashFading] = useState(false);
@@ -59,7 +59,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
 
         <main>{children}</main>
 
-        <Footer />
+        <Footer content={footerContent} />
 
         <Toaster
           position="top-right"

@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { LogOut, CalendarDays } from 'lucide-react';
+import { LogOut, CalendarDays, FileText } from 'lucide-react';
 
 const navLinks = [
   { href: '/admin/reservation', label: 'Réservations', icon: CalendarDays },
+  { href: '/keystatic', label: 'CMS', icon: FileText },
 ];
 
 export function AdminNav() {

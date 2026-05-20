@@ -4,8 +4,12 @@ import { PrismaPg } from '@prisma/adapter-pg';
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
+function expandEnv(value: string): string {
+  return value.replace(/\$\{([^}]+)\}/g, (_, name) => process.env[name] ?? '');
+}
+
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL!;
+  const connectionString = expandEnv(process.env.DATABASE_URL!);
   const isLocal = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
   const adapter = isLocal
     ? new PrismaPg({ connectionString })

@@ -1,18 +1,27 @@
 import { Facebook, Instagram, Youtube, Star } from 'lucide-react';
 
-export function Footer() {
+export interface FooterContent {
+  description?: string | null;
+  facebookUrl?: string | null;
+  instagramUrl?: string | null;
+  youtubeUrl?: string | null;
+  reviews?: Array<{ name: string; rating: string; reviewCount: string }> | null;
+}
+
+export function Footer({ content }: { content?: FooterContent | null }) {
+  const c = content ?? {};
   const logoUrl = '/assets/logo.png';
 
   const socialLinks = [
-    { name: 'Facebook', icon: Facebook, url: '#' },
-    { name: 'Instagram', icon: Instagram, url: '#' },
-    { name: 'YouTube', icon: Youtube, url: '#' },
+    { name: 'Facebook', icon: Facebook, url: c.facebookUrl ?? '#' },
+    { name: 'Instagram', icon: Instagram, url: c.instagramUrl ?? '#' },
+    { name: 'YouTube', icon: Youtube, url: c.youtubeUrl ?? '#' },
   ];
 
-  const reviewPlatforms = [
-    { name: 'TripAdvisor', rating: '5.0', reviews: '248' },
-    { name: 'Google', rating: '4.9', reviews: '312' },
-    { name: 'La Fourchette', rating: '9.8', reviews: '189' },
+  const reviewPlatforms = c.reviews ?? [
+    { name: 'TripAdvisor', rating: '5.0', reviewCount: '248' },
+    { name: 'Google', rating: '4.9', reviewCount: '312' },
+    { name: 'La Fourchette', rating: '9.8', reviewCount: '189' },
   ];
 
   return (
@@ -30,7 +39,7 @@ export function Footer() {
             <p
               className="text-muted-foreground mb-6"
             >
-              Une expérience gastronomique d'exception où chaque plat raconte une histoire.
+              {c.description ?? "Une expérience gastronomique d'exception où chaque plat raconte une histoire."}
             </p>
           </div>
 
@@ -88,7 +97,7 @@ export function Footer() {
                       <span
                         className="text-muted-foreground text-sm"
                       >
-                        ({platform.reviews} avis)
+                        ({platform.reviewCount} avis)
                       </span>
                     </div>
                   </div>

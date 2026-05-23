@@ -42,7 +42,8 @@ export function Gallery({ images }: { images?: Array<{ image: string | null; cap
       caption: "Notre équipe passionnée"
     },
   ];
-  const galleryImages = images?.filter(img => img.image).map(img => ({ url: img.image!, caption: img.caption })) ?? fallbackImages;
+  const filtered = images?.filter(img => img.image).map(img => ({ url: img.image!, caption: img.caption }));
+  const galleryImages = filtered?.length ? filtered : fallbackImages;
 
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
@@ -65,7 +66,7 @@ export function Gallery({ images }: { images?: Array<{ image: string | null; cap
             Galerie
           </h3>
           <p
-            className="text-base sm:text-lg text-muted-foreground"
+            className="text-lg sm:text-xl text-foreground"
           >
             Découvrez l'univers de l’Anøv en images
           </p>

@@ -3,7 +3,7 @@ type SplashScreenProps = {
 };
 
 export function SplashScreen({ isFading = false }: SplashScreenProps) {
-  const logoUrl = '/assets/logo.png';
+  const logoUrl = '/assets/logo.jpg';
 
   return (
     <div

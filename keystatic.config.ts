@@ -11,8 +11,8 @@ export default config({
       schema: {
         image: fields.image({
           label: 'Image de fond',
-          directory: 'public/assets/hero',
-          publicPath: '/assets/hero/',
+          directory: 'public/assets',
+          publicPath: '/assets/',
         }),
         subtitle: fields.text({
           label: 'Sous-titre',
@@ -205,6 +205,10 @@ export default config({
           }),
           { label: 'Avis' }
         ),
+        paymentMethods: fields.text({
+          label: 'Moyens de paiement',
+          description: 'Ex : CB · Visa · Mastercard · Espèces',
+        }),
       },
     }),
   },

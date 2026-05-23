@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Youtube, Star } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Star, CreditCard, Accessibility, AirVent } from 'lucide-react';
 
 export interface FooterContent {
   description?: string | null;
@@ -6,11 +6,12 @@ export interface FooterContent {
   instagramUrl?: string | null;
   youtubeUrl?: string | null;
   reviews?: Array<{ name: string; rating: string; reviewCount: string }> | null;
+  paymentMethods?: string | null;
 }
 
 export function Footer({ content }: { content?: FooterContent | null }) {
   const c = content ?? {};
-  const logoUrl = '/assets/logo.png';
+  const logoUrl = 'assets/img-logo.jpg';
 
   const socialLinks = [
     { name: 'Facebook', icon: Facebook, url: c.facebookUrl ?? '#' },
@@ -28,42 +29,61 @@ export function Footer({ content }: { content?: FooterContent | null }) {
     <footer className="bg-background border-t border-primary/20 py-12 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-          {/* Logo & Description */}
-          <div>
-            <img
-              src={logoUrl}
-              alt="Logo l’Anøv"
-              className="h-30 w-auto"
-            />
-            <p
-              className="text-muted-foreground mb-6"
-            >
-              {c.description ?? "Une expérience gastronomique d'exception où chaque plat raconte une histoire."}
-            </p>
-          </div>
-
-          {/* Social Media */}
-          <div>
-            <h4
-              className="text-xl text-primary mb-4"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
-              Suivez-nous
-            </h4>
-            <div className="flex gap-4">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-card p-3 rounded-lg border border-primary/30 hover:border-primary hover:bg-secondary transition-all duration-300 group"
-                  aria-label={social.name}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8">
+          <div className="col-span-2 flex flex-col justify-between gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              {/* Logo & Description */}
+              <div>
+                <img
+                  src={logoUrl}
+                  alt="Logo l’Anøv"
+                  className="h-16 w-auto"
+                />
+                <p
+                  className="text-muted-foreground my-6"
                 >
-                  <social.icon className="text-primary group-hover:text-primary/90" size={24} />
-                </a>
-              ))}
+                  {c.description ?? "Une expérience gastronomique d'exception où chaque plat raconte une histoire."}
+                </p>
+              </div>
+
+              {/* Social Media */}
+              <div>
+                <h4
+                  className="text-xl text-primary mb-4"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  Suivez-nous
+                </h4>
+                <div className="flex gap-4">
+                  {socialLinks.map((social) => (
+                    <a
+                      key={social.name}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-card p-3 rounded-lg border border-primary/30 hover:border-primary hover:bg-secondary transition-all duration-300 group"
+                      aria-label={social.name}
+                    >
+                      <social.icon className="text-primary group-hover:text-primary/90" size={24} />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+            {/* Commodités */}
+            <div className="flex flex-wrap items-center gap-6">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                <CreditCard size={15} className="text-primary/70 shrink-0" />
+                <span>{c.paymentMethods ?? 'CB · Visa · Mastercard · Amex · Espèces · Chèques'}</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                <Accessibility size={15} className="text-primary/70 shrink-0" />
+                <span>Accès PMR</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                <AirVent size={15} className="text-primary/70 shrink-0" />
+                <span>Climatisé</span>
+              </div>
             </div>
           </div>
 
@@ -108,13 +128,13 @@ export function Footer({ content }: { content?: FooterContent | null }) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-primary/20 pt-8">
+        <div className="border-t border-primary/20 pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p
                 className="text-muted-foreground text-sm"
               >
-                © 2026 l’Anøv <span style={{ fontFamily: 'var(--font-logo)' }}>Ø</span> Tous droits réservés.
+                © 2026 l’Anøv | Tous droits réservés.
               </p>
             </div>
             <div className="md:text-right">

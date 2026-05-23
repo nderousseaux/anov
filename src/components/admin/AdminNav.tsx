@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { LogOut, CalendarDays, FileText } from 'lucide-react';
 
 const navLinks = [
-  { href: '/admin/reservation', label: 'Réservations', icon: CalendarDays },
-  { href: '/keystatic', label: 'CMS', icon: FileText },
+  // { href: '/admin/reservation', label: 'Réservations', icon: CalendarDays },
+  { href: '/admin/cms', label: 'CMS', icon: FileText, activeFor: ['/admin/cms', '/keystatic'] },
 ];
 
 export function AdminNav() {
@@ -33,8 +33,8 @@ export function AdminNav() {
 
       {/* Nav links */}
       <nav className="flex items-center gap-1 flex-1">
-        {navLinks.map(({ href, label, icon: Icon }) => {
-          const active = pathname.startsWith(href);
+        {navLinks.map(({ href, label, icon: Icon, activeFor }) => {
+          const active = (activeFor ?? [href]).some(p => pathname.startsWith(p));
           return (
             <Link
               key={href}

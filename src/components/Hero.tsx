@@ -11,7 +11,7 @@ interface HeroProps {
 }
 
 export function Hero({ subtitle = 'Où chaque plat raconte une histoire, où chaque saveur éveille les sens', image }: HeroProps) {
-  const heroImageUrl = image ?? '/assets/hero/6.jpg';
+  const heroImageUrl = image ?? '/assets/hero.jpg';
   const [isArrowVisible, setIsArrowVisible] = useState(true);
 
   useEffect(() => {
@@ -47,14 +47,14 @@ export function Hero({ subtitle = 'Où chaque plat raconte une histoire, où cha
           alt="Ambiance restaurant"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background/90" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
         <h1
           className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-5 text-primary tracking-[0.06em]"
-          style={{ fontFamily: 'var(--font-logo)' }}
+          style={{ fontFamily: 'var(--font-display)' }}
         >
           L'ANØV
         </h1>
@@ -62,24 +62,25 @@ export function Hero({ subtitle = 'Où chaque plat raconte une histoire, où cha
           <span className="h-px w-10 sm:w-14 bg-primary/80" />
           <p
             className="text-xl sm:text-2xl md:text-3xl text-primary tracking-[0.22em]"
-            style={{ fontFamily: 'var(--font-logo)' }}
+            style={{ fontFamily: 'var(--font-display)' }}
           >
             RESTAURANT
           </p>
           <span className="h-px w-10 sm:w-14 bg-primary/80" />
         </div>
         <p
-          className="text-base sm:text-lg md:text-xl mb-12 text-foreground/85 max-w-2xl mx-auto"
+          className="text-lg sm:text-xl md:text-2xl mb-12 text-foreground max-w-2xl mx-auto italic leading-relaxed tracking-wide"
+          style={{ fontFamily: 'var(--font-display)' }}
         >
           {subtitle}
         </p>
-        <Link href="/reservation">
+        {/* <Link href="/reservation">
           <Button
             className="rounded-full border-2 border-primary/90 bg-background/35 backdrop-blur-sm text-primary px-9 py-6 text-lg tracking-[0.03em] shadow-md transition-all duration-300 ease-out hover:scale-[1.01] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-lg"
           >
             Réserver une table
           </Button>
-        </Link>
+        </Link> */}
       </div>
 
       {/* Scroll Indicator */}

@@ -67,10 +67,10 @@ export function Contact({ content }: { content?: ContactContent | null }) {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12">
             {/* Contact Form */}
-            <div>
-              <form onSubmit={handleSubmit} className="bg-secondary p-8 rounded-lg border border-primary/30 space-y-6">
+            <div className="h-full">
+              <form onSubmit={handleSubmit} className="bg-secondary p-8 rounded-lg border border-primary/30 flex flex-col gap-6 h-full">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-foreground">
+                  <Label htmlFor="name" className="text-foreground text-base">
                     Nom complet
                   </Label>
                   <Input
@@ -85,7 +85,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-foreground">
+                  <Label htmlFor="email" className="text-foreground text-base">
                     Email
                   </Label>
                   <Input
@@ -100,7 +100,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="subject" className="text-foreground">
+                  <Label htmlFor="subject" className="text-foreground text-base">
                     Sujet
                   </Label>
                   <Input
@@ -114,8 +114,8 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="message" className="text-foreground">
+                <div className="space-y-2 flex flex-col flex-1">
+                  <Label htmlFor="message" className="text-foreground text-base">
                     Message
                   </Label>
                   <textarea
@@ -123,7 +123,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     required
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full bg-background/30 border border-primary/30 text-foreground rounded-md p-3 min-h-[150px] placeholder:text-muted-foreground focus:border-primary focus:bg-background/50 focus:outline-none transition-colors duration-300"
+                    className="w-full flex-1 bg-background/30 border border-primary/30 text-foreground rounded-md p-3 min-h-[150px] placeholder:text-muted-foreground focus:border-primary focus:bg-background/50 focus:outline-none transition-colors duration-300"
                     placeholder="Votre message..."
                   />
                 </div>
@@ -138,7 +138,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
             </div>
 
             {/* Contact Information */}
-            <div className="space-y-6">
+            <div className="flex flex-col justify-between gap-6 h-full">
               {/* Address */}
               <div className="bg-secondary p-6 rounded-lg border border-primary/30">
                 <div className="flex items-start gap-4">
@@ -151,7 +151,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                       Adresse
                     </h3>
                     <p
-                      className="text-foreground"
+                      className="text-foreground text-base"
                       style={{ whiteSpace: 'pre-line' }}
                     >
                       {c.address ?? '15 Rue de la Gastronomie\n75008 Paris, France'}
@@ -172,7 +172,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                       Téléphone
                     </h3>
                     <p
-                      className="text-foreground"
+                      className="text-foreground text-base"
                     >
                       {c.phone ?? '+33 1 45 67 89 00'}
                     </p>
@@ -192,7 +192,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                       Email
                     </h3>
                     <p
-                      className="text-foreground"
+                      className="text-foreground text-base"
                     >
                       {c.email ?? 'contact@lanov.fr'}
                     </p>

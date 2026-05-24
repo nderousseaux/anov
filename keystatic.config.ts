@@ -103,89 +103,56 @@ export default config({
         heroTitle: fields.text({ label: 'Hero — Titre' }),
         heroSubtitle: fields.text({ label: 'Hero — Sous-titre' }),
 
-        semaineEntrees: fields.array(
+        tabs: fields.array(
           fields.object({
-            name: fields.text({ label: 'Nom' }),
-            description: fields.text({ label: 'Description' }),
-            price: fields.text({ label: 'Prix' }),
+            name: fields.text({ label: "Nom de l'onglet" }),
+            outline: fields.text({ label: 'Outline (texte descriptif sous le nom)', multiline: true }),
+            categories: fields.array(
+              fields.object({
+                title: fields.text({ label: 'Titre de la catégorie' }),
+                image: fields.image({
+                  label: 'Image d\'illustration (optionnelle)',
+                  directory: 'public/assets/menu',
+                  publicPath: '/assets/menu/',
+                }),
+                dishes: fields.array(
+                  fields.object({
+                    name: fields.text({ label: 'Nom' }),
+                    description: fields.text({ label: 'Description', multiline: true }),
+                    price: fields.text({ label: 'Prix' }),
+                    outline: fields.text({ label: 'Outline (ex : type de vin, appellation…)' }),
+                    allergens: fields.text({ label: 'Allergènes' }),
+                    image: fields.image({
+                      label: 'Image',
+                      directory: 'public/assets/menu',
+                      publicPath: '/assets/menu/',
+                    }),
+                  }),
+                  {
+                    label: 'Plats / Articles',
+                    itemLabel: (props) => props.fields.name.value || 'Nouveau plat',
+                  }
+                ),
+              }),
+              {
+                label: 'Catégories',
+                itemLabel: (props) => props.fields.title.value || 'Nouvelle catégorie',
+              }
+            ),
+            image: fields.image({
+              label: 'Image (en bas de l\'onglet, optionnelle)',
+              directory: 'public/assets/menu',
+              publicPath: '/assets/menu/',
+            }),
+            infoBlockTitle: fields.text({ label: 'Encart — Titre' }),
+            infoBlockText: fields.text({ label: 'Encart — Texte', multiline: true }),
+            infoBlockOutline: fields.text({ label: 'Encart — Outline' }),
+            infoBlockPrice: fields.text({ label: 'Encart — Prix' }),
           }),
-          { label: 'Carte de la semaine — Entrées' }
-        ),
-        semainePlats: fields.array(
-          fields.object({
-            name: fields.text({ label: 'Nom' }),
-            description: fields.text({ label: 'Description' }),
-            price: fields.text({ label: 'Prix' }),
-          }),
-          { label: 'Carte de la semaine — Plats' }
-        ),
-        semaineDesserts: fields.array(
-          fields.object({
-            name: fields.text({ label: 'Nom' }),
-            description: fields.text({ label: 'Description' }),
-            price: fields.text({ label: 'Prix' }),
-          }),
-          { label: 'Carte de la semaine — Desserts' }
-        ),
-        semaineFormulePrix1: fields.text({ label: 'Formule midi — Prix (2 plats)' }),
-        semaineFormulePrix2: fields.text({ label: 'Formule midi — Prix (3 plats)' }),
-
-        dimancheTheme: fields.text({ label: 'Dimanche midi — Thème' }),
-        dimancheDescription: fields.text({ label: 'Dimanche midi — Description', multiline: true }),
-        dimancheMenu: fields.array(
-          fields.object({
-            course: fields.text({ label: 'Service (ex : Entrée)' }),
-            name: fields.text({ label: 'Nom du plat' }),
-            description: fields.text({ label: 'Description' }),
-          }),
-          { label: 'Dimanche midi — Plats' }
-        ),
-        dimanchePrix: fields.text({ label: 'Dimanche midi — Prix menu complet' }),
-
-        soirEntrees: fields.array(
-          fields.object({
-            name: fields.text({ label: 'Nom' }),
-            description: fields.text({ label: 'Description' }),
-            price: fields.text({ label: 'Prix' }),
-          }),
-          { label: 'Carte du soir — Entrées' }
-        ),
-        soirPlats: fields.array(
-          fields.object({
-            name: fields.text({ label: 'Nom' }),
-            description: fields.text({ label: 'Description' }),
-            price: fields.text({ label: 'Prix' }),
-          }),
-          { label: 'Carte du soir — Plats' }
-        ),
-        soirDesserts: fields.array(
-          fields.object({
-            name: fields.text({ label: 'Nom' }),
-            description: fields.text({ label: 'Description' }),
-            price: fields.text({ label: 'Prix' }),
-          }),
-          { label: 'Carte du soir — Desserts' }
-        ),
-        soirDegustationPrix: fields.text({ label: 'Menu dégustation — Prix' }),
-
-        vins: fields.array(
-          fields.object({
-            name: fields.text({ label: 'Nom' }),
-            type: fields.text({ label: 'Type / Appellation' }),
-            description: fields.text({ label: 'Description' }),
-            price: fields.text({ label: 'Prix' }),
-          }),
-          { label: 'Vins' }
-        ),
-        vinsImage: fields.text({ label: "Vins — URL de l'image" }),
-
-        cocktails: fields.array(
-          fields.object({
-            name: fields.text({ label: 'Nom' }),
-            description: fields.text({ label: 'Description' }),
-            price: fields.text({ label: 'Prix' }),
-          }),
-          { label: 'Cocktails' }
+          {
+            label: 'Onglets',
+            itemLabel: (props) => props.fields.name.value || 'Nouvel onglet',
+          }
         ),
       },
     }),

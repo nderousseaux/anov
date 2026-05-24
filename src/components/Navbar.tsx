@@ -89,12 +89,14 @@ export function Navbar() {
   type NavItem =
     | { type: 'section'; label: string; section: string }
     | { type: 'link'; label: string; href: string }
-    | { type: 'cta'; label: string; href: string };
+    | { type: 'cta'; label: string; href: string }
+    | { type: 'separator' };
 
   const navItems: NavItem[] = [
     { type: 'section', label: 'Notre Histoire', section: 'history' },
     { type: 'section', label: 'Galerie', section: 'gallery' },
-    // { type: 'link', label: 'La Carte', href: '/menu' },
+    { type: 'separator' },
+    { type: 'link', label: 'La Carte', href: '/menu' },
     // { type: 'link', label: 'Boutique', href: '/boutique' },
     // { type: 'cta', label: 'Réserver', href: '/reservation' },
   ];
@@ -134,6 +136,9 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-10">
             {navItems.map((item, i) => {
+              if (item.type === 'separator') return (
+                <span key={i} className="text-primary/30 select-none" aria-hidden>|</span>
+              );
               if (item.type === 'section') return (
                 <button key={i} onClick={() => scrollToSection(item.section)} className={menuItemClass}>
                   {item.label}
@@ -166,6 +171,9 @@ export function Navbar() {
           <div className="lg:hidden pb-6">
             <div className="flex flex-col space-y-4">
               {navItems.map((item, i) => {
+                if (item.type === 'separator') return (
+                  <hr key={i} className="border-primary/20" aria-hidden />
+                );
                 if (item.type === 'section') return (
                   <button key={i} onClick={() => scrollToSection(item.section)} className="text-foreground hover:text-primary transition-colors duration-300 text-left py-2">
                     {item.label}

@@ -14,7 +14,7 @@ export function SplashScreen({ isFading = false }: SplashScreenProps) {
         <img
           src={logoUrl}
           alt="L'Anøv Restaurant"
-          className="w-[24vw] max-w-[760px] h-auto object-contain mx-auto"
+          className="w-[80vw] max-w-[760px] md:w-[24vw] h-auto object-contain mx-auto"
         />
       </div>
     </div>

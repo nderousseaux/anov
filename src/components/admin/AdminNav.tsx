@@ -58,8 +58,8 @@ export function AdminNav() {
         onClick={logout}
         className="text-muted-foreground hover:text-foreground shrink-0"
       >
-        <LogOut size={15} className="mr-1.5" />
-        Se déconnecter
+        <LogOut size={15} className="md:mr-1.5" />
+        <span className="hidden md:inline">Se déconnecter</span>
       </Button>
     </header>
   );

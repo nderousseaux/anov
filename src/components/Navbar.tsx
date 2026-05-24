@@ -127,7 +127,7 @@ export function Navbar() {
             <img
               src={logoUrl}
               alt="Logo l’anøv"
-              className="h-12 sm:h-14 w-auto -translate-y-2"
+              className="h-12 sm:h-14 w-auto sm:-translate-y-2 -translate-y-1"
             />
           </Link>
 

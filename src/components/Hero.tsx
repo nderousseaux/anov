@@ -69,7 +69,7 @@ export function Hero({ subtitle = 'Où chaque plat raconte une histoire, où cha
           <span className="h-px w-10 sm:w-14 bg-primary/80" />
         </div>
         <p
-          className="text-lg sm:text-xl md:text-2xl mb-12 text-foreground max-w-2xl mx-auto italic leading-relaxed tracking-wide"
+          className="text-base sm:text-xl md:text-2xl mb-12 text-foreground max-w-2xl mx-auto italic leading-relaxed tracking-wide"
           style={{ fontFamily: 'var(--font-display)' }}
         >
           {subtitle}

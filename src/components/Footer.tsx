@@ -26,35 +26,35 @@ export function Footer({ content }: { content?: FooterContent | null }) {
   ];
 
   return (
-    <footer className="bg-background border-t border-primary/20 py-12 px-4">
+    <footer className="bg-background border-t border-primary/20 py-8 md:py-12 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8">
-          <div className="col-span-2 flex flex-col justify-between gap-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-6 md:mb-8">
+          <div className="md:col-span-2 flex flex-col gap-6 md:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
               {/* Logo & Description */}
-              <div>
+              <div className="text-center md:text-left">
                 <img
                   src={logoUrl}
                   alt="Logo l’Anøv"
-                  className="h-16 w-auto"
+                  className="h-14 md:h-16 w-auto mx-auto md:mx-0"
                 />
                 <p
-                  className="text-muted-foreground my-6"
+                  className="text-muted-foreground text-sm md:text-base mt-4 md:my-6"
                 >
                   {c.description ?? "Une expérience gastronomique d'exception où chaque plat raconte une histoire."}
                 </p>
               </div>
 
               {/* Social Media */}
-              <div>
+              <div className="text-center md:text-left">
                 <h4
-                  className="text-xl text-primary mb-4"
+                  className="text-lg md:text-xl text-primary mb-3 md:mb-4"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   Suivez-nous
                 </h4>
-                <div className="flex gap-4">
+                <div className="flex gap-4 justify-center md:justify-start">
                   {socialLinks.map((social) => (
                     <a
                       key={social.name}
@@ -70,53 +70,32 @@ export function Footer({ content }: { content?: FooterContent | null }) {
                 </div>
               </div>
             </div>
-            {/* Commodités */}
-            <div className="flex flex-wrap items-center gap-6">
-              <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                <CreditCard size={15} className="text-primary/70 shrink-0" />
-                <span>{c.paymentMethods ?? 'CB · Visa · Mastercard · Amex · Espèces · Chèques'}</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                <Accessibility size={15} className="text-primary/70 shrink-0" />
-                <span>Accès PMR</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                <AirVent size={15} className="text-primary/70 shrink-0" />
-                <span>Climatisé</span>
-              </div>
-            </div>
           </div>
 
           {/* Reviews */}
           <div>
             <h4
-              className="text-xl text-primary mb-4"
+              className="text-lg md:text-xl text-primary mb-3 md:mb-4 text-center md:text-left"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Nos Avis
             </h4>
-            <div className="space-y-3">
+            <div className="grid grid-cols-3 md:grid-cols-1 gap-2 md:gap-3">
               {reviewPlatforms.map((platform) => (
                 <div
                   key={platform.name}
-                  className="bg-card p-3 rounded-lg border border-primary/30 hover:border-primary transition-colors duration-300 cursor-pointer"
+                  className="bg-card p-2 md:p-3 rounded-lg border border-primary/30 hover:border-primary transition-colors duration-300 cursor-pointer"
                 >
-                  <div className="flex items-center justify-between">
-                    <span
-                      className="text-foreground"
-                    >
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-1">
+                    <span className="text-foreground text-xs md:text-base font-medium truncate">
                       {platform.name}
                     </span>
-                    <div className="flex items-center gap-2">
-                      <Star className="text-primary fill-primary" size={16} />
-                      <span
-                        className="text-primary/90"
-                      >
+                    <div className="flex items-center gap-1 md:gap-2">
+                      <Star className="text-primary fill-primary shrink-0" size={12} />
+                      <span className="text-primary/90 text-xs md:text-base">
                         {platform.rating}
                       </span>
-                      <span
-                        className="text-muted-foreground text-sm"
-                      >
+                      <span className="text-muted-foreground text-xs hidden md:inline">
                         ({platform.reviewCount} avis)
                       </span>
                     </div>
@@ -125,39 +104,40 @@ export function Footer({ content }: { content?: FooterContent | null }) {
               ))}
             </div>
           </div>
+
+          {/* Commodités */}
+          <div className="md:col-span-3 flex flex-wrap items-center gap-3 md:gap-6 justify-center md:justify-start">
+            <div className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
+              <CreditCard size={14} className="text-primary/70 shrink-0" />
+              <span>{c.paymentMethods ?? 'CB · Visa · Mastercard · Amex · Espèces · Chèques'}</span>
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
+              <Accessibility size={14} className="text-primary/70 shrink-0" />
+              <span>Accès PMR</span>
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
+              <AirVent size={14} className="text-primary/70 shrink-0" />
+              <span>Climatisé</span>
+            </div>
+          </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-primary/20 pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p
-                className="text-muted-foreground text-sm"
-              >
-                © 2026 l’Anøv | Tous droits réservés.
-              </p>
-            </div>
-            <div className="md:text-right">
-              <div className="flex flex-wrap gap-4 md:justify-end">
-                <a
-                  href="#"
-                  className="text-muted-foreground hover:text-primary transition-colors text-sm"
-                >
-                  Mentions légales
-                </a>
-                <a
-                  href="#"
-                  className="text-muted-foreground hover:text-primary transition-colors text-sm"
-                >
-                  Politique de confidentialité
-                </a>
-                <a
-                  href="#"
-                  className="text-muted-foreground hover:text-primary transition-colors text-sm"
-                >
-                  CGV
-                </a>
-              </div>
+        <div className="border-t border-primary/20 pt-4 md:pt-6">
+          <div className="flex flex-col md:grid md:grid-cols-2 md:gap-4 items-center gap-3">
+            <p className="text-muted-foreground text-xs md:text-sm text-center md:text-left">
+              © 2026 l’Anøv | Tous droits réservés.
+            </p>
+            <div className="flex flex-wrap gap-3 md:gap-4 justify-center md:justify-end">
+              <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
+                Mentions légales
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
+                Politique de confidentialité
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
+                CGV
+              </a>
             </div>
           </div>
         </div>

@@ -47,10 +47,10 @@ const DishCard = ({ name, description, price, outline, allergens, image }: Dish)
     const yOffset = 16;
     const tooltipWidth = 256; // w-64
     const tooltipHeight = 240; // approx h-40 + padding + allergens section
-    
+
     let x = e.clientX + xOffset;
     let y = e.clientY + yOffset;
-    
+
     if (typeof window !== 'undefined') {
       const isMobile = window.innerWidth < 768;
       if (isMobile) {
@@ -63,7 +63,7 @@ const DishCard = ({ name, description, price, outline, allergens, image }: Dish)
         return;
       }
     }
-    
+
     setPos({ x, y });
   }, []);
 

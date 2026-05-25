@@ -157,7 +157,7 @@ export function MenuContent({ content }: { content: MenuData | null }) {
   return (
     <div className="min-h-screen bg-background pt-20">
       {/* Hero */}
-      <div className="relative h-[55vh] flex items-center justify-center">
+      <div className="relative h-[36vh] sm:h-[55vh] flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           <img
             src={c.heroImage ?? ''}
@@ -166,14 +166,14 @@ export function MenuContent({ content }: { content: MenuData | null }) {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/70 to-card" />
         </div>
-        <div className="relative z-10 text-center px-4">
+        <div className="relative z-10 text-center sm:px-4 sm:pt-0 pt-16">
           <h1
             className="text-5xl sm:text-6xl md:text-7xl mb-6 text-primary"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             {c.heroTitle ?? 'Nos Cartes'}
           </h1>
-          <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lg sm:text-2xl text-muted-foreground max-w-3xl mx-auto">
             {c.heroSubtitle ?? ''}
           </p>
         </div>

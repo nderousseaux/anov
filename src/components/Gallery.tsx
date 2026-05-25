@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MobileCarousel } from './MobileCarousel';
 
 export function Gallery({ images }: { images?: Array<{ image: string | null; caption: string }> | null }) {
   const fallbackImages = [
@@ -46,39 +47,6 @@ export function Gallery({ images }: { images?: Array<{ image: string | null; cap
   const galleryImages = filtered?.length ? filtered : fallbackImages;
 
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const touchStartX = useRef<number>(0);
-
-  // Auto-advance mobile carousel
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setCurrentSlide(prev => (prev + 1) % galleryImages.length);
-    }, 3500);
-    return () => clearTimeout(timer);
-  }, [currentSlide, galleryImages.length]);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) {
-      setCurrentSlide(prev =>
-        diff > 0
-          ? (prev + 1) % galleryImages.length
-          : (prev - 1 + galleryImages.length) % galleryImages.length
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (selectedImage !== null) {
-      document.documentElement.classList.add('overflow-hidden');
-    } else {
-      document.documentElement.classList.remove('overflow-hidden');
-    }
-  }, [selectedImage]);
 
   return (
     <section id="gallery" className="py-28 md:py-32 px-4 bg-card">
@@ -99,41 +67,7 @@ export function Gallery({ images }: { images?: Array<{ image: string | null; cap
 
         {/* Carrousel mobile */}
         <div className="block sm:hidden">
-          <div
-            className="relative overflow-hidden rounded-lg border-2 border-primary/30"
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-          >
-            <div
-              className="flex transition-transform duration-300 ease-out"
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            >
-              {galleryImages.map((image, index) => (
-                <div key={index} className="min-w-full relative">
-                  <img
-                    src={image.url}
-                    alt={image.caption}
-                    className="w-full h-80 object-cover"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 pt-12 pb-2 px-2 bg-gradient-to-t from-background via-background/60 to-transparent">
-                    <p className="text-foreground text-sm">{image.caption}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          {/* Points de navigation */}
-          <div className="flex justify-center gap-2 mt-4">
-            {galleryImages.map((_, i) => (
-              <button
-                key={i}
-                aria-label={`Image ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-300 ${i === currentSlide ? 'bg-primary w-4' : 'bg-primary/30 w-1.5'
-                  }`}
-                onClick={() => setCurrentSlide(i)}
-              />
-            ))}
-          </div>
+          <MobileCarousel images={galleryImages} />
         </div>
 
         {/* Grille desktop */}

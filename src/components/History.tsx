@@ -76,7 +76,7 @@ export function History({ content }: { content?: HistoireContent | null }) {
         {/* Espace de respiration */}
         <div className="h-20 bg-background" />
 
-        <div className="absolute bottom-0 sm:bottom-20 left-0 right-0 p-8 sm:p-16 md:p-24">
+        <div className="absolute bottom-0 sm:bottom-20 left-0 right-0 p-4 sm:p-16 md:p-24">
           <div className="max-w-5xl mx-auto">
             <h3
               className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
@@ -159,7 +159,7 @@ export function History({ content }: { content?: HistoireContent | null }) {
         {/* Espace de respiration */}
         <div className="h-20 bg-background" />
 
-        <div className="absolute bottom-0 sm:bottom-20 left-0 right-0 p-8 sm:p-16 md:p-24">
+        <div className="absolute bottom-0 sm:bottom-20 left-0 right-0 p-4 sm:p-16 md:p-24">
           <div className="max-w-5xl mx-auto">
             <h3
               className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
@@ -268,7 +268,7 @@ export function History({ content }: { content?: HistoireContent | null }) {
         {/* Espace de respiration */}
         <div className="h-20 bg-background" />
 
-        <div className="absolute bottom-0 sm:bottom-20 left-0 right-0 p-8 sm:p-16 md:p-24">
+        <div className="absolute bottom-0 sm:bottom-20 left-0 right-0 p-4 sm:p-16 md:p-24">
           <div className="max-w-5xl mx-auto">
             <h3
               className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"

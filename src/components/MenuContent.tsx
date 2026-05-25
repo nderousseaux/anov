@@ -1,0 +1,249 @@
+'use client';
+
+import { type ReactNode, useState, useCallback, useEffect } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { createPortal } from 'react-dom';
+
+type Dish = {
+  name: string;
+  description: string;
+  price: string;
+  outline: string;
+  allergens: string;
+  image: string | null;
+};
+
+type Category = {
+  title: string;
+  image: string | null;
+  dishes: readonly Dish[];
+};
+
+type Tab = {
+  name: string;
+  outline: string;
+  categories: readonly Category[];
+  image: string | null;
+  infoBlockTitle: string;
+  infoBlockText: string;
+  infoBlockOutline: string;
+  infoBlockPrice: string;
+};
+
+type MenuData = {
+  heroImage: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  tabs: readonly Tab[];
+};
+
+const DishCard = ({ name, description, price, outline, allergens, image }: Dish) => {
+  const hasPopover = !!(allergens || image);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [visible, setVisible] = useState(false);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    const xOffset = 16;
+    const yOffset = 16;
+    const tooltipWidth = 256; // w-64
+    const tooltipHeight = 240; // approx h-40 + padding + allergens section
+
+    let x = e.clientX + xOffset;
+    let y = e.clientY + yOffset;
+
+    if (typeof window !== 'undefined') {
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        x = e.clientX - tooltipWidth / 2;
+        y = e.clientY - tooltipHeight / 2;
+        x = Math.max(16, Math.min(x, window.innerWidth - tooltipWidth - 16));
+        y = Math.max(16, Math.min(y, window.innerHeight - tooltipHeight - 16));
+      } else {
+        setPos({ x, y });
+        return;
+      }
+    }
+
+    setPos({ x, y });
+  }, []);
+
+  const handleClickOutside = useCallback((e: MouseEvent) => {
+    if (visible) {
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-dish-card]')) {
+        setVisible(false);
+      }
+    }
+  }, [visible]);
+
+  useEffect(() => {
+    if (visible) {
+      window.addEventListener('click', handleClickOutside);
+      window.addEventListener('scroll', () => setVisible(false));
+      return () => {
+        window.removeEventListener('click', handleClickOutside);
+        window.removeEventListener('scroll', () => setVisible(false));
+      };
+    }
+  }, [visible, handleClickOutside]);
+
+  return (
+    <div
+      data-dish-card
+      className="bg-secondary rounded-lg border border-primary/20 hover:border-primary/50 transition-colors duration-300 overflow-hidden cursor-default"
+      onMouseMove={hasPopover ? handleMouseMove : undefined}
+      onMouseEnter={hasPopover ? () => setVisible(true) : undefined}
+      onMouseLeave={hasPopover ? () => setVisible(false) : undefined}
+    >
+      <div className="p-6">
+        {outline && (
+          <p className="text-xs text-primary/70 uppercase tracking-wide mb-2">{outline}</p>
+        )}
+        <div className="flex justify-between items-start mb-3 gap-4">
+          <h3 className="text-lg text-primary" style={{ fontFamily: 'var(--font-display)' }}>{name}</h3>
+          {price && <span className="text-base text-primary/90 shrink-0">{price}</span>}
+        </div>
+        {description && <p className="text-muted-foreground text-sm">{description}</p>}
+      </div>
+
+      {hasPopover && visible && typeof document !== 'undefined' && createPortal(
+        <div
+          className="pointer-events-none fixed z-[9999] w-64 overflow-hidden rounded-lg border border-primary/30 bg-card shadow-2xl"
+          style={{ left: pos.x + 16, top: pos.y + 16 }}
+        >
+          {image && (
+            <img src={image} alt={name} className="w-full h-40 object-cover" />
+          )}
+          {allergens && (
+            <div className="p-3">
+              <p className="text-xs text-muted-foreground/70 uppercase tracking-wide mb-1">Allergènes</p>
+              <p className="text-sm text-foreground">{allergens}</p>
+            </div>
+          )}
+        </div>,
+        document.body
+      )}
+    </div>
+  );
+};
+
+const SectionTitle = ({ children }: { children: ReactNode }) => (
+  <h3 className="text-2xl text-primary mb-5 pb-2 border-b border-primary/20" style={{ fontFamily: 'var(--font-display)' }}>
+    {children}
+  </h3>
+);
+
+const InfoBlock = ({ title, text, outline, price }: { title: string; text: string; outline: string; price: string }) => {
+  if (!title && !text && !outline && !price) return null;
+  return (
+    <div className="bg-secondary p-8 rounded-lg border border-primary/30 text-center">
+      {title && (
+        <h3 className="text-2xl text-primary mb-3" style={{ fontFamily: 'var(--font-display)' }}>{title}</h3>
+      )}
+      {text && <p className="text-foreground mb-2">{text}</p>}
+      {outline && <p className="text-muted-foreground mb-6 text-sm">{outline}</p>}
+      {price && (
+        <span className="text-3xl text-primary/90" style={{ fontFamily: 'var(--font-display)' }}>{price}</span>
+      )}
+    </div>
+  );
+};
+
+export function MenuContent({ content }: { content: MenuData | null }) {
+  const c = content ?? ({} as MenuData);
+  const tabs = c.tabs ?? [];
+  const defaultTab = tabs[0]?.name ?? '';
+
+  return (
+    <div className="min-h-screen bg-background pt-20">
+      {/* Hero */}
+      <div className="relative h-[36vh] sm:h-[55vh] flex items-center justify-center">
+        <div className="absolute inset-0 z-0">
+          <img
+            src={c.heroImage ?? ''}
+            alt="Carte gastronomique"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/70 to-card" />
+        </div>
+        <div className="relative z-10 text-center sm:px-4 sm:pt-0 pt-16">
+          <h1
+            className="text-5xl sm:text-6xl md:text-7xl mb-6 text-primary"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            {c.heroTitle ?? 'Nos Cartes'}
+          </h1>
+          <p className="text-lg sm:text-2xl text-muted-foreground max-w-3xl mx-auto">
+            {c.heroSubtitle ?? ''}
+          </p>
+        </div>
+      </div>
+
+      {/* Menu Content */}
+      <section className="py-16 md:py-20 px-4 bg-card">
+        <div className="max-w-6xl mx-auto">
+          <Tabs defaultValue={defaultTab} className="w-full">
+            <TabsList className="w-full flex flex-wrap h-auto gap-1 mb-10 bg-secondary border border-primary/30 p-1">
+              {tabs.map((tab) => (
+                <TabsTrigger
+                  key={tab.name}
+                  value={tab.name}
+                  className="flex-1 basis-[calc(50%-0.25rem)] sm:basis-[calc(20%-0.25rem)] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-foreground"
+                >
+                  {tab.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            {tabs.map((tab) => (
+              <TabsContent key={tab.name} value={tab.name}>
+                {tab.outline && (
+                  <p className="text-muted-foreground text-sm text-center mb-10">{tab.outline}</p>
+                )}
+
+                {(tab.categories ?? []).map((category, ci) => (
+                  <div key={ci} className="mb-14">
+                    {category.title && <SectionTitle>{category.title}</SectionTitle>}
+                    <div className={category.image ? 'flex gap-8 items-center' : undefined}>
+                      <div className="flex-1 flex flex-col gap-4">
+                        {(category.dishes ?? []).map((dish, di) => (
+                          <DishCard key={di} {...dish} />
+                        ))}
+                      </div>
+                      {category.image && (
+                        <div className="hidden md:block w-72 shrink-0">
+                          <img
+                            src={category.image}
+                            alt={category.title}
+                            className="w-full aspect-[3/4] object-cover rounded-lg border border-primary/20"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                {tab.image && (
+                  <div className="relative group overflow-hidden rounded-lg border-2 border-primary/30 hover:border-primary transition-all duration-300 mb-8">
+                    <img
+                      src={tab.image}
+                      alt={tab.name}
+                      className="w-full h-[360px] object-cover transform group-hover:scale-110 transition-transform duration-500"
+                    />
+                  </div>
+                )}
+
+                <InfoBlock
+                  title={tab.infoBlockTitle ?? ''}
+                  text={tab.infoBlockText ?? ''}
+                  outline={tab.infoBlockOutline ?? ''}
+                  price={tab.infoBlockPrice ?? ''}
+                />
+              </TabsContent>
+            ))}
+          </Tabs>
+        </div>
+      </section>
+    </div>
+  );
+}

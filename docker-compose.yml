@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: anov-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: anov_dev
+      POSTGRES_USER: anov
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - anov_postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U anov -d anov_dev"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  anov_postgres_dev_data:

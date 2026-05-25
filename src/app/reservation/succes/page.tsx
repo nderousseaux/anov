@@ -1,0 +1,152 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { CheckCircle, Calendar, Clock, Users, Mail, Phone, XCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+
+type Reservation = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  date: string;
+  guests: number;
+  status: string;
+};
+
+export default function ReservationSuccessPage() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+  const sessionId = searchParams.get('session_id');
+  const [reservation, setReservation] = useState<Reservation | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (sessionId) {
+      let attempts = 0;
+      const MAX = 6;
+      let cancelled = false;
+
+      const poll = () => {
+        fetch(`/api/reservations/by-session?session_id=${encodeURIComponent(sessionId)}`)
+          .then((r) => r.json())
+          .then((data) => {
+            if (cancelled) return;
+            if (data.error) {
+              if (++attempts < MAX) { setTimeout(poll, 2000); return; }
+              setError(data.error);
+              setLoading(false);
+            } else {
+              setReservation(data);
+              setLoading(false);
+            }
+          })
+          .catch(() => {
+            if (cancelled) return;
+            if (++attempts < MAX) { setTimeout(poll, 2000); return; }
+            setError('Erreur de chargement');
+            setLoading(false);
+          });
+      };
+      poll();
+      return () => { cancelled = true; };
+    }
+    if (!id) { setError('Réservation introuvable'); setLoading(false); return; }
+    fetch(`/api/reservations/${id}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.error) setError(data.error);
+        else setReservation(data);
+      })
+      .catch(() => setError('Erreur de chargement'))
+      .finally(() => setLoading(false));
+  }, [id, sessionId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-primary text-xl">
+          Chargement...
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !reservation) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center pt-20">
+        <div className="text-center">
+          <XCircle size={64} className="text-destructive mx-auto mb-4" />
+          <p className="text-foreground text-xl mb-6">{error ?? 'Réservation introuvable'}</p>
+          <Link href="/reservation">
+            <Button className="bg-primary text-primary-foreground">Faire une réservation</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const d = new Date(reservation.date);
+  const formattedDate = d.toLocaleDateString('fr-FR', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
+  });
+  const formattedTime = `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
+
+  return (
+    <div className="min-h-screen bg-background pt-24 pb-16 px-4">
+      <div className="max-w-lg mx-auto">
+        <div className="text-center mb-10">
+          <CheckCircle size={72} className="text-primary mx-auto mb-4" />
+          <h1
+            className="text-4xl sm:text-5xl text-primary mb-3"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            Réservation confirmée
+          </h1>
+          <p className="text-muted-foreground">Votre acompte a bien été reçu. Un email de confirmation vous a été envoyé.</p>
+        </div>
+
+        <div className="bg-card border border-primary/20 rounded-lg p-8 space-y-5">
+          <div className="flex items-center gap-3 text-foreground">
+            <Calendar size={20} className="text-primary shrink-0" />
+            <span>{formattedDate}</span>
+          </div>
+          <div className="flex items-center gap-3 text-foreground">
+            <Clock size={20} className="text-primary shrink-0" />
+            <span>{formattedTime}</span>
+          </div>
+          <div className="flex items-center gap-3 text-foreground">
+            <Users size={20} className="text-primary shrink-0" />
+            <span>
+              {reservation.guests} personne{reservation.guests > 1 ? 's' : ''}
+            </span>
+          </div>
+          <div className="flex items-center gap-3 text-foreground">
+            <Mail size={20} className="text-primary shrink-0" />
+            <span>{reservation.email}</span>
+          </div>
+          {reservation.phone && (
+            <div className="flex items-center gap-3 text-foreground">
+              <Phone size={20} className="text-primary shrink-0" />
+              <span>{reservation.phone}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="text-center mt-8">
+          <Link href="/">
+            <Button
+              variant="outline"
+              className="border-primary/30 text-foreground hover:bg-primary/10"
+            >
+              Retour à l&apos;accueil
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}

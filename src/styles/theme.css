@@ -2,16 +2,15 @@
 
 :root {
   --font-size: 16px;
-  --font-logo: 'Roman Serif Regular', 'RomanSerifRegular', 'Times New Roman', serif;
   --font-display: 'Playfair Display', serif;
-  --font-body: 'Inter', sans-serif;
+  --font-body: 'Lora', Georgia, serif;
 
   /* Restaurant Colors - Noir, Anthracite, Touches dorées */
-  --color-black: #0a0a0a;
+  --color-black: #1C1C1C;
   --color-deep-green: #111111;
   --color-forest-green: #1a1a1a;
   --color-sage-green: #262626;
-  --color-gold: #e3cb6b;
+  --color-gold: #AC8F00;
   --color-light-gold: #ebddc1;
   --color-cream: #f8f6f0;
 
@@ -139,6 +138,7 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
   }
 
   /**

@@ -1,8 +1,23 @@
 import { config, fields, singleton } from '@keystatic/core';
 
+/**
+ * Keystatic storage configuration
+ * 
+ * En local : kind: 'local' fonctionne parfaitement
+ * En production Vercel :
+ * - kind: 'local' permet de lire le contenu existant mais pas de l'éditer (filesystem read-only après build)
+ * - Pour éditer en production, utiliser kind: 'github' avec GitHub App
+ *   Nécessite de configurer les variables d'environnement Vercel :
+ *   - KEYSTATIC_GITHUB_CLIENT_ID
+ *   - KEYSTATIC_GITHUB_CLIENT_SECRET  
+ *   - KEYSTATIC_SECRET
+ *   - KEYSTATIC_GITHUB_REPOSITORY (format: owner/repo)
+ * - Alternativement, éditer localement et déployer via Git
+ */
 export default config({
   storage: {
-    kind: 'local',
+    kind: 'github',
+    repo: (process.env.KEYSTATIC_GITHUB_REPOSITORY as `${string}/${string}`) || 'nderousseaux/anov',
   },
   singletons: {
     hero: singleton({

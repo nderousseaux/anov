@@ -1,10 +1,14 @@
 import { Resend } from 'resend';
 
-if (!process.env.RESEND_API_KEY) {
-  throw new Error('RESEND_API_KEY is not set');
-}
-
-export const resend = new Resend(process.env.RESEND_API_KEY);
+// SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
+// Le CMS est fonctionnel coté admin, le système de paiement sera activé ultérieurement
+//
+// if (!process.env.RESEND_API_KEY) {
+//   throw new Error('RESEND_API_KEY is not set');
+// }
+//
+// export const resend = new Resend(process.env.RESEND_API_KEY);
+export const resend = null as any;
 
 const FROM = 'ANØV <reservations@anov.fr>';
 
@@ -23,6 +27,10 @@ export async function sendConfirmationEmail({
   guests: number;
   cancelUrl: string;
 }) {
+  // SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
+  console.log('Envoi email de confirmation desactive - CMS admin uniquement');
+  return null;
+
   return resend.emails.send({
     from: FROM,
     to,
@@ -63,6 +71,10 @@ export async function sendReminderEmail({
   guests: number;
   cancelUrl: string;
 }) {
+  // SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
+  console.log('Envoi email de rappel desactive - CMS admin uniquement');
+  return null;
+
   return resend.emails.send({
     from: FROM,
     to,
@@ -99,6 +111,10 @@ export async function sendCancellationEmail({
   date: string;
   time: string;
 }) {
+  // SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
+  console.log('Envoi email d annulation desactive - CMS admin uniquement');
+  return null;
+
   return resend.emails.send({
     from: FROM,
     to,

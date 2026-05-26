@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
-export default function AdminLoginPage() {
+function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [username, setUsername] = useState('');
@@ -100,5 +100,13 @@ export default function AdminLoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="animate-spin" size={32} /></div>}>
+      <AdminLoginForm />
+    </Suspense>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, type FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback, type FormEvent, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,11 +10,10 @@ import { Calendar as CalendarIcon, Clock, Users, Phone, User, MessageSquare, Loa
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from 'sonner';
-import { useSearchParams } from 'next/navigation';
 
 type SlotInfo = { time: string; available: number };
 
-export default function Page() {
+function ReservationForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -402,5 +401,13 @@ export default function Page() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function ReservationPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center pt-20 px-4"><p className="text-foreground text-xl">Chargement...</p></div>}>
+      <ReservationForm />
+    </Suspense>
   );
 }

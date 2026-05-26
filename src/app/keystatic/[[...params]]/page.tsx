@@ -3,12 +3,11 @@
 import { makePage } from '@keystatic/next/ui/app';
 import config from '../../../../keystatic.config';
 
-type KeystaticRouteProps = {
-  params: Promise<{ params?: string[] }>;
-};
-
 const KeystaticPage = makePage(config);
 
-export default function Page(props: KeystaticRouteProps) {
+// SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
+// Le CMS est fonctionnel coté admin, le système de paiement sera activé ultérieurement
+
+export default function Page(props: any) {
   return <KeystaticPage {...props} />;
 }

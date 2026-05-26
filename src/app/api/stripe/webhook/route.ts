@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
+// SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
+// import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
 import { sendConfirmationEmail } from '@/lib/email';
 
 // Désactiver le body parser de Next.js pour lire le corps brut (requis par Stripe)
 export const config = { api: { bodyParser: false } };
 
+// SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
+// Le CMS est fonctionnel coté admin, le système de paiement sera activé ultérieurement
+
 export async function POST(req: NextRequest) {
+  // SYSTEME DE PAIEMENT DESACTIVE - Webhook Stripe inutilisable
+  return NextResponse.json({
+    message: 'Systeme de paiement temporairement desactive',
+    testMode: true,
+  });
+
+  /* Code Stripe commenté pour l'instant
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!webhookSecret) {
     console.error('[stripe/webhook] STRIPE_WEBHOOK_SECRET manquant');
@@ -71,4 +82,5 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ received: true });
+  */
 }

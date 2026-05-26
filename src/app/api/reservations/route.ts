@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { stripe } from '@/lib/stripe';
+
+// SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
+// Le CMS est fonctionnel coté admin, le système de paiement sera activé ultérieurement
+// import { stripe } from '@/lib/stripe';
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,46 +33,22 @@ export async function POST(req: NextRequest) {
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
 
-    // Lire le montant de l'acompte depuis les paramètres du restaurant
-    const restaurantSettings = await prisma.restaurantSettings.upsert({
-      where: { id: 1 },
-      update: {},
-      create: { id: 1 },
-    });
-    const depositPerGuestCents = restaurantSettings.depositPerGuestCents;
+    // SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
+    // Le CMS est fonctionnel coté admin, le système de paiement sera activé ultérieurement
+    // Pour l'instant, on renvoie juste une réponse de test pour permettre la validation des données
 
-    // Créer la session Stripe Checkout (mode intégré) — aucun enregistrement en base avant paiement
-    const session = await stripe.checkout.sessions.create({
-      ui_mode: 'embedded',
-      mode: 'payment',
-      customer_email: email.trim().toLowerCase(),
-      line_items: [
-        {
-          quantity: guestsNum,
-          price_data: {
-            currency: 'eur',
-            unit_amount: depositPerGuestCents,
-            product_data: {
-              name: 'Acompte réservation — ANØV',
-              description: `Table du ${new Date(reservationDate).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })} à ${time} · ${guestsNum} couvert${guestsNum > 1 ? 's' : ''}`,
-            },
-          },
-        },
-      ],
-      // Toutes les données sont stockées dans les metadata — la réservation sera créée en base par le webhook
-      metadata: {
-        name: name.trim().slice(0, 100),
-        email: email.trim().toLowerCase().slice(0, 200),
-        phone: phone ? phone.trim().slice(0, 30) : '',
+    return NextResponse.json({
+      message: 'Systeme de paiement temporairement desactive. Reservations via CMS uniquement.',
+      testMode: true,
+      formData: {
+        name,
+        email: email.trim().toLowerCase(),
+        phone: phone?.trim() || '',
         date: reservationDate.toISOString(),
-        guests: String(guestsNum),
-        specialRequest: specialRequest?.trim().slice(0, 490) || '',
-      },
-      return_url: `${baseUrl}/reservation/succes?session_id={CHECKOUT_SESSION_ID}`,
-      expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
+        guests: guestsNum,
+        specialRequest: specialRequest?.trim() || ''
+      }
     });
-
-    return NextResponse.json({ clientSecret: session.client_secret, sessionId: session.id });
   } catch (err) {
     console.error('[POST /api/reservations]', err);
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });

@@ -9,7 +9,7 @@ type PropType = {
 
 export function MobileCarousel({ images }: PropType) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'center' });
-  const autoPlayIntervalRef = useRef<number | null>(null);
+  const autoPlayIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const isPlayingRef = useRef(true);
   const rootRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);

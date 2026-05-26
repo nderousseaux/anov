@@ -1,10 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircle, Calendar, Clock, Users, Mail, Phone, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+
+// SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
+// Le CMS est fonctionnel coté admin, le système de paiement sera activé ultérieurement
 
 type Reservation = {
   id: string;
@@ -16,7 +19,7 @@ type Reservation = {
   status: string;
 };
 
-export default function ReservationSuccessPage() {
+function ReservationSuccessForm() {
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
   const sessionId = searchParams.get('session_id');
@@ -25,45 +28,10 @@ export default function ReservationSuccessPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (sessionId) {
-      let attempts = 0;
-      const MAX = 6;
-      let cancelled = false;
-
-      const poll = () => {
-        fetch(`/api/reservations/by-session?session_id=${encodeURIComponent(sessionId)}`)
-          .then((r) => r.json())
-          .then((data) => {
-            if (cancelled) return;
-            if (data.error) {
-              if (++attempts < MAX) { setTimeout(poll, 2000); return; }
-              setError(data.error);
-              setLoading(false);
-            } else {
-              setReservation(data);
-              setLoading(false);
-            }
-          })
-          .catch(() => {
-            if (cancelled) return;
-            if (++attempts < MAX) { setTimeout(poll, 2000); return; }
-            setError('Erreur de chargement');
-            setLoading(false);
-          });
-      };
-      poll();
-      return () => { cancelled = true; };
-    }
-    if (!id) { setError('Réservation introuvable'); setLoading(false); return; }
-    fetch(`/api/reservations/${id}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.error) setError(data.error);
-        else setReservation(data);
-      })
-      .catch(() => setError('Erreur de chargement'))
-      .finally(() => setLoading(false));
-  }, [id, sessionId]);
+    // SYSTEME DE PAIEMENT DESACTIVE - REDIRIGER VERS LE CMS
+    setError('Systeme de paiement temporairement desactive. Veuillez utiliser le CMS admin pour faire vos reservations.');
+    setLoading(false);
+  }, []);
 
   if (loading) {
     return (
@@ -80,9 +48,10 @@ export default function ReservationSuccessPage() {
       <div className="min-h-screen bg-background flex items-center justify-center pt-20">
         <div className="text-center">
           <XCircle size={64} className="text-destructive mx-auto mb-4" />
-          <p className="text-foreground text-xl mb-6">{error ?? 'Réservation introuvable'}</p>
+          <p className="text-foreground text-xl mb-6">{error ?? 'Systeme de paiement temporairement desactive'}</p>
+          <p className="text-muted-foreground text-sm mb-6">Veuillez utiliser le CMS admin pour faire vos reservations</p>
           <Link href="/reservation">
-            <Button className="bg-primary text-primary-foreground">Faire une réservation</Button>
+            <Button className="bg-primary text-primary-foreground">Faire une réservation via CMS</Button>
           </Link>
         </div>
       </div>
@@ -148,5 +117,13 @@ export default function ReservationSuccessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ReservationSuccessPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center pt-20"><p className="text-foreground text-xl">Chargement...</p></div>}>
+      <ReservationSuccessForm />
+    </Suspense>
   );
 }

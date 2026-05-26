@@ -2,39 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { loadStripe } from '@stripe/stripe-js';
-import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import Link from 'next/link';
 import { ArrowLeft, Lock } from 'lucide-react';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+// SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
+// Le CMS est fonctionnel coté admin, le système de paiement sera activé ultérieurement
 
 export default function PaiementPage() {
   const router = useRouter();
 
-  // Lire le secret UNE seule fois depuis sessionStorage via l'initialiseur lazy de useState.
-  // useEffect double-fire (React Strict Mode) ne pose pas de problème car l'initialiseur
-  // ne tourne qu'au premier montage réel et l'état est préservé entre les simulations.
-  const [checkoutData] = useState<{ clientSecret: string; sessionId: string } | null>(() => {
-    if (typeof window === 'undefined') return null;
-    const cs = sessionStorage.getItem('stripe_client_secret');
-    const sid = sessionStorage.getItem('stripe_session_id');
-    if (cs && sid) {
-      sessionStorage.removeItem('stripe_client_secret');
-      sessionStorage.removeItem('stripe_session_id');
-      return { clientSecret: cs, sessionId: sid };
-    }
-    return null;
-  });
-
-  const clientSecret = checkoutData?.clientSecret ?? null;
-  const sessionId = checkoutData?.sessionId ?? null;
-
   useEffect(() => {
-    if (!clientSecret) {
-      router.push('/reservation');
-    }
-  }, [clientSecret, router]);
+    // Rediriger vers la page de réservation car le paiement est désactivé
+    router.push('/reservation');
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,15 +38,6 @@ export default function PaiementPage() {
 
       <div className="max-w-2xl mx-auto px-4 py-10">
 
-        {/* Fil d'Ariane */}
-        <Link
-          href="/reservation"
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm mb-8 group"
-        >
-          <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
-          Retour à la réservation
-        </Link>
-
         {/* Titre */}
         <div className="mb-8">
           <h1
@@ -76,8 +47,8 @@ export default function PaiementPage() {
             Paiement de l&apos;acompte
           </h1>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            Votre table sera confirmée dès réception du paiement.
-            L&apos;acompte sera déduit de votre addition le soir de votre venue.
+            SYSTEME DE PAIEMENT TEMPORAIREMENT DESACTIVE.
+            Veuillez faire votre réservation via le CMS admin.
           </p>
         </div>
 
@@ -88,36 +59,21 @@ export default function PaiementPage() {
           <div className="flex-1 h-px bg-primary/20" />
         </div>
 
-        {/* Formulaire Stripe intégré */}
-        {clientSecret ? (
-          <div className="rounded-lg overflow-hidden border border-primary/20 shadow-lg shadow-black/40">
-            <EmbeddedCheckoutProvider
-              stripe={stripePromise}
-              options={{
-                clientSecret,
-                onComplete: () => {
-                  if (sessionId) {
-                    window.location.href = `/reservation/succes?session_id=${encodeURIComponent(sessionId)}`;
-                  }
-                },
-              }}
-            >
-              <EmbeddedCheckout />
-            </EmbeddedCheckoutProvider>
+        {/* Message d'information */}
+        <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center">
+          <div className="text-destructive">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
           </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-24 text-muted-foreground gap-3">
-            <div className="w-6 h-6 border-2 border-primary/40 border-t-primary rounded-full animate-spin" />
-            <span className="text-sm">Chargement du formulaire de paiement…</span>
-          </div>
-        )}
-
-        {/* Pied de page sécurité */}
-        <p className="text-center text-xs text-muted-foreground mt-8">
-          Paiement traité par{' '}
-          <span className="text-foreground/60 font-medium">Stripe</span>
-          {' '}— vos données bancaires ne transitent jamais par nos serveurs.
-        </p>
+          <h3 className="mt-4 text-lg font-semibold text-foreground">Paiement temporairement désactivé</h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Le système de paiement Stripe est en maintenance.
+            Pour faire une réservation, veuillez utiliser le CMS admin.
+          </p>
+        </div>
       </div>
     </div>
   );

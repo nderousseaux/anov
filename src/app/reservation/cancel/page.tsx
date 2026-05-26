@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { XCircle, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-export default function ReservationCancelPage() {
+function ReservationCancelForm() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const [status, setStatus] = useState<'loading' | 'cancelled' | 'already_cancelled' | 'error'>('loading');
@@ -24,55 +24,61 @@ export default function ReservationCancelPage() {
   }, [token]);
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center pt-20 px-4">
-      <div className="max-w-md text-center">
-        {status === 'loading' && (
-          <p className="text-foreground text-xl">
-            Annulation en cours...
+    <div className="max-w-md text-center">
+      {status === 'loading' && (
+        <p className="text-foreground text-xl">
+          Annulation en cours...
+        </p>
+      )}
+      {status === 'cancelled' && (
+        <>
+          <CheckCircle size={64} className="text-primary mx-auto mb-4" />
+          <h1 className="text-3xl text-primary mb-3" style={{ fontFamily: 'var(--font-display)' }}>
+            Réservation annulée
+          </h1>
+          <p className="text-muted-foreground mb-8">
+            Votre réservation a bien été annulée.
           </p>
-        )}
-        {status === 'cancelled' && (
-          <>
-            <CheckCircle size={64} className="text-primary mx-auto mb-4" />
-            <h1 className="text-3xl text-primary mb-3" style={{ fontFamily: 'var(--font-display)' }}>
-              Réservation annulée
-            </h1>
-            <p className="text-muted-foreground mb-8">
-              Votre réservation a bien été annulée.
-            </p>
-          </>
-        )}
-        {status === 'already_cancelled' && (
-          <>
-            <XCircle size={64} className="text-muted-foreground mx-auto mb-4" />
-            <h1 className="text-3xl text-foreground mb-3" style={{ fontFamily: 'var(--font-display)' }}>
-              Déjà annulée
-            </h1>
-            <p className="text-muted-foreground mb-8">
-              Cette réservation a déjà été annulée.
-            </p>
-          </>
-        )}
-        {status === 'error' && (
-          <>
-            <XCircle size={64} className="text-destructive mx-auto mb-4" />
-            <h1 className="text-3xl text-foreground mb-3" style={{ fontFamily: 'var(--font-display)' }}>
-              Lien invalide
-            </h1>
-            <p className="text-muted-foreground mb-8">
-              Ce lien d&apos;annulation est invalide ou a expiré.
-            </p>
-          </>
-        )}
-        <Link href="/">
-          <Button
-            variant="outline"
-            className="border-primary/30 text-foreground hover:bg-primary/10"
-          >
-            Retour à l&apos;accueil
-          </Button>
-        </Link>
-      </div>
+        </>
+      )}
+      {status === 'already_cancelled' && (
+        <>
+          <XCircle size={64} className="text-muted-foreground mx-auto mb-4" />
+          <h1 className="text-3xl text-foreground mb-3" style={{ fontFamily: 'var(--font-display)' }}>
+            Déjà annulée
+          </h1>
+          <p className="text-muted-foreground mb-8">
+            Cette réservation a déjà été annulée.
+          </p>
+        </>
+      )}
+      {status === 'error' && (
+        <>
+          <XCircle size={64} className="text-destructive mx-auto mb-4" />
+          <h1 className="text-3xl text-foreground mb-3" style={{ fontFamily: 'var(--font-display)' }}>
+            Lien invalide
+          </h1>
+          <p className="text-muted-foreground mb-8">
+            Ce lien d&apos;annulation est invalide ou a expiré.
+          </p>
+        </>
+      )}
+      <Link href="/">
+        <Button
+          variant="outline"
+          className="border-primary/30 text-foreground hover:bg-primary/10"
+        >
+          Retour à l'accueil
+        </Button>
+      </Link>
     </div>
+  );
+}
+
+export default function ReservationCancelPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center pt-20 px-4"><p className="text-foreground text-xl">Chargement...</p></div>}>
+      <ReservationCancelForm />
+    </Suspense>
   );
 }

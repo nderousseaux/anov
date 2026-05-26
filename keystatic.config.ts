@@ -17,7 +17,11 @@ import { config, fields, singleton } from '@keystatic/core';
 export default config({
   storage: {
     kind: 'github',
+<<<<<<< Updated upstream
     repo: (process.env.KEYSTATIC_GITHUB_REPOSITORY as `${string}/${string}`) || 'nderousseaux/anov',
+=======
+    repo: 'nderousseaux/anov',
+>>>>>>> Stashed changes
   },
   singletons: {
     hero: singleton({

@@ -39,7 +39,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
   return (
     <section id="contact" className="bg-background">
       {/* Hero avec image */}
-      <div className="relative h-[15vh] sm:h-[30vh]">
+      <div className="relative h-[15vh] sm:h-[40vh]">
         <img
           src={c.image ?? "https://images.unsplash.com/photo-1758612798971-a8adb6cba7eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwaW50ZXJpb3IlMjBhdG1vc3BoZXJlJTIwbGlnaHRpbmd8ZW58MXx8fHwxNzcxNTE0NjAwfDA&ixlib=rb-4.1.0&q=80&w=1080"}
           alt="Contact"

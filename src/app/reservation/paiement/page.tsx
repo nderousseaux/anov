@@ -24,7 +24,7 @@ export default function PaiementPage() {
         <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center">
             <img
-              src="/assets/img-logo.jpg"
+              src="/assets/img-logo.svg"
               alt="ANØV"
               className="h-12 sm:h-14 w-auto -translate-y-1"
             />

@@ -9,7 +9,7 @@ import { Button } from './ui/button';
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isOnHero, setIsOnHero] = useState(false);
-  const logoUrl = '/assets/img-logo.jpg';
+  const logoUrl = '/assets/img-logo.svg';
   const pathname = usePathname();
   const router = useRouter();
   const isHomePage = pathname === '/';

@@ -52,22 +52,12 @@ export function Hero({ subtitle = 'Où chaque plat raconte une histoire, où cha
 
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-        <h1
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-5 text-primary tracking-[0.06em]"
-          style={{ fontFamily: 'var(--font-display)' }}
-        >
-          L'ANØV
-        </h1>
-        <div className="flex items-center justify-center gap-4 sm:gap-6 mb-10">
-          <span className="h-px w-10 sm:w-14 bg-primary/80" />
-          <p
-            className="text-xl sm:text-2xl md:text-3xl text-primary tracking-[0.22em]"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            RESTAURANT
-          </p>
-          <span className="h-px w-10 sm:w-14 bg-primary/80" />
-        </div>
+        <img
+          src="/assets/text-logo.svg"
+          alt="Logo"
+          className="mx-auto mb-8 w-auto h-20 sm:h-24 md:h-36"
+        />
+
         <p
           className="text-base sm:text-xl md:text-2xl mb-12 text-foreground max-w-2xl mx-auto italic leading-relaxed tracking-wide"
           style={{ fontFamily: 'var(--font-display)' }}

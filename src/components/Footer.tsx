@@ -11,7 +11,7 @@ export interface FooterContent {
 
 export function Footer({ content }: { content?: FooterContent | null }) {
   const c = content ?? {};
-  const logoUrl = 'assets/img-logo.jpg';
+  const logoUrl = 'assets/img-logo.svg';
 
   const socialLinks = [
     { name: 'Facebook', icon: Facebook, url: c.facebookUrl ?? '#' },

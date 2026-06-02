@@ -1,0 +1,96 @@
+# Documentation Fonctionnelle — ANØV
+
+> **Public :** restaurateur / responsable du restaurant
+> **Objectif :** savoir comment gérer et mettre à jour le contenu du site web
+
+---
+
+## 1. Vue d'ensemble
+
+Le site du restaurant est géré entièrement depuis le **CMS intégré** (Content Management System). Vous n'avez besoin d'aucune compétence technique pour modifier le contenu.
+
+**Accès :** connectez-vous sur le site, puis rendez-vous sur `/admin/cms`.
+
+---
+
+## 2. Connexion à l'administration
+
+1. Ouvrez le site du restaurant
+2. Rendez-vous sur `/admin/login`
+3. Saisissez votre identifiant et mot de passe
+4. Vous accédez au tableau de bord administrateur
+
+*[Capture d'écran : page de connexion admin]*
+
+---
+
+## 3. Modifier le contenu du site
+
+Le contenu du site se gère depuis le CMS. Voici la correspondance entre les sections du site et les sections du CMS :
+
+| Section du site | Section CMS | Contenu |
+|---|---|---|
+| **Page d'accueil** | | |
+| Section haute | Hero | Image de fond + sous-titre |
+| Notre histoire | Notre Histoire | 8 sections avec textes et images |
+| Galerie photos | Galerie | Photos + légendes |
+| Contact | Contact | Coordonnées, horaires, carte |
+| **Navigation** | | |
+| Menu en bas | Footer | Description + réseaux sociaux + avis |
+| **Autre page** | | |
+| Carte du restaurant | Menu | Onglets, catégories, plats |
+
+![Capture d'écran : accès au CMS depuis /admin/cms](public/assets/docs/cms-interface.png)
+
+### Comment modifier un élément
+
+1. Connectez-vous sur `/admin/login`
+2. Accédez au CMS sur `/admin/cms`
+3. Cliquez sur la section à modifier dans le menu de gauche
+4. Modifiez le contenu (texte, images, etc.)
+5. Cliquez sur **Save** (en haut à droite)
+6. Cliquez sur **Commit** pour publier les modifications
+
+![Capture d'écran : interface d'édition avec boutons Save et Commit](public/assets/docs/cms-edit.png)
+
+### Ajouter des éléments
+
+Pour ajouter une photo dans la galerie ou un plat dans le menu :
+
+1. Ouvrez la section concernée (Galerie ou Menu)
+2. Cliquez sur **Add item**
+3. Remplissez les champs
+4. **Save** puis **Commit**
+
+![Capture d'écran : ajout d'un élément avec le bouton Add item](public/assets/docs/cms-add-item.png)
+
+---
+
+## 4. Gérer les images
+
+Les images se gèrent directement dans le CMS. Glissez-déposez vos images ou cliquez pour les sélectionner.
+
+**Format recommandé :** JPEG ou PNG, minimum 1200px de largeur pour une bonne qualité.
+
+![Capture d'écran : upload d'image dans le CMS](public/assets/docs/cms-image-upload.png)
+
+---
+
+## 5. Questions fréquentes
+
+**Les modifications sont-elles immédiates ?**
+Oui, dès que vous cliquez sur **Commit**, le site se met à jour automatiquement.
+
+**Puis-je revenir en arrière après une modification ?**
+Oui, chaque modification est enregistrée dans l'historique. Contactez votre développeur pour restaurer une version précédente.
+
+**Quelle taille pour les images ?**
+JPEG ou PNG, minimum 1200px de largeur recommandé.
+
+---
+
+## 6. Contact technique
+
+Pour toute question ou modification qui dépasse le CMS (configuration, technique), contactez votre développeur.
+
+*[Nom du développeur / Email / Téléphone]*

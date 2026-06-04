@@ -7,7 +7,7 @@
 | **Vercel** | vercel.com/nderousseaux/anov | Hébergement du site | _[à compléter]_ | _[à compléter]_ |
 | **Neon** | console.neon.tech | Base de données | _[à compléter]_ | _[à compléter]_ |
 | **Domaine** | _[registrar]_ | Gestion DNS | _[à compléter]_ | _[à compléter]_ |
-| **Mail** |  |  |  |  |
+| **Mail** | https://id.ionos.fr/identifier?client_app=IONOSMAIL | Mail admin | admin@anovrestaurant.fr | _[à compléter]_ |
 
 ---
 

@@ -27,13 +27,41 @@ export function Contact({ content }: { content?: ContactContent | null }) {
     subject: '',
     message: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    toast.success('Message envoyé!', {
-      description: 'Nous vous répondrons dans les plus brefs délais.',
-    });
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('Message envoyé !', {
+          description: 'Nous vous répondrons dans les plus brefs délais.',
+        });
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        toast.error('Erreur', {
+          description: data.error || 'Une erreur est survenue. Veuillez réessayer.',
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi:', error);
+      toast.error('Erreur', {
+        description: 'Impossible d\'envoyer le message. Veuillez vérifier votre connexion.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -79,7 +107,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="bg-background/30 border-primary/30 text-muted-foreground text-sm sm:text-base"
+                    className="bg-background/30 border-primary/30 text-sm sm:text-base"
                     placeholder="Jean Dupont"
                   />
                 </div>
@@ -94,7 +122,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="bg-background/30 border-primary/30 text-muted-foreground text-sm sm:text-base"
+                    className="bg-background/30 border-primary/30 text-sm sm:text-base"
                     placeholder="jean.dupont@example.com"
                   />
                 </div>
@@ -109,7 +137,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     required
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="bg-background/30 border-primary/30 text-muted-foreground text-sm sm:text-base"
+                    className="bg-background/30 border-primary/30 text-sm sm:text-base"
                     placeholder="Demande d'information"
                   />
                 </div>
@@ -123,16 +151,17 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     required
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full flex-1 bg-background/30 border border-primary/30 text-muted-foreground text-sm sm:text-base rounded-md p-3 min-h-[120px] sm:min-h-[150px] placeholder:text-muted-foreground focus:border-primary focus:bg-background/50 focus:outline-none transition-colors duration-300"
+                    className="w-full flex-1 bg-background/30 border border-primary/30 text-sm sm:text-base rounded-md p-3 min-h-[120px] sm:min-h-[150px] placeholder:text-muted-foreground focus:border-primary focus:bg-background/50 focus:outline-none transition-colors duration-300"
                     placeholder="Votre message..."
                   />
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-4 sm:py-6 transition-all duration-300"
+                  disabled={isSubmitting}
+                  className="w-full bg-primary hover:bg-primary/90 text-color font-light text-md py-4 sm:py-6 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Envoyer le message
+                  {isSubmitting ? 'Envoi en cours...' : 'Envoyer le message'}
                 </Button>
               </form>
             </div>

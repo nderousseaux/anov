@@ -89,7 +89,36 @@ JPEG ou PNG, minimum 1200px de largeur recommandé.
 
 ---
 
-## 6. Contact technique
+## 6. Accéder à la boîte mail (IONOS)
+
+Le site utilise une adresse e-mail hébergée chez **IONOS** pour recevoir les messages du formulaire de contact et les confirmations de réservation.
+
+### Se connecter au webmail IONOS
+
+1. Rendez-vous sur **[https://webmail.ionos.fr](https://webmail.ionos.fr)**
+2. Saisissez votre adresse e-mail complète (ex. `contact@votre-restaurant.fr`)
+3. Saisissez votre mot de passe
+4. Cliquez sur **Se connecter**
+
+![Capture d'écran : page de connexion webmail IONOS](public/assets/docs/ionos-login.png)
+
+Vous accédez ensuite à votre boîte de réception IONOS, où vous retrouvez tous les e-mails envoyés depuis le site.
+
+![Capture d'écran : boîte de réception webmail IONOS](public/assets/docs/ionos-inbox.png)
+
+### Lien direct
+
+> **Webmail IONOS :** [https://webmail.ionos.fr](https://webmail.ionos.fr)
+
+### En cas de problème de connexion
+
+- Vérifiez que l'adresse e-mail saisie est correcte (avec le bon domaine)
+- Utilisez la fonction **Mot de passe oublié** sur la page de connexion IONOS
+- Ou contactez le support IONOS : [https://www.ionos.fr/assistance](https://www.ionos.fr/assistance)
+
+---
+
+## 7. Contact technique
 
 Pour toute question ou modification qui dépasse le CMS (configuration, technique), contactez votre développeur.
 

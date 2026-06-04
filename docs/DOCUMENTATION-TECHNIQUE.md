@@ -167,6 +167,63 @@ L'authentification utilise des tokens JWT avec la bibliothèque `jose` :
 
 ---
 
+## 4.1. Système d'emails
+
+Le système d'envoi d'emails utilise **nodemailer** avec un serveur SMTP personnalisé.
+
+### Fonctionnalités
+
+- **Formulaire de contact :**
+  - Envoi d'un email de notification à l'adresse configurée (`CONTACT_EMAIL`)
+  - Envoi d'un email de confirmation à l'utilisateur
+- **Réservations :**
+  - Email de confirmation de réservation
+  - Email de rappel (J-1)
+  - Email d'annulation
+
+### Configuration SMTP
+
+Les variables d'environnement suivantes doivent être configurées :
+
+| Variable | Description | Exemple |
+|---|---|---|
+| `SMTP_HOST` | Hôte du serveur SMTP | `smtp.example.com` |
+| `SMTP_PORT` | Port du serveur SMTP | `587` (STARTTLS) ou `465` (SSL) |
+| `SMTP_SECURE` | Utiliser SSL (port 465) | `false` pour port 587, `true` pour port 465 |
+| `SMTP_USER` | Nom d'utilisateur SMTP | `noreply@anov.fr` |
+| `SMTP_PASSWORD` | Mot de passe SMTP | `votre_mot_de_passe` |
+| `SMTP_FROM` | Expéditeur par défaut | `"ANØV <noreply@anov.fr>"` |
+| `CONTACT_EMAIL` | Email de réception des contacts | `contact@anov.fr` |
+
+### API Route
+
+| Route | Méthode | Description |
+|---|---|---|
+| `/api/contact` | POST | Envoi d'un message via le formulaire de contact |
+
+**Payload :**
+```json
+{
+  "name": "Jean Dupont",
+  "email": "jean.dupont@example.com",
+  "subject": "Demande d'information",
+  "message": "Votre message..."
+}
+```
+
+**Réponse :**
+```json
+{
+  "message": "Message envoyé avec succès",
+  "details": {
+    "notificationSent": true,
+    "confirmationSent": true
+  }
+}
+```
+
+---
+
 ## 5. Composants de la vitrine
 
 | Composant | Description |
@@ -197,6 +254,12 @@ L'authentification utilise des tokens JWT avec la bibliothèque `jose` :
 |---|---|---|
 | `/api/keystatic/[...params]` | GET/POST | Routes Keystatic (CRUD) |
 
+### 6.3 Contact
+
+| Route | Méthode | Description |
+|---|---|---|
+| `/api/contact` | POST | Envoi d'un message de contact |
+
 ---
 
 ## 7. Configuration Vercel
@@ -210,6 +273,13 @@ L'authentification utilise des tokens JWT avec la bibliothèque `jose` :
 | `KEYSTATIC_GITHUB_REPOSITORY` | Repository GitHub |
 | `NEXT_PUBLIC_BASE_URL` | URL du site |
 | `DATABASE_URL` | URL de connexion PostgreSQL (Neon) |
+| `SMTP_HOST` | Hôte du serveur SMTP |
+| `SMTP_PORT` | Port du serveur SMTP |
+| `SMTP_SECURE` | SSL activé (true/false) |
+| `SMTP_USER` | Utilisateur SMTP |
+| `SMTP_PASSWORD` | Mot de passe SMTP |
+| `SMTP_FROM` | Expéditeur par défaut |
+| `CONTACT_EMAIL` | Email de réception des contacts |
 
 ---
 

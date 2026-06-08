@@ -171,6 +171,48 @@ export default config({
         ),
       },
     }),
+    mentionsLegales: singleton({
+      label: 'Mentions légales',
+      path: 'content/mentions-legales',
+      format: { contentField: 'content' },
+      schema: {
+        title: fields.text({ label: 'Titre de la page' }),
+        content: fields.document({
+          label: 'Contenu',
+          formatting: true,
+          dividers: true,
+          links: true,
+        }),
+      },
+    }),
+    politiqueConfidentialite: singleton({
+      label: 'Politique de confidentialité',
+      path: 'content/politique-de-confidentialite',
+      format: { contentField: 'content' },
+      schema: {
+        title: fields.text({ label: 'Titre de la page' }),
+        content: fields.document({
+          label: 'Contenu',
+          formatting: true,
+          dividers: true,
+          links: true,
+        }),
+      },
+    }),
+    cgv: singleton({
+      label: 'CGV',
+      path: 'content/cgv',
+      format: { contentField: 'content' },
+      schema: {
+        title: fields.text({ label: 'Titre de la page' }),
+        content: fields.document({
+          label: 'Contenu',
+          formatting: true,
+          dividers: true,
+          links: true,
+        }),
+      },
+    }),
     footer: singleton({
       label: 'Footer',
       path: 'content/footer',

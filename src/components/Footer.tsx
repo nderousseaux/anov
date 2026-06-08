@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Youtube, Star, CreditCard, Accessibility, AirVent } from 'lucide-react';
+import Link from 'next/link';
 
 export interface FooterContent {
   description?: string | null;
@@ -129,15 +130,15 @@ export function Footer({ content }: { content?: FooterContent | null }) {
               © 2026 l’Anøv | Tous droits réservés.
             </p>
             <div className="flex flex-wrap gap-3 md:gap-4 justify-center md:justify-end">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
+              <Link href="/mentions-legales" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
                 Mentions légales
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
+              </Link>
+              <Link href="/politique-de-confidentialite" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
                 Politique de confidentialité
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
+              </Link>
+              <Link href="/cgv" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
                 CGV
-              </a>
+              </Link>
             </div>
           </div>
         </div>

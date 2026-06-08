@@ -39,6 +39,10 @@ Le contenu du site se gère depuis le CMS. Voici la correspondance entre les sec
 | Menu en bas | Footer | Description + réseaux sociaux + avis |
 | **Autre page** | | |
 | Carte du restaurant | Menu | Onglets, catégories, plats |
+| **Pages légales** | | |
+| Mentions légales | Mentions légales | Contenu riche (titres, textes, liens) |
+| Politique de confidentialité | Politique de confidentialité | Contenu riche (titres, textes, liens) |
+| CGV | CGV | Contenu riche (titres, textes, liens) |
 
 ![Capture d'écran : accès au CMS depuis /admin/cms](public/assets/docs/cms-interface.png)
 

@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Facebook, Instagram, Youtube } from 'lucide-react';
 import { Button } from './ui/button';
+import type { FooterContent } from './Footer';
 
-export function Navbar() {
+export function Navbar({ footerContent }: { footerContent?: FooterContent | null }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isOnHero, setIsOnHero] = useState(false);
   const logoUrl = '/assets/img-logo.svg';
@@ -161,6 +162,7 @@ export function Navbar() {
           <button
             className="lg:hidden text-primary"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Menu"
           >
             {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
@@ -192,6 +194,27 @@ export function Navbar() {
                   </Link>
                 );
               })}
+
+              {/* Réseaux sociaux */}
+              {footerContent && (
+                <div className="pt-2 flex gap-3">
+                  {footerContent.facebookUrl && (
+                    <a href={footerContent.facebookUrl} target="_blank" rel="noopener noreferrer" className="bg-card p-2.5 rounded-lg border border-primary/30 hover:border-primary hover:bg-secondary transition-all duration-300 group" aria-label="Facebook">
+                      <Facebook className="text-primary" size={20} />
+                    </a>
+                  )}
+                  {footerContent.instagramUrl && (
+                    <a href={footerContent.instagramUrl} target="_blank" rel="noopener noreferrer" className="bg-card p-2.5 rounded-lg border border-primary/30 hover:border-primary hover:bg-secondary transition-all duration-300 group" aria-label="Instagram">
+                      <Instagram className="text-primary" size={20} />
+                    </a>
+                  )}
+                  {footerContent.youtubeUrl && (
+                    <a href={footerContent.youtubeUrl} target="_blank" rel="noopener noreferrer" className="bg-card p-2.5 rounded-lg border border-primary/30 hover:border-primary hover:bg-secondary transition-all duration-300 group" aria-label="YouTube">
+                      <Youtube className="text-primary" size={20} />
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}

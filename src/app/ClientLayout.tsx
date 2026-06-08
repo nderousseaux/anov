@@ -55,7 +55,7 @@ export default function ClientLayout({ children, footerContent }: { children: Re
   return (
     <>
       <div className="min-h-screen bg-background text-foreground">
-        <Navbar />
+        <Navbar footerContent={footerContent} />
 
         <main>{children}</main>
 

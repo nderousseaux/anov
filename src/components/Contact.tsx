@@ -199,8 +199,8 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                   </h3>
                 </div>
                 <p className="text-foreground text-sm sm:text-base">
-                  <a href={`mailto:${c.email ?? 'contact@lanov.fr'}`} className="hover:text-primary transition-colors">
-                    {c.email ?? 'contact@lanov.fr'}
+                  <a href={`mailto:${c.email ?? 'contact@anovrestaurant.fr'}`} className="hover:text-primary transition-colors">
+                    {c.email ?? 'contact@anovrestaurant.fr'}
                   </a>
                 </p>
               </div>

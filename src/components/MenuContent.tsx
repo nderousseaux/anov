@@ -90,7 +90,7 @@ const DishCard = ({ name, description, price, outline, allergens, image }: Dish)
   return (
     <div
       data-dish-card
-      className="bg-secondary rounded-lg border border-primary/20 hover:border-primary/50 transition-colors duration-300 overflow-hidden cursor-default"
+      className="bg-secondary/50 backdrop-blur-sm rounded-lg border border-primary/20 hover:border-primary/50 transition-colors duration-300 overflow-hidden cursor-default"
       onMouseMove={hasPopover ? handleMouseMove : undefined}
       onMouseEnter={hasPopover ? () => setVisible(true) : undefined}
       onMouseLeave={hasPopover ? () => setVisible(false) : undefined}
@@ -204,19 +204,21 @@ export function MenuContent({ content }: { content: MenuData | null }) {
                 {(tab.categories ?? []).map((category, ci) => (
                   <div key={ci} className="mb-14">
                     {category.title && <SectionTitle>{category.title}</SectionTitle>}
-                    <div className={category.image ? 'flex gap-8 items-center' : undefined}>
-                      <div className="flex-1 flex flex-col gap-4">
+                    <div className={category.image ? 'relative' : undefined}>
+                      <div className={category.image ? 'relative z-10 flex flex-col gap-4 sm:pr-[28%]' : 'flex flex-col gap-4'}>
                         {(category.dishes ?? []).map((dish, di) => (
                           <DishCard key={di} {...dish} />
                         ))}
                       </div>
                       {category.image && (
-                        <div className="hidden md:block w-72 shrink-0">
+                        <div className="absolute inset-[-2rem] right-0 pointer-events-none z-0 translate-x-[10%]">
                           <img
                             src={category.image}
                             alt={category.title}
-                            className="w-full aspect-[3/4] object-cover rounded-lg border border-primary/20"
+                            className="absolute right-0 top-0 h-full w-[40%] sm:w-[42%] object-cover opacity-80 brightness-150"
                           />
+                          <div className="absolute right-0 top-0 h-full w-[40%] sm:w-[42%] bg-gradient-to-r from-card via-card/30 to-card" />
+                          <div className="absolute right-0 top-0 h-full w-[40%] sm:w-[42%] bg-gradient-to-b from-card via-transparent to-card" />
                         </div>
                       )}
                     </div>

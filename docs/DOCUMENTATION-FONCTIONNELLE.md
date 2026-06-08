@@ -64,28 +64,9 @@ Pour ajouter une photo dans la galerie ou un plat dans le menu :
 
 ![Capture d'écran : ajout d'un élément avec le bouton Add item](public/assets/docs/cms-add-item.png)
 
----
+### Valider les modifications
 
-## 4. Gérer les images
-
-Les images se gèrent directement dans le CMS. Glissez-déposez vos images ou cliquez pour les sélectionner.
-
-**Format recommandé :** JPEG ou PNG, minimum 1200px de largeur pour une bonne qualité.
-
-![Capture d'écran : upload d'image dans le CMS](public/assets/docs/cms-image-upload.png)
-
----
-
-## 5. Questions fréquentes
-
-**Les modifications sont-elles immédiates ?**
-Oui, dès que vous cliquez sur **Commit**, le site se met à jour automatiquement.
-
-**Puis-je revenir en arrière après une modification ?**
-Oui, chaque modification est enregistrée dans l'historique. Contactez votre développeur pour restaurer une version précédente.
-
-**Quelle taille pour les images ?**
-JPEG ou PNG, minimum 1200px de largeur recommandé.
+Après avoir cliqué sur **Commit**, les modifications sont publiées et visibles au bout de quelques minutes sur le site.
 
 ---
 

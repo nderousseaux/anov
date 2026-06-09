@@ -87,4 +87,3 @@ function ClientLayoutInner({ children, footerContent }: { children: ReactNode; f
     </>
   );
 }
-

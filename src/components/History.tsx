@@ -84,7 +84,7 @@ export function History({ content }: { content?: Record<string, any> | null }) {
               <p
                 className="text-base sm:text-xl text-foreground mb-6 leading-relaxed"
               >
-                {p('visionText1')} 
+                {p('visionText1')}
               </p>
               <p
                 className="text-sm sm:text-lg text-muted-foreground leading-relaxed mb-6"

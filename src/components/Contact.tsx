@@ -190,7 +190,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     className="text-base sm:text-lg text-primary"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                  {t.contact.phoneLabel}
+                    {t.contact.phoneLabel}
                   </h3>
                 </div>
                 <p className="text-foreground text-sm sm:text-base">
@@ -226,7 +226,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     className="text-base sm:text-lg text-primary"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                  {t.contact.addressLabel}
+                    {t.contact.addressLabel}
                   </h3>
                 </div>
                 <p
@@ -245,7 +245,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     className="text-base sm:text-lg text-primary"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                  {t.contact.hoursLabel}
+                    {t.contact.hoursLabel}
                   </h3>
                 </div>
                 <div

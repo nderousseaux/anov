@@ -23,7 +23,7 @@ interface LanguageContextValue {
 
 const LanguageContext = createContext<LanguageContextValue>({
   locale: DEFAULT_LOCALE,
-  setLocale: () => {},
+  setLocale: () => { },
   t: fr,
 });
 

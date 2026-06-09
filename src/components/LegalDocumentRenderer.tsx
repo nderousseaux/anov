@@ -94,10 +94,10 @@ const config: Config = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function LegalDocumentRenderer({ document }: { document: any }) {
   if (!document?.node) return null;
-  
+
   // Transform Markdoc AST avec la configuration personnalisée
   const content = Markdoc.transform(document.node, config) as RenderableTreeNode;
   const rendered = Markdoc.renderers.react(content, React, { components });
-  
+
   return <div className="space-y-1">{rendered}</div>;
 }

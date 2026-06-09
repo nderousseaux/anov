@@ -6,6 +6,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, Facebook, Instagram, Youtube } from 'lucide-react';
 import { Button } from './ui/button';
 import type { FooterContent } from './Footer';
+import { LanguageSelector } from './LanguageSelector';
+import { useLanguage } from '@/context/LanguageContext';
 
 export function Navbar({ footerContent }: { footerContent?: FooterContent | null }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -14,6 +16,7 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
   const pathname = usePathname();
   const router = useRouter();
   const isHomePage = pathname === '/';
+  const { t } = useLanguage();
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -94,12 +97,12 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
     | { type: 'separator' };
 
   const navItems: NavItem[] = [
-    { type: 'section', label: 'Notre Histoire', section: 'history' },
-    { type: 'section', label: 'Galerie', section: 'gallery' },
+    { type: 'section', label: t.nav.ourStory, section: 'history' },
+    { type: 'section', label: t.nav.gallery, section: 'gallery' },
     { type: 'separator' },
-    { type: 'link', label: 'La Carte', href: '/menu' },
+    { type: 'link', label: t.nav.theMenu, href: '/menu' },
     // { type: 'link', label: 'Boutique', href: '/boutique' },
-    // { type: 'cta', label: 'Réserver', href: '/reservation' },
+    // { type: 'cta', label: t.nav.reserve, href: '/reservation' },
   ];
 
   const menuItemClass =
@@ -156,6 +159,7 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
                 </Link>
               );
             })}
+            <LanguageSelector />
           </div>
 
           {/* Mobile Menu Button */}
@@ -195,7 +199,7 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
                 );
               })}
 
-              {/* Réseaux sociaux */}
+              {/* Réseaux sociaux + sélecteur de langue */}
               {footerContent && (
                 <div className="pt-2 flex gap-3">
                   {footerContent.facebookUrl && (
@@ -215,6 +219,9 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
                   )}
                 </div>
               )}
+              <div className="pt-1">
+                <LanguageSelector />
+              </div>
             </div>
           </div>
         )}

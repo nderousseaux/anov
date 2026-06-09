@@ -1,8 +1,16 @@
-title: Contact
-subtitle: Nous sommes à votre écoute
+title_fr: Contact
+title_en: Contact
+title_de: Kontakt
+subtitle_fr: Nous sommes à votre écoute
+subtitle_en: We are here for you
+subtitle_de: Wir sind für Sie da
 address: "15 Rue de la Gastronomie\n75008 Paris, France"
 phone: "+33 1 45 67 89 00"
 email: contact@anovrestaurant.fr
-hoursLine1: "Mardi - Samedi : 12h00 - 14h30, 19h00 - 22h30"
-hoursLine2: "Dimanche - Lundi : Fermé"
+hoursLine1_fr: "Mardi - Samedi : 12h00 - 14h30, 19h00 - 22h30"
+hoursLine1_en: "Tuesday - Saturday: 12:00 - 14:30, 19:00 - 22:30"
+hoursLine1_de: "Dienstag - Samstag: 12:00 - 14:30, 19:00 - 22:30"
+hoursLine2_fr: "Dimanche - Lundi : Fermé"
+hoursLine2_en: "Sunday - Monday: Closed"
+hoursLine2_de: "Sonntag - Montag: Geschlossen"
 mapsUrl: https://maps.google.com

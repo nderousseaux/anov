@@ -3,8 +3,11 @@
 import { useState } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { MobileCarousel } from './MobileCarousel';
+import { useLanguage } from '@/context/LanguageContext';
+import { pickField } from '@/lib/langs';
 
-export function Gallery({ images }: { images?: Array<{ image: string | null; caption: string }> | null }) {
+export function Gallery({ images }: { images?: Array<{ image: string | null; caption_fr?: string; caption_en?: string; caption_de?: string; caption?: string }> | null }) {
+  const { locale, t } = useLanguage();
   const fallbackImages = [
     {
       url: "https://images.unsplash.com/photo-1768162125985-1cdc0e091b62?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwa2l0Y2hlbiUyMGNvb2tpbmclMjBjaGVmJTIwYWN0aW9ufGVufDF8fHx8MTc3MTUxNDYwMHww&ixlib=rb-4.1.0&q=80&w=1080",
@@ -43,7 +46,11 @@ export function Gallery({ images }: { images?: Array<{ image: string | null; cap
       caption: "Notre équipe passionnée"
     },
   ];
-  const filtered = images?.filter(img => img.image).map(img => ({ url: img.image!, caption: img.caption }));
+  const filtered = images?.filter(img => img.image).map(img => ({
+    url: img.image!,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    caption: pickField(img as any, 'caption', locale) || img.caption || '',
+  }));
   const galleryImages = filtered?.length ? filtered : fallbackImages;
 
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
@@ -56,12 +63,12 @@ export function Gallery({ images }: { images?: Array<{ image: string | null; cap
             className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
             style={{ fontFamily: 'var(--font-display)' }}
           >
-            Galerie
+            {t.gallery.title}
           </h3>
           <p
             className="text-base sm:text-xl text-foreground"
           >
-            Découvrez l'univers de l’Anøv en images
+            {t.gallery.subtitle}
           </p>
         </div>
 

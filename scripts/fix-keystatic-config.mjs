@@ -1,4 +1,11 @@
-import { config, fields, singleton } from '@keystatic/core';
+import { readFileSync, writeFileSync } from 'fs';
+
+// Read current config to preserve any structure
+const currentConfig = readFileSync('keystatic.config.ts', 'utf-8');
+
+// Extract the storage section and beginning
+const storageMatch = currentConfig.match(/(import[\s\S]*?export default config\(\{\s*storage:[\s\S]*?\},\s*singletons: \{)/);
+const prefix = storageMatch ? storageMatch[1] : `import { config, fields, singleton } from '@keystatic/core';
 
 /**
  * Keystatic storage configuration
@@ -19,7 +26,9 @@ export default config({
     kind: 'github',
     repo: 'nderousseaux/anov',
   },
-  singletons: {
+  singletons: {`;
+
+const config = `${prefix}
     hero: singleton({
       label: 'Hero',
       path: 'content/hero',
@@ -31,15 +40,15 @@ export default config({
         }),
         subtitle_fr: fields.text({
           label: 'Sous-titre 🇫🇷',
-          description: 'Texte affiché sous le titre principal sur la page d\'accueil',
+          description: 'Texte affiché sous le titre principal sur la page d\\'accueil',
         }),
         subtitle_en: fields.text({
           label: 'Sous-titre 🇬🇧',
-          description: 'Texte affiché sous le titre principal sur la page d\'accueil',
+          description: 'Texte affiché sous le titre principal sur la page d\\'accueil',
         }),
         subtitle_de: fields.text({
           label: 'Sous-titre 🇩🇪',
-          description: 'Texte affiché sous le titre principal sur la page d\'accueil',
+          description: 'Texte affiché sous le titre principal sur la page d\\'accueil',
         }),
       },
     }),
@@ -191,12 +200,12 @@ export default config({
         heroSubtitle_de: fields.text({ label: 'Hero — Sous-titre 🇩🇪' }),
         tabs: fields.array(
           fields.object({
-            name_fr: fields.text({ label: 'Nom de l\'onglet 🇫🇷' }),
-            name_en: fields.text({ label: 'Nom de l\'onglet 🇬🇧' }),
-            name_de: fields.text({ label: 'Nom de l\'onglet 🇩🇪' }),
-            outline_fr: fields.text({ label: 'Description de l\'onglet 🇫🇷' }),
-            outline_en: fields.text({ label: 'Description de l\'onglet 🇬🇧' }),
-            outline_de: fields.text({ label: 'Description de l\'onglet 🇩🇪' }),
+            name_fr: fields.text({ label: 'Nom de l\\'onglet 🇫🇷' }),
+            name_en: fields.text({ label: 'Nom de l\\'onglet 🇬🇧' }),
+            name_de: fields.text({ label: 'Nom de l\\'onglet 🇩🇪' }),
+            outline_fr: fields.text({ label: 'Description de l\\'onglet 🇫🇷' }),
+            outline_en: fields.text({ label: 'Description de l\\'onglet 🇬🇧' }),
+            outline_de: fields.text({ label: 'Description de l\\'onglet 🇩🇪' }),
             image: fields.text({ label: "URL de l'image (facultatif)" }),
             infoBlockTitle_fr: fields.text({ label: 'Info Block — Titre 🇫🇷' }),
             infoBlockTitle_en: fields.text({ label: 'Info Block — Titre 🇬🇧' }),
@@ -301,3 +310,7 @@ export default config({
     }),
   },
 });
+`;
+
+writeFileSync('keystatic.config.ts', config);
+console.log('keystatic.config.ts updated with multilingual fields');

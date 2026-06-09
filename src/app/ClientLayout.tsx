@@ -6,8 +6,17 @@ import { Toaster } from '@/components/ui/sonner';
 import { Navbar } from '@/components/Navbar';
 import { Footer, type FooterContent } from '@/components/Footer';
 import { SplashScreen } from '@/components/SplashScreen';
+import { LanguageProvider } from '@/context/LanguageContext';
 
 export default function ClientLayout({ children, footerContent }: { children: ReactNode; footerContent?: FooterContent | null }) {
+  return (
+    <LanguageProvider>
+      <ClientLayoutInner footerContent={footerContent}>{children}</ClientLayoutInner>
+    </LanguageProvider>
+  );
+}
+
+function ClientLayoutInner({ children, footerContent }: { children: ReactNode; footerContent?: FooterContent | null }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/admin') || pathname.startsWith('/keystatic');
 
@@ -78,3 +87,4 @@ export default function ClientLayout({ children, footerContent }: { children: Re
     </>
   );
 }
+

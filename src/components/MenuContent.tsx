@@ -3,6 +3,8 @@
 import { type ReactNode, useState, useCallback, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { createPortal } from 'react-dom';
+import { useLanguage } from '@/context/LanguageContext';
+import { pickField } from '@/lib/langs';
 
 type Dish = {
   name: string;
@@ -14,30 +16,29 @@ type Dish = {
 };
 
 type Category = {
-  title: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
   image: string | null;
   dishes: readonly Dish[];
 };
 
 type Tab = {
-  name: string;
-  outline: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
   categories: readonly Category[];
   image: string | null;
-  infoBlockTitle: string;
-  infoBlockText: string;
-  infoBlockOutline: string;
   infoBlockPrice: string;
 };
 
 type MenuData = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
   heroImage: string;
-  heroTitle: string;
-  heroSubtitle: string;
   tabs: readonly Tab[];
 };
 
-const DishCard = ({ name, description, price, outline, allergens, image }: Dish) => {
+const DishCard = ({ name, description, price, outline, allergens, image }: Dish & { allergens_label?: string }) => {
+  const { t } = useLanguage();
   const hasPopover = !!(allergens || image);
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [visible, setVisible] = useState(false);
@@ -116,7 +117,7 @@ const DishCard = ({ name, description, price, outline, allergens, image }: Dish)
           )}
           {allergens && (
             <div className="p-3">
-              <p className="text-xs text-muted-foreground/70 uppercase tracking-wide mb-1">Allergènes</p>
+              <p className="text-xs text-muted-foreground/70 uppercase tracking-wide mb-1">{t.menu.allergens}</p>
               <p className="text-sm text-foreground">{allergens}</p>
             </div>
           )}
@@ -150,9 +151,10 @@ const InfoBlock = ({ title, text, outline, price }: { title: string; text: strin
 };
 
 export function MenuContent({ content }: { content: MenuData | null }) {
+  const { locale } = useLanguage();
   const c = content ?? ({} as MenuData);
   const tabs = c.tabs ?? [];
-  const defaultTab = tabs[0]?.name ?? '';
+  const defaultTab = (tabs[0] ? pickField(tabs[0], 'name', locale) : '') || '';
 
   return (
     <div className="min-h-screen bg-background pt-20">
@@ -171,10 +173,10 @@ export function MenuContent({ content }: { content: MenuData | null }) {
             className="text-5xl sm:text-6xl md:text-7xl mb-6 text-primary"
             style={{ fontFamily: 'var(--font-display)' }}
           >
-            {c.heroTitle ?? 'Nos Cartes'}
+            {pickField(c, 'heroTitle', locale) || 'Nos Cartes'}
           </h1>
           <p className="text-lg sm:text-2xl text-muted-foreground max-w-3xl mx-auto">
-            {c.heroSubtitle ?? ''}
+            {pickField(c, 'heroSubtitle', locale)}
           </p>
         </div>
       </div>
@@ -184,65 +186,75 @@ export function MenuContent({ content }: { content: MenuData | null }) {
         <div className="max-w-6xl mx-auto">
           <Tabs defaultValue={defaultTab} className="w-full">
             <TabsList className="w-full flex flex-wrap h-auto gap-1 mb-10 bg-secondary border border-primary/30 p-1">
-              {tabs.map((tab) => (
-                <TabsTrigger
-                  key={tab.name}
-                  value={tab.name}
-                  className="flex-1 basis-[calc(50%-0.25rem)] sm:basis-[calc(20%-0.25rem)] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-foreground"
-                >
-                  {tab.name}
-                </TabsTrigger>
-              ))}
+              {tabs.map((tab) => {
+                const tabName = pickField(tab, 'name', locale) || tab.name_fr || '';
+                return (
+                  <TabsTrigger
+                    key={tab.name_fr || tabName}
+                    value={tabName}
+                    className="flex-1 basis-[calc(50%-0.25rem)] sm:basis-[calc(20%-0.25rem)] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-foreground"
+                  >
+                    {tabName}
+                  </TabsTrigger>
+                );
+              })}
             </TabsList>
 
-            {tabs.map((tab) => (
-              <TabsContent key={tab.name} value={tab.name}>
-                {tab.outline && (
-                  <p className="text-muted-foreground text-sm text-center mb-10">{tab.outline}</p>
-                )}
+            {tabs.map((tab) => {
+              const tabName = pickField(tab, 'name', locale) || tab.name_fr || '';
+              const tabOutline = pickField(tab, 'outline', locale);
+              return (
+                <TabsContent key={tab.name_fr || tabName} value={tabName}>
+                  {tabOutline && (
+                    <p className="text-muted-foreground text-sm text-center mb-10">{tabOutline}</p>
+                  )}
 
-                {(tab.categories ?? []).map((category, ci) => (
-                  <div key={ci} className="mb-14">
-                    {category.title && <SectionTitle>{category.title}</SectionTitle>}
-                    <div className={category.image ? 'relative' : undefined}>
-                      <div className={category.image ? 'relative z-10 flex flex-col gap-4 sm:pr-[28%]' : 'flex flex-col gap-4'}>
-                        {(category.dishes ?? []).map((dish, di) => (
-                          <DishCard key={di} {...dish} />
-                        ))}
-                      </div>
-                      {category.image && (
-                        <div className="absolute inset-[-2rem] right-0 pointer-events-none z-0 translate-x-[10%]">
-                          <img
-                            src={category.image}
-                            alt={category.title}
-                            className="absolute right-0 top-0 h-full w-[40%] sm:w-[42%] object-cover opacity-80 brightness-150"
-                          />
-                          <div className="absolute right-0 top-0 h-full w-[40%] sm:w-[42%] bg-gradient-to-r from-card via-card/30 to-card" />
-                          <div className="absolute right-0 top-0 h-full w-[40%] sm:w-[42%] bg-gradient-to-b from-card via-transparent to-card" />
+                  {(tab.categories ?? []).map((category: Category, ci: number) => {
+                    const categoryTitle = pickField(category, 'title', locale);
+                    return (
+                      <div key={ci} className="mb-14">
+                        {categoryTitle && <SectionTitle>{categoryTitle}</SectionTitle>}
+                        <div className={category.image ? 'relative' : undefined}>
+                          <div className={category.image ? 'relative z-10 flex flex-col gap-4 sm:pr-[28%]' : 'flex flex-col gap-4'}>
+                            {(category.dishes ?? []).map((dish: Dish, di: number) => (
+                              <DishCard key={di} {...dish} />
+                            ))}
+                          </div>
+                          {category.image && (
+                            <div className="absolute inset-[-2rem] right-0 pointer-events-none z-0 translate-x-[10%]">
+                              <img
+                                src={category.image}
+                                alt={categoryTitle}
+                                className="absolute right-0 top-0 h-full w-[40%] sm:w-[42%] object-cover opacity-80 brightness-150"
+                              />
+                              <div className="absolute right-0 top-0 h-full w-[40%] sm:w-[42%] bg-gradient-to-r from-card via-card/30 to-card" />
+                              <div className="absolute right-0 top-0 h-full w-[40%] sm:w-[42%] bg-gradient-to-b from-card via-transparent to-card" />
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
+                    );
+                  })}
+
+                  {tab.image && (
+                    <div className="relative group overflow-hidden rounded-lg border-2 border-primary/30 hover:border-primary transition-all duration-300 mb-8">
+                      <img
+                        src={tab.image}
+                        alt={tabName}
+                        className="w-full h-[360px] object-cover transform group-hover:scale-110 transition-transform duration-500"
+                      />
                     </div>
-                  </div>
-                ))}
+                  )}
 
-                {tab.image && (
-                  <div className="relative group overflow-hidden rounded-lg border-2 border-primary/30 hover:border-primary transition-all duration-300 mb-8">
-                    <img
-                      src={tab.image}
-                      alt={tab.name}
-                      className="w-full h-[360px] object-cover transform group-hover:scale-110 transition-transform duration-500"
-                    />
-                  </div>
-                )}
-
-                <InfoBlock
-                  title={tab.infoBlockTitle ?? ''}
-                  text={tab.infoBlockText ?? ''}
-                  outline={tab.infoBlockOutline ?? ''}
-                  price={tab.infoBlockPrice ?? ''}
-                />
-              </TabsContent>
-            ))}
+                  <InfoBlock
+                    title={pickField(tab, 'infoBlockTitle', locale) ?? ''}
+                    text={pickField(tab, 'infoBlockText', locale) ?? ''}
+                    outline={pickField(tab, 'infoBlockOutline', locale) ?? ''}
+                    price={tab.infoBlockPrice ?? ''}
+                  />
+                </TabsContent>
+              );
+            })}
           </Tabs>
         </div>
       </section>

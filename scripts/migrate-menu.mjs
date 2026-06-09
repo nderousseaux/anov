@@ -1,4 +1,6 @@
-heroImage: >-
+import { writeFileSync } from 'fs';
+
+const menu = `heroImage: >-
   https://images.unsplash.com/photo-1761095596755-99ba58997720?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwZGlzaCUyMHBsYXRpbmclMjBmaW5lJTIwZGluaW5nfGVufDF8fHx8MTc3MTUwOTU3N3ww&ixlib=rb-4.1.0&q=80&w=1080
 heroTitle_fr: Nos Cartes
 heroTitle_en: Our Menus
@@ -311,3 +313,7 @@ tabs:
     infoBlockOutline_fr: La vente d'alcool aux mineurs est interdite — Loi Évin
     infoBlockOutline_en: Sale of alcohol to minors is prohibited
     infoBlockOutline_de: Der Verkauf von Alkohol an Minderjährige ist verboten
+`;
+
+writeFileSync('content/menu.yaml', menu, 'utf8');
+console.log('menu.yaml written successfully, lines:', menu.split('\n').length);

@@ -1,4 +1,6 @@
-import { createReader } from '@keystatic/core/reader';
+import { writeFileSync } from 'fs';
+
+const content = `import { createReader } from '@keystatic/core/reader';
 import { Hero } from '@/components/Hero';
 import { History } from '@/components/History';
 import { Gallery } from '@/components/Gallery';
@@ -35,3 +37,7 @@ export default async function Page() {
     </div>
   );
 }
+`;
+
+writeFileSync('src/app/page.tsx', content);
+console.log('page.tsx written successfully');

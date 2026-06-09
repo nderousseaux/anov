@@ -6,21 +6,34 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/context/LanguageContext';
+import { pickField } from '@/lib/langs';
 
 interface ContactContent {
   image?: string | null;
-  title?: string | null;
-  subtitle?: string | null;
+  title_fr?: string | null;
+  title_en?: string | null;
+  title_de?: string | null;
+  subtitle_fr?: string | null;
+  subtitle_en?: string | null;
+  subtitle_de?: string | null;
   address?: string | null;
   phone?: string | null;
   email?: string | null;
-  hoursLine1?: string | null;
-  hoursLine2?: string | null;
+  hoursLine1_fr?: string | null;
+  hoursLine1_en?: string | null;
+  hoursLine1_de?: string | null;
+  hoursLine2_fr?: string | null;
+  hoursLine2_en?: string | null;
+  hoursLine2_de?: string | null;
   mapsUrl?: string | null;
 }
 
 export function Contact({ content }: { content?: ContactContent | null }) {
+  const { locale, t } = useLanguage();
   const c = content ?? {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const p = (key: string) => pickField(c as any, key, locale);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -45,19 +58,19 @@ export function Contact({ content }: { content?: ContactContent | null }) {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success('Message envoyé !', {
-          description: 'Nous vous répondrons dans les plus brefs délais.',
+        toast.success(t.contact.successTitle, {
+          description: t.contact.successDesc,
         });
         setFormData({ name: '', email: '', subject: '', message: '' });
       } else {
-        toast.error('Erreur', {
-          description: data.error || 'Une erreur est survenue. Veuillez réessayer.',
+        toast.error(t.contact.errorTitle, {
+          description: data.error || t.contact.errorDesc,
         });
       }
     } catch (error) {
       console.error('Erreur lors de l\'envoi:', error);
-      toast.error('Erreur', {
-        description: 'Impossible d\'envoyer le message. Veuillez vérifier votre connexion.',
+      toast.error(t.contact.errorTitle, {
+        description: t.contact.connectionError,
       });
     } finally {
       setIsSubmitting(false);
@@ -80,12 +93,12 @@ export function Contact({ content }: { content?: ContactContent | null }) {
               className="text-4xl sm:text-5xl md:text-6xl mb-5 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              {c.title ?? 'Contact'}
+              {p('title') || 'Contact'}
             </h2>
             <p
               className="text-sm sm:text-lg text-muted-foreground"
             >
-              {c.subtitle ?? 'Nous sommes à votre écoute'}
+              {p('subtitle') || 'Nous sommes à votre écoute'}
             </p>
           </div>
         </div>
@@ -99,7 +112,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
               <form onSubmit={handleSubmit} className="bg-secondary p-5 sm:p-8 rounded-lg border border-primary/30 flex flex-col gap-4 sm:gap-6 h-full">
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-foreground text-sm sm:text-base">
-                    Nom complet
+                    {t.contact.name}
                   </Label>
                   <Input
                     id="name"
@@ -108,13 +121,13 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="bg-background/30 border-primary/30 text-sm sm:text-base"
-                    placeholder="Jean Dupont"
+                    placeholder={t.contact.namePlaceholder}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-foreground text-sm sm:text-base">
-                    Email
+                    {t.contact.email}
                   </Label>
                   <Input
                     id="email"
@@ -123,13 +136,13 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="bg-background/30 border-primary/30 text-sm sm:text-base"
-                    placeholder="jean.dupont@example.com"
+                    placeholder={t.contact.emailPlaceholder}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="subject" className="text-foreground text-sm sm:text-base">
-                    Sujet
+                    {t.contact.subject}
                   </Label>
                   <Input
                     id="subject"
@@ -138,13 +151,13 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     className="bg-background/30 border-primary/30 text-sm sm:text-base"
-                    placeholder="Demande d'information"
+                    placeholder={t.contact.subjectPlaceholder}
                   />
                 </div>
 
                 <div className="space-y-2 flex flex-col flex-1">
                   <Label htmlFor="message" className="text-foreground text-sm sm:text-base">
-                    Message
+                    {t.contact.message}
                   </Label>
                   <textarea
                     id="message"
@@ -152,7 +165,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="w-full flex-1 bg-background/30 border border-primary/30 text-sm sm:text-base rounded-md p-3 min-h-[120px] sm:min-h-[150px] placeholder:text-muted-foreground focus:border-primary focus:bg-background/50 focus:outline-none transition-colors duration-300"
-                    placeholder="Votre message..."
+                    placeholder={t.contact.messagePlaceholder}
                   />
                 </div>
 
@@ -161,7 +174,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                   disabled={isSubmitting}
                   className="w-full bg-primary hover:bg-primary/90 text-color font-light text-md py-4 sm:py-6 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? 'Envoi en cours...' : 'Envoyer le message'}
+                  {isSubmitting ? t.contact.sending : t.contact.send}
                 </Button>
               </form>
             </div>
@@ -177,7 +190,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     className="text-base sm:text-lg text-primary"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                    Téléphone
+                  {t.contact.phoneLabel}
                   </h3>
                 </div>
                 <p className="text-foreground text-sm sm:text-base">
@@ -195,7 +208,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     className="text-base sm:text-lg text-primary"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                    Email
+                    {t.contact.mailLabel}
                   </h3>
                 </div>
                 <p className="text-foreground text-sm sm:text-base">
@@ -213,7 +226,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     className="text-base sm:text-lg text-primary"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                    Adresse
+                  {t.contact.addressLabel}
                   </h3>
                 </div>
                 <p
@@ -232,14 +245,14 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                     className="text-base sm:text-lg text-primary"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                    Horaires
+                  {t.contact.hoursLabel}
                   </h3>
                 </div>
                 <div
                   className="text-foreground text-sm sm:text-base space-y-1"
                 >
-                  <p>{c.hoursLine1 ?? 'Mardi - Samedi : 12h00 - 14h30, 19h00 - 22h30'}</p>
-                  <p>{c.hoursLine2 ?? 'Dimanche - Lundi : Fermé'}</p>
+                  <p>{p('hoursLine1') || 'Mardi - Samedi : 12h00 - 14h30, 19h00 - 22h30'}</p>
+                  <p>{p('hoursLine2') || 'Dimanche - Lundi : Fermé'}</p>
                 </div>
               </div>
 
@@ -249,7 +262,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                 className="col-span-2 w-full bg-secondary hover:bg-muted text-foreground border border-primary/30 py-4 sm:py-6 transition-all duration-300 flex items-center justify-center gap-2"
               >
                 <MapPin size={20} />
-                Voir sur Google Maps
+                {t.contact.maps}
               </Button>
             </div>
           </div>

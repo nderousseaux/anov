@@ -4,14 +4,18 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { ChevronDown } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+import { pickField } from '@/lib/langs';
 
 interface HeroProps {
-  subtitle?: string;
-  image?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  content?: Record<string, any> | null;
 }
 
-export function Hero({ subtitle = 'Où chaque plat raconte une histoire, où chaque saveur éveille les sens', image }: HeroProps) {
-  const heroImageUrl = image ?? '/assets/hero.jpg';
+export function Hero({ content }: HeroProps) {
+  const { locale, t } = useLanguage();
+  const subtitle = content ? pickField(content, 'subtitle', locale) : t.hero.reserve;
+  const heroImageUrl = content?.image ?? '/assets/hero.jpg';
   const [isArrowVisible, setIsArrowVisible] = useState(true);
 
   useEffect(() => {
@@ -62,7 +66,7 @@ export function Hero({ subtitle = 'Où chaque plat raconte une histoire, où cha
           className="text-base sm:text-xl md:text-2xl mb-12 text-foreground max-w-2xl mx-auto italic leading-relaxed tracking-wide"
           style={{ fontFamily: 'var(--font-display)' }}
         >
-          {subtitle}
+          {subtitle || 'Où chaque plat raconte une histoire, où chaque saveur éveille les sens'}
         </p>
         {/* <Link href="/reservation">
           <Button

@@ -1,11 +1,11 @@
 import { DocumentRenderer, type DocumentRendererProps } from '@keystatic/core/renderer';
-import type { ReactNode } from 'react';
+import type { ElementType, ReactNode } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderers: DocumentRendererProps['renderers'] = {
   block: {
     heading: ({ level, children }) => {
-      const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+      const Tag = `h${level}` as ElementType;
       const classes: Record<number, string> = {
         1: 'text-2xl md:text-3xl text-primary mt-12 mb-4',
         2: 'text-xl md:text-2xl text-primary mt-10 mb-3',

@@ -79,22 +79,22 @@ export function History({ content }: { content?: Record<string, any> | null }) {
                 className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                {p('visionTitle') || 'Une Vision, Une Passion'}
+                {c.visionTitle ?? 'Une Vision, Une Passion'}
               </h3>
               <p
                 className="text-base sm:text-xl text-foreground mb-6 leading-relaxed"
               >
-                {p('visionText1')} 
+                {c.visionText1 ?? ''}
               </p>
               <p
                 className="text-sm sm:text-lg text-muted-foreground leading-relaxed mb-6"
               >
-                {p('visionText2')}
+                {c.visionText2 ?? ''}
               </p>
               <p
                 className="text-sm sm:text-lg text-muted-foreground leading-relaxed"
               >
-                {p('visionText3')}
+                {c.visionText3 ?? ''}
               </p>
             </div>
             <div className="group overflow-hidden rounded-lg border-2 border-primary/30 shadow-2xl hover:border-primary transition-all duration-300">
@@ -137,17 +137,17 @@ export function History({ content }: { content?: Record<string, any> | null }) {
               className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              {p('productsTitle') || "L'Excellence des Produits"}
+              {c.productsTitle ?? "L'Excellence des Produits"}
             </h3>
             <p
               className="text-base sm:text-xl text-foreground mb-5 leading-relaxed"
             >
-              {p('productsText1')}
+              {c.productsText1 ?? ''}
             </p>
             <p
               className="text-sm sm:text-lg text-muted-foreground leading-relaxed"
             >
-              {p('productsText2')}
+              {c.productsText2 ?? ''}
             </p>
           </div>
         </div>
@@ -170,22 +170,22 @@ export function History({ content }: { content?: Record<string, any> | null }) {
                 className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                {p('teamTitle') || "Une Équipe d'Exception"}
+                {c.teamTitle ?? "Une Équipe d'Exception"}
               </h3>
               <p
                 className="text-base sm:text-xl text-foreground mb-6 leading-relaxed"
               >
-                {p('teamText1')}
+                {c.teamText1 ?? ''}
               </p>
               <p
                 className="text-sm sm:text-lg text-muted-foreground mb-6 leading-relaxed"
               >
-                {p('teamText2')}
+                {c.teamText2 ?? ''}
               </p>
               <p
                 className="text-sm sm:text-lg text-muted-foreground leading-relaxed"
               >
-                {p('teamText3')}
+                {c.teamText3 ?? ''}
               </p>
             </div>
           </div>
@@ -197,22 +197,22 @@ export function History({ content }: { content?: Record<string, any> | null }) {
                 className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                {p('wineTitle') || "Une Cave d'Exception"}
+                {c.wineTitle ?? "Une Cave d'Exception"}
               </h3>
               <p
                 className="text-base sm:text-xl text-foreground mb-6 leading-relaxed"
               >
-                {p('wineText1')}
+                {c.wineText1 ?? ''}
               </p>
               <p
                 className="text-sm sm:text-lg text-muted-foreground mb-6 leading-relaxed"
               >
-                {p('wineText2')}
+                {c.wineText2 ?? ''}
               </p>
               <p
                 className="text-sm sm:text-lg text-muted-foreground leading-relaxed"
               >
-                {p('wineText3')}
+                {c.wineText3 ?? ''}
               </p>
             </div>
             <div className="group overflow-hidden rounded-lg border-2 border-primary/30 shadow-2xl hover:border-primary transition-all duration-300">
@@ -246,12 +246,12 @@ export function History({ content }: { content?: Record<string, any> | null }) {
               className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              {p('gestureTitle') || 'La Maîtrise du Geste'}
+              {c.gestureTitle ?? 'La Maîtrise du Geste'}
             </h3>
             <p
               className="text-base sm:text-xl text-foreground leading-relaxed"
             >
-              {p('gestureText')}
+              {c.gestureText ?? ''}
             </p>
           </div>
         </div>
@@ -264,17 +264,17 @@ export function History({ content }: { content?: Record<string, any> | null }) {
             className="text-4xl sm:text-5xl md:text-6xl mb-8 text-primary"
             style={{ fontFamily: 'var(--font-display)' }}
           >
-            {p('engagementTitle') || 'Notre Engagement'}
+            {c.engagementTitle ?? 'Notre Engagement'}
           </h3>
           <p
             className="text-base sm:text-xl text-foreground mb-6 leading-relaxed"
           >
-            {p('engagementText1')}
+            {c.engagementText1 ?? ''}
           </p>
           <p
             className="text-sm sm:text-lg text-muted-foreground leading-relaxed"
           >
-            {p('engagementText2')}
+            {c.engagementText2 ?? ''}
           </p>
         </div>
       </div>

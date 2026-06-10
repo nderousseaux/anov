@@ -80,7 +80,7 @@ const DishCard = ({ name, description, price, outline, allergens, image }: Dish 
   useEffect(() => {
     if (visible) {
       const handleScroll = () => setVisible(false);
-      
+
       window.addEventListener('click', handleClickOutside);
       window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
       return () => {

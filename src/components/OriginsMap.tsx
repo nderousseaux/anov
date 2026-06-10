@@ -38,6 +38,7 @@ interface HoveredPoint {
 export function OriginsMap({ content }: OriginsMapProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const rayMapRef = useRef<Map<string, d3.Selection<SVGLineElement, unknown, null, undefined>>>(new Map());
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [hoveredPoint, setHoveredPoint] = useState<HoveredPoint | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
@@ -59,24 +60,17 @@ export function OriginsMap({ content }: OriginsMapProps) {
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!hoveredPoint) return;
+    
+    // Only follow mouse on desktop
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return;
+    }
 
     const xOffset = 16;
     const yOffset = 16;
-    const tooltipWidth = 256;
-    const tooltipHeight = 320;
 
-    let x = e.clientX + xOffset;
-    let y = e.clientY + yOffset;
-
-    if (typeof window !== 'undefined') {
-      const isMobile = window.innerWidth < 768;
-      if (isMobile) {
-        x = e.clientX - tooltipWidth / 2;
-        y = e.clientY - tooltipHeight / 2;
-        x = Math.max(16, Math.min(x, window.innerWidth - tooltipWidth - 16));
-        y = Math.max(16, Math.min(y, window.innerHeight - tooltipHeight - 16));
-      }
-    }
+    const x = e.clientX + xOffset;
+    const y = e.clientY + yOffset;
 
     setTooltipPos({ x, y });
   }, [hoveredPoint]);
@@ -89,10 +83,20 @@ export function OriginsMap({ content }: OriginsMapProps) {
         // Don't close if clicking on a map point or the tooltip itself
         if (!target.closest('[data-origins-map]') && !target.closest('[data-origins-tooltip]')) {
           setHoveredPoint(null);
+          // Reset all rays
+          rayMapRef.current.forEach(ray => {
+            ray.attr('opacity', 0.5).attr('stroke-width', 0.5);
+          });
         }
       };
 
-      const handleScroll = () => setHoveredPoint(null);
+      const handleScroll = () => {
+        setHoveredPoint(null);
+        // Reset all rays when scrolling
+        rayMapRef.current.forEach(ray => {
+          ray.attr('opacity', 0.5).attr('stroke-width', 0.5);
+        });
+      };
 
       // Small delay to avoid immediate close on open
       const timeoutId = setTimeout(() => {
@@ -147,7 +151,7 @@ export function OriginsMap({ content }: OriginsMapProps) {
 
     // Create radial gradient mask for fade effect (only on desktop for performance)
     const defs = svg.append('defs');
-    
+
     let maskId = '';
     if (!isMobile) {
       const radialGradient = defs.append('radialGradient')
@@ -173,7 +177,7 @@ export function OriginsMap({ content }: OriginsMapProps) {
         .attr('width', width)
         .attr('height', height)
         .attr('fill', 'url(#fade-gradient)');
-      
+
       maskId = 'url(#fade-mask)';
     }
 
@@ -202,8 +206,8 @@ export function OriginsMap({ content }: OriginsMapProps) {
       // Besançon coordinates for rays
       const besanconCoords = projection([besanconLon, besanconLat]);
 
-      // Store ray references for hover effect
-      const rayMap = new Map<string, d3.Selection<SVGLineElement, unknown, null, undefined>>();
+      // Clear and reset ray map
+      rayMapRef.current.clear();
 
       // Add custom points from Keystatic
       const points = mapData.points ?? [];
@@ -225,7 +229,7 @@ export function OriginsMap({ content }: OriginsMapProps) {
               .attr('stroke-dasharray', '3,3')
               .attr('class', `ray-${pointId}`);
 
-            rayMap.set(pointId, ray);
+            rayMapRef.current.set(pointId, ray);
 
             // Small outer glow
             gMasked.append('circle')
@@ -263,7 +267,7 @@ export function OriginsMap({ content }: OriginsMapProps) {
               .attr('fill', 'transparent')
               .attr('cursor', 'pointer')
               .attr('data-origins-map', '')
-              .on('mouseenter', function() {
+              .on('mouseenter', function () {
                 // Only use mouseenter on desktop
                 if (typeof window !== 'undefined' && window.innerWidth >= 768) {
                   ray.attr('opacity', 0.8).attr('stroke-width', 1.5);
@@ -285,24 +289,59 @@ export function OriginsMap({ content }: OriginsMapProps) {
                   }
                 }
               })
-              .on('mouseleave', function() {
+              .on('mouseleave', function () {
                 // Only use mouseleave on desktop
                 if (typeof window !== 'undefined' && window.innerWidth >= 768) {
-                  ray.attr('opacity', 0.2).attr('stroke-width', 0.5);
+                  ray.attr('opacity', 0.5).attr('stroke-width', 0.5);
                   setHoveredPoint(null);
                 }
               })
-              .on('click', function(event) {
+              .on('click', function (event) {
                 event.stopPropagation();
                 const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-                
+
                 if (isMobile) {
-                  // On mobile: toggle tooltip
+                  // On mobile: reset all rays first, then highlight current
+                  rayMapRef.current.forEach(r => {
+                    r.attr('opacity', 0.5).attr('stroke-width', 0.5);
+                  });
                   ray.attr('opacity', 0.8).attr('stroke-width', 1.5);
+
                   const pointTitle = pickField(point as Record<string, unknown>, 'title', locale);
                   const pointDescription = pickField(point as Record<string, unknown>, 'description', locale);
-                  
-                  if (point.image || pointTitle || pointDescription || point.url) {
+                  const hasContent = !!(point.image || pointTitle || pointDescription || point.url);
+
+                  if (hasContent) {
+                    // Position tooltip near the clicked point on mobile
+                    const tooltipWidth = 256;
+                    const tooltipHeight = 320;
+                    const rect = (event.target as SVGElement).getBoundingClientRect();
+                    const clickX = rect.left + rect.width / 2;
+                    const clickY = rect.top + rect.height / 2;
+                    
+                    // Position below and to the right of the click, but keep it on screen
+                    let x = clickX + 16;
+                    let y = clickY + 16;
+                    
+                    // Adjust if too far right
+                    if (x + tooltipWidth > window.innerWidth - 16) {
+                      x = window.innerWidth - tooltipWidth - 16;
+                    }
+                    // Adjust if too far down
+                    if (y + tooltipHeight > window.innerHeight - 16) {
+                      y = clickY - tooltipHeight - 16;
+                    }
+                    // Adjust if too far left
+                    if (x < 16) {
+                      x = 16;
+                    }
+                    // Adjust if too far up
+                    if (y < 16) {
+                      y = 16;
+                    }
+                    
+                    setTooltipPos({ x, y });
+
                     setHoveredPoint({
                       id: pointId,
                       label: point.label!,
@@ -313,6 +352,9 @@ export function OriginsMap({ content }: OriginsMapProps) {
                       x: coords[0],
                       y: coords[1],
                     });
+                  } else {
+                    // No content: close any existing tooltip
+                    setHoveredPoint(null);
                   }
                 } else if (point.url) {
                   // On desktop: open link directly
@@ -364,38 +406,106 @@ export function OriginsMap({ content }: OriginsMapProps) {
           .attr('fill', 'transparent')
           .attr('cursor', 'pointer')
           .attr('data-origins-map', '')
-          .on('mouseenter', () => {
-            // Highlight all rays
-            rayMap.forEach(ray => {
-              ray.attr('opacity', 0.8).attr('stroke-width', 1.5);
-            });
-            // Get localized title and description for Besançon
-            const besanconTitle = p('besanconTitle');
-            const besanconDescription = p('besanconDescription');
-            // Only show tooltip if there's content to display
-            const hasContent = mapData.besanconImage || besanconTitle || besanconDescription || besanconUrl;
-            if (hasContent) {
-              setHoveredPoint({
-                id: besanconId,
-                label: besanconLabel,
-                image: mapData.besanconImage,
-                title: besanconTitle,
-                description: besanconDescription,
-                url: besanconUrl,
-                x: besanconCoords[0],
-                y: besanconCoords[1],
+          .on('mouseenter', function () {
+            // Only use mouseenter on desktop
+            if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+              // Highlight all rays
+              rayMapRef.current.forEach(ray => {
+                ray.attr('opacity', 0.8).attr('stroke-width', 1.5);
               });
+              // Get localized title and description for Besançon
+              const besanconTitle = p('besanconTitle');
+              const besanconDescription = p('besanconDescription');
+              // Only show tooltip if there's content to display
+              const hasContent = mapData.besanconImage || besanconTitle || besanconDescription || besanconUrl;
+              if (hasContent) {
+                setHoveredPoint({
+                  id: besanconId,
+                  label: besanconLabel,
+                  image: mapData.besanconImage,
+                  title: besanconTitle,
+                  description: besanconDescription,
+                  url: besanconUrl,
+                  x: besanconCoords[0],
+                  y: besanconCoords[1],
+                });
+              }
             }
           })
-          .on('mouseleave', () => {
-            // Reset all rays
-            rayMap.forEach(ray => {
-              ray.attr('opacity', 0.2).attr('stroke-width', 0.5);
-            });
-            setHoveredPoint(null);
+          .on('mouseleave', function () {
+            // Only use mouseleave on desktop
+            if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+              // Reset all rays
+              rayMapRef.current.forEach(ray => {
+                ray.attr('opacity', 0.5).attr('stroke-width', 0.5);
+              });
+              setHoveredPoint(null);
+            }
           })
-          .on('click', () => {
-            if (besanconUrl) {
+          .on('click', function (event) {
+            event.stopPropagation();
+            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+            if (isMobile) {
+              // On mobile: reset all rays first, then highlight all
+              rayMapRef.current.forEach(ray => {
+                ray.attr('opacity', 0.5).attr('stroke-width', 0.5);
+              });
+              rayMapRef.current.forEach(ray => {
+                ray.attr('opacity', 0.8).attr('stroke-width', 1.5);
+              });
+
+              const besanconTitle = p('besanconTitle');
+              const besanconDescription = p('besanconDescription');
+              const hasContent = !!(mapData.besanconImage || besanconTitle || besanconDescription || besanconUrl);
+
+              if (hasContent) {
+                // Position tooltip near the clicked point on mobile
+                const tooltipWidth = 256;
+                const tooltipHeight = 320;
+                const rect = (event.target as SVGElement).getBoundingClientRect();
+                const clickX = rect.left + rect.width / 2;
+                const clickY = rect.top + rect.height / 2;
+                
+                // Position below and to the right of the click, but keep it on screen
+                let x = clickX + 16;
+                let y = clickY + 16;
+                
+                // Adjust if too far right
+                if (x + tooltipWidth > window.innerWidth - 16) {
+                  x = window.innerWidth - tooltipWidth - 16;
+                }
+                // Adjust if too far down
+                if (y + tooltipHeight > window.innerHeight - 16) {
+                  y = clickY - tooltipHeight - 16;
+                }
+                // Adjust if too far left
+                if (x < 16) {
+                  x = 16;
+                }
+                // Adjust if too far up
+                if (y < 16) {
+                  y = 16;
+                }
+                
+                setTooltipPos({ x, y });
+
+                setHoveredPoint({
+                  id: besanconId,
+                  label: besanconLabel,
+                  image: mapData.besanconImage,
+                  title: besanconTitle,
+                  description: besanconDescription,
+                  url: besanconUrl,
+                  x: besanconCoords[0],
+                  y: besanconCoords[1],
+                });
+              } else {
+                // No content: close any existing tooltip
+                setHoveredPoint(null);
+              }
+            } else if (besanconUrl) {
+              // On desktop: open link directly
               window.open(besanconUrl, '_blank', 'noopener,noreferrer');
             }
           });
@@ -436,7 +546,7 @@ export function OriginsMap({ content }: OriginsMapProps) {
             width={dimensions.width}
             height={dimensions.height}
             className="mx-auto"
-            style={{ 
+            style={{
               maxWidth: '100%',
               willChange: 'auto',
               transform: 'translateZ(0)',

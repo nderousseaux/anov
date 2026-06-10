@@ -60,7 +60,7 @@ export function OriginsMap({ content }: OriginsMapProps) {
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!hoveredPoint) return;
-    
+
     // Only follow mouse on desktop
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
       return;
@@ -318,11 +318,11 @@ export function OriginsMap({ content }: OriginsMapProps) {
                     const rect = (event.target as SVGElement).getBoundingClientRect();
                     const clickX = rect.left + rect.width / 2;
                     const clickY = rect.top + rect.height / 2;
-                    
+
                     // Position below and to the right of the click, but keep it on screen
                     let x = clickX + 16;
                     let y = clickY + 16;
-                    
+
                     // Adjust if too far right
                     if (x + tooltipWidth > window.innerWidth - 16) {
                       x = window.innerWidth - tooltipWidth - 16;
@@ -339,7 +339,7 @@ export function OriginsMap({ content }: OriginsMapProps) {
                     if (y < 16) {
                       y = 16;
                     }
-                    
+
                     setTooltipPos({ x, y });
 
                     setHoveredPoint({
@@ -466,11 +466,11 @@ export function OriginsMap({ content }: OriginsMapProps) {
                 const rect = (event.target as SVGElement).getBoundingClientRect();
                 const clickX = rect.left + rect.width / 2;
                 const clickY = rect.top + rect.height / 2;
-                
+
                 // Position below and to the right of the click, but keep it on screen
                 let x = clickX + 16;
                 let y = clickY + 16;
-                
+
                 // Adjust if too far right
                 if (x + tooltipWidth > window.innerWidth - 16) {
                   x = window.innerWidth - tooltipWidth - 16;
@@ -487,7 +487,7 @@ export function OriginsMap({ content }: OriginsMapProps) {
                 if (y < 16) {
                   y = 16;
                 }
-                
+
                 setTooltipPos({ x, y });
 
                 setHoveredPoint({

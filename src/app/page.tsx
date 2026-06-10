@@ -7,9 +7,10 @@ import config from '../../keystatic.config';
 
 export default async function Page() {
   const reader = createReader(process.cwd(), config);
-  const [heroContent, histoireContent, galerieContent, contactContent] = await Promise.all([
+  const [heroContent, histoireContent, originesContent, galerieContent, contactContent] = await Promise.all([
     reader.singletons.hero.read(),
     reader.singletons.histoire.read(),
+    reader.singletons.origines.read(),
     reader.singletons.galerie.read(),
     reader.singletons.contact.read(),
   ]);
@@ -28,7 +29,7 @@ export default async function Page() {
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <Hero content={heroContent as any} />
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      <History content={histoireContent as any} />
+      <History content={histoireContent as any} originesContent={originesContent as any} />
       <Gallery images={galerieData?.photos} />
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <Contact content={contactContent as any} />

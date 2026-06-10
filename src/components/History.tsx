@@ -2,9 +2,10 @@
 
 import { useLanguage } from '@/context/LanguageContext';
 import { pickField } from '@/lib/langs';
+import { OriginsMap } from './OriginsMap';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function History({ content }: { content?: Record<string, any> | null }) {
+export function History({ content, originesContent }: { content?: Record<string, any> | null; originesContent?: Record<string, any> | null }) {
   const { locale } = useLanguage();
   const c = content ?? {};
   const p = (key: string) => pickField(c, key, locale);
@@ -116,6 +117,10 @@ export function History({ content }: { content?: Record<string, any> | null }) {
           </div>
         </div>
       </div>
+
+      {/* Carte des Origines */}
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <OriginsMap content={originesContent as any} />
 
       {/* Full Width Image - Ingredients */}
       <div className="relative">

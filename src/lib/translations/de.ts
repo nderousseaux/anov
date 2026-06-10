@@ -66,8 +66,9 @@ const de = {
   },
   menu: {
     allergens: 'Allergene',
-  },
-  legal: {
+  }, origins: {
+    clickToLearnMore: 'Klicken Sie, um mehr zu erfahren',
+  }, legal: {
     frenchOnly: '(Dokument nur auf Französisch verfügbar)',
   },
 } as const;

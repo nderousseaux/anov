@@ -1,0 +1,55 @@
+title_fr: Carte des Origines
+title_en: Origins Map
+title_de: Herkunftskarte
+description_fr: >-
+  Située au cœur de la Franche-Comté, notre cuisine puise son inspiration dans
+  les richesses du terroir local et des régions voisines.
+description_en: >-
+  Located in the heart of Franche-Comté, our cuisine draws its inspiration from
+  the riches of the local terroir and neighboring regions.
+description_de: >-
+  Im Herzen der Franche-Comté gelegen, schöpft unsere Küche ihre Inspiration
+  aus den Reichtümern des lokalen Terroirs und der Nachbarregionen.
+subtitle_fr: >-
+  De la Suisse à la Bourgogne, en passant par le Jura, nous sélectionnons les
+  meilleurs produits pour vous offrir une expérience gastronomique unique.
+subtitle_en: >-
+  From Switzerland to Burgundy, via the Jura, we select the finest products to
+  offer you a unique gastronomic experience.
+subtitle_de: >-
+  Von der Schweiz über Burgund bis zum Jura wählen wir die besten Produkte
+  aus, um Ihnen ein einzigartiges gastronomisches Erlebnis zu bieten.
+besanconLabel: Besançon
+besanconImage: https://images.unsplash.com/photo-1534482421-64566f976cfa?w=600&q=80
+besanconTitle_fr: Notre Maison
+besanconTitle_en: Our Home
+besanconTitle_de: Unser Haus
+besanconDescription_fr: >-
+  Au cœur de Besançon, notre restaurant célèbre les saveurs de la Franche-Comté
+  et des régions voisines. Découvrez notre passion pour les produits locaux.
+besanconDescription_en: >-
+  In the heart of Besançon, our restaurant celebrates the flavors of Franche-Comté
+  and neighboring regions. Discover our passion for local products.
+besanconDescription_de: >-
+  Im Herzen von Besançon feiert unser Restaurant die Aromen der Franche-Comté
+  und der Nachbarregionen. Entdecken Sie unsere Leidenschaft für lokale Produkte.
+points:
+  - label: Lyon
+    latitude: 45.764
+    longitude: 4.8357
+    title_fr: Lyon
+    title_en: Lyon
+    title_de: Lyon
+    description_fr: La capitale de la gastronomie française nous inspire pour nos créations culinaires.
+    description_en: The capital of French gastronomy inspires our culinary creations.
+    description_de: Die Hauptstadt der französischen Gastronomie inspiriert unsere kulinarischen Kreationen.
+    url: https://www.lyon-france.com
+  - label: Frankfurt
+    latitude: 50.1109
+    longitude: 8.6821
+  - label: Brest
+    latitude: 48.3904
+    longitude: -4.4861
+  - label: Venise
+    latitude: 45.4408
+    longitude: 12.3155

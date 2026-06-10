@@ -57,21 +57,6 @@ Le contenu du site se gère depuis le CMS. Voici la correspondance entre les sec
 
 ![Capture d'écran : interface d'édition avec boutons Save et Commit](public/assets/docs/cms-edit.png)
 
-### Gestion des origines
-
-La section **Nos Origines** affiche une carte géographique avec des points placés sur les villes de fournisseurs (Besançon, Brest, Lyon, etc.). Le contenu est géré depuis `/admin/cms` → section **Origines** :
-
-- **Points** : liste des fournisseurs avec coordonnées GPS (latitude/longitude)
-- **Besançon** : centre de la carte, point d'origine des rayons
-
-Chaque point peut avoir :
-- Titre (fr/en/de)
-- Description (fr/en/de)
-- Image
-- Lien "En savoir plus"
-
-Les rayons partent de chaque ville vers Besançon pour symboliser le lien entre les fournisseurs et le restaurant.
-
 ### Ajouter des éléments
 
 Pour ajouter une photo dans la galerie ou un plat dans le menu :

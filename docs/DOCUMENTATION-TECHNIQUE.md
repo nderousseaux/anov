@@ -235,8 +235,22 @@ Les variables d'environnement suivantes doivent être configurées :
 | `Gallery` | Galerie photos avec lightbox |
 | `Contact` | Section contact avec formulaire |
 | `MenuContent` | Affichage de la carte en onglets |
-| `OriginsMap` | Carte géographique interactive avec rayons (D3.js) |
+| `OriginsMap` | Carte interactive des origines avec D3.js |
 | `SplashScreen` | Animation de chargement initial |
+
+### OriginsMap — Carte des origines
+
+**Librairie :** `d3` (7.9.0) pour projection géographique et rendu SVG
+
+**Données :** `/public/europe.geojson` (frontières Europe) + `content/origines.yaml` (points d'origine)
+
+**Mécanisme :**
+- Projection Mercator centrée sur Besançon (47.2378°N, 6.0244°E)
+- Lignes radiales dorées reliant chaque ville à Besançon
+- Masque SVG pour fondu vers les bords (desktop)
+- Interactivité : hover (desktop) / clic (mobile) pour tooltips
+
+**Points :** Chaque point a `label`, `latitude`, `longitude`, `title_*`, `description_*`, `image`, `url`
 
 ---
 
@@ -299,68 +313,3 @@ Les variables d'environnement suivantes doivent être configurées :
 - **Keystatic Reader :** `createReader(process.cwd(), config)` pour lire les YAML
 - **Prisma adapter :** Détection auto local/prod (PostgreSQL direct ou Neon serverless)
 - **TypeScript strict :** `strict: true`, `noEmit: true`
-
----
-
-## 10. Système de carte géographique (OriginsMap)
-
-### 10.1 Architecture
-
-La carte des origines utilise **D3.js** pour afficher une carte de l'Europe avec des rayons partant des villes fournisseurs vers Besançon.
-
-### 10.2 Données
-
-Le contenu est géré via Keystatic dans `content/origines.yaml` :
-
-```yaml
-title_fr: "Nos Origines"
-title_en: "Our Origins"
-points:
-  - label: "Brest"
-    latitude: 48.39
-    longitude: -4.49
-    title_fr: "Producteurs bretons"
-    title_en: "Breton producers"
-    description_fr: "Producteurs locaux de la région de Brest"
-    description_en: "Local producers from the Brest region"
-    url: "https://..."
-    image: "/assets/origins/brest.jpg"
-  - label: "Lyon"
-    latitude: 45.76
-    longitude: 4.83
-    title_fr: "Producteurs lyonnais"
-    # ...
-besanconLabel: "Besançon"
-besanconTitle_fr: "Notre point de chute"
-besanconDescription_fr: "Située au cœur de la Franche-Comté..."
-besanconUrl: "https://..."
-besanconImage: "/assets/origins/besancon.jpg"
-```
-
-### 10.3 Géométrie
-
-- **Projection :** Mercator centrée sur Besançon
-- **Données spatiales :** GeoJSON Europe (`/europe.geojson`)
-- **Coordinates :** WGS84 (latitude/longitude) → Mercator via `d3.geoMercator()`
-
-### 10.4 Comportement
-
-- **Desktop :** Tooltip au hover, clic ouvre lien direct
-- **Mobile :** 
-  - Clic sur un point affiche le tooltip centré
-  - Clic sur le tooltip ouvre le lien
-  - Scroll ou click externe ferme le tooltip
-  - Rayons passés en surbrillance (opacity 0.8)
-
-### 10.5 Performance
-
-- Masque SVG désactivé sur mobile (moins coûteux)
-- Utilisation de `useMemo` pour stabiliser les données
-- Ref `rayMapRef` pour persister les tracés entre renders
-- Transitions CSS optimisées pour mobile
-
-### 10.6 Dépendances
-
-- `d3` : géométrie, projections, SVG manipulation
-- `d3-geo` : projections géographiques
-- `d3-selection` : sélection et manipulation d'éléments SVG

@@ -3,6 +3,7 @@ const en = {
     ourStory: 'Our Story',
     gallery: 'Gallery',
     theMenu: 'Menu',
+    boutique: 'Gift Cards',
     reserve: 'Reserve',
   },
   footer: {
@@ -68,7 +69,28 @@ const en = {
     allergens: 'Allergens',
   }, origins: {
     clickToLearnMore: 'Click to learn more',
-  }, legal: {
+  },
+  boutique: {
+    title: 'Gift Cards',
+    subtitle: 'Give an unforgettable gastronomic experience',
+    giftCards: {
+      title: 'Gift Cards',
+      labelAmount: 'Amount',
+      placeholderAmount: '100€',
+      labelRecipient: 'Recipient email',
+      placeholderRecipient: 'recipient@example.com',
+      labelMessage: 'Personal message',
+      placeholderMessage: 'Add a personalized message...',
+      submit: 'Buy now',
+      paymentInfo: 'Secure payment • Delivery by email',
+      amounts: ['€50', '€100', '€150', '€200', '€250', '€500'],
+    },
+    footer: {
+      secure: 'All purchases are secure',
+      valid: 'Vouchers and gift cards are valid for 12 months',
+    },
+  },
+  legal: {
     frenchOnly: '(Document available in French only)',
   },
 } as const;

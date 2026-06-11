@@ -3,6 +3,7 @@ const fr = {
     ourStory: 'Notre Histoire',
     gallery: 'Galerie',
     theMenu: 'La Carte',
+    boutique: 'Chèques Cadeaux',
     reserve: 'Réserver',
   },
   footer: {
@@ -19,6 +20,26 @@ const fr = {
   gallery: {
     title: 'Galerie',
     subtitle: "Découvrez l'univers de l'Anøv en images",
+  },
+  boutique: {
+    title: 'Chèques Cadeaux',
+    subtitle: 'Offrez une expérience gastronomique inoubliable',
+    giftCards: {
+      title: 'Chèques Cadeaux',
+      labelAmount: 'Montant',
+      placeholderAmount: '100€',
+      labelRecipient: 'Email du destinataire',
+      placeholderRecipient: 'destinataire@example.com',
+      labelMessage: 'Message personnel',
+      placeholderMessage: 'Ajoutez un message personnalisé...',
+      submit: 'Acheter maintenant',
+      paymentInfo: 'Paiement sécurisé • Livraison par email',
+      amounts: ['50€', '100€', '150€', '200€', '250€', '500€'],
+    },
+    footer: {
+      secure: 'Tous les achats sont sécurisés',
+      valid: 'Les bons et chèques cadeaux sont valables 12 mois',
+    },
   },
   contact: {
     name: 'Nom',

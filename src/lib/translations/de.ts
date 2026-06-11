@@ -68,7 +68,41 @@ const de = {
     allergens: 'Allergene',
   }, origins: {
     clickToLearnMore: 'Klicken Sie, um mehr zu erfahren',
-  }, legal: {
+  },
+  boutique: {
+    title: 'Shop',
+    subtitle: 'Geben Sie eine unvergessliche gastronomische Erfahrung',
+    giftCards: {
+      title: 'Gutscheine',
+      subtitle: 'Ein elegantes Geschenk für alle Anlässe',
+      labelAmount: 'Betrag',
+      placeholderAmount: '100€',
+      labelRecipient: 'E-Mail des Empfängers',
+      placeholderRecipient: 'empfänger@example.com',
+      labelMessage: 'Persönliche Nachricht',
+      placeholderMessage: 'Fügen Sie eine personalisierte Nachricht hinzu...',
+      submit: 'Jetzt kaufen',
+      paymentInfo: 'Sichere Zahlung • Lieferung per E-Mail',
+      amounts: ['50€', '100€', '150€', '200€', '250€', '500€'],
+    },
+    experiences: {
+      title: 'Erlebnisgutscheine',
+      subtitle: 'Einzigartige Momente zum Teilen',
+    },
+    giftBoxes: {
+      title: 'Geschenkkisten',
+      subtitle: 'Raffinierte Auswahl unserer besten Produkte',
+    },
+    events: {
+      title: 'Sonderveranstaltungen',
+      subtitle: 'Exklusive Erlebnisse das ganze Jahr über',
+    },
+    footer: {
+      secure: 'Alle Käufe sind sicher',
+      valid: 'Gutscheine und Gutschein sind 12 Monate gültig',
+    },
+  },
+  legal: {
     frenchOnly: '(Dokument nur auf Französisch verfügbar)',
   },
 } as const;

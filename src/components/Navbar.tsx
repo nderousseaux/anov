@@ -101,7 +101,7 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
     { type: 'section', label: t.nav.gallery, section: 'gallery' },
     { type: 'separator' },
     { type: 'link', label: t.nav.theMenu, href: '/menu' },
-    // { type: 'link', label: 'Boutique', href: '/boutique' },
+    { type: 'link', label: t.nav.boutique, href: '/cheques-cadeaux' },
     // { type: 'cta', label: t.nav.reserve, href: '/reservation' },
   ];
 

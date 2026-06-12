@@ -79,3 +79,33 @@ model DayOverride {
   maxCovers    Int? // null = utiliser les paramètres globaux
   openingSlots String? // null = utiliser les paramètres globaux
 }
+
+// ─── Chèques Cadeaux ──────────────────────────────────────────────────────────
+model GiftCard {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Informations du chèque cadeau
+  code            String  @unique // Code unique du chèque cadeau (ex: ANOV-XXXX-XXXX)
+  amount          Float // Montant en euros
+  recipientEmail  String // Email du destinataire
+  personalMessage String? // Message personnalisé
+
+  // Statut
+  status GiftCardStatus @default(PENDING_PAYMENT)
+
+  // Paiement Stripe
+  stripeSessionId String? @unique
+
+  // Validité
+  expiresAt DateTime // Date d'expiration (12 mois après création)
+  usedAt    DateTime? // Date d'utilisation (null si pas encore utilisé)
+}
+
+enum GiftCardStatus {
+  PENDING_PAYMENT // en attente de paiement
+  ACTIVE // actif et utilisable
+  USED // utilisé
+  EXPIRED // expiré
+}

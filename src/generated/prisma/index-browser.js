@@ -162,6 +162,20 @@ exports.Prisma.DayOverrideScalarFieldEnum = {
   openingSlots: 'openingSlots'
 };
 
+exports.Prisma.GiftCardScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  code: 'code',
+  amount: 'amount',
+  recipientEmail: 'recipientEmail',
+  personalMessage: 'personalMessage',
+  status: 'status',
+  stripeSessionId: 'stripeSessionId',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -183,11 +197,19 @@ exports.ReservationStatus = exports.$Enums.ReservationStatus = {
   COMPLETED: 'COMPLETED'
 };
 
+exports.GiftCardStatus = exports.$Enums.GiftCardStatus = {
+  PENDING_PAYMENT: 'PENDING_PAYMENT',
+  ACTIVE: 'ACTIVE',
+  USED: 'USED',
+  EXPIRED: 'EXPIRED'
+};
+
 exports.Prisma.ModelName = {
   Reservation: 'Reservation',
   Admin: 'Admin',
   RestaurantSettings: 'RestaurantSettings',
-  DayOverride: 'DayOverride'
+  DayOverride: 'DayOverride',
+  GiftCard: 'GiftCard'
 };
 
 /**

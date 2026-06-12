@@ -171,7 +171,7 @@ L'authentification utilise des tokens JWT avec la bibliothèque `jose` :
 
 Le système d'envoi d'emails utilise **nodemailer** avec un serveur SMTP personnalisé.
 
-### Fonctionnalités
+#### Fonctionnalités
 
 - **Formulaire de contact :**
   - Envoi d'un email de notification à l'adresse configurée (`CONTACT_EMAIL`)
@@ -180,6 +180,9 @@ Le système d'envoi d'emails utilise **nodemailer** avec un serveur SMTP personn
   - Email de confirmation de réservation
   - Email de rappel (J-1)
   - Email d'annulation
+- **Chèques cadeaux :**
+  - Email de notification au destinataire avec le code unique
+  - Instructions d'utilisation
 
 ### Configuration SMTP
 
@@ -274,6 +277,62 @@ Les variables d'environnement suivantes doivent être configurées :
 | Route | Méthode | Description |
 |---|---|---|
 | `/api/contact` | POST | Envoi d'un message de contact |
+
+### 6.4 Chèques Cadeaux
+
+| Route | Méthode | Description |
+|---|---|---|
+| `/api/gift-cards/checkout` | POST | Création d'une session de paiement Stripe |
+| `/api/stripe/webhook` | POST | Webhook Stripe (gestion réservations + chèques cadeaux) |
+
+#### `/api/gift-cards/checkout`
+
+**Payload :**
+```json
+{
+  "amount": "100",
+  "recipientEmail": "destinataire@example.com",
+  "personalMessage": "Bonne dégustation !"
+}
+```
+
+**Réponse :**
+```json
+{
+  "sessionId": "cs_test_...",
+  "url": "https://checkout.stripe.com/..."
+}
+```
+
+**Logique :**
+1. Génère un code unique (`ANOV-XXXX-XXXX`)
+2. Crée l'enregistrement `GiftCard` en base avec statut `PENDING_PAYMENT`
+3. Crée la session Stripe Checkout
+4. Retourne l'URL de paiement
+
+#### `/api/stripe/webhook`
+
+Gère deux types de paiements :
+
+- **Réservations** (metadata: `name`, `email`, `date`, `guests`)
+- **Chèques cadeaux** (metadata: `type: 'gift_card'`, `giftCardId`)
+
+**Webhook Events :**
+- `checkout.session.completed` : Confirme le paiement et active le chèque
+
+**Activation du chèque cadeau :**
+1. Récupère le chèque via `giftCardId`
+2. Met à jour le statut à `ACTIVE`
+3. Envoie l'email avec le code au destinataire
+4. Loggue l'activité
+
+### 6.5 Stripe
+
+| Variable | Description |
+|---|---|
+| `STRIPE_SECRET_KEY` | Clé API secrète |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Clé API publique |
+| `STRIPE_WEBHOOK_SECRET` | Secret de signature des webhooks |
 
 ---
 

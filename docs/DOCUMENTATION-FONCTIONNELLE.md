@@ -103,7 +103,38 @@ Vous accédez ensuite à votre boîte de réception IONOS, où vous retrouvez to
 
 ---
 
-## 7. Contact technique
+## 7. Chèques Cadeaux
+
+Le système de chèques cadeaux permet aux clients d'acheter des chèques cadeaux en ligne pour les offrir à leurs proches.
+
+### Fonctionnement
+
+1. Le client saisit le montant, l'email du destinataire et un message personnalisé (optionnel)
+2. Il est redirigé vers Stripe Checkout pour le paiement
+3. Une fois le paiement confirmé, un chèque cadeau est créé en base avec un code unique
+4. Un email est envoyé automatiquement au destinataire avec les instructions d'utilisation
+
+### Page de paiement
+
+Accessible via `/cheques-cadeaux`
+
+*[Capture d'écran : formulaire de création de chèque cadeau]*
+
+### Comment utiliser un chèque cadeau
+
+Le destinataire reçoit un email avec :
+- Le montant du chèque cadeau
+- Le code unique
+- Les instructions d'utilisation
+
+**À l'utilisation :**
+1. Réservez votre table sur notre site ou par téléphone
+2. Présentez le code au moment du paiement
+3. Le montant est déduit de votre addition
+
+> **Note :** Les chèques cadeaux expirent automatiquement après 12 mois.
+
+## 8. Contact technique
 
 Pour toute question ou modification qui dépasse le CMS (configuration, technique), contactez votre développeur.
 

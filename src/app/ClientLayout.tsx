@@ -20,7 +20,16 @@ function ClientLayoutInner({ children, footerContent }: { children: ReactNode; f
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/admin') || pathname.startsWith('/keystatic');
 
-  const [showSplash, setShowSplash] = useState(!isAdmin);
+  // Pages où le splash screen ne doit pas s'afficher
+  const noSplashPages = [
+    '/cheques-cadeaux/succes',
+    '/reservation/succes',
+    '/reservation/paiement',
+    '/reservation/cancel',
+  ];
+  const shouldShowSplash = !isAdmin && !noSplashPages.some(page => pathname.startsWith(page));
+
+  const [showSplash, setShowSplash] = useState(shouldShowSplash);
   const [isSplashFading, setIsSplashFading] = useState(false);
 
   useEffect(() => {

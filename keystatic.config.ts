@@ -400,5 +400,56 @@ export default config({
         footerValid_de: fields.text({ label: 'Footer Validité 🇩🇪' }),
       },
     }),
+    giftCardSuccess: singleton({
+      label: 'Chèques Cadeaux — Succès',
+      path: 'content/gift-card-success',
+      schema: {
+        title_fr: fields.text({ label: 'Titre 🇫🇷', defaultValue: 'Merci pour votre achat !' }),
+        title_en: fields.text({ label: 'Titre 🇬🇧', defaultValue: 'Thank you for your purchase!' }),
+        title_de: fields.text({ label: 'Titre 🇩🇪', defaultValue: 'Vielen Dank für Ihren Einkauf!' }),
+        confirmationText_fr: fields.text({ label: 'Texte de confirmation 🇫🇷', defaultValue: 'Votre paiement a été traité avec succès.' }),
+        confirmationText_en: fields.text({ label: 'Texte de confirmation 🇬🇧', defaultValue: 'Your payment has been processed successfully.' }),
+        confirmationText_de: fields.text({ label: 'Texte de confirmation 🇩🇪', defaultValue: 'Ihre Zahlung wurde erfolgreich verarbeitet.' }),
+        emailSentTitle_fr: fields.text({ label: 'Titre email envoyé 🇫🇷', defaultValue: 'Un email contenant le chèque cadeau a été envoyé au destinataire.' }),
+        emailSentTitle_en: fields.text({ label: 'Titre email envoyé 🇬🇧', defaultValue: 'An email containing the gift card has been sent to the recipient.' }),
+        emailSentTitle_de: fields.text({ label: 'Titre email envoyé 🇩🇪', defaultValue: 'Eine E-Mail mit dem Geschenkgutschein wurde an den Empfänger gesendet.' }),
+        emailSentDescription_fr: fields.text({
+          label: 'Description email 🇫🇷',
+          multiline: true,
+          defaultValue: 'Le destinataire recevra un code unique valable 12 mois pour profiter d\'une expérience gastronomique chez ANØV.'
+        }),
+        emailSentDescription_en: fields.text({
+          label: 'Description email 🇬🇧',
+          multiline: true,
+          defaultValue: 'The recipient will receive a unique code valid for 12 months to enjoy a gastronomic experience at ANØV.'
+        }),
+        emailSentDescription_de: fields.text({
+          label: 'Description email 🇩🇪',
+          multiline: true,
+          defaultValue: 'Der Empfänger erhält einen einzigartigen Code, der 12 Monate lang gültig ist, um ein gastronomisches Erlebnis bei ANØV zu genießen.'
+        }),
+        helpTitle_fr: fields.text({ label: 'Titre aide 🇫🇷', defaultValue: 'Besoin d\'aide ?' }),
+        helpTitle_en: fields.text({ label: 'Titre aide 🇬🇧', defaultValue: 'Need help?' }),
+        helpTitle_de: fields.text({ label: 'Titre aide 🇩🇪', defaultValue: 'Brauchen Sie Hilfe?' }),
+        helpText_fr: fields.text({
+          label: 'Texte aide 🇫🇷',
+          defaultValue: 'Contactez-nous si vous avez des questions concernant votre achat.'
+        }),
+        helpText_en: fields.text({
+          label: 'Texte aide 🇬🇧',
+          defaultValue: 'Contact us if you have any questions about your purchase.'
+        }),
+        helpText_de: fields.text({
+          label: 'Texte aide 🇩🇪',
+          defaultValue: 'Kontaktieren Sie uns, wenn Sie Fragen zu Ihrem Kauf haben.'
+        }),
+        buttonHome_fr: fields.text({ label: 'Bouton Accueil 🇫🇷', defaultValue: 'Retour à l\'accueil' }),
+        buttonHome_en: fields.text({ label: 'Bouton Accueil 🇬🇧', defaultValue: 'Back to home' }),
+        buttonHome_de: fields.text({ label: 'Bouton Accueil 🇩🇪', defaultValue: 'Zurück zur Startseite' }),
+        buttonAnother_fr: fields.text({ label: 'Bouton Autre achat 🇫🇷', defaultValue: 'Acheter un autre chèque cadeau' }),
+        buttonAnother_en: fields.text({ label: 'Bouton Autre achat 🇬🇧', defaultValue: 'Buy another gift card' }),
+        buttonAnother_de: fields.text({ label: 'Bouton Autre achat 🇩🇪', defaultValue: 'Einen weiteren Geschenkgutschein kaufen' }),
+      },
+    }),
   },
 });

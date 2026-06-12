@@ -62,6 +62,7 @@ export function ChequesCadeauxContent({ content }: { content?: BoutiqueContent |
     amount: '',
     recipient: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const c = content ?? {};
 
@@ -101,7 +102,7 @@ export function ChequesCadeauxContent({ content }: { content?: BoutiqueContent |
     return isValid;
   };
 
-  const handlePurchase = (e: FormEvent) => {
+  const handlePurchase = async (e: FormEvent) => {
     e.preventDefault();
     if (!validateForm()) {
       toast.error('Veuillez corriger les erreurs', {
@@ -109,9 +110,42 @@ export function ChequesCadeauxContent({ content }: { content?: BoutiqueContent |
       });
       return;
     }
-    toast.success('Merci pour votre achat !', {
-      description: 'Un email de confirmation a été envoyé.',
-    });
+
+    setIsLoading(true);
+
+    try {
+      // Appeler l'API pour créer une session de paiement Stripe
+      const response = await fetch('/api/gift-cards/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: giftCard.amount,
+          recipientEmail: giftCard.recipient,
+          personalMessage: giftCard.message,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur lors de la création de la session de paiement');
+      }
+
+      // Rediriger vers Stripe Checkout
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('URL de paiement manquante');
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'achat:', error);
+      toast.error('Erreur lors de l\'achat', {
+        description: error instanceof Error ? error.message : 'Une erreur est survenue',
+      });
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -198,10 +232,20 @@ export function ChequesCadeauxContent({ content }: { content?: BoutiqueContent |
 
             <Button
               type="submit"
+              disabled={isLoading}
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 transition-all duration-300 flex items-center justify-center gap-2"
             >
-              <CreditCard size={20} />
-              {pickField(c, 'submitButton', locale)}
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-foreground"></div>
+                  <span>Redirection vers le paiement...</span>
+                </>
+              ) : (
+                <>
+                  <CreditCard size={20} />
+                  {pickField(c, 'submitButton', locale)}
+                </>
+              )}
             </Button>
 
             <div className="flex-col">

@@ -40,12 +40,14 @@ export async function POST(req: Request) {
     expiresAt.setMonth(expiresAt.getMonth() + 12);
 
     // Créer le chèque cadeau dans la base de données (statut PENDING_PAYMENT)
+    // isPaid: true pour les bons créés via le site client (payés)
     const giftCard = await prisma.giftCard.create({
       data: {
         code,
         amount: amountValue,
         recipientEmail,
         personalMessage: personalMessage || null,
+        isPaid: true,
         expiresAt,
         status: 'PENDING_PAYMENT',
       },
@@ -95,11 +97,11 @@ export async function POST(req: Request) {
 
 /**
  * Génère un code unique pour le chèque cadeau
- * Format : ANOV-XXXX-XXXX
+ * Format : ANOV-G-XXXX-XXXX (gift/client Stripe)
  */
 function generateGiftCardCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Sans O, 0, I, 1 pour éviter la confusion
   const part1 = Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
   const part2 = Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-  return `ANOV-${part1}-${part2}`;
+  return `ANOV-G-${part1}-${part2}`;
 }

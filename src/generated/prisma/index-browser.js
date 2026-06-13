@@ -170,6 +170,7 @@ exports.Prisma.GiftCardScalarFieldEnum = {
   amount: 'amount',
   recipientEmail: 'recipientEmail',
   personalMessage: 'personalMessage',
+  isPaid: 'isPaid',
   status: 'status',
   stripeSessionId: 'stripeSessionId',
   expiresAt: 'expiresAt',

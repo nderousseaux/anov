@@ -105,34 +105,39 @@ Vous accédez ensuite à votre boîte de réception IONOS, où vous retrouvez to
 
 ## 7. Chèques Cadeaux
 
-Le système de chèques cadeaux permet aux clients d'acheter des chèques cadeaux en ligne pour les offrir à leurs proches.
+Le système de chèques cadeaux permet aux clients d'acheter des chèques cadeaux en ligne pour les offrir à leurs proches, et aux administrateurs d'en créer manuellement.
 
-### Fonctionnement
+### Fonctionnement - Achat client
 
 1. Le client saisit le montant, l'email du destinataire et un message personnalisé (optionnel)
 2. Il est redirigé vers Stripe Checkout pour le paiement
-3. Une fois le paiement confirmé, un chèque cadeau est créé en base avec un code unique
+3. Une fois le paiement confirmé, un chèque cadeau est créé en base avec un code unique (`ANOV-G-XXXX-XXXX`)
 4. Un email est envoyé automatiquement au destinataire avec les instructions d'utilisation
 
-### Page de paiement
+### Fonctionnement - Création manuelle (Admin)
+
+L'administrateur peut créer un chèque cadeau gratuit depuis l'interface admin :
+
+1. Rendez-vous sur `/admin/cheques-cadeaux`
+2. Cliquez sur **Créer un bon cadeau**
+3. Saisissez le montant (entier, sans centimes)
+4. Entrez l'email du destinataire (optionnel mais recommandé)
+5. Ajoutez un message personnalisé (optionnel)
+6. Validez
+
+**Note :** Les codes des bons manuels ont le préfixe `ANOV-M-XXXX-XXXX` pour les distinguer des bons clients (`ANOV-G-XXXX-XXXX`).
+
+### Page de paiement client
 
 Accessible via `/cheques-cadeaux`
 
 *[Capture d'écran : formulaire de création de chèque cadeau]*
 
-### Comment utiliser un chèque cadeau
-
-Le destinataire reçoit un email avec :
-- Le montant du chèque cadeau
-- Le code unique
-- Les instructions d'utilisation
-
-**À l'utilisation :**
-1. Réservez votre table sur notre site ou par téléphone
-2. Présentez le code au moment du paiement
-3. Le montant est déduit de votre addition
-
 > **Note :** Les chèques cadeaux expirent automatiquement après 12 mois.
+
+#### Email des bons admin
+
+Lorsqu'un bon est créé manuellement avec une adresse email, un email est envoyé automatiquement au destinataire (sauf si l'email est laissé vide).
 
 ## 8. Contact technique
 

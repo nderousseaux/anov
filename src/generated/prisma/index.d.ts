@@ -5573,6 +5573,7 @@ export namespace Prisma {
     amount: number | null
     recipientEmail: string | null
     personalMessage: string | null
+    isPaid: boolean | null
     status: $Enums.GiftCardStatus | null
     stripeSessionId: string | null
     expiresAt: Date | null
@@ -5587,6 +5588,7 @@ export namespace Prisma {
     amount: number | null
     recipientEmail: string | null
     personalMessage: string | null
+    isPaid: boolean | null
     status: $Enums.GiftCardStatus | null
     stripeSessionId: string | null
     expiresAt: Date | null
@@ -5601,6 +5603,7 @@ export namespace Prisma {
     amount: number
     recipientEmail: number
     personalMessage: number
+    isPaid: number
     status: number
     stripeSessionId: number
     expiresAt: number
@@ -5625,6 +5628,7 @@ export namespace Prisma {
     amount?: true
     recipientEmail?: true
     personalMessage?: true
+    isPaid?: true
     status?: true
     stripeSessionId?: true
     expiresAt?: true
@@ -5639,6 +5643,7 @@ export namespace Prisma {
     amount?: true
     recipientEmail?: true
     personalMessage?: true
+    isPaid?: true
     status?: true
     stripeSessionId?: true
     expiresAt?: true
@@ -5653,6 +5658,7 @@ export namespace Prisma {
     amount?: true
     recipientEmail?: true
     personalMessage?: true
+    isPaid?: true
     status?: true
     stripeSessionId?: true
     expiresAt?: true
@@ -5752,8 +5758,9 @@ export namespace Prisma {
     updatedAt: Date
     code: string
     amount: number
-    recipientEmail: string
+    recipientEmail: string | null
     personalMessage: string | null
+    isPaid: boolean
     status: $Enums.GiftCardStatus
     stripeSessionId: string | null
     expiresAt: Date
@@ -5787,6 +5794,7 @@ export namespace Prisma {
     amount?: boolean
     recipientEmail?: boolean
     personalMessage?: boolean
+    isPaid?: boolean
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
@@ -5801,6 +5809,7 @@ export namespace Prisma {
     amount?: boolean
     recipientEmail?: boolean
     personalMessage?: boolean
+    isPaid?: boolean
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
@@ -5815,6 +5824,7 @@ export namespace Prisma {
     amount?: boolean
     recipientEmail?: boolean
     personalMessage?: boolean
+    isPaid?: boolean
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
@@ -5829,13 +5839,14 @@ export namespace Prisma {
     amount?: boolean
     recipientEmail?: boolean
     personalMessage?: boolean
+    isPaid?: boolean
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
     usedAt?: boolean
   }
 
-  export type GiftCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "amount" | "recipientEmail" | "personalMessage" | "status" | "stripeSessionId" | "expiresAt" | "usedAt", ExtArgs["result"]["giftCard"]>
+  export type GiftCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "amount" | "recipientEmail" | "personalMessage" | "isPaid" | "status" | "stripeSessionId" | "expiresAt" | "usedAt", ExtArgs["result"]["giftCard"]>
 
   export type $GiftCardPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GiftCard"
@@ -5846,8 +5857,9 @@ export namespace Prisma {
       updatedAt: Date
       code: string
       amount: number
-      recipientEmail: string
+      recipientEmail: string | null
       personalMessage: string | null
+      isPaid: boolean
       status: $Enums.GiftCardStatus
       stripeSessionId: string | null
       expiresAt: Date
@@ -6282,6 +6294,7 @@ export namespace Prisma {
     readonly amount: FieldRef<"GiftCard", 'Float'>
     readonly recipientEmail: FieldRef<"GiftCard", 'String'>
     readonly personalMessage: FieldRef<"GiftCard", 'String'>
+    readonly isPaid: FieldRef<"GiftCard", 'Boolean'>
     readonly status: FieldRef<"GiftCard", 'GiftCardStatus'>
     readonly stripeSessionId: FieldRef<"GiftCard", 'String'>
     readonly expiresAt: FieldRef<"GiftCard", 'DateTime'>
@@ -6733,6 +6746,7 @@ export namespace Prisma {
     amount: 'amount',
     recipientEmail: 'recipientEmail',
     personalMessage: 'personalMessage',
+    isPaid: 'isPaid',
     status: 'status',
     stripeSessionId: 'stripeSessionId',
     expiresAt: 'expiresAt',
@@ -7140,8 +7154,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"GiftCard"> | Date | string
     code?: StringFilter<"GiftCard"> | string
     amount?: FloatFilter<"GiftCard"> | number
-    recipientEmail?: StringFilter<"GiftCard"> | string
+    recipientEmail?: StringNullableFilter<"GiftCard"> | string | null
     personalMessage?: StringNullableFilter<"GiftCard"> | string | null
+    isPaid?: BoolFilter<"GiftCard"> | boolean
     status?: EnumGiftCardStatusFilter<"GiftCard"> | $Enums.GiftCardStatus
     stripeSessionId?: StringNullableFilter<"GiftCard"> | string | null
     expiresAt?: DateTimeFilter<"GiftCard"> | Date | string
@@ -7154,8 +7169,9 @@ export namespace Prisma {
     updatedAt?: SortOrder
     code?: SortOrder
     amount?: SortOrder
-    recipientEmail?: SortOrder
+    recipientEmail?: SortOrderInput | SortOrder
     personalMessage?: SortOrderInput | SortOrder
+    isPaid?: SortOrder
     status?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
     expiresAt?: SortOrder
@@ -7172,8 +7188,9 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"GiftCard"> | Date | string
     updatedAt?: DateTimeFilter<"GiftCard"> | Date | string
     amount?: FloatFilter<"GiftCard"> | number
-    recipientEmail?: StringFilter<"GiftCard"> | string
+    recipientEmail?: StringNullableFilter<"GiftCard"> | string | null
     personalMessage?: StringNullableFilter<"GiftCard"> | string | null
+    isPaid?: BoolFilter<"GiftCard"> | boolean
     status?: EnumGiftCardStatusFilter<"GiftCard"> | $Enums.GiftCardStatus
     expiresAt?: DateTimeFilter<"GiftCard"> | Date | string
     usedAt?: DateTimeNullableFilter<"GiftCard"> | Date | string | null
@@ -7185,8 +7202,9 @@ export namespace Prisma {
     updatedAt?: SortOrder
     code?: SortOrder
     amount?: SortOrder
-    recipientEmail?: SortOrder
+    recipientEmail?: SortOrderInput | SortOrder
     personalMessage?: SortOrderInput | SortOrder
+    isPaid?: SortOrder
     status?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
     expiresAt?: SortOrder
@@ -7207,8 +7225,9 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"GiftCard"> | Date | string
     code?: StringWithAggregatesFilter<"GiftCard"> | string
     amount?: FloatWithAggregatesFilter<"GiftCard"> | number
-    recipientEmail?: StringWithAggregatesFilter<"GiftCard"> | string
+    recipientEmail?: StringNullableWithAggregatesFilter<"GiftCard"> | string | null
     personalMessage?: StringNullableWithAggregatesFilter<"GiftCard"> | string | null
+    isPaid?: BoolWithAggregatesFilter<"GiftCard"> | boolean
     status?: EnumGiftCardStatusWithAggregatesFilter<"GiftCard"> | $Enums.GiftCardStatus
     stripeSessionId?: StringNullableWithAggregatesFilter<"GiftCard"> | string | null
     expiresAt?: DateTimeWithAggregatesFilter<"GiftCard"> | Date | string
@@ -7509,8 +7528,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     code: string
     amount: number
-    recipientEmail: string
+    recipientEmail?: string | null
     personalMessage?: string | null
+    isPaid?: boolean
     status?: $Enums.GiftCardStatus
     stripeSessionId?: string | null
     expiresAt: Date | string
@@ -7523,8 +7543,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     code: string
     amount: number
-    recipientEmail: string
+    recipientEmail?: string | null
     personalMessage?: string | null
+    isPaid?: boolean
     status?: $Enums.GiftCardStatus
     stripeSessionId?: string | null
     expiresAt: Date | string
@@ -7537,8 +7558,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    recipientEmail?: StringFieldUpdateOperationsInput | string
+    recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
     personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isPaid?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumGiftCardStatusFieldUpdateOperationsInput | $Enums.GiftCardStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7551,8 +7573,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    recipientEmail?: StringFieldUpdateOperationsInput | string
+    recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
     personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isPaid?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumGiftCardStatusFieldUpdateOperationsInput | $Enums.GiftCardStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7565,8 +7588,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     code: string
     amount: number
-    recipientEmail: string
+    recipientEmail?: string | null
     personalMessage?: string | null
+    isPaid?: boolean
     status?: $Enums.GiftCardStatus
     stripeSessionId?: string | null
     expiresAt: Date | string
@@ -7579,8 +7603,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    recipientEmail?: StringFieldUpdateOperationsInput | string
+    recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
     personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isPaid?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumGiftCardStatusFieldUpdateOperationsInput | $Enums.GiftCardStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7593,8 +7618,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    recipientEmail?: StringFieldUpdateOperationsInput | string
+    recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
     personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isPaid?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumGiftCardStatusFieldUpdateOperationsInput | $Enums.GiftCardStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7984,6 +8010,7 @@ export namespace Prisma {
     amount?: SortOrder
     recipientEmail?: SortOrder
     personalMessage?: SortOrder
+    isPaid?: SortOrder
     status?: SortOrder
     stripeSessionId?: SortOrder
     expiresAt?: SortOrder
@@ -8002,6 +8029,7 @@ export namespace Prisma {
     amount?: SortOrder
     recipientEmail?: SortOrder
     personalMessage?: SortOrder
+    isPaid?: SortOrder
     status?: SortOrder
     stripeSessionId?: SortOrder
     expiresAt?: SortOrder
@@ -8016,6 +8044,7 @@ export namespace Prisma {
     amount?: SortOrder
     recipientEmail?: SortOrder
     personalMessage?: SortOrder
+    isPaid?: SortOrder
     status?: SortOrder
     stripeSessionId?: SortOrder
     expiresAt?: SortOrder

@@ -89,8 +89,9 @@ model GiftCard {
   // Informations du chèque cadeau
   code              String   @unique // Code unique du chèque cadeau (ex: ANOV-XXXX-XXXX)
   amount            Float    // Montant en euros
-  recipientEmail    String   // Email du destinataire
+  recipientEmail    String?  // Email du destinataire (optionnel pour les créations admin)
   personalMessage   String?  // Message personnalisé
+  isPaid            Boolean  @default(false) // true = payé par le client, false = créé par admin (gratuit)
 
   // Statut
   status GiftCardStatus @default(PENDING_PAYMENT)

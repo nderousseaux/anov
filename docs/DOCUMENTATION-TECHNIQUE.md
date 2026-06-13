@@ -282,7 +282,9 @@ Les variables d'environnement suivantes doivent être configurées :
 
 | Route | Méthode | Description |
 |---|---|---|
-| `/api/gift-cards/checkout` | POST | Création d'une session de paiement Stripe |
+| `/api/gift-cards/checkout` | POST | Création d'une session de paiement Stripe (client) |
+| `/api/admin/gift-cards` | POST | Création manuelle d'un chèque cadeau (admin) |
+| `/api/admin/gift-cards` | PATCH | Actions sur un chèque (utiliser, annuler, supprimer) |
 | `/api/stripe/webhook` | POST | Webhook Stripe (gestion réservations + chèques cadeaux) |
 
 #### `/api/gift-cards/checkout`
@@ -305,10 +307,50 @@ Les variables d'environnement suivantes doivent être configurées :
 ```
 
 **Logique :**
-1. Génère un code unique (`ANOV-XXXX-XXXX`)
+1. Génère un code unique (`ANOV-G-XXXX-XXXX`)
 2. Crée l'enregistrement `GiftCard` en base avec statut `PENDING_PAYMENT`
 3. Crée la session Stripe Checkout
 4. Retourne l'URL de paiement
+
+#### `/api/admin/gift-cards` (POST)
+
+**Payload :**
+```json
+{
+  "amount": 100,
+  "recipientEmail": "destinataire@example.com",
+  "personalMessage": "Bonne dégustation !"
+}
+```
+
+**Réponse :**
+```json
+{
+  "id": "clxxxxx",
+  "code": "ANOV-M-XXXX-XXXX",
+  "amount": 100,
+  "recipientEmail": "destinataire@example.com",
+  "personalMessage": "Bonne dégustation !",
+  "isPaid": false,
+  "status": "ACTIVE",
+  "createdAt": "...",
+  "expiresAt": "..."
+}
+```
+
+**Logique :**
+1. Génère un code unique avec préfixe `ANOV-M-` (Manuel)
+2. Crée l'enregistrement `GiftCard` en base avec statut `ACTIVE`
+3. Envoie un email au destinataire si email fourni
+4. Retourne les détails du chèque créé
+
+#### `/api/admin/gift-cards` (PATCH)
+
+| Action | Payload | Description |
+|--------|---------|-------------|
+| `markUsed` | `{ id, action: "markUsed" }` | Marque le chèque comme utilisé |
+| `validate` | `{ id, action: "validate" }` | Remet le chèque comme non utilisé |
+| `delete` | `{ id, action: "delete" }` | Supprime le chèque |
 
 #### `/api/stripe/webhook`
 
@@ -320,7 +362,7 @@ Gère deux types de paiements :
 **Webhook Events :**
 - `checkout.session.completed` : Confirme le paiement et active le chèque
 
-**Activation du chèque cadeau :**
+**Activation du chèque cadeau (client) :**
 1. Récupère le chèque via `giftCardId`
 2. Met à jour le statut à `ACTIVE`
 3. Envoie l'email avec le code au destinataire

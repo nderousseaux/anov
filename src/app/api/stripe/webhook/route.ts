@@ -73,18 +73,22 @@ async function handleGiftCardPayment(giftCardId: string, sessionId: string) {
 
     // Envoyer l'email avec le chèque cadeau au destinataire
     try {
-      await sendGiftCardEmail({
-        to: giftCard.recipientEmail,
-        code: giftCard.code,
-        amount: giftCard.amount,
-        personalMessage: giftCard.personalMessage || undefined,
-        expiresAt: giftCard.expiresAt.toLocaleDateString('fr-FR', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        }),
-      });
-      console.log('[stripe/webhook] Email envoyé avec succès:', giftCard.recipientEmail);
+      if (giftCard.recipientEmail) {
+        await sendGiftCardEmail({
+          to: giftCard.recipientEmail,
+          code: giftCard.code,
+          amount: giftCard.amount,
+          personalMessage: giftCard.personalMessage || undefined,
+          expiresAt: giftCard.expiresAt.toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          }),
+        });
+        console.log('[stripe/webhook] Email envoyé avec succès:', giftCard.recipientEmail);
+      } else {
+        console.log('[stripe/webhook] Aucun email à envoyer pour le chèque cadeau:', giftCard.code);
+      }
     } catch (emailError) {
       console.error('[stripe/webhook] Erreur lors de l\'envoi de l\'email:', emailError);
     }

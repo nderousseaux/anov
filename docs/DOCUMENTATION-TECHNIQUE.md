@@ -407,6 +407,113 @@ Gère deux types de paiements :
 
 ---
 
+## 9. Intégration Stripe en production (Vercel)
+
+### 9.1 Configuration locale (développement)
+
+En local, pour tester les webhooks Stripe, utilise `stripe-cli` :
+
+```bash
+# Installer stripe-cli (macOS)
+brew install stripe/tap/stripe
+
+# Forwarder les webhooks vers ton localhost
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```
+
+Stripe te fournira un **secret de signature** (ex: `whsec_xxxxxxxxxxxx`) que tu ajoutes à ton `.env.local` :
+
+```env
+STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxx
+```
+
+### 9.2 Configuration production (Vercel)
+
+En production, **tu n'as pas besoin de `stripe listen`** car Vercel expose déjà tes API routes publicatement.
+
+#### Étapes de déploiement :
+
+1. **Déployer ton app sur Vercel**
+   ```bash
+   git push origin main  # ou pprod pour preview
+   ```
+
+2. **Créer un webhook dans le Dashboard Stripe**
+   - Aller sur https://dashboard.stripe.com/webhooks
+   - Clic sur **"Add endpoint"**
+   - URL : `https://ton-app.vercel.app/api/stripe/webhook`
+   - Sélectionner les événements :
+     - `checkout.session.completed` (obligatoire)
+
+3. **Copier le Signing Secret**
+   - Stripe affiche un secret (ex: `whsec_1234567890abcdef`)
+   - Copier cette valeur et la mettre dans STRIPE_WEBHOOK_SECRET sur Vercel
+
+4. **Ajouter les variables d'environnement sur Vercel**
+
+   Dans les **Settings → Environment Variables** de ton projet Vercel :
+
+   | Variable | Valeur | Type |
+   |---|---|---|
+   | `STRIPE_SECRET_KEY` | `sk_live_xxxxxxxxxxxx` | Production |
+   | `STRIPE_WEBHOOK_SECRET` | `whsec_xxxxxxxxxxxx` | Production |
+   | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | `pk_live_xxxxxxxxxxxx` | Production |
+
+   > **Important :** Cocher "Production" pour que les variables soient accessibles en prod.
+
+5. **Redéployer**
+   - Après avoir ajouté les variables, Vercel te propose de redeployer
+   - Ou fait un `git push` pour déclencher un nouveau déploiement
+
+### 9.3 Vérification du webhook
+
+Après déploiement, tu peux tester manuellement :
+
+```bash
+# Tester l'endpoint (aura une erreur de signature, mais vérifie que l'URL répond)
+curl -X POST https://ton-app.vercel.app/api/stripe/webhook \
+  -H "Stripe-Signature: test"
+```
+
+Pour un test complet, utilise l'interface Stripe :
+- Dashboard → **Webhooks** → Sélectionne ton endpoint
+- Clic sur **"Send test webhook"**
+- Choisir l'événement `checkout.session.completed`
+- Vérifier les logs dans les **Deployments** de Vercel
+
+### 9.4 Flux de paiement complet
+
+```mermaid
+sequenceDiagram
+    participant User as Utilisateur
+    participant Stripe as Stripe Checkout
+    participant Webhook as Vercel Webhook
+    participant DB as PostgreSQL (Neon)
+    participant Email as Serveur SMTP
+
+    User->>Stripe: Chèque cadeau (100€)
+    Note right of Stripe: stripe.redirectToCheckout()
+    Stripe-->>User: Page de paiement Stripe
+    User->>Stripe: Paiement réussi
+    Stripe-->>Webhook: POST /api/stripe/webhook
+    Webhook->>Webhook: Vérifie signature
+    Webhook->>DB: Met à jour GiftCard.status = ACTIVE
+    Webhook->>Email: Envoi email avec code
+    Webhook-->>Stripe: 200 OK
+    Stripe-->>User: Redirection vers /cheques-cadeaux/succes
+```
+
+### 9.5 Codes de statut du webhook
+
+Le webhook retourne :
+- `200 OK` : Traitement successful
+- `400 Bad Request` : Signature invalide ou metadata manquantes
+- `500 Internal Error` : Erreur serveur (base de données, email, etc.)
+
+---
+
+## 9. Notes techniques
+
 ## 9. Notes techniques
 
 - **Server Components :** Pages qui fetch le contenu CMS au runtime

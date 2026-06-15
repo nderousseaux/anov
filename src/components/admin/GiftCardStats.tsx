@@ -1,4 +1,4 @@
-import { GiftCardStats as GiftCardStatsType } from '@/app/admin/cheques-cadeaux/page';
+import { GiftCardStats as GiftCardStatsType } from './types';
 
 interface GiftCardStatsProps {
   stats: GiftCardStatsType;

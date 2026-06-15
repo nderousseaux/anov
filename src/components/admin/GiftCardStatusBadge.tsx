@@ -1,4 +1,4 @@
-import { GiftCardStatus } from '@prisma/client';
+import type { GiftCardStatus } from './types';
 
 interface GiftCardStatusBadgeProps {
   status: GiftCardStatus;

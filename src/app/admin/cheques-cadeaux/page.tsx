@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { AdminNav } from '@/components/admin/AdminNav';
 import { GiftCardStats } from '@/components/admin/GiftCardStats';
+import type { GiftCardStats as GiftCardStatsType } from '@/components/admin/types';
 import { GiftCardCard } from '@/components/admin/GiftCardCard';
 import { GiftCardFilters } from '@/components/admin/GiftCardFilters';
 import { Loader2, RefreshCw, AlertCircle, Check, Trash2, Plus, Mail, X } from 'lucide-react';
@@ -27,13 +28,6 @@ interface GiftCardListResponse {
   total: number;
   page: number;
   pageSize: number;
-}
-
-interface GiftCardStats {
-  totalIssued: number;
-  totalAmount: number;
-  active: number;
-  expired: number;
 }
 
 function StatsFallback() {
@@ -84,12 +78,12 @@ function loadScript(src: string) {
 
 async function loadStripe() {
   if (typeof window === 'undefined') return null;
-  
+
   // Vérifier si Stripe est déjà chargé
   if ((window as any).Stripe) {
     return (window as any).Stripe;
   }
-  
+
   try {
     await loadScript('https://js.stripe.com/v3/');
     return (window as any).Stripe;
@@ -99,9 +93,9 @@ async function loadStripe() {
   }
 }
 
-export default function AdminGiftCardsPage() {
+function GiftCardPageContent() {
   const [giftCards, setGiftCards] = useState<GiftCard[]>([]);
-  const [stats, setStats] = useState<GiftCardStats>({
+  const [stats, setStats] = useState<GiftCardStatsType>({
     totalIssued: 0,
     totalAmount: 0,
     active: 0,
@@ -117,10 +111,10 @@ export default function AdminGiftCardsPage() {
     personalMessage: '',
   });
 
-  // Filters state
+  // Filters state - must be inside a component wrapped by Suspense
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   const [filters, setFilters] = useState({
     status: searchParams.get('status') || '',
     code: searchParams.get('code') || '',
@@ -150,7 +144,7 @@ export default function AdminGiftCardsPage() {
       const statsResponse = await fetch('/api/admin/gift-cards/stats');
       if (!statsResponse.ok) throw new Error('Erreur lors du chargement des statistiques');
       
-      const statsData: GiftCardStats = await statsResponse.json();
+      const statsData: GiftCardStatsType = await statsResponse.json();
       setStats(statsData);
       
     } catch (err) {
@@ -578,4 +572,10 @@ export default function AdminGiftCardsPage() {
   );
 }
 
-
+export default function AdminGiftCardsPage() {
+  return (
+    <Suspense fallback={<StatsFallback />}>
+      <GiftCardPageContent />
+    </Suspense>
+  );
+}

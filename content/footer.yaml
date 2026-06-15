@@ -1,17 +1,21 @@
-description_fr: "Une expérience gastronomique d'exception où chaque plat raconte une histoire."
-description_en: "An exceptional gastronomic experience where every dish tells a story."
-description_de: "Ein außergewöhnliches gastronomisches Erlebnis, bei dem jedes Gericht eine Geschichte erzählt."
-facebookUrl: "#"
-instagramUrl: "#"
-youtubeUrl: "#"
+description_fr: >-
+  Une expérience gastronomique d'exception où chaque plat raconte une histoire
+  spéciale.
+description_en: An exceptional gastronomic experience where every dish tells a story.
+description_de: >-
+  Ein außergewöhnliches gastronomisches Erlebnis, bei dem jedes Gericht eine
+  Geschichte erzählt.
+facebookUrl: '#'
+instagramUrl: '#'
+youtubeUrl: '#'
 reviews:
   - name: TripAdvisor
-    rating: "5.0"
-    reviewCount: "248"
+    rating: '5.0'
+    reviewCount: '248'
   - name: Google
-    rating: "4.9"
-    reviewCount: "312"
+    rating: '4.9'
+    reviewCount: '312'
   - name: La Fourchette
-    rating: "9.8"
-    reviewCount: "189"
-paymentMethods: "CB · Visa · Mastercard · Amex · Espèces · Chèques"
+    rating: '9.8'
+    reviewCount: '189'
+paymentMethods: CB · Visa · Mastercard · Amex · Espèces · Chèques

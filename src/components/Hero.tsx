@@ -4,14 +4,18 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { ChevronDown } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+import { pickField } from '@/lib/langs';
 
 interface HeroProps {
-  subtitle?: string;
-  image?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  content?: Record<string, any> | null;
 }
 
-export function Hero({ subtitle = 'Où chaque plat raconte une histoire, où chaque saveur éveille les sens', image }: HeroProps) {
-  const heroImageUrl = image ?? '/assets/hero.jpg';
+export function Hero({ content }: HeroProps) {
+  const { locale, t } = useLanguage();
+  const subtitle = content ? pickField(content, 'subtitle', locale) : t.hero.reserve;
+  const heroImageUrl = content?.image ?? '/assets/hero.jpg';
   const [isArrowVisible, setIsArrowVisible] = useState(true);
 
   useEffect(() => {
@@ -52,27 +56,17 @@ export function Hero({ subtitle = 'Où chaque plat raconte une histoire, où cha
 
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-        <h1
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-5 text-primary tracking-[0.06em]"
-          style={{ fontFamily: 'var(--font-display)' }}
-        >
-          L'ANØV
-        </h1>
-        <div className="flex items-center justify-center gap-4 sm:gap-6 mb-10">
-          <span className="h-px w-10 sm:w-14 bg-primary/80" />
-          <p
-            className="text-xl sm:text-2xl md:text-3xl text-primary tracking-[0.22em]"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            RESTAURANT
-          </p>
-          <span className="h-px w-10 sm:w-14 bg-primary/80" />
-        </div>
+        <img
+          src="/assets/text-logo.svg"
+          alt="Logo"
+          className="mx-auto mb-8 w-auto h-20 sm:h-24 md:h-36"
+        />
+
         <p
           className="text-base sm:text-xl md:text-2xl mb-12 text-foreground max-w-2xl mx-auto italic leading-relaxed tracking-wide"
           style={{ fontFamily: 'var(--font-display)' }}
         >
-          {subtitle}
+          {subtitle || 'Où chaque plat raconte une histoire, où chaque saveur éveille les sens'}
         </p>
         {/* <Link href="/reservation">
           <Button

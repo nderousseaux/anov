@@ -1,7 +1,14 @@
+'use client';
+
 import { Facebook, Instagram, Youtube, Star, CreditCard, Accessibility, AirVent } from 'lucide-react';
+import Link from 'next/link';
+import { useLanguage } from '@/context/LanguageContext';
+import { pickField } from '@/lib/langs';
 
 export interface FooterContent {
-  description?: string | null;
+  description_fr?: string | null;
+  description_en?: string | null;
+  description_de?: string | null;
   facebookUrl?: string | null;
   instagramUrl?: string | null;
   youtubeUrl?: string | null;
@@ -10,8 +17,11 @@ export interface FooterContent {
 }
 
 export function Footer({ content }: { content?: FooterContent | null }) {
+  const { locale, t } = useLanguage();
   const c = content ?? {};
-  const logoUrl = 'assets/img-logo.jpg';
+  const logoUrl = 'assets/img-logo.svg';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const description = pickField(c as any, 'description', locale) || "Une expérience gastronomique d'exception où chaque plat raconte une histoire.";
 
   const socialLinks = [
     { name: 'Facebook', icon: Facebook, url: c.facebookUrl ?? '#' },
@@ -42,7 +52,7 @@ export function Footer({ content }: { content?: FooterContent | null }) {
                 <p
                   className="text-muted-foreground text-sm md:text-base mt-4 md:my-6"
                 >
-                  {c.description ?? "Une expérience gastronomique d'exception où chaque plat raconte une histoire."}
+                  {description}
                 </p>
               </div>
 
@@ -52,7 +62,7 @@ export function Footer({ content }: { content?: FooterContent | null }) {
                   className="text-lg md:text-xl text-primary mb-3 md:mb-4"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
-                  Suivez-nous
+                  {t.footer.followUs}
                 </h4>
                 <div className="flex gap-4 justify-center md:justify-start">
                   {socialLinks.map((social) => (
@@ -78,7 +88,7 @@ export function Footer({ content }: { content?: FooterContent | null }) {
               className="text-lg md:text-xl text-primary mb-3 md:mb-4 text-center md:text-left"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              Nos Avis
+              {t.footer.ourReviews}
             </h4>
             <div className="grid grid-cols-3 md:grid-cols-1 gap-2 md:gap-3">
               {reviewPlatforms.map((platform) => (
@@ -96,7 +106,7 @@ export function Footer({ content }: { content?: FooterContent | null }) {
                         {platform.rating}
                       </span>
                       <span className="text-muted-foreground text-xs hidden md:inline">
-                        ({platform.reviewCount} avis)
+                        ({platform.reviewCount} {t.footer.reviews})
                       </span>
                     </div>
                   </div>
@@ -113,11 +123,11 @@ export function Footer({ content }: { content?: FooterContent | null }) {
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
               <Accessibility size={14} className="text-primary/70 shrink-0" />
-              <span>Accès PMR</span>
+              <span>{t.footer.pmr}</span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
               <AirVent size={14} className="text-primary/70 shrink-0" />
-              <span>Climatisé</span>
+              <span>{t.footer.aircon}</span>
             </div>
           </div>
         </div>
@@ -126,18 +136,18 @@ export function Footer({ content }: { content?: FooterContent | null }) {
         <div className="border-t border-primary/20 pt-4 md:pt-6">
           <div className="flex flex-col md:grid md:grid-cols-2 md:gap-4 items-center gap-3">
             <p className="text-muted-foreground text-xs md:text-sm text-center md:text-left">
-              © 2026 l’Anøv | Tous droits réservés.
+              {t.footer.copyright}
             </p>
             <div className="flex flex-wrap gap-3 md:gap-4 justify-center md:justify-end">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
-                Mentions légales
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
-                Politique de confidentialité
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
-                CGV
-              </a>
+              <Link href="/mentions-legales" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
+                {t.footer.legal}
+              </Link>
+              <Link href="/politique-de-confidentialite" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
+                {t.footer.privacy}
+              </Link>
+              <Link href="/cgv" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
+                {t.footer.cgv}
+              </Link>
             </div>
           </div>
         </div>

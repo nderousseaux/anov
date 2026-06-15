@@ -1,23 +1,51 @@
-# ANOV
+# ANØV — Restaurant
 
-## Développement
+Site de l'anov restaurant, avec des fonctionnalités backend de gestion du restaurant :
+- Site vitrine pour présenter le restaurant.
+- CMS intégré pour gérer le contenu (textes, images, horaires, etc.).
+
+Le site est développé avec Next.js, hébergé sur Vercel, et utilise Keystatic comme CMS intégré.
+
+## Développement local
 
 ```bash
-cp .env.example .env.local
+git clone <url> && cd anov
 pnpm install
-```
-Démarrage :
-```bash
-npm run db:start   # démarre le container PostgreSQL
-npm run db:init    # applique les migrations et le seed
-npm run dev        # démarre le serveur Next.js (http://localhost:3000)
+cp .env.example .env.local
+pnpm dev
 ```
 
-### Commandes de gestion de la base de données
+## Déploiement
 
-| Commande | Description |
+Push sur `pprod` → preview Vercel → merge `pprod` → `main` → build auto.
+
+Les images du CMS sont stockées dans le repository GitHub (`public/assets/`).
+
+
+## Pages
+
+| Route | Description |
 |---|---|
-| `npm run db:start` | Démarre le container Docker PostgreSQL |
-| `npm run db:migrate` | Crée et applique les nouvelles migrations |
-| `npm run db:init` | Migrations + seed (premier lancement) |
-| `npm run db:reset` | Supprime tout, réapplique les migrations et le seed |
+| `/` | Page d'accueil (Hero, Histoire, Galerie, Contact) |
+| `/menu` | Carte du restaurant |
+| `/admin` | Racine du dashboard admin |
+| `/admin/cms` (`/keystatic`) | Éditeur CMS intégré |
+
+## Architecture
+
+```
+content/              # Fichiers YAML du CMS (source de vérité)
+keystatic.config.ts   # Configuration du CMS (schémas)
+public/assets/        # Images statiques
+src/
+  app/
+    layout.tsx        # Layout racine (fetch CMS + ClientLayout)
+    page.tsx          # Page d'accueil
+    menu/page.tsx     # Page carte
+    admin/            # Dashboard admin (CMS + login)
+    keystatic/        # Interface Keystatic
+    api/              # Routes API
+  components/         # Composants React
+  lib/                # Utilitaires (auth, prisma...)
+  middleware.ts       # Protection routes /admin et /keystatic
+```

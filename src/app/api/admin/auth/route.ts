@@ -37,7 +37,8 @@ export async function POST(req: NextRequest) {
       path: '/',
     });
     return response;
-  } catch {
+  } catch (err) {
+    console.error('[POST /api/admin/auth]', err);
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }

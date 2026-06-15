@@ -1,0 +1,316 @@
+import { readFileSync, writeFileSync } from 'fs';
+
+// Read current config to preserve any structure
+const currentConfig = readFileSync('keystatic.config.ts', 'utf-8');
+
+// Extract the storage section and beginning
+const storageMatch = currentConfig.match(/(import[\s\S]*?export default config\(\{\s*storage:[\s\S]*?\},\s*singletons: \{)/);
+const prefix = storageMatch ? storageMatch[1] : `import { config, fields, singleton } from '@keystatic/core';
+
+/**
+ * Keystatic storage configuration
+ *
+ * En local : kind: 'local' fonctionne parfaitement
+ * En production Vercel :
+ * - kind: 'local' permet de lire le contenu existant mais pas de l'éditer (filesystem read-only après build)
+ * - Pour éditer en production, utiliser kind: 'github' avec GitHub App
+ *   Nécessite de configurer les variables d'environnement Vercel :
+ *   - KEYSTATIC_GITHUB_CLIENT_ID
+ *   - KEYSTATIC_GITHUB_CLIENT_SECRET
+ *   - KEYSTATIC_SECRET
+ *   - KEYSTATIC_GITHUB_REPOSITORY (format: owner/repo)
+ * - Alternativement, éditer localement et déployer via Git
+ */
+export default config({
+  storage: {
+    kind: 'github',
+    repo: 'nderousseaux/anov',
+  },
+  singletons: {`;
+
+const config = `${prefix}
+    hero: singleton({
+      label: 'Hero',
+      path: 'content/hero',
+      schema: {
+        image: fields.image({
+          label: 'Image de fond',
+          directory: 'public/assets',
+          publicPath: '/assets/',
+        }),
+        subtitle_fr: fields.text({
+          label: 'Sous-titre 🇫🇷',
+          description: 'Texte affiché sous le titre principal sur la page d\\'accueil',
+        }),
+        subtitle_en: fields.text({
+          label: 'Sous-titre 🇬🇧',
+          description: 'Texte affiché sous le titre principal sur la page d\\'accueil',
+        }),
+        subtitle_de: fields.text({
+          label: 'Sous-titre 🇩🇪',
+          description: 'Texte affiché sous le titre principal sur la page d\\'accueil',
+        }),
+      },
+    }),
+    histoire: singleton({
+      label: 'Notre Histoire',
+      path: 'content/histoire',
+      schema: {
+        introTitle_fr: fields.text({ label: 'Section 1 — Titre 🇫🇷' }),
+        introTitle_en: fields.text({ label: 'Section 1 — Titre 🇬🇧' }),
+        introTitle_de: fields.text({ label: 'Section 1 — Titre 🇩🇪' }),
+        introText1_fr: fields.text({ label: 'Section 1 — Paragraphe 1 🇫🇷', multiline: true }),
+        introText1_en: fields.text({ label: 'Section 1 — Paragraphe 1 🇬🇧', multiline: true }),
+        introText1_de: fields.text({ label: 'Section 1 — Paragraphe 1 🇩🇪', multiline: true }),
+        introText2_fr: fields.text({ label: 'Section 1 — Paragraphe 2 🇫🇷', multiline: true }),
+        introText2_en: fields.text({ label: 'Section 1 — Paragraphe 2 🇬🇧', multiline: true }),
+        introText2_de: fields.text({ label: 'Section 1 — Paragraphe 2 🇩🇪', multiline: true }),
+        chefImage: fields.image({ label: 'Section 2 — Image', directory: 'public/assets/histoire', publicPath: '/assets/histoire/' }),
+        chefName: fields.text({ label: 'Section 2 — Nom du Chef' }),
+        chefText1_fr: fields.text({ label: 'Section 2 — Paragraphe 1 🇫🇷', multiline: true }),
+        chefText1_en: fields.text({ label: 'Section 2 — Paragraphe 1 🇬🇧', multiline: true }),
+        chefText1_de: fields.text({ label: 'Section 2 — Paragraphe 1 🇩🇪', multiline: true }),
+        chefText2_fr: fields.text({ label: 'Section 2 — Paragraphe 2 🇫🇷', multiline: true }),
+        chefText2_en: fields.text({ label: 'Section 2 — Paragraphe 2 🇬🇧', multiline: true }),
+        chefText2_de: fields.text({ label: 'Section 2 — Paragraphe 2 🇩🇪', multiline: true }),
+        visionTitle_fr: fields.text({ label: 'Section 3 — Titre 🇫🇷' }),
+        visionTitle_en: fields.text({ label: 'Section 3 — Titre 🇬🇧' }),
+        visionTitle_de: fields.text({ label: 'Section 3 — Titre 🇩🇪' }),
+        visionText1_fr: fields.text({ label: 'Section 3 — Paragraphe 1 🇫🇷', multiline: true }),
+        visionText1_en: fields.text({ label: 'Section 3 — Paragraphe 1 🇬🇧', multiline: true }),
+        visionText1_de: fields.text({ label: 'Section 3 — Paragraphe 1 🇩🇪', multiline: true }),
+        visionText2_fr: fields.text({ label: 'Section 3 — Paragraphe 2 🇫🇷', multiline: true }),
+        visionText2_en: fields.text({ label: 'Section 3 — Paragraphe 2 🇬🇧', multiline: true }),
+        visionText2_de: fields.text({ label: 'Section 3 — Paragraphe 2 🇩🇪', multiline: true }),
+        visionText3_fr: fields.text({ label: 'Section 3 — Paragraphe 3 🇫🇷', multiline: true }),
+        visionText3_en: fields.text({ label: 'Section 3 — Paragraphe 3 🇬🇧', multiline: true }),
+        visionText3_de: fields.text({ label: 'Section 3 — Paragraphe 3 🇩🇪', multiline: true }),
+        visionImage1: fields.image({ label: 'Section 3 — Image 1', directory: 'public/assets/histoire', publicPath: '/assets/histoire/' }),
+        visionImage2: fields.image({ label: 'Section 3 — Image 2', directory: 'public/assets/histoire', publicPath: '/assets/histoire/' }),
+        productsImage: fields.image({ label: 'Section 4 — Image', directory: 'public/assets/histoire', publicPath: '/assets/histoire/' }),
+        productsTitle_fr: fields.text({ label: 'Section 4 — Titre 🇫🇷' }),
+        productsTitle_en: fields.text({ label: 'Section 4 — Titre 🇬🇧' }),
+        productsTitle_de: fields.text({ label: 'Section 4 — Titre 🇩🇪' }),
+        productsText1_fr: fields.text({ label: 'Section 4 — Paragraphe 1 🇫🇷', multiline: true }),
+        productsText1_en: fields.text({ label: 'Section 4 — Paragraphe 1 🇬🇧', multiline: true }),
+        productsText1_de: fields.text({ label: 'Section 4 — Paragraphe 1 🇩🇪', multiline: true }),
+        productsText2_fr: fields.text({ label: 'Section 4 — Paragraphe 2 🇫🇷', multiline: true }),
+        productsText2_en: fields.text({ label: 'Section 4 — Paragraphe 2 🇬🇧', multiline: true }),
+        productsText2_de: fields.text({ label: 'Section 4 — Paragraphe 2 🇩🇪', multiline: true }),
+        teamImage: fields.image({ label: 'Section 5 — Image', directory: 'public/assets/histoire', publicPath: '/assets/histoire/' }),
+        teamTitle_fr: fields.text({ label: 'Section 5 — Titre 🇫🇷' }),
+        teamTitle_en: fields.text({ label: 'Section 5 — Titre 🇬🇧' }),
+        teamTitle_de: fields.text({ label: 'Section 5 — Titre 🇩🇪' }),
+        teamText1_fr: fields.text({ label: 'Section 5 — Paragraphe 1 🇫🇷', multiline: true }),
+        teamText1_en: fields.text({ label: 'Section 5 — Paragraphe 1 🇬🇧', multiline: true }),
+        teamText1_de: fields.text({ label: 'Section 5 — Paragraphe 1 🇩🇪', multiline: true }),
+        teamText2_fr: fields.text({ label: 'Section 5 — Paragraphe 2 🇫🇷', multiline: true }),
+        teamText2_en: fields.text({ label: 'Section 5 — Paragraphe 2 🇬🇧', multiline: true }),
+        teamText2_de: fields.text({ label: 'Section 5 — Paragraphe 2 🇩🇪', multiline: true }),
+        teamText3_fr: fields.text({ label: 'Section 5 — Paragraphe 3 🇫🇷', multiline: true }),
+        teamText3_en: fields.text({ label: 'Section 5 — Paragraphe 3 🇬🇧', multiline: true }),
+        teamText3_de: fields.text({ label: 'Section 5 — Paragraphe 3 🇩🇪', multiline: true }),
+        wineTitle_fr: fields.text({ label: 'Section 6 — Titre 🇫🇷' }),
+        wineTitle_en: fields.text({ label: 'Section 6 — Titre 🇬🇧' }),
+        wineTitle_de: fields.text({ label: 'Section 6 — Titre 🇩🇪' }),
+        wineText1_fr: fields.text({ label: 'Section 6 — Paragraphe 1 🇫🇷', multiline: true }),
+        wineText1_en: fields.text({ label: 'Section 6 — Paragraphe 1 🇬🇧', multiline: true }),
+        wineText1_de: fields.text({ label: 'Section 6 — Paragraphe 1 🇩🇪', multiline: true }),
+        wineText2_fr: fields.text({ label: 'Section 6 — Paragraphe 2 🇫🇷', multiline: true }),
+        wineText2_en: fields.text({ label: 'Section 6 — Paragraphe 2 🇬🇧', multiline: true }),
+        wineText2_de: fields.text({ label: 'Section 6 — Paragraphe 2 🇩🇪', multiline: true }),
+        wineText3_fr: fields.text({ label: 'Section 6 — Paragraphe 3 🇫🇷', multiline: true }),
+        wineText3_en: fields.text({ label: 'Section 6 — Paragraphe 3 🇬🇧', multiline: true }),
+        wineText3_de: fields.text({ label: 'Section 6 — Paragraphe 3 🇩🇪', multiline: true }),
+        wineImage: fields.image({ label: 'Section 6 — Image', directory: 'public/assets/histoire', publicPath: '/assets/histoire/' }),
+        gestureImage: fields.image({ label: 'Section 7 — Image', directory: 'public/assets/histoire', publicPath: '/assets/histoire/' }),
+        gestureTitle_fr: fields.text({ label: 'Section 7 — Titre 🇫🇷' }),
+        gestureTitle_en: fields.text({ label: 'Section 7 — Titre 🇬🇧' }),
+        gestureTitle_de: fields.text({ label: 'Section 7 — Titre 🇩🇪' }),
+        gestureText_fr: fields.text({ label: 'Section 7 — Paragraphe 🇫🇷', multiline: true }),
+        gestureText_en: fields.text({ label: 'Section 7 — Paragraphe 🇬🇧', multiline: true }),
+        gestureText_de: fields.text({ label: 'Section 7 — Paragraphe 🇩🇪', multiline: true }),
+        engagementTitle_fr: fields.text({ label: 'Section 8 — Titre 🇫🇷' }),
+        engagementTitle_en: fields.text({ label: 'Section 8 — Titre 🇬🇧' }),
+        engagementTitle_de: fields.text({ label: 'Section 8 — Titre 🇩🇪' }),
+        engagementText1_fr: fields.text({ label: 'Section 8 — Paragraphe 1 🇫🇷', multiline: true }),
+        engagementText1_en: fields.text({ label: 'Section 8 — Paragraphe 1 🇬🇧', multiline: true }),
+        engagementText1_de: fields.text({ label: 'Section 8 — Paragraphe 1 🇩🇪', multiline: true }),
+        engagementText2_fr: fields.text({ label: 'Section 8 — Paragraphe 2 🇫🇷', multiline: true }),
+        engagementText2_en: fields.text({ label: 'Section 8 — Paragraphe 2 🇬🇧', multiline: true }),
+        engagementText2_de: fields.text({ label: 'Section 8 — Paragraphe 2 🇩🇪', multiline: true }),
+      },
+    }),
+    galerie: singleton({
+      label: 'Galerie',
+      path: 'content/galerie',
+      schema: {
+        photos: fields.array(
+          fields.object({
+            image: fields.image({
+              label: 'Image',
+              directory: 'public/assets/gallery',
+              publicPath: '/assets/gallery/',
+            }),
+            caption_fr: fields.text({ label: 'Légende 🇫🇷' }),
+            caption_en: fields.text({ label: 'Légende 🇬🇧' }),
+            caption_de: fields.text({ label: 'Légende 🇩🇪' }),
+          }),
+          { label: 'Photos' }
+        ),
+      },
+    }),
+    contact: singleton({
+      label: 'Contact',
+      path: 'content/contact',
+      schema: {
+        image: fields.image({
+          label: 'Image de fond',
+          directory: 'public/assets/contact',
+          publicPath: '/assets/contact/',
+        }),
+        title_fr: fields.text({ label: 'Titre 🇫🇷' }),
+        title_en: fields.text({ label: 'Titre 🇬🇧' }),
+        title_de: fields.text({ label: 'Titre 🇩🇪' }),
+        subtitle_fr: fields.text({ label: 'Sous-titre 🇫🇷' }),
+        subtitle_en: fields.text({ label: 'Sous-titre 🇬🇧' }),
+        subtitle_de: fields.text({ label: 'Sous-titre 🇩🇪' }),
+        address: fields.text({ label: 'Adresse', multiline: true }),
+        phone: fields.text({ label: 'Téléphone' }),
+        email: fields.text({ label: 'Email' }),
+        hoursLine1_fr: fields.text({ label: 'Horaires — Ligne 1 🇫🇷' }),
+        hoursLine1_en: fields.text({ label: 'Horaires — Ligne 1 🇬🇧' }),
+        hoursLine1_de: fields.text({ label: 'Horaires — Ligne 1 🇩🇪' }),
+        hoursLine2_fr: fields.text({ label: 'Horaires — Ligne 2 🇫🇷' }),
+        hoursLine2_en: fields.text({ label: 'Horaires — Ligne 2 🇬🇧' }),
+        hoursLine2_de: fields.text({ label: 'Horaires — Ligne 2 🇩🇪' }),
+        mapsUrl: fields.text({ label: 'Lien Google Maps' }),
+      },
+    }),
+    menu: singleton({
+      label: 'Menu',
+      path: 'content/menu',
+      schema: {
+        heroImage: fields.text({ label: "Hero — URL de l'image" }),
+        heroTitle_fr: fields.text({ label: 'Hero — Titre 🇫🇷' }),
+        heroTitle_en: fields.text({ label: 'Hero — Titre 🇬🇧' }),
+        heroTitle_de: fields.text({ label: 'Hero — Titre 🇩🇪' }),
+        heroSubtitle_fr: fields.text({ label: 'Hero — Sous-titre 🇫🇷' }),
+        heroSubtitle_en: fields.text({ label: 'Hero — Sous-titre 🇬🇧' }),
+        heroSubtitle_de: fields.text({ label: 'Hero — Sous-titre 🇩🇪' }),
+        tabs: fields.array(
+          fields.object({
+            name_fr: fields.text({ label: 'Nom de l\\'onglet 🇫🇷' }),
+            name_en: fields.text({ label: 'Nom de l\\'onglet 🇬🇧' }),
+            name_de: fields.text({ label: 'Nom de l\\'onglet 🇩🇪' }),
+            outline_fr: fields.text({ label: 'Description de l\\'onglet 🇫🇷' }),
+            outline_en: fields.text({ label: 'Description de l\\'onglet 🇬🇧' }),
+            outline_de: fields.text({ label: 'Description de l\\'onglet 🇩🇪' }),
+            image: fields.text({ label: "URL de l'image (facultatif)" }),
+            infoBlockTitle_fr: fields.text({ label: 'Info Block — Titre 🇫🇷' }),
+            infoBlockTitle_en: fields.text({ label: 'Info Block — Titre 🇬🇧' }),
+            infoBlockTitle_de: fields.text({ label: 'Info Block — Titre 🇩🇪' }),
+            infoBlockText_fr: fields.text({ label: 'Info Block — Texte 🇫🇷', multiline: true }),
+            infoBlockText_en: fields.text({ label: 'Info Block — Texte 🇬🇧', multiline: true }),
+            infoBlockText_de: fields.text({ label: 'Info Block — Texte 🇩🇪', multiline: true }),
+            infoBlockOutline_fr: fields.text({ label: 'Info Block — Outline 🇫🇷' }),
+            infoBlockOutline_en: fields.text({ label: 'Info Block — Outline 🇬🇧' }),
+            infoBlockOutline_de: fields.text({ label: 'Info Block — Outline 🇩🇪' }),
+            infoBlockPrice: fields.text({ label: 'Info Block — Prix' }),
+            categories: fields.array(
+              fields.object({
+                title_fr: fields.text({ label: 'Titre de la catégorie 🇫🇷' }),
+                title_en: fields.text({ label: 'Titre de la catégorie 🇬🇧' }),
+                title_de: fields.text({ label: 'Titre de la catégorie 🇩🇪' }),
+                image: fields.text({ label: "Image d'arrière-plan (facultatif)" }),
+                dishes: fields.array(
+                  fields.object({
+                    name: fields.text({ label: 'Nom du plat' }),
+                    description: fields.text({ label: 'Description', multiline: true }),
+                    price: fields.text({ label: 'Prix' }),
+                    outline: fields.text({ label: 'Précision' }),
+                    allergens: fields.text({ label: 'Allergènes' }),
+                    image: fields.text({ label: 'Image URL (facultatif)' }),
+                  }),
+                  {
+                    label: 'Plats',
+                    itemLabel: (props) => props.fields.name.value,
+                  }
+                ),
+              }),
+              {
+                label: 'Catégories',
+                itemLabel: (props) => props.fields.title_fr.value,
+              }
+            ),
+          }),
+          {
+            label: 'Onglets',
+            itemLabel: (props) => props.fields.name_fr.value,
+          }
+        ),
+      },
+    }),
+    footer: singleton({
+      label: 'Footer',
+      path: 'content/footer',
+      schema: {
+        description_fr: fields.text({ label: 'Description 🇫🇷', multiline: true }),
+        description_en: fields.text({ label: 'Description 🇬🇧', multiline: true }),
+        description_de: fields.text({ label: 'Description 🇩🇪', multiline: true }),
+        facebookUrl: fields.text({ label: 'Facebook — URL' }),
+        instagramUrl: fields.text({ label: 'Instagram — URL' }),
+        youtubeUrl: fields.text({ label: 'YouTube — URL' }),
+        reviews: fields.array(
+          fields.object({
+            name: fields.text({ label: 'Plateforme' }),
+            rating: fields.text({ label: 'Note' }),
+            reviewCount: fields.text({ label: "Nombre d'avis" }),
+          }),
+          { label: 'Avis' }
+        ),
+        paymentMethods: fields.text({
+          label: 'Moyens de paiement',
+          description: 'Ex : CB · Visa · Mastercard · Espèces',
+        }),
+      },
+    }),
+    mentionsLegales: singleton({
+      label: 'Mentions légales',
+      path: 'content/mentions-legales',
+      format: { contentField: 'content' },
+      schema: {
+        title: fields.text({ label: 'Titre' }),
+        content: fields.markdoc({
+          label: 'Contenu',
+        }),
+      },
+    }),
+    politiqueConfidentialite: singleton({
+      label: 'Politique de confidentialité',
+      path: 'content/politique-de-confidentialite',
+      format: { contentField: 'content' },
+      schema: {
+        title: fields.text({ label: 'Titre' }),
+        content: fields.markdoc({
+          label: 'Contenu',
+        }),
+      },
+    }),
+    cgv: singleton({
+      label: 'Conditions Générales de Vente',
+      path: 'content/cgv',
+      format: { contentField: 'content' },
+      schema: {
+        title: fields.text({ label: 'Titre' }),
+        content: fields.markdoc({
+          label: 'Contenu',
+        }),
+      },
+    }),
+  },
+});
+`;
+
+writeFileSync('keystatic.config.ts', config);
+console.log('keystatic.config.ts updated with multilingual fields');

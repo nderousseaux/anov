@@ -33,6 +33,11 @@ export type RestaurantSettings = $Result.DefaultSelection<Prisma.$RestaurantSett
  * 
  */
 export type DayOverride = $Result.DefaultSelection<Prisma.$DayOverridePayload>
+/**
+ * Model GiftCard
+ * 
+ */
+export type GiftCard = $Result.DefaultSelection<Prisma.$GiftCardPayload>
 
 /**
  * Enums
@@ -47,11 +52,25 @@ export namespace $Enums {
 
 export type ReservationStatus = (typeof ReservationStatus)[keyof typeof ReservationStatus]
 
+
+export const GiftCardStatus: {
+  PENDING_PAYMENT: 'PENDING_PAYMENT',
+  ACTIVE: 'ACTIVE',
+  USED: 'USED',
+  EXPIRED: 'EXPIRED'
+};
+
+export type GiftCardStatus = (typeof GiftCardStatus)[keyof typeof GiftCardStatus]
+
 }
 
 export type ReservationStatus = $Enums.ReservationStatus
 
 export const ReservationStatus: typeof $Enums.ReservationStatus
+
+export type GiftCardStatus = $Enums.GiftCardStatus
+
+export const GiftCardStatus: typeof $Enums.GiftCardStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -213,6 +232,16 @@ export class PrismaClient<
     * ```
     */
   get dayOverride(): Prisma.DayOverrideDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.giftCard`: Exposes CRUD operations for the **GiftCard** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GiftCards
+    * const giftCards = await prisma.giftCard.findMany()
+    * ```
+    */
+  get giftCard(): Prisma.GiftCardDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -650,7 +679,8 @@ export namespace Prisma {
     Reservation: 'Reservation',
     Admin: 'Admin',
     RestaurantSettings: 'RestaurantSettings',
-    DayOverride: 'DayOverride'
+    DayOverride: 'DayOverride',
+    GiftCard: 'GiftCard'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -666,7 +696,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "reservation" | "admin" | "restaurantSettings" | "dayOverride"
+      modelProps: "reservation" | "admin" | "restaurantSettings" | "dayOverride" | "giftCard"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -966,6 +996,80 @@ export namespace Prisma {
           }
         }
       }
+      GiftCard: {
+        payload: Prisma.$GiftCardPayload<ExtArgs>
+        fields: Prisma.GiftCardFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GiftCardFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GiftCardPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GiftCardFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GiftCardPayload>
+          }
+          findFirst: {
+            args: Prisma.GiftCardFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GiftCardPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GiftCardFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GiftCardPayload>
+          }
+          findMany: {
+            args: Prisma.GiftCardFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GiftCardPayload>[]
+          }
+          create: {
+            args: Prisma.GiftCardCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GiftCardPayload>
+          }
+          createMany: {
+            args: Prisma.GiftCardCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.GiftCardCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GiftCardPayload>[]
+          }
+          delete: {
+            args: Prisma.GiftCardDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GiftCardPayload>
+          }
+          update: {
+            args: Prisma.GiftCardUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GiftCardPayload>
+          }
+          deleteMany: {
+            args: Prisma.GiftCardDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GiftCardUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.GiftCardUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GiftCardPayload>[]
+          }
+          upsert: {
+            args: Prisma.GiftCardUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GiftCardPayload>
+          }
+          aggregate: {
+            args: Prisma.GiftCardAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGiftCard>
+          }
+          groupBy: {
+            args: Prisma.GiftCardGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GiftCardGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.GiftCardCountArgs<ExtArgs>
+            result: $Utils.Optional<GiftCardCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1078,6 +1182,7 @@ export namespace Prisma {
     admin?: AdminOmit
     restaurantSettings?: RestaurantSettingsOmit
     dayOverride?: DayOverrideOmit
+    giftCard?: GiftCardOmit
   }
 
   /* Types for Logging */
@@ -5441,6 +5546,1131 @@ export namespace Prisma {
 
 
   /**
+   * Model GiftCard
+   */
+
+  export type AggregateGiftCard = {
+    _count: GiftCardCountAggregateOutputType | null
+    _avg: GiftCardAvgAggregateOutputType | null
+    _sum: GiftCardSumAggregateOutputType | null
+    _min: GiftCardMinAggregateOutputType | null
+    _max: GiftCardMaxAggregateOutputType | null
+  }
+
+  export type GiftCardAvgAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type GiftCardSumAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type GiftCardMinAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    code: string | null
+    amount: number | null
+    recipientEmail: string | null
+    personalMessage: string | null
+    isPaid: boolean | null
+    status: $Enums.GiftCardStatus | null
+    stripeSessionId: string | null
+    expiresAt: Date | null
+    usedAt: Date | null
+  }
+
+  export type GiftCardMaxAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    code: string | null
+    amount: number | null
+    recipientEmail: string | null
+    personalMessage: string | null
+    isPaid: boolean | null
+    status: $Enums.GiftCardStatus | null
+    stripeSessionId: string | null
+    expiresAt: Date | null
+    usedAt: Date | null
+  }
+
+  export type GiftCardCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    updatedAt: number
+    code: number
+    amount: number
+    recipientEmail: number
+    personalMessage: number
+    isPaid: number
+    status: number
+    stripeSessionId: number
+    expiresAt: number
+    usedAt: number
+    _all: number
+  }
+
+
+  export type GiftCardAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type GiftCardSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type GiftCardMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    code?: true
+    amount?: true
+    recipientEmail?: true
+    personalMessage?: true
+    isPaid?: true
+    status?: true
+    stripeSessionId?: true
+    expiresAt?: true
+    usedAt?: true
+  }
+
+  export type GiftCardMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    code?: true
+    amount?: true
+    recipientEmail?: true
+    personalMessage?: true
+    isPaid?: true
+    status?: true
+    stripeSessionId?: true
+    expiresAt?: true
+    usedAt?: true
+  }
+
+  export type GiftCardCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    code?: true
+    amount?: true
+    recipientEmail?: true
+    personalMessage?: true
+    isPaid?: true
+    status?: true
+    stripeSessionId?: true
+    expiresAt?: true
+    usedAt?: true
+    _all?: true
+  }
+
+  export type GiftCardAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GiftCard to aggregate.
+     */
+    where?: GiftCardWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GiftCards to fetch.
+     */
+    orderBy?: GiftCardOrderByWithRelationInput | GiftCardOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GiftCardWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GiftCards from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GiftCards.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GiftCards
+    **/
+    _count?: true | GiftCardCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: GiftCardAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GiftCardSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GiftCardMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GiftCardMaxAggregateInputType
+  }
+
+  export type GetGiftCardAggregateType<T extends GiftCardAggregateArgs> = {
+        [P in keyof T & keyof AggregateGiftCard]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGiftCard[P]>
+      : GetScalarType<T[P], AggregateGiftCard[P]>
+  }
+
+
+
+
+  export type GiftCardGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GiftCardWhereInput
+    orderBy?: GiftCardOrderByWithAggregationInput | GiftCardOrderByWithAggregationInput[]
+    by: GiftCardScalarFieldEnum[] | GiftCardScalarFieldEnum
+    having?: GiftCardScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GiftCardCountAggregateInputType | true
+    _avg?: GiftCardAvgAggregateInputType
+    _sum?: GiftCardSumAggregateInputType
+    _min?: GiftCardMinAggregateInputType
+    _max?: GiftCardMaxAggregateInputType
+  }
+
+  export type GiftCardGroupByOutputType = {
+    id: string
+    createdAt: Date
+    updatedAt: Date
+    code: string
+    amount: number
+    recipientEmail: string | null
+    personalMessage: string | null
+    isPaid: boolean
+    status: $Enums.GiftCardStatus
+    stripeSessionId: string | null
+    expiresAt: Date
+    usedAt: Date | null
+    _count: GiftCardCountAggregateOutputType | null
+    _avg: GiftCardAvgAggregateOutputType | null
+    _sum: GiftCardSumAggregateOutputType | null
+    _min: GiftCardMinAggregateOutputType | null
+    _max: GiftCardMaxAggregateOutputType | null
+  }
+
+  type GetGiftCardGroupByPayload<T extends GiftCardGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GiftCardGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GiftCardGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GiftCardGroupByOutputType[P]>
+            : GetScalarType<T[P], GiftCardGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GiftCardSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    code?: boolean
+    amount?: boolean
+    recipientEmail?: boolean
+    personalMessage?: boolean
+    isPaid?: boolean
+    status?: boolean
+    stripeSessionId?: boolean
+    expiresAt?: boolean
+    usedAt?: boolean
+  }, ExtArgs["result"]["giftCard"]>
+
+  export type GiftCardSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    code?: boolean
+    amount?: boolean
+    recipientEmail?: boolean
+    personalMessage?: boolean
+    isPaid?: boolean
+    status?: boolean
+    stripeSessionId?: boolean
+    expiresAt?: boolean
+    usedAt?: boolean
+  }, ExtArgs["result"]["giftCard"]>
+
+  export type GiftCardSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    code?: boolean
+    amount?: boolean
+    recipientEmail?: boolean
+    personalMessage?: boolean
+    isPaid?: boolean
+    status?: boolean
+    stripeSessionId?: boolean
+    expiresAt?: boolean
+    usedAt?: boolean
+  }, ExtArgs["result"]["giftCard"]>
+
+  export type GiftCardSelectScalar = {
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    code?: boolean
+    amount?: boolean
+    recipientEmail?: boolean
+    personalMessage?: boolean
+    isPaid?: boolean
+    status?: boolean
+    stripeSessionId?: boolean
+    expiresAt?: boolean
+    usedAt?: boolean
+  }
+
+  export type GiftCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "amount" | "recipientEmail" | "personalMessage" | "isPaid" | "status" | "stripeSessionId" | "expiresAt" | "usedAt", ExtArgs["result"]["giftCard"]>
+
+  export type $GiftCardPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GiftCard"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      createdAt: Date
+      updatedAt: Date
+      code: string
+      amount: number
+      recipientEmail: string | null
+      personalMessage: string | null
+      isPaid: boolean
+      status: $Enums.GiftCardStatus
+      stripeSessionId: string | null
+      expiresAt: Date
+      usedAt: Date | null
+    }, ExtArgs["result"]["giftCard"]>
+    composites: {}
+  }
+
+  type GiftCardGetPayload<S extends boolean | null | undefined | GiftCardDefaultArgs> = $Result.GetResult<Prisma.$GiftCardPayload, S>
+
+  type GiftCardCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GiftCardFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GiftCardCountAggregateInputType | true
+    }
+
+  export interface GiftCardDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GiftCard'], meta: { name: 'GiftCard' } }
+    /**
+     * Find zero or one GiftCard that matches the filter.
+     * @param {GiftCardFindUniqueArgs} args - Arguments to find a GiftCard
+     * @example
+     * // Get one GiftCard
+     * const giftCard = await prisma.giftCard.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GiftCardFindUniqueArgs>(args: SelectSubset<T, GiftCardFindUniqueArgs<ExtArgs>>): Prisma__GiftCardClient<$Result.GetResult<Prisma.$GiftCardPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GiftCard that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GiftCardFindUniqueOrThrowArgs} args - Arguments to find a GiftCard
+     * @example
+     * // Get one GiftCard
+     * const giftCard = await prisma.giftCard.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GiftCardFindUniqueOrThrowArgs>(args: SelectSubset<T, GiftCardFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GiftCardClient<$Result.GetResult<Prisma.$GiftCardPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GiftCard that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GiftCardFindFirstArgs} args - Arguments to find a GiftCard
+     * @example
+     * // Get one GiftCard
+     * const giftCard = await prisma.giftCard.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GiftCardFindFirstArgs>(args?: SelectSubset<T, GiftCardFindFirstArgs<ExtArgs>>): Prisma__GiftCardClient<$Result.GetResult<Prisma.$GiftCardPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GiftCard that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GiftCardFindFirstOrThrowArgs} args - Arguments to find a GiftCard
+     * @example
+     * // Get one GiftCard
+     * const giftCard = await prisma.giftCard.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GiftCardFindFirstOrThrowArgs>(args?: SelectSubset<T, GiftCardFindFirstOrThrowArgs<ExtArgs>>): Prisma__GiftCardClient<$Result.GetResult<Prisma.$GiftCardPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GiftCards that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GiftCardFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GiftCards
+     * const giftCards = await prisma.giftCard.findMany()
+     * 
+     * // Get first 10 GiftCards
+     * const giftCards = await prisma.giftCard.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const giftCardWithIdOnly = await prisma.giftCard.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GiftCardFindManyArgs>(args?: SelectSubset<T, GiftCardFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GiftCardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GiftCard.
+     * @param {GiftCardCreateArgs} args - Arguments to create a GiftCard.
+     * @example
+     * // Create one GiftCard
+     * const GiftCard = await prisma.giftCard.create({
+     *   data: {
+     *     // ... data to create a GiftCard
+     *   }
+     * })
+     * 
+     */
+    create<T extends GiftCardCreateArgs>(args: SelectSubset<T, GiftCardCreateArgs<ExtArgs>>): Prisma__GiftCardClient<$Result.GetResult<Prisma.$GiftCardPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GiftCards.
+     * @param {GiftCardCreateManyArgs} args - Arguments to create many GiftCards.
+     * @example
+     * // Create many GiftCards
+     * const giftCard = await prisma.giftCard.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GiftCardCreateManyArgs>(args?: SelectSubset<T, GiftCardCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many GiftCards and returns the data saved in the database.
+     * @param {GiftCardCreateManyAndReturnArgs} args - Arguments to create many GiftCards.
+     * @example
+     * // Create many GiftCards
+     * const giftCard = await prisma.giftCard.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many GiftCards and only return the `id`
+     * const giftCardWithIdOnly = await prisma.giftCard.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends GiftCardCreateManyAndReturnArgs>(args?: SelectSubset<T, GiftCardCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GiftCardPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a GiftCard.
+     * @param {GiftCardDeleteArgs} args - Arguments to delete one GiftCard.
+     * @example
+     * // Delete one GiftCard
+     * const GiftCard = await prisma.giftCard.delete({
+     *   where: {
+     *     // ... filter to delete one GiftCard
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GiftCardDeleteArgs>(args: SelectSubset<T, GiftCardDeleteArgs<ExtArgs>>): Prisma__GiftCardClient<$Result.GetResult<Prisma.$GiftCardPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GiftCard.
+     * @param {GiftCardUpdateArgs} args - Arguments to update one GiftCard.
+     * @example
+     * // Update one GiftCard
+     * const giftCard = await prisma.giftCard.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GiftCardUpdateArgs>(args: SelectSubset<T, GiftCardUpdateArgs<ExtArgs>>): Prisma__GiftCardClient<$Result.GetResult<Prisma.$GiftCardPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GiftCards.
+     * @param {GiftCardDeleteManyArgs} args - Arguments to filter GiftCards to delete.
+     * @example
+     * // Delete a few GiftCards
+     * const { count } = await prisma.giftCard.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GiftCardDeleteManyArgs>(args?: SelectSubset<T, GiftCardDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GiftCards.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GiftCardUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GiftCards
+     * const giftCard = await prisma.giftCard.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GiftCardUpdateManyArgs>(args: SelectSubset<T, GiftCardUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GiftCards and returns the data updated in the database.
+     * @param {GiftCardUpdateManyAndReturnArgs} args - Arguments to update many GiftCards.
+     * @example
+     * // Update many GiftCards
+     * const giftCard = await prisma.giftCard.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more GiftCards and only return the `id`
+     * const giftCardWithIdOnly = await prisma.giftCard.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends GiftCardUpdateManyAndReturnArgs>(args: SelectSubset<T, GiftCardUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GiftCardPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one GiftCard.
+     * @param {GiftCardUpsertArgs} args - Arguments to update or create a GiftCard.
+     * @example
+     * // Update or create a GiftCard
+     * const giftCard = await prisma.giftCard.upsert({
+     *   create: {
+     *     // ... data to create a GiftCard
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GiftCard we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GiftCardUpsertArgs>(args: SelectSubset<T, GiftCardUpsertArgs<ExtArgs>>): Prisma__GiftCardClient<$Result.GetResult<Prisma.$GiftCardPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of GiftCards.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GiftCardCountArgs} args - Arguments to filter GiftCards to count.
+     * @example
+     * // Count the number of GiftCards
+     * const count = await prisma.giftCard.count({
+     *   where: {
+     *     // ... the filter for the GiftCards we want to count
+     *   }
+     * })
+    **/
+    count<T extends GiftCardCountArgs>(
+      args?: Subset<T, GiftCardCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GiftCardCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GiftCard.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GiftCardAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GiftCardAggregateArgs>(args: Subset<T, GiftCardAggregateArgs>): Prisma.PrismaPromise<GetGiftCardAggregateType<T>>
+
+    /**
+     * Group by GiftCard.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GiftCardGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GiftCardGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GiftCardGroupByArgs['orderBy'] }
+        : { orderBy?: GiftCardGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GiftCardGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGiftCardGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GiftCard model
+   */
+  readonly fields: GiftCardFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GiftCard.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GiftCardClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GiftCard model
+   */
+  interface GiftCardFieldRefs {
+    readonly id: FieldRef<"GiftCard", 'String'>
+    readonly createdAt: FieldRef<"GiftCard", 'DateTime'>
+    readonly updatedAt: FieldRef<"GiftCard", 'DateTime'>
+    readonly code: FieldRef<"GiftCard", 'String'>
+    readonly amount: FieldRef<"GiftCard", 'Float'>
+    readonly recipientEmail: FieldRef<"GiftCard", 'String'>
+    readonly personalMessage: FieldRef<"GiftCard", 'String'>
+    readonly isPaid: FieldRef<"GiftCard", 'Boolean'>
+    readonly status: FieldRef<"GiftCard", 'GiftCardStatus'>
+    readonly stripeSessionId: FieldRef<"GiftCard", 'String'>
+    readonly expiresAt: FieldRef<"GiftCard", 'DateTime'>
+    readonly usedAt: FieldRef<"GiftCard", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GiftCard findUnique
+   */
+  export type GiftCardFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GiftCard
+     */
+    select?: GiftCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GiftCard
+     */
+    omit?: GiftCardOmit<ExtArgs> | null
+    /**
+     * Filter, which GiftCard to fetch.
+     */
+    where: GiftCardWhereUniqueInput
+  }
+
+  /**
+   * GiftCard findUniqueOrThrow
+   */
+  export type GiftCardFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GiftCard
+     */
+    select?: GiftCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GiftCard
+     */
+    omit?: GiftCardOmit<ExtArgs> | null
+    /**
+     * Filter, which GiftCard to fetch.
+     */
+    where: GiftCardWhereUniqueInput
+  }
+
+  /**
+   * GiftCard findFirst
+   */
+  export type GiftCardFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GiftCard
+     */
+    select?: GiftCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GiftCard
+     */
+    omit?: GiftCardOmit<ExtArgs> | null
+    /**
+     * Filter, which GiftCard to fetch.
+     */
+    where?: GiftCardWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GiftCards to fetch.
+     */
+    orderBy?: GiftCardOrderByWithRelationInput | GiftCardOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GiftCards.
+     */
+    cursor?: GiftCardWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GiftCards from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GiftCards.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GiftCards.
+     */
+    distinct?: GiftCardScalarFieldEnum | GiftCardScalarFieldEnum[]
+  }
+
+  /**
+   * GiftCard findFirstOrThrow
+   */
+  export type GiftCardFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GiftCard
+     */
+    select?: GiftCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GiftCard
+     */
+    omit?: GiftCardOmit<ExtArgs> | null
+    /**
+     * Filter, which GiftCard to fetch.
+     */
+    where?: GiftCardWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GiftCards to fetch.
+     */
+    orderBy?: GiftCardOrderByWithRelationInput | GiftCardOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GiftCards.
+     */
+    cursor?: GiftCardWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GiftCards from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GiftCards.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GiftCards.
+     */
+    distinct?: GiftCardScalarFieldEnum | GiftCardScalarFieldEnum[]
+  }
+
+  /**
+   * GiftCard findMany
+   */
+  export type GiftCardFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GiftCard
+     */
+    select?: GiftCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GiftCard
+     */
+    omit?: GiftCardOmit<ExtArgs> | null
+    /**
+     * Filter, which GiftCards to fetch.
+     */
+    where?: GiftCardWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GiftCards to fetch.
+     */
+    orderBy?: GiftCardOrderByWithRelationInput | GiftCardOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GiftCards.
+     */
+    cursor?: GiftCardWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GiftCards from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GiftCards.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GiftCards.
+     */
+    distinct?: GiftCardScalarFieldEnum | GiftCardScalarFieldEnum[]
+  }
+
+  /**
+   * GiftCard create
+   */
+  export type GiftCardCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GiftCard
+     */
+    select?: GiftCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GiftCard
+     */
+    omit?: GiftCardOmit<ExtArgs> | null
+    /**
+     * The data needed to create a GiftCard.
+     */
+    data: XOR<GiftCardCreateInput, GiftCardUncheckedCreateInput>
+  }
+
+  /**
+   * GiftCard createMany
+   */
+  export type GiftCardCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GiftCards.
+     */
+    data: GiftCardCreateManyInput | GiftCardCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * GiftCard createManyAndReturn
+   */
+  export type GiftCardCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GiftCard
+     */
+    select?: GiftCardSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GiftCard
+     */
+    omit?: GiftCardOmit<ExtArgs> | null
+    /**
+     * The data used to create many GiftCards.
+     */
+    data: GiftCardCreateManyInput | GiftCardCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * GiftCard update
+   */
+  export type GiftCardUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GiftCard
+     */
+    select?: GiftCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GiftCard
+     */
+    omit?: GiftCardOmit<ExtArgs> | null
+    /**
+     * The data needed to update a GiftCard.
+     */
+    data: XOR<GiftCardUpdateInput, GiftCardUncheckedUpdateInput>
+    /**
+     * Choose, which GiftCard to update.
+     */
+    where: GiftCardWhereUniqueInput
+  }
+
+  /**
+   * GiftCard updateMany
+   */
+  export type GiftCardUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GiftCards.
+     */
+    data: XOR<GiftCardUpdateManyMutationInput, GiftCardUncheckedUpdateManyInput>
+    /**
+     * Filter which GiftCards to update
+     */
+    where?: GiftCardWhereInput
+    /**
+     * Limit how many GiftCards to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GiftCard updateManyAndReturn
+   */
+  export type GiftCardUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GiftCard
+     */
+    select?: GiftCardSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GiftCard
+     */
+    omit?: GiftCardOmit<ExtArgs> | null
+    /**
+     * The data used to update GiftCards.
+     */
+    data: XOR<GiftCardUpdateManyMutationInput, GiftCardUncheckedUpdateManyInput>
+    /**
+     * Filter which GiftCards to update
+     */
+    where?: GiftCardWhereInput
+    /**
+     * Limit how many GiftCards to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GiftCard upsert
+   */
+  export type GiftCardUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GiftCard
+     */
+    select?: GiftCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GiftCard
+     */
+    omit?: GiftCardOmit<ExtArgs> | null
+    /**
+     * The filter to search for the GiftCard to update in case it exists.
+     */
+    where: GiftCardWhereUniqueInput
+    /**
+     * In case the GiftCard found by the `where` argument doesn't exist, create a new GiftCard with this data.
+     */
+    create: XOR<GiftCardCreateInput, GiftCardUncheckedCreateInput>
+    /**
+     * In case the GiftCard was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GiftCardUpdateInput, GiftCardUncheckedUpdateInput>
+  }
+
+  /**
+   * GiftCard delete
+   */
+  export type GiftCardDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GiftCard
+     */
+    select?: GiftCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GiftCard
+     */
+    omit?: GiftCardOmit<ExtArgs> | null
+    /**
+     * Filter which GiftCard to delete.
+     */
+    where: GiftCardWhereUniqueInput
+  }
+
+  /**
+   * GiftCard deleteMany
+   */
+  export type GiftCardDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GiftCards to delete
+     */
+    where?: GiftCardWhereInput
+    /**
+     * Limit how many GiftCards to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GiftCard without action
+   */
+  export type GiftCardDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GiftCard
+     */
+    select?: GiftCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GiftCard
+     */
+    omit?: GiftCardOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -5506,6 +6736,24 @@ export namespace Prisma {
   };
 
   export type DayOverrideScalarFieldEnum = (typeof DayOverrideScalarFieldEnum)[keyof typeof DayOverrideScalarFieldEnum]
+
+
+  export const GiftCardScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    code: 'code',
+    amount: 'amount',
+    recipientEmail: 'recipientEmail',
+    personalMessage: 'personalMessage',
+    isPaid: 'isPaid',
+    status: 'status',
+    stripeSessionId: 'stripeSessionId',
+    expiresAt: 'expiresAt',
+    usedAt: 'usedAt'
+  };
+
+  export type GiftCardScalarFieldEnum = (typeof GiftCardScalarFieldEnum)[keyof typeof GiftCardScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -5611,6 +6859,20 @@ export namespace Prisma {
    * Reference to a field of type 'Float[]'
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'GiftCardStatus'
+   */
+  export type EnumGiftCardStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GiftCardStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'GiftCardStatus[]'
+   */
+  export type ListEnumGiftCardStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GiftCardStatus[]'>
     
   /**
    * Deep Input Types
@@ -5881,6 +7143,95 @@ export namespace Prisma {
     closed?: BoolWithAggregatesFilter<"DayOverride"> | boolean
     maxCovers?: IntNullableWithAggregatesFilter<"DayOverride"> | number | null
     openingSlots?: StringNullableWithAggregatesFilter<"DayOverride"> | string | null
+  }
+
+  export type GiftCardWhereInput = {
+    AND?: GiftCardWhereInput | GiftCardWhereInput[]
+    OR?: GiftCardWhereInput[]
+    NOT?: GiftCardWhereInput | GiftCardWhereInput[]
+    id?: StringFilter<"GiftCard"> | string
+    createdAt?: DateTimeFilter<"GiftCard"> | Date | string
+    updatedAt?: DateTimeFilter<"GiftCard"> | Date | string
+    code?: StringFilter<"GiftCard"> | string
+    amount?: FloatFilter<"GiftCard"> | number
+    recipientEmail?: StringNullableFilter<"GiftCard"> | string | null
+    personalMessage?: StringNullableFilter<"GiftCard"> | string | null
+    isPaid?: BoolFilter<"GiftCard"> | boolean
+    status?: EnumGiftCardStatusFilter<"GiftCard"> | $Enums.GiftCardStatus
+    stripeSessionId?: StringNullableFilter<"GiftCard"> | string | null
+    expiresAt?: DateTimeFilter<"GiftCard"> | Date | string
+    usedAt?: DateTimeNullableFilter<"GiftCard"> | Date | string | null
+  }
+
+  export type GiftCardOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    code?: SortOrder
+    amount?: SortOrder
+    recipientEmail?: SortOrderInput | SortOrder
+    personalMessage?: SortOrderInput | SortOrder
+    isPaid?: SortOrder
+    status?: SortOrder
+    stripeSessionId?: SortOrderInput | SortOrder
+    expiresAt?: SortOrder
+    usedAt?: SortOrderInput | SortOrder
+  }
+
+  export type GiftCardWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    code?: string
+    stripeSessionId?: string
+    AND?: GiftCardWhereInput | GiftCardWhereInput[]
+    OR?: GiftCardWhereInput[]
+    NOT?: GiftCardWhereInput | GiftCardWhereInput[]
+    createdAt?: DateTimeFilter<"GiftCard"> | Date | string
+    updatedAt?: DateTimeFilter<"GiftCard"> | Date | string
+    amount?: FloatFilter<"GiftCard"> | number
+    recipientEmail?: StringNullableFilter<"GiftCard"> | string | null
+    personalMessage?: StringNullableFilter<"GiftCard"> | string | null
+    isPaid?: BoolFilter<"GiftCard"> | boolean
+    status?: EnumGiftCardStatusFilter<"GiftCard"> | $Enums.GiftCardStatus
+    expiresAt?: DateTimeFilter<"GiftCard"> | Date | string
+    usedAt?: DateTimeNullableFilter<"GiftCard"> | Date | string | null
+  }, "id" | "code" | "stripeSessionId">
+
+  export type GiftCardOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    code?: SortOrder
+    amount?: SortOrder
+    recipientEmail?: SortOrderInput | SortOrder
+    personalMessage?: SortOrderInput | SortOrder
+    isPaid?: SortOrder
+    status?: SortOrder
+    stripeSessionId?: SortOrderInput | SortOrder
+    expiresAt?: SortOrder
+    usedAt?: SortOrderInput | SortOrder
+    _count?: GiftCardCountOrderByAggregateInput
+    _avg?: GiftCardAvgOrderByAggregateInput
+    _max?: GiftCardMaxOrderByAggregateInput
+    _min?: GiftCardMinOrderByAggregateInput
+    _sum?: GiftCardSumOrderByAggregateInput
+  }
+
+  export type GiftCardScalarWhereWithAggregatesInput = {
+    AND?: GiftCardScalarWhereWithAggregatesInput | GiftCardScalarWhereWithAggregatesInput[]
+    OR?: GiftCardScalarWhereWithAggregatesInput[]
+    NOT?: GiftCardScalarWhereWithAggregatesInput | GiftCardScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GiftCard"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"GiftCard"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"GiftCard"> | Date | string
+    code?: StringWithAggregatesFilter<"GiftCard"> | string
+    amount?: FloatWithAggregatesFilter<"GiftCard"> | number
+    recipientEmail?: StringNullableWithAggregatesFilter<"GiftCard"> | string | null
+    personalMessage?: StringNullableWithAggregatesFilter<"GiftCard"> | string | null
+    isPaid?: BoolWithAggregatesFilter<"GiftCard"> | boolean
+    status?: EnumGiftCardStatusWithAggregatesFilter<"GiftCard"> | $Enums.GiftCardStatus
+    stripeSessionId?: StringNullableWithAggregatesFilter<"GiftCard"> | string | null
+    expiresAt?: DateTimeWithAggregatesFilter<"GiftCard"> | Date | string
+    usedAt?: DateTimeNullableWithAggregatesFilter<"GiftCard"> | Date | string | null
   }
 
   export type ReservationCreateInput = {
@@ -6169,6 +7520,111 @@ export namespace Prisma {
     closed?: BoolFieldUpdateOperationsInput | boolean
     maxCovers?: NullableIntFieldUpdateOperationsInput | number | null
     openingSlots?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type GiftCardCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    code: string
+    amount: number
+    recipientEmail?: string | null
+    personalMessage?: string | null
+    isPaid?: boolean
+    status?: $Enums.GiftCardStatus
+    stripeSessionId?: string | null
+    expiresAt: Date | string
+    usedAt?: Date | string | null
+  }
+
+  export type GiftCardUncheckedCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    code: string
+    amount: number
+    recipientEmail?: string | null
+    personalMessage?: string | null
+    isPaid?: boolean
+    status?: $Enums.GiftCardStatus
+    stripeSessionId?: string | null
+    expiresAt: Date | string
+    usedAt?: Date | string | null
+  }
+
+  export type GiftCardUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    code?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isPaid?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumGiftCardStatusFieldUpdateOperationsInput | $Enums.GiftCardStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type GiftCardUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    code?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isPaid?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumGiftCardStatusFieldUpdateOperationsInput | $Enums.GiftCardStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type GiftCardCreateManyInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    code: string
+    amount: number
+    recipientEmail?: string | null
+    personalMessage?: string | null
+    isPaid?: boolean
+    status?: $Enums.GiftCardStatus
+    stripeSessionId?: string | null
+    expiresAt: Date | string
+    usedAt?: Date | string | null
+  }
+
+  export type GiftCardUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    code?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isPaid?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumGiftCardStatusFieldUpdateOperationsInput | $Enums.GiftCardStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type GiftCardUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    code?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isPaid?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumGiftCardStatusFieldUpdateOperationsInput | $Enums.GiftCardStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -6517,6 +7973,128 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type EnumGiftCardStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.GiftCardStatus | EnumGiftCardStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumGiftCardStatusFilter<$PrismaModel> | $Enums.GiftCardStatus
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type GiftCardCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    code?: SortOrder
+    amount?: SortOrder
+    recipientEmail?: SortOrder
+    personalMessage?: SortOrder
+    isPaid?: SortOrder
+    status?: SortOrder
+    stripeSessionId?: SortOrder
+    expiresAt?: SortOrder
+    usedAt?: SortOrder
+  }
+
+  export type GiftCardAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type GiftCardMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    code?: SortOrder
+    amount?: SortOrder
+    recipientEmail?: SortOrder
+    personalMessage?: SortOrder
+    isPaid?: SortOrder
+    status?: SortOrder
+    stripeSessionId?: SortOrder
+    expiresAt?: SortOrder
+    usedAt?: SortOrder
+  }
+
+  export type GiftCardMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    code?: SortOrder
+    amount?: SortOrder
+    recipientEmail?: SortOrder
+    personalMessage?: SortOrder
+    isPaid?: SortOrder
+    status?: SortOrder
+    stripeSessionId?: SortOrder
+    expiresAt?: SortOrder
+    usedAt?: SortOrder
+  }
+
+  export type GiftCardSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type EnumGiftCardStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GiftCardStatus | EnumGiftCardStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumGiftCardStatusWithAggregatesFilter<$PrismaModel> | $Enums.GiftCardStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumGiftCardStatusFilter<$PrismaModel>
+    _max?: NestedEnumGiftCardStatusFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -6551,6 +8129,22 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type EnumGiftCardStatusFieldUpdateOperationsInput = {
+    set?: $Enums.GiftCardStatus
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -6744,6 +8338,64 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumGiftCardStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.GiftCardStatus | EnumGiftCardStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumGiftCardStatusFilter<$PrismaModel> | $Enums.GiftCardStatus
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type NestedEnumGiftCardStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GiftCardStatus | EnumGiftCardStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumGiftCardStatusWithAggregatesFilter<$PrismaModel> | $Enums.GiftCardStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumGiftCardStatusFilter<$PrismaModel>
+    _max?: NestedEnumGiftCardStatusFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
 

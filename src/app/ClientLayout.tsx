@@ -6,12 +6,30 @@ import { Toaster } from '@/components/ui/sonner';
 import { Navbar } from '@/components/Navbar';
 import { Footer, type FooterContent } from '@/components/Footer';
 import { SplashScreen } from '@/components/SplashScreen';
+import { LanguageProvider } from '@/context/LanguageContext';
 
 export default function ClientLayout({ children, footerContent }: { children: ReactNode; footerContent?: FooterContent | null }) {
+  return (
+    <LanguageProvider>
+      <ClientLayoutInner footerContent={footerContent}>{children}</ClientLayoutInner>
+    </LanguageProvider>
+  );
+}
+
+function ClientLayoutInner({ children, footerContent }: { children: ReactNode; footerContent?: FooterContent | null }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/admin') || pathname.startsWith('/keystatic');
 
-  const [showSplash, setShowSplash] = useState(!isAdmin);
+  // Pages où le splash screen ne doit pas s'afficher
+  const noSplashPages = [
+    '/cheques-cadeaux/succes',
+    '/reservation/succes',
+    '/reservation/paiement',
+    '/reservation/cancel',
+  ];
+  const shouldShowSplash = !isAdmin && !noSplashPages.some(page => pathname.startsWith(page));
+
+  const [showSplash, setShowSplash] = useState(shouldShowSplash);
   const [isSplashFading, setIsSplashFading] = useState(false);
 
   useEffect(() => {
@@ -55,7 +73,7 @@ export default function ClientLayout({ children, footerContent }: { children: Re
   return (
     <>
       <div className="min-h-screen bg-background text-foreground">
-        <Navbar />
+        <Navbar footerContent={footerContent} />
 
         <main>{children}</main>
 

@@ -3,27 +3,9 @@ import type { ReactNode } from 'react';
 
 export default function CmsLayout({ children }: { children: ReactNode }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    <div className="flex flex-col h-screen">
       <AdminNav />
-      <div
-        style={
-          {
-            flex: 1,
-            overflow: 'auto',
-            backgroundColor: '#ffffff',
-            color: '#09090b',
-            '--background': '#ffffff',
-            '--foreground': '#09090b',
-            '--card': '#ffffff',
-            '--card-foreground': '#09090b',
-            '--primary': '#18181b',
-            '--primary-foreground': '#fafafa',
-            '--muted': '#f4f4f5',
-            '--muted-foreground': '#71717a',
-            '--border': '#e4e4e7',
-          } as React.CSSProperties
-        }
-      >
+      <div className="flex-1 overflow-auto bg-background text-foreground">
         {children}
       </div>
     </div>

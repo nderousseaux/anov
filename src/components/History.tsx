@@ -1,41 +1,14 @@
-interface HistoireContent {
-  introTitle?: string | null;
-  introText1?: string | null;
-  introText2?: string | null;
-  chefImage?: string | null;
-  chefName?: string | null;
-  chefText1?: string | null;
-  chefText2?: string | null;
-  visionTitle?: string | null;
-  visionText1?: string | null;
-  visionText2?: string | null;
-  visionText3?: string | null;
-  visionImage1?: string | null;
-  visionImage2?: string | null;
-  productsImage?: string | null;
-  productsTitle?: string | null;
-  productsText1?: string | null;
-  productsText2?: string | null;
-  teamImage?: string | null;
-  teamTitle?: string | null;
-  teamText1?: string | null;
-  teamText2?: string | null;
-  teamText3?: string | null;
-  wineTitle?: string | null;
-  wineText1?: string | null;
-  wineText2?: string | null;
-  wineText3?: string | null;
-  wineImage?: string | null;
-  gestureImage?: string | null;
-  gestureTitle?: string | null;
-  gestureText?: string | null;
-  engagementTitle?: string | null;
-  engagementText1?: string | null;
-  engagementText2?: string | null;
-}
+'use client';
 
-export function History({ content }: { content?: HistoireContent | null }) {
+import { useLanguage } from '@/context/LanguageContext';
+import { pickField } from '@/lib/langs';
+import { OriginsMap } from './OriginsMap';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function History({ content, originesContent }: { content?: Record<string, any> | null; originesContent?: Record<string, any> | null }) {
+  const { locale } = useLanguage();
   const c = content ?? {};
+  const p = (key: string) => pickField(c, key, locale);
   return (
     <section id="history" className="bg-background">
       {/* Introduction avec plus d'espace */}
@@ -46,17 +19,17 @@ export function History({ content }: { content?: HistoireContent | null }) {
               className="text-4xl sm:text-5xl md:text-6xl mb-8 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              {c.introTitle ?? 'Notre Histoire'}
+              {p('introTitle') || 'Notre Histoire'}
             </h2>
             <p
               className="text-base sm:text-xl text-foreground max-w-4xl mx-auto leading-relaxed mb-6"
             >
-              {c.introText1 ?? ''}
+              {p('introText1')}
             </p>
             <p
               className="text-sm sm:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed"
             >
-              {c.introText2 ?? ''}
+              {p('introText2')}
             </p>
           </div>
         </div>
@@ -87,12 +60,12 @@ export function History({ content }: { content?: HistoireContent | null }) {
             <p
               className="text-base sm:text-xl text-foreground mb-5 leading-relaxed"
             >
-              {c.chefText1 ?? ''}
+              {p('chefText1')}
             </p>
             <p
               className="text-sm sm:text-lg text-muted-foreground leading-relaxed"
             >
-              {c.chefText2 ?? ''}
+              {p('chefText2')}
             </p>
           </div>
         </div>
@@ -107,22 +80,22 @@ export function History({ content }: { content?: HistoireContent | null }) {
                 className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                {c.visionTitle ?? 'Une Vision, Une Passion'}
+                {p('visionTitle') || 'Une Vision, Une Passion'}
               </h3>
               <p
                 className="text-base sm:text-xl text-foreground mb-6 leading-relaxed"
               >
-                {c.visionText1 ?? ''}
+                {p('visionText1')}
               </p>
               <p
                 className="text-sm sm:text-lg text-muted-foreground leading-relaxed mb-6"
               >
-                {c.visionText2 ?? ''}
+                {p('visionText2')}
               </p>
               <p
                 className="text-sm sm:text-lg text-muted-foreground leading-relaxed"
               >
-                {c.visionText3 ?? ''}
+                {p('visionText3')}
               </p>
             </div>
             <div className="group overflow-hidden rounded-lg border-2 border-primary/30 shadow-2xl hover:border-primary transition-all duration-300">
@@ -145,6 +118,10 @@ export function History({ content }: { content?: HistoireContent | null }) {
         </div>
       </div>
 
+      {/* Carte des Origines */}
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <OriginsMap content={originesContent as any} />
+
       {/* Full Width Image - Ingredients */}
       <div className="relative">
         <div className="relative h-screen w-full">
@@ -165,17 +142,17 @@ export function History({ content }: { content?: HistoireContent | null }) {
               className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              {c.productsTitle ?? "L'Excellence des Produits"}
+              {p('productsTitle') || "L'Excellence des Produits"}
             </h3>
             <p
               className="text-base sm:text-xl text-foreground mb-5 leading-relaxed"
             >
-              {c.productsText1 ?? ''}
+              {p('productsText1')}
             </p>
             <p
               className="text-sm sm:text-lg text-muted-foreground leading-relaxed"
             >
-              {c.productsText2 ?? ''}
+              {p('productsText2')}
             </p>
           </div>
         </div>
@@ -198,22 +175,22 @@ export function History({ content }: { content?: HistoireContent | null }) {
                 className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                {c.teamTitle ?? "Une Équipe d'Exception"}
+                {p('teamTitle') || "Une Équipe d'Exception"}
               </h3>
               <p
                 className="text-base sm:text-xl text-foreground mb-6 leading-relaxed"
               >
-                {c.teamText1 ?? ''}
+                {p('teamText1')}
               </p>
               <p
                 className="text-sm sm:text-lg text-muted-foreground mb-6 leading-relaxed"
               >
-                {c.teamText2 ?? ''}
+                {p('teamText2')}
               </p>
               <p
                 className="text-sm sm:text-lg text-muted-foreground leading-relaxed"
               >
-                {c.teamText3 ?? ''}
+                {p('teamText3')}
               </p>
             </div>
           </div>
@@ -225,22 +202,22 @@ export function History({ content }: { content?: HistoireContent | null }) {
                 className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                {c.wineTitle ?? "Une Cave d'Exception"}
+                {p('wineTitle') || "Une Cave d'Exception"}
               </h3>
               <p
                 className="text-base sm:text-xl text-foreground mb-6 leading-relaxed"
               >
-                {c.wineText1 ?? ''}
+                {p('wineText1')}
               </p>
               <p
                 className="text-sm sm:text-lg text-muted-foreground mb-6 leading-relaxed"
               >
-                {c.wineText2 ?? ''}
+                {p('wineText2')}
               </p>
               <p
                 className="text-sm sm:text-lg text-muted-foreground leading-relaxed"
               >
-                {c.wineText3 ?? ''}
+                {p('wineText3')}
               </p>
             </div>
             <div className="group overflow-hidden rounded-lg border-2 border-primary/30 shadow-2xl hover:border-primary transition-all duration-300">
@@ -274,12 +251,12 @@ export function History({ content }: { content?: HistoireContent | null }) {
               className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              {c.gestureTitle ?? 'La Maîtrise du Geste'}
+              {p('gestureTitle') || 'La Maîtrise du Geste'}
             </h3>
             <p
               className="text-base sm:text-xl text-foreground leading-relaxed"
             >
-              {c.gestureText ?? ''}
+              {p('gestureText')}
             </p>
           </div>
         </div>
@@ -292,17 +269,17 @@ export function History({ content }: { content?: HistoireContent | null }) {
             className="text-4xl sm:text-5xl md:text-6xl mb-8 text-primary"
             style={{ fontFamily: 'var(--font-display)' }}
           >
-            {c.engagementTitle ?? 'Notre Engagement'}
+            {p('engagementTitle') || 'Notre Engagement'}
           </h3>
           <p
             className="text-base sm:text-xl text-foreground mb-6 leading-relaxed"
           >
-            {c.engagementText1 ?? ''}
+            {p('engagementText1')}
           </p>
           <p
             className="text-sm sm:text-lg text-muted-foreground leading-relaxed"
           >
-            {c.engagementText2 ?? ''}
+            {p('engagementText2')}
           </p>
         </div>
       </div>

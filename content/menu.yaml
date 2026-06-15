@@ -1,14 +1,23 @@
 heroImage: >-
   https://images.unsplash.com/photo-1761095596755-99ba58997720?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwZGlzaCUyMHBsYXRpbmclMjBmaW5lJTIwZGluaW5nfGVufDF8fHx8MTc3MTUwOTU3N3ww&ixlib=rb-4.1.0&q=80&w=1080
-heroTitle: Nos Cartes
-heroSubtitle: >-
-  Quatre formules, une seule promesse : une cuisine vivante, ancrée dans les saisons
+heroTitle_fr: Nos Cartes
+heroTitle_en: Our Menus
+heroTitle_de: Unsere Speisekarten
+heroSubtitle_fr: "Quatre formules, une seule promesse : une cuisine vivante, ancrée dans les saisons"
+heroSubtitle_en: "Four offerings, one promise: a living cuisine, rooted in the seasons"
+heroSubtitle_de: "Vier Angebote, ein Versprechen: eine lebendige Küche, verwurzelt in den Jahreszeiten"
 tabs:
-  - name: Carte de la semaine
-    outline: Renouvelée chaque semaine selon les arrivages du marché
+  - name_fr: Carte de la semaine
+    name_en: Weekly Menu
+    name_de: Wochenkarte
+    outline_fr: Renouvelée chaque semaine selon les arrivages du marché
+    outline_en: Renewed every week according to market arrivals
+    outline_de: Wöchentlich erneuert nach Marktverfügbarkeit
     categories:
-      - title: Entrées
-        image: "https://images.unsplash.com/photo-1543353071-10c8ba85a904?w=800&q=80"
+      - title_fr: Entrées
+        title_en: Starters
+        title_de: Vorspeisen
+        image: "https://images.unsplash.com/photo-1534482421-64566f976cfa?w=600&q=80"
         dishes:
           - name: Velouté de butternut
             description: Crème légère, huile de truffe, croûtons maison
@@ -29,7 +38,9 @@ tabs:
             description: "Betterave, carotte, avocat, vinaigrette miso-sésame"
             price: 16€
             allergens: "Sésame, Soja (miso)"
-      - title: Plats
+      - title_fr: Plats
+        title_en: Main Courses
+        title_de: Hauptgänge
         image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80"
         dishes:
           - name: Suprême de volaille
@@ -49,7 +60,9 @@ tabs:
             description: "Sauce romarin-miel, écrasée de pommes de terre, haricots verts"
             price: 29€
             allergens: Moutarde (sauce)
-      - title: Desserts
+      - title_fr: Desserts
+        title_en: Desserts
+        title_de: Desserts
         dishes:
           - name: Crème brûlée vanille
             description: "Vanille de Madagascar, cassonade caramélisée"
@@ -67,15 +80,29 @@ tabs:
             description: "Fruit de saison, coulis maison, tuile croustillante"
             price: 9€
             allergens: Gluten (tuile)
-    infoBlockTitle: Formule du midi
-    infoBlockText: Entrée + Plat ou Plat + Dessert
-    infoBlockOutline: Entrée + Plat + Dessert — 38€
+    infoBlockTitle_fr: Formule du midi
+    infoBlockTitle_en: Lunch Menu
+    infoBlockTitle_de: Mittagsmenü
+    infoBlockText_fr: Entrée + Plat ou Plat + Dessert
+    infoBlockText_en: Starter + Main or Main + Dessert
+    infoBlockText_de: Vorspeise + Hauptgang oder Hauptgang + Dessert
+    infoBlockOutline_fr: Entrée + Plat + Dessert — 38€
+    infoBlockOutline_en: Starter + Main + Dessert — 38€
+    infoBlockOutline_de: Vorspeise + Hauptgang + Dessert — 38€
     infoBlockPrice: 32€
-  - name: Carte du soir
-    outline: >-
+  - name_fr: Carte du soir
+    name_en: Evening Menu
+    name_de: Abendkarte
+    outline_fr: >-
       Renouvelée tous les deux mois · Actuelle depuis début de saison
+    outline_en: >-
+      Renewed every two months · Current since the start of the season
+    outline_de: >-
+      Alle zwei Monate erneuert · Aktuell seit Saisonbeginn
     categories:
-      - title: Entrées
+      - title_fr: Entrées
+        title_en: Starters
+        title_de: Vorspeisen
         dishes:
           - name: Saint-Jacques snackées
             description: "Purée de topinambour, émulsion noisette, copeaux de truffe"
@@ -96,7 +123,9 @@ tabs:
             price: 34€
             allergens: "Crustacés, Lactose (crème)"
             image: "https://images.unsplash.com/photo-1548943487-a2e4e43b4853?w=600&q=80"
-      - title: Plats
+      - title_fr: Plats
+        title_en: Main Courses
+        title_de: Hauptgänge
         dishes:
           - name: Magret de canard
             description: "Jus de porto, purée de céleri-rave, légumes de saison rôtis"
@@ -116,7 +145,9 @@ tabs:
             price: 58€
             allergens: "Crustacés, Lactose, Gluten (sauce)"
             image: "https://images.unsplash.com/photo-1550177278-4d7a45cbfa31?w=600&q=80"
-      - title: Desserts
+      - title_fr: Desserts
+        title_en: Desserts
+        title_de: Desserts
         dishes:
           - name: Soufflé Grand Marnier
             description: "Servi chaud à la minute, sauce anglaise à la vanille"
@@ -136,14 +167,26 @@ tabs:
             description: "Meringue italienne légère, sorbet citron de Menton"
             price: 14€
             allergens: "Gluten, Lactose, Œufs"
-    infoBlockTitle: Menu Dégustation
-    infoBlockText: 7 plats de saison composés par le Chef
-    infoBlockOutline: Accord mets et vins inclus — disponible uniquement le soir
+    infoBlockTitle_fr: Menu Dégustation
+    infoBlockTitle_en: Tasting Menu
+    infoBlockTitle_de: Degustationsmenü
+    infoBlockText_fr: 7 plats de saison composés par le Chef
+    infoBlockText_en: 7 seasonal dishes crafted by the Chef
+    infoBlockText_de: 7 saisonale Gänge vom Chef kreiert
+    infoBlockOutline_fr: Accord mets et vins inclus — disponible uniquement le soir
+    infoBlockOutline_en: Wine pairing included — evening only
+    infoBlockOutline_de: Weinbegleitung inklusive — nur abends
     infoBlockPrice: 125€
-  - name: Vins
-    outline: Une sélection soigneusement choisie par notre sommelier
+  - name_fr: Vins
+    name_en: Wines
+    name_de: Weine
+    outline_fr: Une sélection soigneusement choisie par notre sommelier
+    outline_en: A carefully curated selection by our sommelier
+    outline_de: Eine sorgfältig zusammengestellte Auswahl unseres Sommeliers
     categories:
-      - title: Vins Rouges
+      - title_fr: Vins Rouges
+        title_en: Red Wines
+        title_de: Rotweine
         image: "https://images.unsplash.com/photo-1474722883778-792e7990302f?w=800&q=80"
         dishes:
           - name: Château Margaux 2015
@@ -162,7 +205,9 @@ tabs:
             description: "Élégance pinot noir, cerise griotte, sous-bois, tannins veloutés."
             price: 130€
             allergens: Sulfites
-      - title: Vins Blancs
+      - title_fr: Vins Blancs
+        title_en: White Wines
+        title_de: Weißweine
         dishes:
           - name: Chablis Grand Cru Les Clos
             outline: Bourgogne Blanc – Chablis
@@ -185,7 +230,9 @@ tabs:
             description: "Viognier floral et exubérant, abricot, pêche blanche, gras et onctueux."
             price: 75€
             allergens: Sulfites
-      - title: Champagnes
+      - title_fr: Champagnes
+        title_en: Champagnes
+        title_de: Champagner
         dishes:
           - name: Champagne Dom Pérignon 2012
             outline: Blanc de Blancs Millésimé
@@ -200,14 +247,24 @@ tabs:
             allergens: Sulfites
     image: >-
       https://images.unsplash.com/photo-1769697064243-889f2e25d44a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3aW5lJTIwY2VsbGFyJTIwYm90dGxlcyUyMGVsZWdhbnR8ZW58MXx8fHwxNzcxNDkzNTEwfDA&ixlib=rb-4.1.0&q=80&w=1080
-    infoBlockText: >-
+    infoBlockText_fr: >-
       Notre sommelier se fera un plaisir de vous conseiller selon vos préférences et vos plats
-  - name: Cocktails
-    outline: Créations de notre bartender — servis au bar ou en table
+    infoBlockText_en: >-
+      Our sommelier will be happy to advise you according to your preferences and dishes
+    infoBlockText_de: >-
+      Unser Sommelier berät Sie gerne entsprechend Ihren Vorlieben und Gerichten
+  - name_fr: Cocktails
+    name_en: Cocktails
+    name_de: Cocktails
+    outline_fr: Créations de notre bartender — servis au bar ou en table
+    outline_en: Creations by our bartender — served at the bar or at the table
+    outline_de: Kreationen unseres Barkeepers — an der Bar oder am Tisch serviert
     categories:
-      - title: Signatures
+      - title_fr: Signatures
+        title_en: Signatures
+        title_de: Signature Cocktails
         dishes:
-          - name: l'anøv Signature
+          - name: "l'anøv Signature"
             description: "Gin floral, elderflower, champagne, citron vert, basilic"
             price: 18€
             allergens: Sulfites (champagne)
@@ -228,7 +285,9 @@ tabs:
             description: "Whisky tourbé, cerise amarena, bitter chocolat, fumée légère"
             price: 19€
             allergens: Sulfites
-      - title: Sans Alcool
+      - title_fr: Sans Alcool
+        title_en: Non-Alcoholic
+        title_de: Alkoholfrei
         dishes:
           - name: Élixir Vert
             description: "Concombre, pomme verte, menthe, gingembre, eau gazeuse"
@@ -243,6 +302,12 @@ tabs:
             description: "Eau florale de rose, citron yuzu, sirop de lavande, eau pétillante"
             price: 10€
             outline: Virgin
-    infoBlockText: >-
+    infoBlockText_fr: >-
       L'abus d'alcool est dangereux pour la santé — À consommer avec modération
-    infoBlockOutline: La vente d'alcool aux mineurs est interdite — Loi Évin
+    infoBlockText_en: >-
+      Alcohol abuse is dangerous for your health — Please drink responsibly
+    infoBlockText_de: >-
+      Alkoholmissbrauch ist gesundheitsschädlich — Bitte maßvoll genießen
+    infoBlockOutline_fr: La vente d'alcool aux mineurs est interdite — Loi Évin
+    infoBlockOutline_en: Sale of alcohol to minors is prohibited
+    infoBlockOutline_de: Der Verkauf von Alkohol an Minderjährige ist verboten

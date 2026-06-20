@@ -49,7 +49,7 @@ export async function POST(req: Request) {
         personalMessage: personalMessage || null,
         isPaid: true,
         expiresAt,
-        status: 'PENDING_PAYMENT',
+        status: 'IN_PROGRESS_PAYMENT',
       },
     });
 

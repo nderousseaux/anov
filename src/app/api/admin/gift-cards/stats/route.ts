@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAdminFromCookies } from '@/lib/auth';
+import { $Enums } from '@/generated/prisma';
 
 export async function GET() {
   const admin = await getAdminFromCookies();
@@ -8,36 +9,29 @@ export async function GET() {
 
   const now = new Date();
 
+  // Utiliser les types Prisma pour éviter les erreurs d'enum
+  const GiftCardStatus = $Enums.GiftCardStatus;
+
   // Compter SEULEMENT les cartes à afficher (exclure les transactions expirées à 10min)
   // Les cartes avec IN_PROGRESS_PAYMENT + transactionExpireAt dépassé ne doivent JAMAIS s'afficher
   // Mais leur statut reste IN_PROGRESS_PAYMENT en base (paiement non abouti)
 
   // Total émis = toutes les cartes SAUF celles avec transaction expirée (10 min)
-  // Prisma: on utilise AND avec un tableau pour combiner plusieurs conditions
+  // Prisma: on utilise NOT avec OR pour exclure les transactions expirées
   const total = await prisma.giftCard.count({
     where: {
-      AND: [
-        {
-          NOT: {
-            status: 'IN_PROGRESS_PAYMENT',
-            transactionExpireAt: { lt: now },
-          },
-        },
+      OR: [
+        { status: { not: GiftCardStatus.IN_PROGRESS_PAYMENT } },
+        { transactionExpireAt: { gt: now } },
       ],
     },
   });
 
   // Actifs = cartes ACTIVE ou IN_PROGRESS_PAYMENT (sans transaction expirée)
-  // Prisma: on combine les conditions avec AND, et OR avec OR (majuscule)
   const activeCount = await prisma.giftCard.count({
     where: {
       AND: [
-        {
-          OR: [
-            { status: 'ACTIVE' },
-            { status: 'IN_PROGRESS_PAYMENT' },
-          ],
-        },
+        { status: { in: [GiftCardStatus.ACTIVE, GiftCardStatus.IN_PROGRESS_PAYMENT] } },
         {
           OR: [
             { transactionExpireAt: { gt: now } },
@@ -50,14 +44,14 @@ export async function GET() {
 
   // Expirés = statut EXPIRED (date d'expiration 1 an dépassée)
   const expiredCount = await prisma.giftCard.count({
-    where: { status: 'EXPIRED' },
+    where: { status: GiftCardStatus.EXPIRED },
   });
 
   // En cours de paiement = IN_PROGRESS_PAYMENT sans transaction expirée
   const inProgressCount = await prisma.giftCard.count({
     where: {
       AND: [
-        { status: 'IN_PROGRESS_PAYMENT' },
+        { status: GiftCardStatus.IN_PROGRESS_PAYMENT },
         { transactionExpireAt: { gt: now } },
       ],
     },
@@ -69,14 +63,12 @@ export async function GET() {
     where: {
       AND: [
         {
-          NOT: {
-            status: 'IN_PROGRESS_PAYMENT',
-            transactionExpireAt: { lt: now },
-          },
+          OR: [
+            { status: { not: GiftCardStatus.IN_PROGRESS_PAYMENT } },
+            { transactionExpireAt: { gt: now } },
+          ],
         },
-        {
-          status: { notIn: ['EXPIRED', 'USED'] },
-        },
+        { status: { notIn: [GiftCardStatus.EXPIRED, GiftCardStatus.USED] } },
       ],
     },
   });

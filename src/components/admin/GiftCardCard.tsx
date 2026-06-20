@@ -105,6 +105,11 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, formatDateT
             <p className="text-sm text-foreground/80 line-clamp-2 italic">"{giftCard.personalMessage}"</p>
           </div>
         )}
+
+        <div>
+          <p className="text-sm text-muted-foreground">Date d'achat</p>
+          <p className="text-sm text-foreground">{formatDateTime(giftCard.createdAt)}</p>
+        </div>
       </div>
 
       <div className="mt-4 pt-3 border-t border-border/50">
@@ -122,9 +127,6 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, formatDateT
                giftCard.status === 'USED' ? 'Utilisé' :
                'Expiré'}
             </span>
-          </div>
-          <div className="text-xs text-muted-foreground">
-            {formatDateTime(giftCard.createdAt)}
           </div>
         </div>
 

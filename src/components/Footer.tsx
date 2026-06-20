@@ -16,20 +16,19 @@ export interface FooterContent {
   paymentMethods?: string | null;
 }
 
-export function Footer({ content }: { content?: FooterContent | null }) {
+export function Footer({ content }: { content?: Record<string, unknown> | null }) {
   const { locale, t } = useLanguage();
-  const c = content ?? {};
+  const c = (content ?? {}) as Record<string, unknown>;
   const logoUrl = 'assets/img-logo.svg';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const description = pickField(c as any, 'description', locale) || "Une expérience gastronomique d'exception où chaque plat raconte une histoire.";
+  const description = pickField(c, 'description', locale) || "Une expérience gastronomique d'exception où chaque plat raconte une histoire.";
 
   const socialLinks = [
-    { name: 'Facebook', icon: Facebook, url: c.facebookUrl ?? '#' },
-    { name: 'Instagram', icon: Instagram, url: c.instagramUrl ?? '#' },
-    { name: 'YouTube', icon: Youtube, url: c.youtubeUrl ?? '#' },
+    { name: 'Facebook', icon: Facebook, url: (c.facebookUrl as string) ?? '#' },
+    { name: 'Instagram', icon: Instagram, url: (c.instagramUrl as string) ?? '#' },
+    { name: 'YouTube', icon: Youtube, url: (c.youtubeUrl as string) ?? '#' },
   ];
 
-  const reviewPlatforms = c.reviews ?? [
+  const reviewPlatforms = (c.reviews as Array<{ name: string; rating: string; reviewCount: string }>) ?? [
     { name: 'TripAdvisor', rating: '5.0', reviewCount: '248' },
     { name: 'Google', rating: '4.9', reviewCount: '312' },
     { name: 'La Fourchette', rating: '9.8', reviewCount: '189' },
@@ -91,7 +90,7 @@ export function Footer({ content }: { content?: FooterContent | null }) {
               {t.footer.ourReviews}
             </h4>
             <div className="grid grid-cols-3 md:grid-cols-1 gap-2 md:gap-3">
-              {reviewPlatforms.map((platform) => (
+              {reviewPlatforms.map((platform: { name: string; rating: string; reviewCount: string }) => (
                 <div
                   key={platform.name}
                   className="bg-card p-2 md:p-3 rounded-lg border border-primary/30 hover:border-primary transition-colors duration-300 cursor-pointer"
@@ -119,7 +118,7 @@ export function Footer({ content }: { content?: FooterContent | null }) {
           <div className="md:col-span-3 flex flex-wrap items-center gap-3 md:gap-6 justify-center md:justify-start">
             <div className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
               <CreditCard size={14} className="text-primary/70 shrink-0" />
-              <span>{c.paymentMethods ?? 'CB · Visa · Mastercard · Amex · Espèces · Chèques'}</span>
+              <span>{(c.paymentMethods as string | undefined) ?? 'CB · Visa · Mastercard · Amex · Espèces · Chèques'}</span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
               <Accessibility size={14} className="text-primary/70 shrink-0" />

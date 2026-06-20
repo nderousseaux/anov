@@ -51,7 +51,7 @@ interface BoutiqueContent {
   footerValid_de?: string;
 }
 
-export function ChequesCadeauxContent({ content }: { content?: BoutiqueContent | null }) {
+export function ChequesCadeauxContent({ content }: { content?: Record<string, unknown> | null }) {
   const { locale } = useLanguage();
   const [giftCard, setGiftCard] = useState({
     amount: '',
@@ -64,13 +64,13 @@ export function ChequesCadeauxContent({ content }: { content?: BoutiqueContent |
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const c = content ?? {};
+  const c = (content ?? {}) as Record<string, unknown>;
 
   // Parse amounts from comma-separated string
-  const amounts = (c.amounts || '50€, 100€, 150€, 200€, 250€, 500€')
+  const amounts = (((c.amounts as string) || '50€, 100€, 150€, 200€, 250€, 500€') as string)
     .split(',')
-    .map(a => a.trim())
-    .filter(a => a.length > 0);
+    .map((a: string) => a.trim())
+    .filter((a: string) => a.length > 0);
 
   const validateForm = (): boolean => {
     let isValid = true;
@@ -153,7 +153,7 @@ export function ChequesCadeauxContent({ content }: { content?: BoutiqueContent |
       <div className="relative h-[36vh] sm:h-[55vh] flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           <img
-            src={c.image || 'https://images.unsplash.com/photo-1761095596755-99ba58997720?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwZGlzaCUyMHBsYXRpbmclMjBmaW5lJTIwZGluaW5mfGVufDF8fHx8MTc3MTUwOTU3N3ww&ixlib=rb-4.1.0&q=80&w=1080'}
+            src={(c.image as string | undefined) || 'https://images.unsplash.com/photo-1761095596755-99ba58997720?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwZGlzaCUyMHBsYXRpbmclMjBmaW5lJTIwZGluaW5mfGVufDF8fHx8MTc3MTUwOTU3N3ww&ixlib=rb-4.1.0&q=80&w=1080'}
             alt="Chèques Cadeaux"
             className="w-full h-full object-cover"
           />

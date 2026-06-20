@@ -16,23 +16,19 @@ type Dish = {
 };
 
 type Category = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
   image: string | null;
   dishes: readonly Dish[];
 };
 
 type Tab = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
+  name_fr?: string;
+  name?: string;
   categories: readonly Category[];
   image: string | null;
   infoBlockPrice: string;
 };
 
 type MenuData = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
   heroImage: string;
   tabs: readonly Tab[];
 };

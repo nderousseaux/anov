@@ -48,8 +48,7 @@ export function Gallery({ images }: { images?: Array<{ image: string | null; cap
   ];
   const filtered = images?.filter(img => img.image).map(img => ({
     url: img.image!,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    caption: pickField(img as any, 'caption', locale) || img.caption || '',
+    caption: pickField(img, 'caption', locale) || img.caption || '',
   }));
   const galleryImages = filtered?.length ? filtered : fallbackImages;
 

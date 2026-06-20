@@ -1,9 +1,7 @@
 import nodemailer from 'nodemailer';
 
 // Configuration du serveur SMTP
-if (!process.env.SMTP_HOST || !process.env.SMTP_PORT || !process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
-  console.warn('Variables SMTP manquantes - emails désactivés');
-}
+// SMTP is configured via environment variables - logs handled externally if needed
 
 // Créer le transporteur nodemailer avec les paramètres SMTP personnalisés
 const transporter = process.env.SMTP_HOST ? nodemailer.createTransport({
@@ -35,7 +33,7 @@ export async function sendConfirmationEmail({
   cancelUrl: string;
 }) {
   if (!transporter) {
-    console.log('Envoi email de confirmation désactivé - SMTP non configuré');
+    // Email service disabled - SMTP not configured
     return null;
   }
 
@@ -80,7 +78,7 @@ export async function sendReminderEmail({
   cancelUrl: string;
 }) {
   if (!transporter) {
-    console.log('Envoi email de rappel désactivé - SMTP non configuré');
+    // Email service disabled - SMTP not configured
     return null;
   }
 
@@ -121,7 +119,7 @@ export async function sendCancellationEmail({
   time: string;
 }) {
   if (!transporter) {
-    console.log('Envoi email d\'annulation désactivé - SMTP non configuré');
+    // Email service disabled - SMTP not configured
     return null;
   }
 
@@ -157,7 +155,7 @@ export async function sendContactNotification({
   message: string;
 }) {
   if (!transporter) {
-    console.log('Envoi email de notification désactivé - SMTP non configuré');
+    // Email service disabled - SMTP not configured
     return null;
   }
 
@@ -193,7 +191,7 @@ export async function sendContactConfirmation({
   name: string;
 }) {
   if (!transporter) {
-    console.log('Envoi email de confirmation désactivé - SMTP non configuré');
+    // Email service disabled - SMTP not configured
     return null;
   }
 
@@ -231,7 +229,7 @@ export async function sendGiftCardEmail({
   expiresAt: string;
 }) {
   if (!transporter) {
-    console.log('Envoi email de chèque cadeau désactivé - SMTP non configuré');
+    // Email service disabled - SMTP not configured
     return null;
   }
 

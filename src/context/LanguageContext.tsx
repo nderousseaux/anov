@@ -11,9 +11,10 @@ import fr from '@/lib/translations/fr';
 import en from '@/lib/translations/en';
 import de from '@/lib/translations/de';
 
-type Translations = typeof fr;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const translations: Record<Locale, any> = { fr, en, de };
+// Type definition for translations - using any to allow flexible structure
+type Translations = any;
+
+const translations: Record<Locale, Translations> = { fr, en, de };
 
 interface LanguageContextValue {
   locale: Locale;

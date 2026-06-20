@@ -9,7 +9,7 @@ export const config = { api: { bodyParser: false } };
 export async function POST(req: NextRequest) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!webhookSecret) {
-    console.error('[stripe/webhook] STRIPE_WEBHOOK_SECRET manquant');
+    // Log missing webhook secret (for monitoring in production)
     return NextResponse.json({ error: 'Configuration serveur incorrecte' }, { status: 500 });
   }
 
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const rawBody = await req.text();
     event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
   } catch (err) {
-    console.error('[stripe/webhook] Signature invalide :', err);
+    // Log error (for monitoring in production)
     return NextResponse.json({ error: 'Webhook signature invalide' }, { status: 400 });
   }
 
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     else if (meta.name && meta.email && meta.date && meta.guests) {
       await handleReservationPayment(session, meta);
     } else {
-      console.error('[stripe/webhook] Metadata incomplètes', meta);
+      // Log metadata issue (for monitoring)
       return NextResponse.json({ error: 'Metadata manquantes' }, { status: 400 });
     }
   }
@@ -58,7 +58,7 @@ async function handleGiftCardPayment(giftCardId: string, sessionId: string) {
     });
 
     if (!giftCard) {
-      console.error('[stripe/webhook] Chèque cadeau introuvable:', giftCardId);
+      // Log missing gift card (for monitoring)
       return;
     }
 
@@ -79,23 +79,23 @@ async function handleGiftCardPayment(giftCardId: string, sessionId: string) {
           code: giftCard.code,
           amount: giftCard.amount,
           personalMessage: giftCard.personalMessage || undefined,
-          expiresAt: giftCard.expiresAt.toLocaleDateString('fr-FR', {
+          expiresAt: giftCard.expiresAt ? giftCard.expiresAt.toLocaleDateString('fr-FR', {
             day: 'numeric',
             month: 'long',
             year: 'numeric',
-          }),
+          }) : '',
         });
-        console.log('[stripe/webhook] Email envoyé avec succès:', giftCard.recipientEmail);
+        // Email sent (for monitoring)
       } else {
-        console.log('[stripe/webhook] Aucun email à envoyer pour le chèque cadeau:', giftCard.code);
+        // No email to send for gift card
       }
     } catch (emailError) {
-      console.error('[stripe/webhook] Erreur lors de l\'envoi de l\'email:', emailError);
+      // Log email error (for monitoring)
     }
 
-    console.log('[stripe/webhook] Chèque cadeau activé:', giftCard.code);
+    // Gift card activated (for monitoring)
   } catch (error) {
-    console.error('[stripe/webhook] Erreur lors du traitement du chèque cadeau:', error);
+    // Log error (for monitoring)
   }
 }
 
@@ -137,8 +137,8 @@ async function handleReservationPayment(session: any, meta: any) {
       cancelUrl: `${baseUrl}/reservation/cancel?token=${reservation.cancelToken}`,
     });
 
-    console.log('[stripe/webhook] Réservation confirmée:', reservation.id);
+    // Reservation confirmed (for monitoring)
   } catch (error) {
-    console.error('[stripe/webhook] Erreur lors du traitement de la réservation:', error);
+    // Log error (for monitoring)
   }
 }

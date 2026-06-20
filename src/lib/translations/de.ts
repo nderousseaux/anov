@@ -3,6 +3,7 @@ const de = {
     ourStory: 'Unsere Geschichte',
     gallery: 'Galerie',
     theMenu: 'Speisekarte',
+    boutique: 'Geschenkkarten',
     reserve: 'Reservieren',
   },
   footer: {

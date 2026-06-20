@@ -5,9 +5,10 @@ import * as d3 from 'd3';
 import { createPortal } from 'react-dom';
 import { useLanguage } from '@/context/LanguageContext';
 import { pickField } from '@/lib/langs';
+import type { HistoryContent } from '@/types/content';
 
 interface OriginsMapProps {
-  content?: Record<string, unknown> | null;
+  content?: HistoryContent | null;
 }
 
 interface PointData {

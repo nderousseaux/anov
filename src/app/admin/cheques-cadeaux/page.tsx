@@ -19,7 +19,7 @@ interface GiftCard {
   isPaid: boolean;
   status: 'IN_PROGRESS_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED';
   createdAt: string;
-  expiresAt: string;
+  expiresAt: string | null;
   transactionExpireAt: string | null;
   usedAt: string | null;
 }
@@ -194,12 +194,16 @@ function GiftCardPageContent() {
   };
 
   const handleMarkUsed = (giftCard: GiftCard) => {
+    // If expiresAt is null, treat it as not expired
     const now = new Date();
-    const expiresAt = new Date(giftCard.expiresAt);
-    const isExpired = now > expiresAt;
+    let isExpired = false;
+    if (giftCard.expiresAt) {
+      const expiresAt = new Date(giftCard.expiresAt);
+      isExpired = now > expiresAt;
+    }
 
     if (isExpired) {
-      const formattedDate = formatDateTime(giftCard.expiresAt);
+      const formattedDate = giftCard.expiresAt ? formatDateTime(giftCard.expiresAt) : '';
       if (!confirm(`Attention, ce bon cadeau est expiré depuis le ${formattedDate}. Êtes-vous sûr de vouloir le marquer comme utilisé ?`)) {
         return;
       }
@@ -208,6 +212,11 @@ function GiftCardPageContent() {
     }
 
     handleMarkUsedAction(giftCard.id);
+  };
+
+  // Wrapper function for GiftCardCard component (only passes required props)
+  const handleMarkUsedForCard = ({ id, expiresAt }: { id: string; expiresAt?: string | null }) => {
+    handleMarkUsed({ id, code: '', amount: 0, recipientEmail: null, personalMessage: null, isPaid: false, status: 'ACTIVE', createdAt: '', expiresAt: expiresAt ?? '', transactionExpireAt: null, usedAt: null });
   };
 
   const handleMarkUsedAction = async (id: string) => {
@@ -244,7 +253,8 @@ function GiftCardPageContent() {
     return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
   };
 
-  const formatDateTime = (dateString: string) => {
+  const formatDateTime = (dateString: string | null) => {
+    if (!dateString) return '';
     return new Date(dateString).toLocaleDateString('fr-FR', {
       day: 'numeric',
       month: 'long',
@@ -432,7 +442,7 @@ function GiftCardPageContent() {
                     formatDate={formatDateString}
                     formatDateTime={formatDateTime}
                     onValidate={handleValidateGiftCard}
-                    onMarkUsed={handleMarkUsed}
+                    onMarkUsed={handleMarkUsedForCard}
                     onDelete={handleDeleteGiftCard}
                   />
                 ))}

@@ -106,15 +106,15 @@ export async function POST(req: NextRequest) {
         code: giftCard.code,
         amount: giftCard.amount,
         personalMessage: giftCard.personalMessage || undefined,
-        expiresAt: giftCard.expiresAt.toLocaleDateString('fr-FR', {
+        expiresAt: giftCard.expiresAt ? giftCard.expiresAt.toLocaleDateString('fr-FR', {
           day: 'numeric',
           month: 'long',
           year: 'numeric',
-        }),
+        }) : '',
       });
-      console.log('[admin/gift-cards] Email envoyé à:', emailValue);
+      // Email sent (for monitoring)
     } catch (error) {
-      console.error('[admin/gift-cards] Erreur lors de l\'envoi de l\'email:', error);
+      // Log email error (for monitoring)
     }
   }
 

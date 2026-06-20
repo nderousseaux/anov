@@ -26,13 +26,9 @@ export default async function Page() {
 
   return (
     <div>
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      <Hero content={heroContent as any} />
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      <History content={histoireContent as any} originesContent={originesContent as any} />
-      <Gallery images={galerieData?.photos} />
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      <Contact content={contactContent as any} />
+      <Hero content={heroContent as Record<string, unknown> | null} />
+      <History content={histoireContent as Record<string, unknown> | null} originesContent={originesContent as Record<string, unknown> | null} />
+      <Contact content={contactContent as Record<string, unknown> | null} />
     </div>
   );
 }

@@ -8,7 +8,7 @@ import { Footer, type FooterContent } from '@/components/Footer';
 import { SplashScreen } from '@/components/SplashScreen';
 import { LanguageProvider } from '@/context/LanguageContext';
 
-export default function ClientLayout({ children, footerContent }: { children: ReactNode; footerContent?: FooterContent | null }) {
+export default function ClientLayout({ children, footerContent }: { children: ReactNode; footerContent?: Record<string, unknown> | null }) {
   return (
     <LanguageProvider>
       <ClientLayoutInner footerContent={footerContent}>{children}</ClientLayoutInner>
@@ -16,7 +16,7 @@ export default function ClientLayout({ children, footerContent }: { children: Re
   );
 }
 
-function ClientLayoutInner({ children, footerContent }: { children: ReactNode; footerContent?: FooterContent | null }) {
+function ClientLayoutInner({ children, footerContent }: { children: ReactNode; footerContent?: Record<string, unknown> | null }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/admin') || pathname.startsWith('/keystatic');
 

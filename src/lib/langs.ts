@@ -1,3 +1,5 @@
+// Types for translations
+
 export type Locale = 'fr' | 'en' | 'de';
 
 export const SUPPORTED_LOCALES: Locale[] = ['fr', 'en', 'de'];
@@ -30,7 +32,9 @@ export function detectBrowserLocale(): Locale {
 
 /** Pick the localized variant of a field from a content object.
  *  Falls back to _fr, then bare key, then empty string. */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function pickField(obj: Record<string, any>, key: string, locale: Locale): string {
-  return (obj[`${key}_${locale}`] ?? obj[`${key}_fr`] ?? obj[key] ?? '') as string;
+export function pickField<T extends Record<string, unknown>>(obj: T, key: string, locale: Locale): string {
+  return (obj[`${key}_${locale}`] as string | undefined) ??
+         (obj[`${key}_fr`] as string | undefined) ??
+         (obj[key] as string | undefined) ??
+         '';
 }

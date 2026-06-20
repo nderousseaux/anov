@@ -12,15 +12,15 @@ interface GiftCardCardProps {
     isPaid: boolean;
     status: 'IN_PROGRESS_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED';
     createdAt: string;
-    expiresAt: string;
+    expiresAt: string | null;
     transactionExpireAt: string | null;
     usedAt: string | null;
   };
   formatCurrency: (amount: number) => string;
   formatDate: (dateString: string) => string;
-  formatDateTime: (dateString: string) => string;
+  formatDateTime: (dateString: string | null) => string;
   onValidate: (id: string) => void;
-  onMarkUsed: (giftCard: { id: string; expiresAt: string }) => void;
+  onMarkUsed: (giftCard: { id: string; expiresAt?: string | null }) => void;
   onDelete: (id: string) => void;
 }
 
@@ -39,7 +39,7 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, formatDateT
         {/* Marquer comme utilisé pour ACTIVE ou EXPIRED */}
         {canMarkUsed && !isMarkedAsUsed && (
           <button
-            onClick={() => onMarkUsed({ id: giftCard.id, expiresAt: giftCard.expiresAt })}
+            onClick={() => onMarkUsed({ id: giftCard.id, expiresAt: giftCard.expiresAt ?? undefined })}
             className="p-2 bg-green-500/10 hover:bg-green-500 text-green-400 hover:text-white rounded-lg transition-colors"
             title={giftCard.status === 'EXPIRED' ? 'Valider le bon expiré' : 'Marquer comme utilisé'}
           >
@@ -133,7 +133,7 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, formatDateT
         <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
           <span>Expire:</span>
           <span className={giftCard.status === 'EXPIRED' ? 'text-red-400' : ''}>
-            {formatDate(giftCard.expiresAt)}
+            {giftCard.expiresAt ? formatDate(giftCard.expiresAt) : 'N/A'}
           </span>
         </div>
 

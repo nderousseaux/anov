@@ -29,11 +29,10 @@ interface ContactContent {
   mapsUrl?: string | null;
 }
 
-export function Contact({ content }: { content?: ContactContent | null }) {
+export function Contact({ content }: { content?: Record<string, unknown> | null }) {
   const { locale, t } = useLanguage();
   const c = content ?? {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const p = (key: string) => pickField(c as any, key, locale);
+  const p = (key: string) => pickField(c, key, locale);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -82,7 +81,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
       {/* Hero avec image */}
       <div className="relative h-[15vh] sm:h-[40vh]">
         <img
-          src={c.image ?? "https://images.unsplash.com/photo-1758612798971-a8adb6cba7eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwaW50ZXJpb3IlMjBhdG1vc3BoZXJlJTIwbGlnaHRpbmd8ZW58MXx8fHwxNzcxNTE0NjAwfDA&ixlib=rb-4.1.0&q=80&w=1080"}
+          src={(c.image as string | undefined) ?? "https://images.unsplash.com/photo-1758612798971-a8adb6cba7eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwaW50ZXJpb3IlMjBhdG1vc3BoZXJlJTIwbGlnaHRpbmd8ZW58MXx8fHwxNzcxNTE0NjAwfDA&ixlib=rb-4.1.0&q=80&w=1080"}
           alt="Contact"
           className="w-full h-full object-cover"
         />
@@ -194,8 +193,8 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                   </h3>
                 </div>
                 <p className="text-foreground text-sm sm:text-base">
-                  <a href={`tel:${c.phone ?? '+33145678900'}`} className="hover:text-primary transition-colors">
-                    {c.phone ?? '+33 1 45 67 89 00'}
+                  <a href={`tel:${(c.phone as string | null | undefined) ?? '+33145678900'}`} className="hover:text-primary transition-colors">
+                    {(c.phone as string | null | undefined) ?? '+33 1 45 67 89 00'}
                   </a>
                 </p>
               </div>
@@ -212,8 +211,8 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                   </h3>
                 </div>
                 <p className="text-foreground text-sm sm:text-base">
-                  <a href={`mailto:${c.email ?? 'contact@anovrestaurant.fr'}`} className="hover:text-primary transition-colors">
-                    {c.email ?? 'contact@anovrestaurant.fr'}
+                  <a href={`mailto:${(c.email as string | null | undefined) ?? 'contact@anovrestaurant.fr'}`} className="hover:text-primary transition-colors">
+                    {(c.email as string | null | undefined) ?? 'contact@anovrestaurant.fr'}
                   </a>
                 </p>
               </div>
@@ -233,7 +232,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
                   className="text-foreground text-sm sm:text-base"
                   style={{ whiteSpace: 'pre-line' }}
                 >
-                  {c.address ?? '15 Rue de la Gastronomie\n75008 Paris, France'}
+                  {(c.address as string | null | undefined) ?? '15 Rue de la Gastronomie\n75008 Paris, France'}
                 </p>
               </div>
 
@@ -258,7 +257,7 @@ export function Contact({ content }: { content?: ContactContent | null }) {
 
               {/* Map Link */}
               <Button
-                onClick={() => window.open(c.mapsUrl ?? 'https://maps.google.com', '_blank')}
+                onClick={() => window.open((c.mapsUrl as string | null | undefined) ?? 'https://maps.google.com', '_blank')}
                 className="col-span-2 w-full bg-secondary hover:bg-muted text-foreground border border-primary/30 py-4 sm:py-6 transition-all duration-300 flex items-center justify-center gap-2"
               >
                 <MapPin size={20} />

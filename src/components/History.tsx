@@ -3,9 +3,9 @@
 import { useLanguage } from '@/context/LanguageContext';
 import { pickField } from '@/lib/langs';
 import { OriginsMap } from './OriginsMap';
+import type { HistoryContent } from '@/types/content';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function History({ content, originesContent }: { content?: Record<string, any> | null; originesContent?: Record<string, any> | null }) {
+export function History({ content, originesContent }: { content?: HistoryContent | null; originesContent?: HistoryContent | null }) {
   const { locale } = useLanguage();
   const c = content ?? {};
   const p = (key: string) => pickField(c, key, locale);
@@ -120,13 +120,13 @@ export function History({ content, originesContent }: { content?: Record<string,
 
       {/* Carte des Origines */}
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      <OriginsMap content={originesContent as any} />
+      <OriginsMap content={originesContent} />
 
       {/* Full Width Image - Ingredients */}
       <div className="relative">
         <div className="relative h-screen w-full">
           <img
-            src={c.productsImage ?? "https://images.unsplash.com/photo-1758221055278-cfff8d83b091?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmcmVzaCUyMGluZ3JlZGllbnRzJTIwdmVnZXRhYmxlcyUyMGdvdXJtZXR8ZW58MXx8fHwxNzcxNTA5NTc4fDA&ixlib=rb-4.1.0&q=80&w=1080"}
+            src={(c.productsImage as string | undefined) ?? undefined}
             alt="Ingrédients frais"
             className="w-full h-full object-cover"
           />
@@ -235,7 +235,7 @@ export function History({ content, originesContent }: { content?: Record<string,
       <div className="relative">
         <div className="relative h-screen w-full">
           <img
-            src={c.gestureImage ?? "https://images.unsplash.com/photo-1765448856945-481569592cf3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGVmJTIwY29va2luZyUyMGZpcmUlMjBraXRjaGVuJTIwcHJvZmVzc2lvbmFsfGVufDF8fHx8MTc3MTU5NDU3NXww&ixlib=rb-4.1.0&q=80&w=1080"}
+            src={(c.gestureImage as string | undefined) ?? undefined}
             alt="Maîtrise du feu"
             className="w-full h-full object-cover"
           />

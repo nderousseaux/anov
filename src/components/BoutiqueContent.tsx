@@ -57,7 +57,7 @@ interface BoutiqueContent {
   footerValid_de?: string;
 }
 
-export function BoutiqueContent({ content }: { content?: BoutiqueContent | null }) {
+export function BoutiqueContent({ content }: { content?: Record<string, unknown> | null }) {
   const { locale } = useLanguage();
   const [giftCard, setGiftCard] = useState({
     amount: '',
@@ -65,13 +65,13 @@ export function BoutiqueContent({ content }: { content?: BoutiqueContent | null 
     message: '',
   });
 
-  const c = content ?? {};
+  const c = (content ?? {}) as Record<string, unknown>;
 
   // Parse amounts from comma-separated string
-  const amounts = (c.amounts || '50€, 100€, 150€, 200€, 250€, 500€')
+  const amounts = ((c.amounts as string | undefined) || '50€, 100€, 150€, 200€, 250€, 500€')
     .split(',')
-    .map(a => a.trim())
-    .filter(a => a.length > 0);
+    .map((a: string) => a.trim())
+    .filter((a: string) => a.length > 0);
 
   const handlePurchase = (e: FormEvent) => {
     e.preventDefault();
@@ -85,7 +85,7 @@ export function BoutiqueContent({ content }: { content?: BoutiqueContent | null 
       <div className="relative h-[36vh] sm:h-[55vh] flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           <img
-            src={c.image || 'https://images.unsplash.com/photo-1761095596755-99ba58997720?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwZGlzaCUyMHBsYXRpbmclMjBmaW5lJTIwZGluaW5mfGVufDF8fHx8MTc3MTUwOTU3N3ww&ixlib=rb-4.1.0&q=80&w=1080'}
+            src={(c.image as string) || 'https://images.unsplash.com/photo-1761095596755-99ba58997720?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwZGlzaCUyMHBsYXRpbmclMjBmaW5lJTIwZGluaW5mfGVufDF8fHx8MTc3MTUwOTU3N3ww&ixlib=rb-4.1.0&q=80&w=1080'}
             alt="Boutique"
             className="w-full h-full object-cover"
           />
@@ -133,7 +133,7 @@ export function BoutiqueContent({ content }: { content?: BoutiqueContent | null 
                   </SelectTrigger>
                   <SelectContent className="bg-secondary border-primary/30">
                     {amounts.map((amount) => (
-                      <SelectItem key={amount} value={amount} className="text-foreground focus:bg-primary/20 data-[highlighted]:text-primary">
+                      <SelectItem key={amount} value={amount as string} className="text-foreground focus:bg-primary/20 data-[highlighted]:text-primary">
                         {amount}
                       </SelectItem>
                     ))}

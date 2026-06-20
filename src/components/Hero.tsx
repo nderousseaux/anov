@@ -6,10 +6,10 @@ import { Button } from './ui/button';
 import { ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { pickField } from '@/lib/langs';
+import type { HeroContent } from '@/types/content';
 
 interface HeroProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  content?: Record<string, any> | null;
+  content?: Record<string, unknown> | null;
 }
 
 export function Hero({ content }: HeroProps) {
@@ -47,7 +47,7 @@ export function Hero({ content }: HeroProps) {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src={heroImageUrl}
+          src={heroImageUrl as string}
           alt="Ambiance restaurant"
           className="w-full h-full object-cover"
         />

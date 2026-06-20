@@ -3,9 +3,9 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { Toaster } from '@/components/ui/sonner';
-import { Navbar } from '@/components/Navbar';
-import { Footer, type FooterContent } from '@/components/Footer';
-import { SplashScreen } from '@/components/SplashScreen';
+import { Navbar } from '@/components/layout/Navbar';
+import { Footer, type FooterContent } from '@/components/layout/Footer';
+import { SplashScreen } from '@/components/shared/SplashScreen';
 import { LanguageProvider } from '@/context/LanguageContext';
 
 export default function ClientLayout({ children, footerContent }: { children: ReactNode; footerContent?: Record<string, unknown> | null }) {

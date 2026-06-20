@@ -1,6 +1,6 @@
 import { createReader } from '@keystatic/core/reader';
 import config from '../../../keystatic.config';
-import { ChequesCadeauxContent } from '@/components/ChequesCadeauxContent';
+import { ChequesCadeauxContent } from '@/components/shared/ChequesCadeauxContent';
 
 export default async function Page() {
   const reader = createReader(process.cwd(), config);

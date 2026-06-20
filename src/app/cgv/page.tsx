@@ -1,7 +1,7 @@
 import { createReader } from '@keystatic/core/reader';
 import config from '../../../keystatic.config';
-import { LegalDocumentRenderer } from '@/components/LegalDocumentRenderer';
-import { LegalLanguageNotice } from '@/components/LegalLanguageNotice';
+import { LegalDocumentRenderer } from '@/components/shared/LegalDocumentRenderer';
+import { LegalLanguageNotice } from '@/components/shared/LegalLanguageNotice';
 
 export default async function CGVPage() {
   const reader = createReader(process.cwd(), config);

@@ -3,7 +3,7 @@
 import { RefreshCw, X } from 'lucide-react';
 
 // Gift card status values (matching Prisma schema)
-type GiftCardStatus = 'PENDING_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED';
+type GiftCardStatus = 'IN_PROGRESS_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED';
 
 interface GiftCardFiltersProps {
   filters: {
@@ -44,7 +44,7 @@ export function GiftCardFilters({ filters, setFilters }: GiftCardFiltersProps) {
               className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:border-gold focus:ring-1 focus:ring-gold text-foreground appearance-none"
             >
               <option value="">Tous les statuts</option>
-              <option value="PENDING_PAYMENT">En attente</option>
+              <option value="IN_PROGRESS_PAYMENT">En cours de paiement</option>
               <option value="ACTIVE">Actif</option>
               <option value="USED">Utilisé</option>
               <option value="EXPIRED">Expiré</option>

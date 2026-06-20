@@ -301,10 +301,10 @@ export default function AdminReservationsPage() {
 
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground flex flex-col overflow-hidden">
       <AdminNav />
 
-      <main className="px-4 py-6 max-w-7xl mx-auto space-y-4">
+      <main className="flex-1 px-4 py-6 max-w-7xl mx-auto space-y-4 overflow-y-auto">
 
         {/* ── Header ── */}
         <div className="flex items-center justify-between">

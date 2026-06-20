@@ -47,14 +47,16 @@ export namespace $Enums {
   PENDING_PAYMENT: 'PENDING_PAYMENT',
   CONFIRMED: 'CONFIRMED',
   CANCELLED: 'CANCELLED',
-  COMPLETED: 'COMPLETED'
+  COMPLETED: 'COMPLETED',
+  IN_PROGRESS_PAYMENT: 'IN_PROGRESS_PAYMENT',
+  EXPIRED: 'EXPIRED'
 };
 
 export type ReservationStatus = (typeof ReservationStatus)[keyof typeof ReservationStatus]
 
 
 export const GiftCardStatus: {
-  PENDING_PAYMENT: 'PENDING_PAYMENT',
+  IN_PROGRESS_PAYMENT: 'IN_PROGRESS_PAYMENT',
   ACTIVE: 'ACTIVE',
   USED: 'USED',
   EXPIRED: 'EXPIRED'
@@ -1296,6 +1298,7 @@ export namespace Prisma {
     wantsSmsReminder: boolean | null
     status: $Enums.ReservationStatus | null
     stripeSessionId: string | null
+    expiresAt: Date | null
     reminderEmailSent: boolean | null
     reminderSmsSent: boolean | null
     cancelToken: string | null
@@ -1314,6 +1317,7 @@ export namespace Prisma {
     wantsSmsReminder: boolean | null
     status: $Enums.ReservationStatus | null
     stripeSessionId: string | null
+    expiresAt: Date | null
     reminderEmailSent: boolean | null
     reminderSmsSent: boolean | null
     cancelToken: string | null
@@ -1332,6 +1336,7 @@ export namespace Prisma {
     wantsSmsReminder: number
     status: number
     stripeSessionId: number
+    expiresAt: number
     reminderEmailSent: number
     reminderSmsSent: number
     cancelToken: number
@@ -1360,6 +1365,7 @@ export namespace Prisma {
     wantsSmsReminder?: true
     status?: true
     stripeSessionId?: true
+    expiresAt?: true
     reminderEmailSent?: true
     reminderSmsSent?: true
     cancelToken?: true
@@ -1378,6 +1384,7 @@ export namespace Prisma {
     wantsSmsReminder?: true
     status?: true
     stripeSessionId?: true
+    expiresAt?: true
     reminderEmailSent?: true
     reminderSmsSent?: true
     cancelToken?: true
@@ -1396,6 +1403,7 @@ export namespace Prisma {
     wantsSmsReminder?: true
     status?: true
     stripeSessionId?: true
+    expiresAt?: true
     reminderEmailSent?: true
     reminderSmsSent?: true
     cancelToken?: true
@@ -1501,6 +1509,7 @@ export namespace Prisma {
     wantsSmsReminder: boolean
     status: $Enums.ReservationStatus
     stripeSessionId: string | null
+    expiresAt: Date | null
     reminderEmailSent: boolean
     reminderSmsSent: boolean
     cancelToken: string
@@ -1538,6 +1547,7 @@ export namespace Prisma {
     wantsSmsReminder?: boolean
     status?: boolean
     stripeSessionId?: boolean
+    expiresAt?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
@@ -1556,6 +1566,7 @@ export namespace Prisma {
     wantsSmsReminder?: boolean
     status?: boolean
     stripeSessionId?: boolean
+    expiresAt?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
@@ -1574,6 +1585,7 @@ export namespace Prisma {
     wantsSmsReminder?: boolean
     status?: boolean
     stripeSessionId?: boolean
+    expiresAt?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
@@ -1592,12 +1604,13 @@ export namespace Prisma {
     wantsSmsReminder?: boolean
     status?: boolean
     stripeSessionId?: boolean
+    expiresAt?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
   }
 
-  export type ReservationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "name" | "email" | "phone" | "date" | "guests" | "specialRequest" | "wantsSmsReminder" | "status" | "stripeSessionId" | "reminderEmailSent" | "reminderSmsSent" | "cancelToken", ExtArgs["result"]["reservation"]>
+  export type ReservationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "name" | "email" | "phone" | "date" | "guests" | "specialRequest" | "wantsSmsReminder" | "status" | "stripeSessionId" | "expiresAt" | "reminderEmailSent" | "reminderSmsSent" | "cancelToken", ExtArgs["result"]["reservation"]>
 
   export type $ReservationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Reservation"
@@ -1615,6 +1628,7 @@ export namespace Prisma {
       wantsSmsReminder: boolean
       status: $Enums.ReservationStatus
       stripeSessionId: string | null
+      expiresAt: Date | null
       reminderEmailSent: boolean
       reminderSmsSent: boolean
       cancelToken: string
@@ -2053,6 +2067,7 @@ export namespace Prisma {
     readonly wantsSmsReminder: FieldRef<"Reservation", 'Boolean'>
     readonly status: FieldRef<"Reservation", 'ReservationStatus'>
     readonly stripeSessionId: FieldRef<"Reservation", 'String'>
+    readonly expiresAt: FieldRef<"Reservation", 'DateTime'>
     readonly reminderEmailSent: FieldRef<"Reservation", 'Boolean'>
     readonly reminderSmsSent: FieldRef<"Reservation", 'Boolean'>
     readonly cancelToken: FieldRef<"Reservation", 'String'>
@@ -5577,6 +5592,7 @@ export namespace Prisma {
     status: $Enums.GiftCardStatus | null
     stripeSessionId: string | null
     expiresAt: Date | null
+    transactionExpireAt: Date | null
     usedAt: Date | null
   }
 
@@ -5592,6 +5608,7 @@ export namespace Prisma {
     status: $Enums.GiftCardStatus | null
     stripeSessionId: string | null
     expiresAt: Date | null
+    transactionExpireAt: Date | null
     usedAt: Date | null
   }
 
@@ -5607,6 +5624,7 @@ export namespace Prisma {
     status: number
     stripeSessionId: number
     expiresAt: number
+    transactionExpireAt: number
     usedAt: number
     _all: number
   }
@@ -5632,6 +5650,7 @@ export namespace Prisma {
     status?: true
     stripeSessionId?: true
     expiresAt?: true
+    transactionExpireAt?: true
     usedAt?: true
   }
 
@@ -5647,6 +5666,7 @@ export namespace Prisma {
     status?: true
     stripeSessionId?: true
     expiresAt?: true
+    transactionExpireAt?: true
     usedAt?: true
   }
 
@@ -5662,6 +5682,7 @@ export namespace Prisma {
     status?: true
     stripeSessionId?: true
     expiresAt?: true
+    transactionExpireAt?: true
     usedAt?: true
     _all?: true
   }
@@ -5763,7 +5784,8 @@ export namespace Prisma {
     isPaid: boolean
     status: $Enums.GiftCardStatus
     stripeSessionId: string | null
-    expiresAt: Date
+    expiresAt: Date | null
+    transactionExpireAt: Date | null
     usedAt: Date | null
     _count: GiftCardCountAggregateOutputType | null
     _avg: GiftCardAvgAggregateOutputType | null
@@ -5798,6 +5820,7 @@ export namespace Prisma {
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
+    transactionExpireAt?: boolean
     usedAt?: boolean
   }, ExtArgs["result"]["giftCard"]>
 
@@ -5813,6 +5836,7 @@ export namespace Prisma {
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
+    transactionExpireAt?: boolean
     usedAt?: boolean
   }, ExtArgs["result"]["giftCard"]>
 
@@ -5828,6 +5852,7 @@ export namespace Prisma {
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
+    transactionExpireAt?: boolean
     usedAt?: boolean
   }, ExtArgs["result"]["giftCard"]>
 
@@ -5843,10 +5868,11 @@ export namespace Prisma {
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
+    transactionExpireAt?: boolean
     usedAt?: boolean
   }
 
-  export type GiftCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "amount" | "recipientEmail" | "personalMessage" | "isPaid" | "status" | "stripeSessionId" | "expiresAt" | "usedAt", ExtArgs["result"]["giftCard"]>
+  export type GiftCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "amount" | "recipientEmail" | "personalMessage" | "isPaid" | "status" | "stripeSessionId" | "expiresAt" | "transactionExpireAt" | "usedAt", ExtArgs["result"]["giftCard"]>
 
   export type $GiftCardPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GiftCard"
@@ -5862,7 +5888,8 @@ export namespace Prisma {
       isPaid: boolean
       status: $Enums.GiftCardStatus
       stripeSessionId: string | null
-      expiresAt: Date
+      expiresAt: Date | null
+      transactionExpireAt: Date | null
       usedAt: Date | null
     }, ExtArgs["result"]["giftCard"]>
     composites: {}
@@ -6298,6 +6325,7 @@ export namespace Prisma {
     readonly status: FieldRef<"GiftCard", 'GiftCardStatus'>
     readonly stripeSessionId: FieldRef<"GiftCard", 'String'>
     readonly expiresAt: FieldRef<"GiftCard", 'DateTime'>
+    readonly transactionExpireAt: FieldRef<"GiftCard", 'DateTime'>
     readonly usedAt: FieldRef<"GiftCard", 'DateTime'>
   }
     
@@ -6697,6 +6725,7 @@ export namespace Prisma {
     wantsSmsReminder: 'wantsSmsReminder',
     status: 'status',
     stripeSessionId: 'stripeSessionId',
+    expiresAt: 'expiresAt',
     reminderEmailSent: 'reminderEmailSent',
     reminderSmsSent: 'reminderSmsSent',
     cancelToken: 'cancelToken'
@@ -6750,6 +6779,7 @@ export namespace Prisma {
     status: 'status',
     stripeSessionId: 'stripeSessionId',
     expiresAt: 'expiresAt',
+    transactionExpireAt: 'transactionExpireAt',
     usedAt: 'usedAt'
   };
 
@@ -6895,6 +6925,7 @@ export namespace Prisma {
     wantsSmsReminder?: BoolFilter<"Reservation"> | boolean
     status?: EnumReservationStatusFilter<"Reservation"> | $Enums.ReservationStatus
     stripeSessionId?: StringNullableFilter<"Reservation"> | string | null
+    expiresAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
     reminderEmailSent?: BoolFilter<"Reservation"> | boolean
     reminderSmsSent?: BoolFilter<"Reservation"> | boolean
     cancelToken?: StringFilter<"Reservation"> | string
@@ -6913,6 +6944,7 @@ export namespace Prisma {
     wantsSmsReminder?: SortOrder
     status?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
+    expiresAt?: SortOrderInput | SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -6935,6 +6967,7 @@ export namespace Prisma {
     specialRequest?: StringNullableFilter<"Reservation"> | string | null
     wantsSmsReminder?: BoolFilter<"Reservation"> | boolean
     status?: EnumReservationStatusFilter<"Reservation"> | $Enums.ReservationStatus
+    expiresAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
     reminderEmailSent?: BoolFilter<"Reservation"> | boolean
     reminderSmsSent?: BoolFilter<"Reservation"> | boolean
   }, "id" | "stripeSessionId" | "cancelToken">
@@ -6952,6 +6985,7 @@ export namespace Prisma {
     wantsSmsReminder?: SortOrder
     status?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
+    expiresAt?: SortOrderInput | SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -6978,6 +7012,7 @@ export namespace Prisma {
     wantsSmsReminder?: BoolWithAggregatesFilter<"Reservation"> | boolean
     status?: EnumReservationStatusWithAggregatesFilter<"Reservation"> | $Enums.ReservationStatus
     stripeSessionId?: StringNullableWithAggregatesFilter<"Reservation"> | string | null
+    expiresAt?: DateTimeNullableWithAggregatesFilter<"Reservation"> | Date | string | null
     reminderEmailSent?: BoolWithAggregatesFilter<"Reservation"> | boolean
     reminderSmsSent?: BoolWithAggregatesFilter<"Reservation"> | boolean
     cancelToken?: StringWithAggregatesFilter<"Reservation"> | string
@@ -7159,7 +7194,8 @@ export namespace Prisma {
     isPaid?: BoolFilter<"GiftCard"> | boolean
     status?: EnumGiftCardStatusFilter<"GiftCard"> | $Enums.GiftCardStatus
     stripeSessionId?: StringNullableFilter<"GiftCard"> | string | null
-    expiresAt?: DateTimeFilter<"GiftCard"> | Date | string
+    expiresAt?: DateTimeNullableFilter<"GiftCard"> | Date | string | null
+    transactionExpireAt?: DateTimeNullableFilter<"GiftCard"> | Date | string | null
     usedAt?: DateTimeNullableFilter<"GiftCard"> | Date | string | null
   }
 
@@ -7174,7 +7210,8 @@ export namespace Prisma {
     isPaid?: SortOrder
     status?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
-    expiresAt?: SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    transactionExpireAt?: SortOrderInput | SortOrder
     usedAt?: SortOrderInput | SortOrder
   }
 
@@ -7192,7 +7229,8 @@ export namespace Prisma {
     personalMessage?: StringNullableFilter<"GiftCard"> | string | null
     isPaid?: BoolFilter<"GiftCard"> | boolean
     status?: EnumGiftCardStatusFilter<"GiftCard"> | $Enums.GiftCardStatus
-    expiresAt?: DateTimeFilter<"GiftCard"> | Date | string
+    expiresAt?: DateTimeNullableFilter<"GiftCard"> | Date | string | null
+    transactionExpireAt?: DateTimeNullableFilter<"GiftCard"> | Date | string | null
     usedAt?: DateTimeNullableFilter<"GiftCard"> | Date | string | null
   }, "id" | "code" | "stripeSessionId">
 
@@ -7207,7 +7245,8 @@ export namespace Prisma {
     isPaid?: SortOrder
     status?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
-    expiresAt?: SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    transactionExpireAt?: SortOrderInput | SortOrder
     usedAt?: SortOrderInput | SortOrder
     _count?: GiftCardCountOrderByAggregateInput
     _avg?: GiftCardAvgOrderByAggregateInput
@@ -7230,7 +7269,8 @@ export namespace Prisma {
     isPaid?: BoolWithAggregatesFilter<"GiftCard"> | boolean
     status?: EnumGiftCardStatusWithAggregatesFilter<"GiftCard"> | $Enums.GiftCardStatus
     stripeSessionId?: StringNullableWithAggregatesFilter<"GiftCard"> | string | null
-    expiresAt?: DateTimeWithAggregatesFilter<"GiftCard"> | Date | string
+    expiresAt?: DateTimeNullableWithAggregatesFilter<"GiftCard"> | Date | string | null
+    transactionExpireAt?: DateTimeNullableWithAggregatesFilter<"GiftCard"> | Date | string | null
     usedAt?: DateTimeNullableWithAggregatesFilter<"GiftCard"> | Date | string | null
   }
 
@@ -7247,6 +7287,7 @@ export namespace Prisma {
     wantsSmsReminder?: boolean
     status?: $Enums.ReservationStatus
     stripeSessionId?: string | null
+    expiresAt?: Date | string | null
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: string
@@ -7265,6 +7306,7 @@ export namespace Prisma {
     wantsSmsReminder?: boolean
     status?: $Enums.ReservationStatus
     stripeSessionId?: string | null
+    expiresAt?: Date | string | null
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: string
@@ -7283,6 +7325,7 @@ export namespace Prisma {
     wantsSmsReminder?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
@@ -7301,6 +7344,7 @@ export namespace Prisma {
     wantsSmsReminder?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
@@ -7319,6 +7363,7 @@ export namespace Prisma {
     wantsSmsReminder?: boolean
     status?: $Enums.ReservationStatus
     stripeSessionId?: string | null
+    expiresAt?: Date | string | null
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: string
@@ -7337,6 +7382,7 @@ export namespace Prisma {
     wantsSmsReminder?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
@@ -7355,6 +7401,7 @@ export namespace Prisma {
     wantsSmsReminder?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
@@ -7533,7 +7580,8 @@ export namespace Prisma {
     isPaid?: boolean
     status?: $Enums.GiftCardStatus
     stripeSessionId?: string | null
-    expiresAt: Date | string
+    expiresAt?: Date | string | null
+    transactionExpireAt?: Date | string | null
     usedAt?: Date | string | null
   }
 
@@ -7548,7 +7596,8 @@ export namespace Prisma {
     isPaid?: boolean
     status?: $Enums.GiftCardStatus
     stripeSessionId?: string | null
-    expiresAt: Date | string
+    expiresAt?: Date | string | null
+    transactionExpireAt?: Date | string | null
     usedAt?: Date | string | null
   }
 
@@ -7563,7 +7612,8 @@ export namespace Prisma {
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumGiftCardStatusFieldUpdateOperationsInput | $Enums.GiftCardStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -7578,7 +7628,8 @@ export namespace Prisma {
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumGiftCardStatusFieldUpdateOperationsInput | $Enums.GiftCardStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -7593,7 +7644,8 @@ export namespace Prisma {
     isPaid?: boolean
     status?: $Enums.GiftCardStatus
     stripeSessionId?: string | null
-    expiresAt: Date | string
+    expiresAt?: Date | string | null
+    transactionExpireAt?: Date | string | null
     usedAt?: Date | string | null
   }
 
@@ -7608,7 +7660,8 @@ export namespace Prisma {
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumGiftCardStatusFieldUpdateOperationsInput | $Enums.GiftCardStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -7623,7 +7676,8 @@ export namespace Prisma {
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumGiftCardStatusFieldUpdateOperationsInput | $Enums.GiftCardStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -7691,6 +7745,17 @@ export namespace Prisma {
     not?: NestedEnumReservationStatusFilter<$PrismaModel> | $Enums.ReservationStatus
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -7709,6 +7774,7 @@ export namespace Prisma {
     wantsSmsReminder?: SortOrder
     status?: SortOrder
     stripeSessionId?: SortOrder
+    expiresAt?: SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -7731,6 +7797,7 @@ export namespace Prisma {
     wantsSmsReminder?: SortOrder
     status?: SortOrder
     stripeSessionId?: SortOrder
+    expiresAt?: SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -7749,6 +7816,7 @@ export namespace Prisma {
     wantsSmsReminder?: SortOrder
     status?: SortOrder
     stripeSessionId?: SortOrder
+    expiresAt?: SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -7840,6 +7908,20 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumReservationStatusFilter<$PrismaModel>
     _max?: NestedEnumReservationStatusFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type AdminCountOrderByAggregateInput = {
@@ -7991,17 +8073,6 @@ export namespace Prisma {
     not?: NestedEnumGiftCardStatusFilter<$PrismaModel> | $Enums.GiftCardStatus
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type GiftCardCountOrderByAggregateInput = {
     id?: SortOrder
     createdAt?: SortOrder
@@ -8014,6 +8085,7 @@ export namespace Prisma {
     status?: SortOrder
     stripeSessionId?: SortOrder
     expiresAt?: SortOrder
+    transactionExpireAt?: SortOrder
     usedAt?: SortOrder
   }
 
@@ -8033,6 +8105,7 @@ export namespace Prisma {
     status?: SortOrder
     stripeSessionId?: SortOrder
     expiresAt?: SortOrder
+    transactionExpireAt?: SortOrder
     usedAt?: SortOrder
   }
 
@@ -8048,6 +8121,7 @@ export namespace Prisma {
     status?: SortOrder
     stripeSessionId?: SortOrder
     expiresAt?: SortOrder
+    transactionExpireAt?: SortOrder
     usedAt?: SortOrder
   }
 
@@ -8081,20 +8155,6 @@ export namespace Prisma {
     _max?: NestedEnumGiftCardStatusFilter<$PrismaModel>
   }
 
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -8123,6 +8183,10 @@ export namespace Prisma {
     set?: $Enums.ReservationStatus
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type NullableIntFieldUpdateOperationsInput = {
     set?: number | null
     increment?: number
@@ -8141,10 +8205,6 @@ export namespace Prisma {
 
   export type EnumGiftCardStatusFieldUpdateOperationsInput = {
     set?: $Enums.GiftCardStatus
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -8207,6 +8267,17 @@ export namespace Prisma {
     in?: $Enums.ReservationStatus[] | ListEnumReservationStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.ReservationStatus[] | ListEnumReservationStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumReservationStatusFilter<$PrismaModel> | $Enums.ReservationStatus
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -8313,6 +8384,20 @@ export namespace Prisma {
     _max?: NestedEnumReservationStatusFilter<$PrismaModel>
   }
 
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -8347,17 +8432,6 @@ export namespace Prisma {
     not?: NestedEnumGiftCardStatusFilter<$PrismaModel> | $Enums.GiftCardStatus
   }
 
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -8382,20 +8456,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumGiftCardStatusFilter<$PrismaModel>
     _max?: NestedEnumGiftCardStatusFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
 

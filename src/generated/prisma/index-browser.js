@@ -133,6 +133,7 @@ exports.Prisma.ReservationScalarFieldEnum = {
   wantsSmsReminder: 'wantsSmsReminder',
   status: 'status',
   stripeSessionId: 'stripeSessionId',
+  expiresAt: 'expiresAt',
   reminderEmailSent: 'reminderEmailSent',
   reminderSmsSent: 'reminderSmsSent',
   cancelToken: 'cancelToken'
@@ -174,6 +175,7 @@ exports.Prisma.GiftCardScalarFieldEnum = {
   status: 'status',
   stripeSessionId: 'stripeSessionId',
   expiresAt: 'expiresAt',
+  transactionExpireAt: 'transactionExpireAt',
   usedAt: 'usedAt'
 };
 
@@ -195,11 +197,13 @@ exports.ReservationStatus = exports.$Enums.ReservationStatus = {
   PENDING_PAYMENT: 'PENDING_PAYMENT',
   CONFIRMED: 'CONFIRMED',
   CANCELLED: 'CANCELLED',
-  COMPLETED: 'COMPLETED'
+  COMPLETED: 'COMPLETED',
+  IN_PROGRESS_PAYMENT: 'IN_PROGRESS_PAYMENT',
+  EXPIRED: 'EXPIRED'
 };
 
 exports.GiftCardStatus = exports.$Enums.GiftCardStatus = {
-  PENDING_PAYMENT: 'PENDING_PAYMENT',
+  IN_PROGRESS_PAYMENT: 'IN_PROGRESS_PAYMENT',
   ACTIVE: 'ACTIVE',
   USED: 'USED',
   EXPIRED: 'EXPIRED'

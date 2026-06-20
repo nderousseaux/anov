@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "ReservationStatus" AS ENUM ('PENDING_PAYMENT', 'CONFIRMED', 'CANCELLED', 'COMPLETED');
+CREATE TYPE "ReservationStatus" AS ENUM ('PENDING_PAYMENT', 'CONFIRMED', 'CANCELLED', 'COMPLETED', 'IN_PROGRESS_PAYMENT', 'EXPIRED');
 
 -- CreateTable
 CREATE TABLE "Reservation" (
@@ -15,6 +15,7 @@ CREATE TABLE "Reservation" (
     "wantsSmsReminder" BOOLEAN NOT NULL DEFAULT false,
     "status" "ReservationStatus" NOT NULL DEFAULT 'PENDING_PAYMENT',
     "stripeSessionId" TEXT,
+    "expiresAt" TIMESTAMP(3),
     "reminderEmailSent" BOOLEAN NOT NULL DEFAULT false,
     "reminderSmsSent" BOOLEAN NOT NULL DEFAULT false,
     "cancelToken" TEXT NOT NULL,
@@ -55,6 +56,28 @@ CREATE TABLE "DayOverride" (
     CONSTRAINT "DayOverride_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateEnum
+CREATE TYPE "GiftCardStatus" AS ENUM ('IN_PROGRESS_PAYMENT', 'ACTIVE', 'USED', 'EXPIRED');
+
+-- CreateTable
+CREATE TABLE "GiftCard" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "code" TEXT NOT NULL,
+    "amount" DOUBLE PRECISION NOT NULL,
+    "recipientEmail" TEXT,
+    "personalMessage" TEXT,
+    "isPaid" BOOLEAN NOT NULL DEFAULT false,
+    "status" "GiftCardStatus" NOT NULL DEFAULT 'IN_PROGRESS_PAYMENT',
+    "stripeSessionId" TEXT,
+    "expiresAt" TIMESTAMP(3),
+    "transactionExpireAt" TIMESTAMP(3),
+    "usedAt" TIMESTAMP(3),
+
+    CONSTRAINT "GiftCard_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Reservation_stripeSessionId_key" ON "Reservation"("stripeSessionId");
 
@@ -66,3 +89,9 @@ CREATE UNIQUE INDEX "Admin_email_key" ON "Admin"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "DayOverride_date_key" ON "DayOverride"("date");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "GiftCard_code_key" ON "GiftCard"("code");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "GiftCard_stripeSessionId_key" ON "GiftCard"("stripeSessionId");

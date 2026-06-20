@@ -17,9 +17,10 @@ interface GiftCard {
   recipientEmail: string | null;
   personalMessage: string | null;
   isPaid: boolean;
-  status: 'PENDING_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED';
+  status: 'IN_PROGRESS_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED';
   createdAt: string;
   expiresAt: string;
+  transactionExpireAt: string | null;
   usedAt: string | null;
 }
 
@@ -100,6 +101,7 @@ function GiftCardPageContent() {
     totalAmount: 0,
     active: 0,
     expired: 0,
+    inProgress: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -121,11 +123,11 @@ function GiftCardPageContent() {
     email: searchParams.get('email') || '',
     page: parseInt(searchParams.get('page') || '1', 10),
   });
-  
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       // Fetch gift cards list
       const params = new URLSearchParams();
@@ -133,20 +135,20 @@ function GiftCardPageContent() {
       if (filters.code) params.append('code', filters.code);
       if (filters.email) params.append('email', filters.email);
       params.append('page', filters.page.toString());
-      
+
       const listResponse = await fetch(`/api/admin/gift-cards?${params.toString()}`);
       if (!listResponse.ok) throw new Error('Erreur lors du chargement des chèques cadeaux');
-      
+
       const listData: GiftCardListResponse = await listResponse.json();
       setGiftCards(listData.data);
-      
+
       // Fetch stats
       const statsResponse = await fetch('/api/admin/gift-cards/stats');
       if (!statsResponse.ok) throw new Error('Erreur lors du chargement des statistiques');
-      
+
       const statsData: GiftCardStatsType = await statsResponse.json();
       setStats(statsData);
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue');
     } finally {
@@ -178,12 +180,12 @@ function GiftCardPageContent() {
           action: 'validate',
         }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Erreur lors de la validation');
       }
-      
+
       // Refresh data
       handleRefresh();
     } catch (err) {
@@ -191,7 +193,24 @@ function GiftCardPageContent() {
     }
   };
 
-  const handleMarkUsed = async (id: string) => {
+  const handleMarkUsed = (giftCard: GiftCard) => {
+    const now = new Date();
+    const expiresAt = new Date(giftCard.expiresAt);
+    const isExpired = now > expiresAt;
+
+    if (isExpired) {
+      const formattedDate = formatDateTime(giftCard.expiresAt);
+      if (!confirm(`Attention, ce bon cadeau est expiré depuis le ${formattedDate}. Êtes-vous sûr de vouloir le marquer comme utilisé ?`)) {
+        return;
+      }
+    } else if (!confirm('Êtes-vous sûr de vouloir marquer ce bon comme utilisé ?')) {
+      return;
+    }
+
+    handleMarkUsedAction(giftCard.id);
+  };
+
+  const handleMarkUsedAction = async (id: string) => {
     try {
       const response = await fetch('/api/admin/gift-cards', {
         method: 'PATCH',
@@ -203,12 +222,12 @@ function GiftCardPageContent() {
           action: 'markUsed',
         }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Erreur lors de la mise à jour');
       }
-      
+
       // Refresh data
       handleRefresh();
     } catch (err) {
@@ -216,35 +235,23 @@ function GiftCardPageContent() {
     }
   };
 
-  const handleDeleteGiftCard = async (id: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce bon cadeau ?')) return;
-    
-    try {
-      const response = await fetch('/api/admin/gift-cards', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id,
-          action: 'delete',
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Erreur lors de la suppression');
-      }
-      
-      // Refresh data
-      handleRefresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
-    }
+  // La suppression de bons cadeaux est désactivée
+  const handleDeleteGiftCard = () => {
+    setError('La suppression de bons cadeaux n\'est pas autorisée.');
   };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
+  };
+
+  const formatDateTime = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   const formatDateString = (dateString: string) => {
@@ -351,16 +358,16 @@ function GiftCardPageContent() {
   }, [isCreateModalOpen]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col overflow-hidden">
       <AdminNav />
-      
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-y-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gold">Bons Cadeaux</h1>
             <p className="text-muted-foreground mt-1">Gestion complète des chèques cadeaux</p>
           </div>
-          
+
           <div className="mt-4 md:mt-0 flex flex-wrap gap-3 items-center">
             <button
               onClick={() => setIsCreateModalOpen(true)}
@@ -382,27 +389,27 @@ function GiftCardPageContent() {
             </button>
           </div>
         </div>
-        
+
         {/* Statistics Cards */}
         <Suspense fallback={<StatsFallback />}>
           <GiftCardStats stats={stats} />
         </Suspense>
-        
+
         {/* Filters */}
         <div className="mb-6">
-          <GiftCardFilters 
-            filters={filters} 
-            setFilters={setFilters} 
+          <GiftCardFilters
+            filters={filters}
+            setFilters={setFilters}
           />
         </div>
-        
+
         {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 bg-red-900/20 border border-red-700/50 rounded-lg text-red-200">
             {error}
           </div>
         )}
-        
+
         {/* Gift Card Grid */}
         {loading && !giftCards.length ? (
           <GiftCardListFallback />
@@ -418,11 +425,12 @@ function GiftCardPageContent() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {giftCards.map((giftCard) => (
-                  <GiftCardCard 
-                    key={giftCard.id} 
-                    giftCard={giftCard} 
+                  <GiftCardCard
+                    key={giftCard.id}
+                    giftCard={giftCard}
                     formatCurrency={formatCurrency}
                     formatDate={formatDateString}
+                    formatDateTime={formatDateTime}
                     onValidate={handleValidateGiftCard}
                     onMarkUsed={handleMarkUsed}
                     onDelete={handleDeleteGiftCard}
@@ -430,7 +438,7 @@ function GiftCardPageContent() {
                 ))}
               </div>
             )}
-            
+
             {/* Pagination */}
             {giftCards.length > 0 && (
               <div className="mt-8 flex items-center justify-center gap-2">
@@ -443,11 +451,11 @@ function GiftCardPageContent() {
                     Précédent
                   </button>
                 )}
-                
+
                 <span className="text-foreground/80">
                   Page {filters.page} sur {Math.ceil(stats.totalIssued / 25) || 1}
                 </span>
-                
+
                 {Math.ceil(stats.totalIssued / 25) > 1 && (
                   <button
                     onClick={() => setFilters(prev => ({ ...prev, page: prev.page + 1 }))}

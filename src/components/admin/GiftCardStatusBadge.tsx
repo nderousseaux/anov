@@ -5,12 +5,12 @@ interface GiftCardStatusBadgeProps {
   className?: string;
 }
 
-const statusConfig = {
-  PENDING_PAYMENT: {
-    bg: 'bg-yellow-600/20',
-    text: 'text-yellow-400',
-    border: 'border-yellow-600/30',
-    label: 'En attente',
+const statusConfig: Record<GiftCardStatus, { bg: string; text: string; border: string; label: string }> = {
+  IN_PROGRESS_PAYMENT: {
+    bg: 'bg-amber-600/20',
+    text: 'text-amber-400',
+    border: 'border-amber-600/30',
+    label: 'En cours de paiement',
   },
   ACTIVE: {
     bg: 'bg-green-600/20',
@@ -34,7 +34,7 @@ const statusConfig = {
 
 export function GiftCardStatusBadge({ status, className = '' }: GiftCardStatusBadgeProps) {
   const config = statusConfig[status];
-  
+
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${config.bg} ${config.text} ${config.border} ${className}`}>
       {config.label}

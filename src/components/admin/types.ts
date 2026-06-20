@@ -3,6 +3,7 @@ export interface GiftCardStats {
   totalAmount: number;
   active: number;
   expired: number;
+  inProgress: number;
 }
 
-export type GiftCardStatus = 'PENDING_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED';
+export type GiftCardStatus = 'IN_PROGRESS_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED';

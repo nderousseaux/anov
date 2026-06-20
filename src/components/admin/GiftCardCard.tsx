@@ -10,46 +10,54 @@ interface GiftCardCardProps {
     recipientEmail: string | null;
     personalMessage: string | null;
     isPaid: boolean;
-    status: 'PENDING_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED';
+    status: 'IN_PROGRESS_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED';
     createdAt: string;
     expiresAt: string;
+    transactionExpireAt: string | null;
     usedAt: string | null;
   };
   formatCurrency: (amount: number) => string;
   formatDate: (dateString: string) => string;
+  formatDateTime: (dateString: string) => string;
   onValidate: (id: string) => void;
-  onMarkUsed: (id: string) => void;
+  onMarkUsed: (giftCard: { id: string; expiresAt: string }) => void;
   onDelete: (id: string) => void;
 }
 
-export function GiftCardCard({ giftCard, formatCurrency, formatDate, onValidate, onMarkUsed, onDelete }: GiftCardCardProps) {
-  const canValidate = giftCard.status === 'PENDING_PAYMENT' || giftCard.status === 'ACTIVE' || giftCard.status === 'USED';
-  const canDelete = giftCard.status !== 'USED';
-  const isPending = giftCard.status === 'PENDING_PAYMENT';
+export function GiftCardCard({ giftCard, formatCurrency, formatDate, formatDateTime, onValidate, onMarkUsed, onDelete }: GiftCardCardProps) {
+  // La suppression de bons cadeaux est désactivée
+  const canValidate = giftCard.status === 'ACTIVE' || giftCard.status === 'USED';
+  const canDelete = false;
+  const canMarkUsed = giftCard.status === 'ACTIVE' || giftCard.status === 'EXPIRED';
+  const isPending = giftCard.status === 'IN_PROGRESS_PAYMENT';
   const isMarkedAsUsed = giftCard.status === 'USED';
-  
+
   return (
     <div className="bg-card border border-border rounded-lg p-5 hover:border-gold/30 transition-colors group relative">
       {/* Actions buttons */}
       <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        {canValidate && (
+        {/* Marquer comme utilisé pour ACTIVE ou EXPIRED */}
+        {canMarkUsed && !isMarkedAsUsed && (
           <button
-            onClick={() => isMarkedAsUsed ? onValidate(giftCard.id) : onMarkUsed(giftCard.id)}
-            className={`p-2 rounded-lg transition-colors ${
-              isMarkedAsUsed
-                ? 'bg-blue-500/10 hover:bg-blue-500 text-blue-400 hover:text-white'
-                : 'bg-green-500/10 hover:bg-green-500 text-green-400 hover:text-white'
-            }`}
-            title={isMarkedAsUsed ? 'Marquer comme non utilisé' : 'Marquer comme utilisé'}
+            onClick={() => onMarkUsed({ id: giftCard.id, expiresAt: giftCard.expiresAt })}
+            className="p-2 bg-green-500/10 hover:bg-green-500 text-green-400 hover:text-white rounded-lg transition-colors"
+            title={giftCard.status === 'EXPIRED' ? 'Valider le bon expiré' : 'Marquer comme utilisé'}
           >
-            {isMarkedAsUsed ? (
-              <RotateCcw className="w-4 h-4" />
-            ) : (
-              <Check className="w-4 h-4" />
-            )}
+            <Check className="w-4 h-4" />
           </button>
         )}
-        {canDelete && (
+        {/* Remettre USED à non utilisé */}
+        {canValidate && isMarkedAsUsed && (
+          <button
+            onClick={() => onValidate(giftCard.id)}
+            className="p-2 bg-blue-500/10 hover:bg-blue-500 text-blue-400 hover:text-white rounded-lg transition-colors"
+            title="Marquer comme non utilisé"
+          >
+            <RotateCcw className="w-4 h-4" />
+          </button>
+        )}
+        {/* Supprimer - désactivé */}
+        {canDelete && !isMarkedAsUsed && (
           <button
             onClick={() => onDelete(giftCard.id)}
             className="p-2 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-lg transition-colors"
@@ -75,13 +83,13 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, onValidate,
           </div>
         </div>
       </div>
-      
+
       <div className="space-y-2">
         <div>
           <p className="text-sm text-muted-foreground">Montant</p>
           <p className="text-lg font-bold text-foreground">{formatCurrency(giftCard.amount)}</p>
         </div>
-        
+
         <div>
           <p className="text-sm text-muted-foreground">Destinataire</p>
           {giftCard.recipientEmail ? (
@@ -90,7 +98,7 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, onValidate,
             <p className="text-foreground/60 italic">Email non communiqué</p>
           )}
         </div>
-        
+
         {giftCard.personalMessage && (
           <div>
             <p className="text-sm text-muted-foreground">Message</p>
@@ -98,7 +106,7 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, onValidate,
           </div>
         )}
       </div>
-      
+
       <div className="mt-4 pt-3 border-t border-border/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -107,26 +115,26 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, onValidate,
               giftCard.status === 'ACTIVE' ? 'text-green-400' :
               giftCard.status === 'USED' ? 'text-blue-400' :
               giftCard.status === 'EXPIRED' ? 'text-red-400' :
-              'text-yellow-400'
+              'text-amber-400'
             }`}>
-              {giftCard.status === 'PENDING_PAYMENT' ? 'En attente' :
+              {giftCard.status === 'IN_PROGRESS_PAYMENT' ? 'En cours de paiement' :
                giftCard.status === 'ACTIVE' ? 'Actif' :
                giftCard.status === 'USED' ? 'Utilisé' :
                'Expiré'}
             </span>
           </div>
           <div className="text-xs text-muted-foreground">
-            {formatDate(giftCard.createdAt)}
+            {formatDateTime(giftCard.createdAt)}
           </div>
         </div>
-        
+
         <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
           <span>Expire:</span>
           <span className={giftCard.status === 'EXPIRED' ? 'text-red-400' : ''}>
             {formatDate(giftCard.expiresAt)}
           </span>
         </div>
-        
+
         {giftCard.usedAt && (
           <div className="mt-1 flex items-center gap-2 text-xs text-blue-400">
             <span>Utilisé le:</span>

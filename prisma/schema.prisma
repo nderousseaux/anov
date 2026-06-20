@@ -9,42 +9,47 @@ datasource db {
 
 // ─── Réservation client ────────────────────────────────────────────────────────
 model Reservation {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String            @id @default(cuid())
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
 
   // Coordonnées client
-  name  String
-  email String
-  phone String?
+  name              String
+  email             String
+  phone             String?
 
   // Détails de la réservation
-  date           DateTime // date + heure du repas
-  guests         Int      // nombre de convives
-  specialRequest String?  // demandes spéciales
+  date              DateTime
+  guests            Int
+  specialRequest    String?
 
   // Options
-  wantsSmsReminder Boolean @default(false)
+  wantsSmsReminder  Boolean           @default(false)
 
   // Statut
-  status ReservationStatus @default(PENDING_PAYMENT)
+  status            ReservationStatus @default(PENDING_PAYMENT)
 
   // Paiement Stripe
-  stripeSessionId String? @unique
+  stripeSessionId   String?           @unique
+
+  // Expiration (pour IN_PROGRESS_PAYMENT)
+  expiresAt         DateTime?
 
   // Rappels envoyés
-  reminderEmailSent Boolean @default(false)
-  reminderSmsSent   Boolean @default(false)
+  reminderEmailSent Boolean           @default(false)
+  reminderSmsSent   Boolean           @default(false)
 
   // Token d'annulation (lien dans l'email)
-  cancelToken String @unique @default(cuid())
+  cancelToken       String            @unique @default(cuid())
 }
 
 enum ReservationStatus {
-  PENDING_PAYMENT // en attente de paiement
-  CONFIRMED       // confirmée
-  CANCELLED       // annulée
-  COMPLETED       // passée
+  PENDING_PAYMENT
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  IN_PROGRESS_PAYMENT
+  EXPIRED
 }
 
 // ─── Compte administrateur ────────────────────────────────────────────────────
@@ -58,15 +63,12 @@ model Admin {
 // ─── Paramètres du restaurant ─────────────────────────────────────────────────
 // Singleton (id = 1 toujours)
 model RestaurantSettings {
-  id            Int    @id @default(1)
-  maxCovers     Int    @default(20)
-  mealDuration  Int    @default(90) // durée d'un repas en minutes (multiple de 30)
-  // JSON array of day-of-week numbers : 0=Dim, 1=Lun, 2=Mar, 3=Mer, 4=Jeu, 5=Ven, 6=Sam
-  openingDays   String @default("[2,3,4,5,6]")
-  // JSON array : ["12:00","12:30","13:00","13:30","19:00","19:30","20:00","20:30","21:00","21:30"]
-  openingSlots  String @default("[\"12:00\",\"12:30\",\"13:00\",\"13:30\",\"19:00\",\"19:30\",\"20:00\",\"20:30\",\"21:00\",\"21:30\"]")
-  // Acompte en centimes par couvert (ex: 2000 = 20€)
-  depositPerGuestCents Int @default(2000)
+  id                   Int    @id @default(1)
+  maxCovers            Int    @default(20)
+  mealDuration         Int    @default(90)
+  openingDays          String @default("[2,3,4,5,6]")
+  openingSlots         String @default("[\"12:00\",\"12:30\",\"13:00\",\"13:30\",\"19:00\",\"19:30\",\"20:00\",\"20:30\",\"21:00\",\"21:30\"]")
+  depositPerGuestCents Int    @default(2000)
 }
 
 // ─── Override pour un jour spécifique ─────────────────────────────────────────
@@ -76,37 +78,33 @@ model DayOverride {
   id           Int      @id @default(autoincrement())
   date         DateTime @unique
   closed       Boolean  @default(false)
-  maxCovers    Int?                 // null = utiliser les paramètres globaux
-  openingSlots String?              // null = utiliser les paramètres globaux
+  maxCovers    Int?
+  openingSlots String?
 }
 
 // ─── Chèques Cadeaux ──────────────────────────────────────────────────────────
 model GiftCard {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  String            @id @default(cuid())
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
 
-  // Informations du chèque cadeau
-  code              String   @unique // Code unique du chèque cadeau (ex: ANOV-XXXX-XXXX)
-  amount            Float    // Montant en euros
-  recipientEmail    String?  // Email du destinataire (optionnel pour les créations admin)
-  personalMessage   String?  // Message personnalisé
-  isPaid            Boolean  @default(false) // true = payé par le client, false = créé par admin (gratuit)
+  code                String            @unique
+  amount              Float
+  recipientEmail      String?
+  personalMessage     String?
+  isPaid              Boolean           @default(false)
 
-  // Statut
-  status GiftCardStatus @default(PENDING_PAYMENT)
+  status              GiftCardStatus    @default(IN_PROGRESS_PAYMENT)
 
-  // Paiement Stripe
-  stripeSessionId String? @unique
-
-  // Validité
-  expiresAt DateTime // Date d'expiration (12 mois après création)
-  usedAt    DateTime? // Date d'utilisation (null si pas encore utilisé)
+  stripeSessionId     String?           @unique
+  expiresAt           DateTime?
+  transactionExpireAt DateTime?
+  usedAt              DateTime?
 }
 
 enum GiftCardStatus {
-  PENDING_PAYMENT // en attente de paiement
-  ACTIVE          // actif et utilisable
-  USED            // utilisé
-  EXPIRED         // expiré
+  IN_PROGRESS_PAYMENT
+  ACTIVE
+  USED
+  EXPIRED
 }

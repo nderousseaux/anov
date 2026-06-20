@@ -13,7 +13,7 @@ export function GiftCardStats({ stats }: GiftCardStatsProps) {
       color: 'text-gold',
     },
     {
-      label: 'Montant total',
+      label: 'Montant actif',
       value: formatCurrency(stats.totalAmount),
       icon: 'euro',
       color: 'text-green-400',

@@ -27,16 +27,29 @@ export async function GET() {
     },
   });
 
-  // Actifs = SEULEMENT cartes ACTIVE (exclure les en cours de paiement)
+  // Actifs = SEULEMENT cartes ACTIVE non expirées (exclure les en cours de paiement et celles avec expiresAt dépassé)
   const activeCount = await prisma.giftCard.count({
     where: {
       status: GiftCardStatus.ACTIVE,
+      expiresAt: { gt: now },
     },
   });
 
-  // Expirés = statut EXPIRED (date d'expiration 1 an dépassée)
+  // Expirés =
+  // 1. Cartes avec le statut EXPIRED en base
+  // 2. Cartes ACTIVE mais dont expiresAt est dépassé (1 an)
   const expiredCount = await prisma.giftCard.count({
-    where: { status: GiftCardStatus.EXPIRED },
+    where: {
+      OR: [
+        { status: GiftCardStatus.EXPIRED },
+        {
+          AND: [
+            { status: GiftCardStatus.ACTIVE },
+            { expiresAt: { lt: now } },
+          ],
+        },
+      ],
+    },
   });
 
   // En cours de paiement = IN_PROGRESS_PAYMENT sans transaction expirée
@@ -49,7 +62,7 @@ export async function GET() {
     },
   });
 
-  // Montant actif = somme des montants des cartes à afficher (exclure les EXPIRED, USED et les transactions expirées)
+  // Montant actif = somme des montants des cartes à afficher (exclure les EXPIRED, USED, les transactions expirées à 10min et les cartes actives expirées à 1 an)
   const totalAmountResult = await prisma.giftCard.aggregate({
     _sum: { amount: true },
     where: {
@@ -61,6 +74,7 @@ export async function GET() {
           ],
         },
         { status: { notIn: [GiftCardStatus.EXPIRED, GiftCardStatus.USED] } },
+        { expiresAt: { gt: now } }, // Exclure les cartes actives expirées
       ],
     },
   });

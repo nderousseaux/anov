@@ -2,6 +2,11 @@
 
 import { AlertCircle, Check, Trash2, X, RotateCcw } from 'lucide-react';
 
+function checkIsExpired(expiresAt: string | null): boolean {
+  if (!expiresAt) return false;
+  return new Date(expiresAt) < new Date();
+}
+
 interface GiftCardCardProps {
   giftCard: {
     id: string;
@@ -31,6 +36,7 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, formatDateT
   const canMarkUsed = giftCard.status === 'ACTIVE' || giftCard.status === 'EXPIRED';
   const isPending = giftCard.status === 'IN_PROGRESS_PAYMENT';
   const isMarkedAsUsed = giftCard.status === 'USED';
+  const isExpired = checkIsExpired(giftCard.expiresAt); // Carte ACTIVE expirée à 1 an
 
   return (
     <div className="bg-card border border-border rounded-lg p-5 hover:border-gold/30 transition-colors group relative">
@@ -117,12 +123,15 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, formatDateT
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">Statut:</span>
             <span className={`text-sm font-medium ${
+              giftCard.status === 'IN_PROGRESS_PAYMENT' ? 'text-amber-400' :
+              giftCard.status === 'ACTIVE' && isExpired ? 'text-red-400' :
               giftCard.status === 'ACTIVE' ? 'text-green-400' :
               giftCard.status === 'USED' ? 'text-blue-400' :
               giftCard.status === 'EXPIRED' ? 'text-red-400' :
               'text-amber-400'
             }`}>
               {giftCard.status === 'IN_PROGRESS_PAYMENT' ? 'En cours de paiement' :
+               giftCard.status === 'ACTIVE' && isExpired ? 'Expiré' :
                giftCard.status === 'ACTIVE' ? 'Actif' :
                giftCard.status === 'USED' ? 'Utilisé' :
                'Expiré'}
@@ -130,17 +139,17 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, formatDateT
           </div>
         </div>
 
-        <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-          <span>Expire:</span>
-          <span className={giftCard.status === 'EXPIRED' ? 'text-red-400' : ''}>
-            {giftCard.expiresAt ? formatDate(giftCard.expiresAt) : 'N/A'}
-          </span>
-        </div>
-
-        {giftCard.usedAt && (
-          <div className="mt-1 flex items-center gap-2 text-xs text-blue-400">
+        {giftCard.usedAt ? (
+          <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
             <span>Utilisé le:</span>
-            <span>{formatDate(giftCard.usedAt)}</span>
+            <span className="text-blue-400">{formatDate(giftCard.usedAt)}</span>
+          </div>
+        ) : (
+          <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+            <span>Expire:</span>
+            <span className={giftCard.status === 'EXPIRED' || (giftCard.status === 'ACTIVE' && isExpired) ? 'text-red-400' : ''}>
+              {giftCard.expiresAt ? formatDate(giftCard.expiresAt) : 'N/A'}
+            </span>
           </div>
         )}
       </div>

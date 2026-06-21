@@ -24,6 +24,8 @@ export async function GET(req: NextRequest) {
   // Les transactions expirées restent en IN_PROGRESS_PAYMENT mais ne sont pas affichées
   const andFilters = [];
   if (status) andFilters.push({ status });
+  // Exclure les cartes actives expirées à 1 an du total (mais les afficher)
+  // On ne filtre pas sur expiresAt - on les affiche avec leur statut ACTIVE mais non utilisables
   andFilters.push({
     OR: [
       { status: { not: 'IN_PROGRESS_PAYMENT' } },

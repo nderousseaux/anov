@@ -35,8 +35,11 @@ export async function POST(req: NextRequest) {
     if (meta.type === 'gift_card' && meta.giftCardId) {
       await handleGiftCardPayment(meta.giftCardId, session.id);
     }
-    // Gérer les réservations
-    else if (meta.name && meta.email && meta.date && meta.guests) {
+    // Gérer les réservations (supporte les deux formats)
+    else if (
+      (meta.name && meta.email && meta.date && meta.guests) ||  // ancien format
+      (meta.reservation_name && meta.reservation_email && meta.reservation_date && meta.reservation_guests)  // nouveau format
+    ) {
       await handleReservationPayment(session, meta);
     } else {
       // Log metadata issue (for monitoring)
@@ -105,14 +108,22 @@ async function handleGiftCardPayment(giftCardId: string, sessionId: string) {
 async function handleReservationPayment(session: any, meta: any) {
   try {
     // Créer la réservation en base maintenant que le paiement est confirmé
+    // Supporte les deux formats de metadata
+    const name = meta.reservation_name || meta.name;
+    const email = meta.reservation_email || meta.email;
+    const phone = meta.reservation_phone || meta.phone || null;
+    const date = meta.reservation_date || meta.date;
+    const guests = meta.reservation_guests || meta.guests;
+    const specialRequest = meta.reservation_special_request || meta.specialRequest || null;
+
     const reservation = await prisma.reservation.create({
       data: {
-        name: meta.name,
-        email: meta.email,
-        phone: meta.phone || null,
-        date: new Date(meta.date),
-        guests: parseInt(meta.guests, 10),
-        specialRequest: meta.specialRequest || null,
+        name,
+        email,
+        phone,
+        date: new Date(date),
+        guests: parseInt(guests, 10),
+        specialRequest,
         wantsSmsReminder: false,
         status: 'CONFIRMED',
         stripeSessionId: session.id,

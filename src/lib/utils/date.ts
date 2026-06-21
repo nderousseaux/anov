@@ -68,10 +68,11 @@ export function formatTime(
 export function isToday(date: Date | string): boolean {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   const today = new Date();
+  // Use UTC methods to avoid timezone issues when comparing dates
   return (
-    dateObj.getDate() === today.getDate() &&
-    dateObj.getMonth() === today.getMonth() &&
-    dateObj.getFullYear() === today.getFullYear()
+    dateObj.getUTCDate() === today.getUTCDate() &&
+    dateObj.getUTCMonth() === today.getUTCMonth() &&
+    dateObj.getUTCFullYear() === today.getUTCFullYear()
   );
 }
 

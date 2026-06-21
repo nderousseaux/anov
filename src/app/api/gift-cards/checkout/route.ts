@@ -39,6 +39,10 @@ export async function POST(req: Request) {
     const expiresAt = new Date();
     expiresAt.setMonth(expiresAt.getMonth() + 12);
 
+    // Calculer l'expiration de la transaction (10 minutes pour le paiement)
+    const transactionExpireAt = new Date();
+    transactionExpireAt.setMinutes(transactionExpireAt.getMinutes() + 10);
+
     // Créer le chèque cadeau dans la base de données (statut PENDING_PAYMENT)
     // isPaid: true pour les bons créés via le site client (payés)
     const giftCard = await prisma.giftCard.create({
@@ -49,6 +53,7 @@ export async function POST(req: Request) {
         personalMessage: personalMessage || null,
         isPaid: true,
         expiresAt,
+        transactionExpireAt,
         status: 'IN_PROGRESS_PAYMENT',
       },
     });

@@ -65,12 +65,13 @@ async function handleGiftCardPayment(giftCardId: string, sessionId: string) {
       return;
     }
 
-    // Mettre à jour le statut du chèque cadeau
+    // Mettre à jour le statut du chèque cadeau et effacer l'expiration de la transaction
     await prisma.giftCard.update({
       where: { id: giftCardId },
       data: {
         status: 'ACTIVE',
         stripeSessionId: sessionId,
+        transactionExpireAt: null, // La transaction est terminée
       },
     });
 

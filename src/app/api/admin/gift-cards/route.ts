@@ -14,10 +14,24 @@ export async function GET(req: NextRequest) {
   const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10));
   const perPage = 25;
 
+  const now = new Date();
   const where: Record<string, unknown> = {};
   if (status) where.status = status;
   if (code) where.code = { contains: code, mode: 'insensitive' };
   if (email) where.recipientEmail = { contains: email, mode: 'insensitive' };
+
+  // Exclure les cartes avec transaction expirée (10 min) - mais garder IN_PROGRESS_PAYMENT en base
+  // Les transactions expirées restent en IN_PROGRESS_PAYMENT mais ne sont pas affichées
+  const andFilters = [];
+  if (status) andFilters.push({ status });
+  andFilters.push({
+    OR: [
+      { status: { not: 'IN_PROGRESS_PAYMENT' } },
+      { transactionExpireAt: { gt: now } },
+      { transactionExpireAt: null },
+    ],
+  });
+  where.AND = andFilters;
 
   const [total, giftCards] = await Promise.all([
     prisma.giftCard.count({ where }),

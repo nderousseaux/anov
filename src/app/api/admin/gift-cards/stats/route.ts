@@ -27,18 +27,10 @@ export async function GET() {
     },
   });
 
-  // Actifs = cartes ACTIVE ou IN_PROGRESS_PAYMENT (sans transaction expirée)
+  // Actifs = SEULEMENT cartes ACTIVE (exclure les en cours de paiement)
   const activeCount = await prisma.giftCard.count({
     where: {
-      AND: [
-        { status: { in: [GiftCardStatus.ACTIVE, GiftCardStatus.IN_PROGRESS_PAYMENT] } },
-        {
-          OR: [
-            { transactionExpireAt: { gt: now } },
-            { transactionExpireAt: null },
-          ],
-        },
-      ],
+      status: GiftCardStatus.ACTIVE,
     },
   });
 

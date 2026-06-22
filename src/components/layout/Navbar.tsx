@@ -3,8 +3,29 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, X, Facebook, Instagram, Youtube } from 'lucide-react';
+import { Menu, X, Facebook, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+// TikTok SVG icon component (not available in lucide-react)
+function TiktokIcon({ className, size, ...props }: { className?: string; size?: number } & React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      {...props}
+    >
+      <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+    </svg>
+  );
+}
 import type { FooterContent } from './Footer';
 import { LanguageSelector } from './LanguageSelector';
 import { useLanguage } from '@/context/LanguageContext';
@@ -212,9 +233,9 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
                       <Instagram className="text-primary" size={20} />
                     </a>
                   )}
-                  {footerContent.youtubeUrl && (
-                    <a href={footerContent.youtubeUrl} target="_blank" rel="noopener noreferrer" className="bg-card p-2.5 rounded-lg border border-primary/30 hover:border-primary hover:bg-secondary transition-all duration-300 group" aria-label="YouTube">
-                      <Youtube className="text-primary" size={20} />
+                  {footerContent.tiktokUrl && (
+                    <a href={footerContent.tiktokUrl} target="_blank" rel="noopener noreferrer" className="bg-card p-2.5 rounded-lg border border-primary/30 hover:border-primary hover:bg-secondary transition-all duration-300 group" aria-label="TikTok">
+                      <TiktokIcon className="text-primary" size={20} />
                     </a>
                   )}
                 </div>

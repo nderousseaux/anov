@@ -1,9 +1,30 @@
 'use client';
 
-import { Facebook, Instagram, Youtube, Star, CreditCard, Accessibility, AirVent } from 'lucide-react';
+import { Facebook, Instagram, Star, CreditCard, Accessibility, AirVent } from 'lucide-react';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { pickField } from '@/lib/langs';
+
+// TikTok SVG icon component (not available in lucide-react)
+function TiktokIcon({ className, size, ...props }: { className?: string; size?: number } & React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      {...props}
+    >
+      <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+    </svg>
+  );
+}
 
 export interface FooterContent {
   description_fr?: string | null;
@@ -11,7 +32,7 @@ export interface FooterContent {
   description_de?: string | null;
   facebookUrl?: string | null;
   instagramUrl?: string | null;
-  youtubeUrl?: string | null;
+  tiktokUrl?: string | null;
   reviews?: Array<{ name: string; rating: string; reviewCount: string }> | null;
   paymentMethods?: string | null;
 }
@@ -25,7 +46,7 @@ export function Footer({ content }: { content?: Record<string, unknown> | null }
   const socialLinks = [
     { name: 'Facebook', icon: Facebook, url: (c.facebookUrl as string) ?? '#' },
     { name: 'Instagram', icon: Instagram, url: (c.instagramUrl as string) ?? '#' },
-    { name: 'YouTube', icon: Youtube, url: (c.youtubeUrl as string) ?? '#' },
+    { name: 'TikTok', icon: TiktokIcon, url: (c.tiktokUrl as string) ?? '#' },
   ];
 
   const reviewPlatforms = (c.reviews as Array<{ name: string; rating: string; reviewCount: string }>) ?? [

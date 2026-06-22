@@ -149,7 +149,7 @@ export interface FooterContent {
   description_de?: string | null;
   facebookUrl?: string | null;
   instagramUrl?: string | null;
-  youtubeUrl?: string | null;
+  tiktokUrl?: string | null;
   reviews?: Array<{ name: string; rating: string; reviewCount: string }> | null;
   paymentMethods?: string | null;
 }

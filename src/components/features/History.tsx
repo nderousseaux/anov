@@ -126,7 +126,7 @@ export function History({ content, originesContent }: { content?: HistoryContent
       <div className="relative">
         <div className="relative h-screen w-full">
           <img
-            src={(c.productsImage as string | undefined) ?? undefined}
+            src={c.productsImage ?? "https://images.unsplash.com/photo-1758221055278-cfff8d83b091?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmcmVzaCUyMGluZ3JlZGllbnRzJTIwdmVnZXRhYmxlcyUyMGdvdXJtZXR8ZW58MXx8fHwxNzcxNTA5NTc4fDA&ixlib=rb-4.1.0&q=80&w=1080"}
             alt="Ingrédients frais"
             className="w-full h-full object-cover"
           />
@@ -235,7 +235,7 @@ export function History({ content, originesContent }: { content?: HistoryContent
       <div className="relative">
         <div className="relative h-screen w-full">
           <img
-            src={(c.gestureImage as string | undefined) ?? undefined}
+            src={c.gestureImage ?? "https://images.unsplash.com/photo-1765448856945-481569592cf3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGVmJTIwY29va2luZyUyMGZpcmUlMjBraXRjaGVuJTIwcHJvZmVzc2lvbmFsfGVufDF8fHx8MTc3MTU5NDU3NXww&ixlib=rb-4.1.0&q=80&w=1080"}
             alt="Maîtrise du feu"
             className="w-full h-full object-cover"
           />

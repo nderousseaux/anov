@@ -368,10 +368,10 @@ function GiftCardPageContent() {
   }, [isCreateModalOpen]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground flex flex-col overflow-y-auto">
       <AdminNav />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-y-auto">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gold">Bons Cadeaux</h1>
@@ -573,11 +573,10 @@ function GiftCardPageContent() {
                 <button
                   type="submit"
                   disabled={!createFormData.amount}
-                  className={`flex-1 px-4 py-2 font-semibold rounded-lg transition-colors ${
-                    createFormData.amount
+                  className={`flex-1 px-4 py-2 font-semibold rounded-lg transition-colors ${createFormData.amount
                       ? 'bg-[#C5A236] hover:bg-[#d4b14b] text-[#1C1C1C]'
                       : 'bg-muted text-muted-foreground cursor-not-allowed'
-                  }`}
+                    }`}
                 >
                   Créer le bon
                 </button>

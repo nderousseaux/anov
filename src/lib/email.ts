@@ -14,7 +14,7 @@ const transporter = process.env.SMTP_HOST ? nodemailer.createTransport({
   },
 }) : null;
 
-const FROM = process.env.SMTP_FROM || 'ANØV <noreply@anov.fr>';
+const FROM = process.env.SMTP_FROM || "l'Anøv <noreply@anov.fr>";
 const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'contact@anov.fr';
 
 export async function sendConfirmationEmail({
@@ -40,10 +40,10 @@ export async function sendConfirmationEmail({
   return transporter.sendMail({
     from: FROM,
     to,
-    subject: `Confirmation de votre réservation — ANØV`,
+    subject: `Confirmation de votre réservation — l'Anøv`,
     html: `
       <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
-        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">ANØV</h1>
+        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
         <h2 style="font-size:20px;font-weight:normal;">Votre réservation est confirmée</h2>
         <p>Bonjour ${name},</p>
         <p>Nous avons bien enregistré votre réservation :</p>
@@ -56,7 +56,7 @@ export async function sendConfirmationEmail({
           <a href="${cancelUrl}" style="color:#e3cb6b;">Annuler ma réservation</a>
         </p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
-        <p style="color:#888;font-size:13px;">ANØV — · Besançon</p>
+        <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
       </div>
     `,
   });
@@ -85,10 +85,10 @@ export async function sendReminderEmail({
   return transporter.sendMail({
     from: FROM,
     to,
-    subject: `Rappel — Votre réservation demain chez ANØV`,
+    subject: `Rappel — Votre réservation demain chez l'Anøv`,
     html: `
       <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
-        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">ANØV</h1>
+        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
         <h2 style="font-size:20px;font-weight:normal;">Votre réservation est demain</h2>
         <p>Bonjour ${name},</p>
         <p>Nous vous rappelons votre réservation pour demain :</p>
@@ -101,7 +101,7 @@ export async function sendReminderEmail({
           <a href="${cancelUrl}" style="color:#e3cb6b;">Annuler ma réservation</a>
         </p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
-        <p style="color:#888;font-size:13px;">ANØV — · Besançon</p>
+        <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
       </div>
     `,
   });
@@ -126,16 +126,16 @@ export async function sendCancellationEmail({
   return transporter.sendMail({
     from: FROM,
     to,
-    subject: `Annulation de votre réservation — ANØV`,
+    subject: `Annulation de votre réservation — l'Anøv`,
     html: `
       <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
-        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">ANØV</h1>
+        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
         <h2 style="font-size:20px;font-weight:normal;">Réservation annulée</h2>
         <p>Bonjour ${name},</p>
         <p>Votre réservation du <strong>${date} à ${time}</strong> a bien été annulée.</p>
         <p>Nous espérons vous accueillir prochainement.</p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
-        <p style="color:#888;font-size:13px;">ANØV — · Besançon</p>
+        <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
       </div>
     `,
   });
@@ -163,10 +163,10 @@ export async function sendContactNotification({
     from: FROM,
     to: CONTACT_EMAIL,
     replyTo: email,
-    subject: `[Contact ANØV] ${subject}`,
+    subject: `[Contact l'Anøv] ${subject}`,
     html: `
       <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
-        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">ANØV</h1>
+        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
         <h2 style="font-size:20px;font-weight:normal;">Nouveau message de contact</h2>
         <table style="border-collapse:collapse;width:100%;margin:16px 0;">
           <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Nom</td><td style="padding:8px;border-bottom:1px solid #eee;">${name}</td></tr>
@@ -198,16 +198,16 @@ export async function sendContactConfirmation({
   return transporter.sendMail({
     from: FROM,
     to,
-    subject: `Message reçu — ANØV`,
+    subject: `Message reçu — l'Anøv`,
     html: `
       <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
-        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">ANØV</h1>
+        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
         <h2 style="font-size:20px;font-weight:normal;">Nous avons bien reçu votre message</h2>
         <p>Bonjour ${name},</p>
         <p>Merci de nous avoir contactés. Nous avons bien reçu votre message et nous vous répondrons dans les plus brefs délais.</p>
         <p>À très bientôt !</p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
-        <p style="color:#888;font-size:13px;">ANØV — · Besançon</p>
+        <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
       </div>
     `,
   });
@@ -236,17 +236,17 @@ export async function sendGiftCardEmail({
   return transporter.sendMail({
     from: FROM,
     to,
-    subject: `Vous avez reçu un chèque cadeau ANØV`,
+    subject: `Vous avez reçu un chèque cadeau l'Anøv`,
     html: `
       <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
-        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">ANØV</h1>
+        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
         <h2 style="font-size:20px;font-weight:normal;">Vous avez reçu un chèque cadeau !</h2>
         ${personalMessage ? `
           <div style="padding:16px;background:#f5f5f5;border-left:4px solid #e3cb6b;margin:16px 0;">
             <p style="margin:0;white-space:pre-wrap;font-style:italic;">${personalMessage}</p>
           </div>
         ` : ''}
-        <p>Félicitations ! Vous avez reçu un chèque cadeau pour une expérience gastronomique chez ANØV.</p>
+        <p>Félicitations ! Vous avez reçu un chèque cadeau pour une expérience gastronomique chez l'Anøv.</p>
         <div style="background:#f8f4e8;padding:24px;border-radius:8px;margin:24px 0;text-align:center;">
           <p style="font-size:14px;color:#888;margin:0 0 8px 0;">Montant du chèque cadeau</p>
           <p style="font-size:36px;color:#e3cb6b;font-weight:bold;margin:0 0 16px 0;">${amount}€</p>
@@ -261,10 +261,10 @@ export async function sendGiftCardEmail({
         </ol>
         <p style="color:#888;font-size:13px;margin-top:24px;">
           Valable jusqu'au ${expiresAt}<br/>
-          Ce chèque cadeau est valable pour toute consommation chez ANØV.
+          Ce chèque cadeau est valable pour toute consommation chez l'Anøv.
         </p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
-        <p style="color:#888;font-size:13px;">ANØV — · Besançon</p>
+        <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
       </div>
     `,
   });

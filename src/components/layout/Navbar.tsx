@@ -123,7 +123,7 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
     { type: 'separator' },
     { type: 'link', label: t.nav.theMenu, href: '/menu' },
     { type: 'link', label: t.nav.boutique, href: '/cheques-cadeaux' },
-    // { type: 'cta', label: t.nav.reserve, href: '/reservation' },
+    { type: 'cta', label: t.nav.reserve, href: '/reservation' },
   ];
 
   const menuItemClass =

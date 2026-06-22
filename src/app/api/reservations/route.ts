@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { stripe, DEPOSIT_PER_GUEST_CENTS } from '@/lib/stripe';
 
-// SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
-// Le CMS est fonctionnel coté admin, le système de paiement sera activé ultérieurement
-// import { stripe } from '@/lib/stripe';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,23 +30,60 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Date invalide' }, { status: 400 });
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+    // Calcul du dépôt: montant par couvert * nombre de couverts
+    const depositAmount = DEPOSIT_PER_GUEST_CENTS * guestsNum;
 
-    // SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
-    // Le CMS est fonctionnel coté admin, le système de paiement sera activé ultérieurement
-    // Pour l'instant, on renvoie juste une réponse de test pour permettre la validation des données
+    // Calculer l'expiration de la session (10 minutes pour le paiement)
+    const sessionExpireAt = new Date();
+    sessionExpireAt.setMinutes(sessionExpireAt.getMinutes() + 10);
 
-    return NextResponse.json({
-      message: 'Systeme de paiement temporairement desactive. Reservations via CMS uniquement.',
-      testMode: true,
-      formData: {
+    // Créer la session Stripe
+    const stripeSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'eur',
+            product_data: {
+              name: `Réservation ${name}`,
+              description: `${date} à ${time} - ${guestsNum} couvert(s)`,
+            },
+            unit_amount: depositAmount,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${BASE_URL}/reservation/succes?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${BASE_URL}/reservation/cancel`,
+      customer_email: email.trim().toLowerCase(),
+      metadata: {
         name,
         email: email.trim().toLowerCase(),
         phone: phone?.trim() || '',
         date: reservationDate.toISOString(),
+        guests: guestsNum.toString(),
+        specialRequest: specialRequest?.trim() || '',
+      },
+    });
+
+    // Créer la réservation en base avec le statut PENDING_PAYMENT
+    const reservation = await prisma.reservation.create({
+      data: {
+        name: name,
+        email: email.trim().toLowerCase(),
+        phone: phone?.trim() || '',
+        date: reservationDate,
         guests: guestsNum,
-        specialRequest: specialRequest?.trim() || ''
-      }
+        specialRequest: specialRequest?.trim() || '',
+        status: 'PENDING_PAYMENT',
+        stripeSessionId: stripeSession.id,
+      },
+    });
+
+    return NextResponse.json({
+      url: stripeSession.url,
+      sessionId: stripeSession.id,
     });
   } catch (err) {
     console.error('[POST /api/reservations]', err);

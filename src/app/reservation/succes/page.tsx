@@ -6,8 +6,8 @@ import { CheckCircle, Calendar, Clock, Users, Mail, Phone, XCircle } from 'lucid
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-// SYSTEME DE PAIEMENT COMMENTE POUR L'INSTANT
-// Le CMS est fonctionnel coté admin, le système de paiement sera activé ultérieurement
+// SYSTEME DE PAIEMENT ACTIVE
+// Le CMS est fonctionnel coté admin, le système de paiement Stripe est maintenant actif
 
 type Reservation = {
   id: string;
@@ -28,10 +28,27 @@ function ReservationSuccessForm() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // SYSTEME DE PAIEMENT DESACTIVE - REDIRIGER VERS LE CMS
-    setError('Systeme de paiement temporairement desactive. Veuillez utiliser le CMS admin pour faire vos reservations.');
-    setLoading(false);
-  }, []);
+    // Vérifier le statut de la session Stripe
+    if (sessionId) {
+      fetch(`/api/reservations/by-session?session_id=${sessionId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.id) {
+            setReservation(data);
+          } else {
+            setError(data.error || 'Session introuvable');
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          setError('Erreur lors de la vérification de la réservation');
+          setLoading(false);
+        });
+    } else {
+      setError('ID de session manquant');
+      setLoading(false);
+    }
+  }, [sessionId]);
 
   if (loading) {
     return (

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { LogOut, CalendarDays, FileText, Gift } from 'lucide-react';
 
 const navLinks = [
-  // { href: '/admin/reservation', label: 'Réservations', icon: CalendarDays },
+  { href: '/admin/reservation', label: 'Réservations', icon: CalendarDays },
   { href: '/admin/cheques-cadeaux', label: 'Bons Cadeaux', icon: Gift },
   { href: '/admin/cms', label: 'CMS', icon: FileText, activeFor: ['/admin/cms', '/keystatic'] },
 ];

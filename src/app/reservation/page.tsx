@@ -105,10 +105,12 @@ function ReservationForm() {
         toast.error(data.error ?? 'Erreur lors de la réservation');
         return;
       }
-      // Redirection vers la page de paiement intégrée
-      sessionStorage.setItem('stripe_client_secret', data.clientSecret);
-      sessionStorage.setItem('stripe_session_id', data.sessionId);
-      router.push('/reservation/paiement');
+      // Redirection vers Stripe Checkout
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('URL de paiement manquante');
+      }
     } catch {
       toast.error('Erreur réseau, veuillez réessayer');
     } finally {

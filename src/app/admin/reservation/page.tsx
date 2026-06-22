@@ -304,14 +304,14 @@ export default function AdminReservationsPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col overflow-y-auto">
       <AdminNav />
 
-      <main className="flex-1 px-4 py-6 max-w-7xl mx-auto space-y-4">
-
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         {/* ── Header ── */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold" style={{ fontFamily: 'var(--font-display)' }}>
-            Réservations
-          </h1>
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground">Réservations</h1>
+            <p className="text-muted-foreground mt-1">Gestion des réservations et disponibilités</p>
+          </div>
+          <div className="mt-4 md:mt-0 flex flex-wrap gap-3 items-center">
             <Button variant={showSettings ? 'default' : 'outline'} size="sm"
               onClick={() => setShowSettings((v) => !v)}
               className={showSettings ? 'bg-primary/20 text-primary border-primary/40' : 'border-primary/30 text-foreground'}>
@@ -449,11 +449,11 @@ export default function AdminReservationsPage() {
           </div>
         )}
 
-        {/* ══ CALENDAR VIEW ══════════════════════════════════════════════════════ */}
-        <div className="space-y-3">
+        {/* ══ Calendar View ══════════════════════════════════════════════════════ */}
+        <div className="space-y-4 mt-6">
 
           {/* Navigation */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Button variant="outline" size="sm"
               onClick={() => setCurrentMonth((m) => m.month === 0 ? { year: m.year - 1, month: 11 } : { year: m.year, month: m.month - 1 })}
               className="border-primary/30 text-foreground"><ChevronLeft size={15} /></Button>
@@ -488,7 +488,7 @@ export default function AdminReservationsPage() {
           {calendarLoading ? (
             <div className="flex justify-center py-16"><Loader2 size={28} className="animate-spin text-primary" /></div>
           ) : (
-            <div className="space-y-1">
+            <div className="space-y-1 max-w-7xl mx-auto">
               {weeks.map((week, wi) => (
                 <div key={wi} className="grid grid-cols-7 gap-1">
                   {week.map((day) => {
@@ -560,12 +560,12 @@ export default function AdminReservationsPage() {
 
           {/* ── Day detail panel ── */}
           {selectedDate && selectedDayInfo && (
-            <div className="bg-card border border-primary/20 rounded-xl overflow-hidden mt-2">
+            <div className="bg-card border border-primary/20 rounded-xl overflow-hidden mt-4">
 
               {/* Header */}
-              <div className="px-5 py-3.5 border-b border-primary/10 flex items-center justify-between bg-card/50">
+              <div className="px-5 py-4 border-b border-primary/10 flex items-center justify-between bg-card/50">
                 <div className="flex items-center gap-2.5 flex-wrap">
-                  <h2 className="font-semibold capitalize" style={{ fontFamily: 'var(--font-display)' }}>
+                  <h2 className="text-lg font-semibold capitalize" style={{ fontFamily: 'var(--font-display)' }}>
                     {formatFullDate(selectedDate)}
                   </h2>
                   <span className={`text-xs px-2 py-0.5 rounded border ${selectedDayInfo.effectiveOpen
@@ -593,7 +593,7 @@ export default function AdminReservationsPage() {
 
                 {/* ── Override panel ── */}
                 <div className="p-5 space-y-4">
-                  <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">Override du jour</h3>
+                  <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">Override du jour</h3>
 
                   <div className="flex flex-col gap-1.5">
                     {([
@@ -732,7 +732,6 @@ export default function AdminReservationsPage() {
             </div>
           )}
         </div>
-
 
       </main>
     </div>

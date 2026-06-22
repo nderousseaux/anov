@@ -207,12 +207,12 @@ function ReservationForm() {
                 value={formData.guests}
                 onValueChange={(v) => setFormData({ ...formData, guests: v, time: '' })}
               >
-                <SelectTrigger className="bg-background/30 border-primary/30 text-foreground">
+                <SelectTrigger className="bg-background/30 border-primary/30 text-foreground hover:border-primary/60">
                   <SelectValue placeholder="Choisir" />
                 </SelectTrigger>
                 <SelectContent className="bg-secondary border-primary/30">
                   {Array.from({ length: maxGuests }, (_, i) => i + 1).map((n) => (
-                    <SelectItem key={n} value={String(n)} className="text-foreground focus:bg-primary/20">
+                    <SelectItem key={n} value={String(n)} className="text-foreground focus:bg-primary/20 data-[highlighted]:text-primary">
                       {n} personne{n > 1 ? 's' : ''}
                     </SelectItem>
                   ))}

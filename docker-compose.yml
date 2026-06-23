@@ -1,4 +1,11 @@
 services:
+  mailcatcher:
+    image: schickling/mailcatcher
+    container_name: anov-mailcatcher-dev
+    restart: unless-stopped
+    ports:
+      - "1080:1080"
+      - "1025:1025"
   postgres:
     image: postgres:16-alpine
     container_name: anov-postgres-dev

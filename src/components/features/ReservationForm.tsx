@@ -12,6 +12,38 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { toast } from 'sonner';
 import { useLanguage } from '@/context/LanguageContext';
 import { pickField } from '@/lib/langs';
+import * as translations from '@/lib/translations';
+import type { Locale } from '@/lib/langs';
+
+interface TranslationData {
+  reservation: {
+    name: string;
+    email: string;
+    phone: string;
+    date: string;
+    time: string;
+    guests: string;
+    specialRequest: string;
+    submit: string;
+    lunch: string;
+    dinner: string;
+    selectDate: string;
+    selectTime: string;
+    loading: string;
+    noSlots: string;
+    available: string;
+    placeholderPhone: string;
+    placeholderEmail: string;
+    placeholderName: string;
+    specialRequestPlaceholder: string;
+    submitSubmitting: string;
+    pleaseSelectDate: string;
+    errorSelectDate: string;
+    errorSelectTime: string;
+    errorReservation: string;
+    errorNetwork: string;
+  };
+}
 
 type SlotInfo = { time: string; available: number };
 
@@ -19,18 +51,86 @@ interface ReservationFormProps {
   content?: Record<string, unknown> | null;
 }
 
+// Composant client qui affiche le texte traduit
+function TranslatedText({ text }: { text: string | undefined }) {
+  if (typeof text !== 'string') {
+    return <span className="inline-block min-w-[4ch]"></span>;
+  }
+  return <>{text}</>;
+}
+
 export function ReservationForm({ content }: ReservationFormProps) {
   const router = useRouter();
-  const { locale } = useLanguage();
+  const { locale, t } = useLanguage();
   const c = (content ?? {}) as Record<string, unknown>;
 
+  // Translation constants for form labels and placeholders
+  // Using useMemo or useEffect to update when t changes
+  const [formLabels, setFormLabels] = useState({
+    fullName: t.reservation.name,
+    email: t.reservation.email,
+    phone: t.reservation.phone,
+    guests: t.reservation.guests,
+    date: t.reservation.date,
+    time: t.reservation.time,
+    specialRequest: t.reservation.specialRequest,
+    submit: t.reservation.submit,
+    lunch: t.reservation.lunch,
+    dinner: t.reservation.dinner,
+  });
+
+  const [placeholders, setPlaceholders] = useState({
+    phone: t.reservation.placeholderPhone,
+    email: t.reservation.placeholderEmail,
+    name: t.reservation.placeholderName,
+    specialRequest: t.reservation.specialRequestPlaceholder,
+    selectDate: t.reservation.selectDate,
+    loading: t.reservation.loading,
+    noSlots: t.reservation.noSlots,
+    available: t.reservation.available,
+    submitSubmitting: t.reservation.submitSubmitting,
+  });
+
+  const [errorMessages, setErrorMessages] = useState({
+    selectDate: t.reservation.errorSelectDate,
+    selectTime: t.reservation.errorSelectTime,
+    reservationError: t.reservation.errorReservation,
+    networkError: t.reservation.errorNetwork,
+  });
+
   useEffect(() => {
-    // Vérifie les paramètres d'URL initiaux pour détecter l'annulation
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('cancelled') === '1') {
-      toast.info("Paiement annulé, votre réservation n'a pas été confirmée.");
-    }
-  }, []);
+    setFormLabels({
+      fullName: t.reservation.name,
+      email: t.reservation.email,
+      phone: t.reservation.phone,
+      guests: t.reservation.guests,
+      date: t.reservation.date,
+      time: t.reservation.time,
+      specialRequest: t.reservation.specialRequest,
+      submit: t.reservation.submit,
+      lunch: t.reservation.lunch,
+      dinner: t.reservation.dinner,
+    });
+    setPlaceholders({
+      phone: t.reservation.placeholderPhone,
+      email: t.reservation.placeholderEmail,
+      name: t.reservation.placeholderName,
+      specialRequest: t.reservation.specialRequestPlaceholder,
+      selectDate: t.reservation.selectDate,
+      loading: t.reservation.loading,
+      noSlots: t.reservation.noSlots,
+      available: t.reservation.available,
+      submitSubmitting: t.reservation.submitSubmitting,
+    });
+    setErrorMessages({
+      selectDate: t.reservation.errorSelectDate,
+      selectTime: t.reservation.errorSelectTime,
+      reservationError: t.reservation.errorReservation,
+      networkError: t.reservation.errorNetwork,
+    });
+  }, [t]);
+
+  // textConstants is now replaced with direct t.reservation.pleaseSelectDate usage
 
   const [formData, setFormData] = useState({
     name: '',
@@ -50,6 +150,11 @@ export function ReservationForm({ content }: ReservationFormProps) {
     () => { const now = new Date(); return new Date(now.getFullYear(), now.getMonth(), 1); },
   );
   const [unavailableDates, setUnavailableDates] = useState<Date[]>([]);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const guestsNum = parseInt(formData.guests, 10);
 
@@ -95,11 +200,11 @@ export function ReservationForm({ content }: ReservationFormProps) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!formData.date) {
-      toast.error('Veuillez choisir une date');
+      toast.error(t.reservation.errorSelectDate);
       return;
     }
     if (!formData.time) {
-      toast.error('Veuillez choisir un horaire');
+      toast.error(t.reservation.errorSelectTime);
       return;
     }
     setSubmitting(true);
@@ -111,7 +216,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error ?? 'Erreur lors de la réservation');
+        toast.error(data.error ?? t.reservation.errorReservation);
         return;
       }
       // Redirection vers Stripe Checkout
@@ -121,7 +226,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
         throw new Error('URL de paiement manquante');
       }
     } catch {
-      toast.error('Erreur réseau, veuillez réessayer');
+      toast.error(t.reservation.errorNetwork);
     } finally {
       setSubmitting(false);
     }
@@ -168,14 +273,14 @@ export function ReservationForm({ content }: ReservationFormProps) {
             <div className="space-y-2">
               <Label htmlFor="name" className="text-foreground flex items-center gap-2">
                 <User size={16} className="text-primary" />
-                Nom complet
+                {t.reservation.name}
               </Label>
               <Input
                 id="name" type="text" required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="bg-background/30 border-primary/30 text-foreground"
-                placeholder="Jean Dupont"
+                placeholder={t.reservation.placeholderName}
               />
             </div>
 
@@ -183,14 +288,14 @@ export function ReservationForm({ content }: ReservationFormProps) {
               {/* Email */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-foreground flex items-center gap-2">
-                  Email
+                  {t.reservation.email}
                 </Label>
                 <Input
                   id="email" type="email" required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="bg-background/30 border-primary/30 text-foreground"
-                  placeholder="jean@example.com"
+                  placeholder={t.reservation.placeholderEmail}
                 />
               </div>
 
@@ -198,14 +303,14 @@ export function ReservationForm({ content }: ReservationFormProps) {
               <div className="space-y-2">
                 <Label htmlFor="phone" className="text-foreground flex items-center gap-2">
                   <Phone size={16} className="text-primary" />
-                  Téléphone <span className="text-muted-foreground text-xs">(optionnel)</span>
+                  {t.reservation.phone} <span className="text-muted-foreground text-xs">(optionnel)</span>
                 </Label>
                 <Input
                   id="phone" type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="bg-background/30 border-primary/30 text-foreground"
-                  placeholder="+33 6 12 34 56 78"
+                  placeholder={t.reservation.placeholderPhone}
                 />
               </div>
             </div>
@@ -214,14 +319,14 @@ export function ReservationForm({ content }: ReservationFormProps) {
             <div className="space-y-2">
               <Label className="text-foreground flex items-center gap-2">
                 <Users size={16} className="text-primary" />
-                Nombre de personnes
+                {t.reservation.guests}
               </Label>
               <Select
                 value={formData.guests}
                 onValueChange={(v) => setFormData({ ...formData, guests: v, time: '' })}
               >
                 <SelectTrigger className="bg-background/30 border-primary/30 text-foreground hover:border-primary/60">
-                  <SelectValue placeholder="Choisir" />
+                  <SelectValue placeholder={t.reservation.guests} />
                 </SelectTrigger>
                 <SelectContent className="bg-secondary border-primary/30">
                   {Array.from({ length: maxGuests }, (_, i) => i + 1).map((n) => (
@@ -237,7 +342,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
             <div className="space-y-2">
               <Label className="text-foreground flex items-center gap-2">
                 <CalendarIcon size={16} className="text-primary" />
-                Date
+                {t.reservation.date}
               </Label>
               <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                 <PopoverTrigger asChild>
@@ -253,7 +358,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
                         })}
                       </span>
                     ) : (
-                      <span className="text-muted-foreground">Choisir une date</span>
+                      <span className="text-muted-foreground">{t.reservation.selectDate}</span>
                     )}
                   </button>
                 </PopoverTrigger>
@@ -293,21 +398,23 @@ export function ReservationForm({ content }: ReservationFormProps) {
             <div className="space-y-3">
               <Label className="text-foreground flex items-center gap-2">
                 <Clock size={16} className="text-primary" />
-                Heure
+                {t.reservation.time}
                 {loadingSlots && <Loader2 size={14} className="animate-spin text-primary ml-1" />}
               </Label>
 
               {!formData.date ? (
-                <p className="text-sm text-muted-foreground">Choisissez d&apos;abord une date.</p>
+                <p className="text-sm text-muted-foreground">{t.reservation.pleaseSelectDate}</p>
               ) : loadingSlots ? (
-                <p className="text-sm text-muted-foreground">Chargement des disponibilités...</p>
+                <p className="text-sm text-muted-foreground">{t.reservation.loading}</p>
               ) : slots.length === 0 ? (
-                <p className="text-sm text-destructive">Aucune disponibilité ce jour. Choisissez une autre date.</p>
+                <p className="text-sm text-destructive">{t.reservation.noSlots}</p>
               ) : (
                 <div className="space-y-4">
                   {lunchSlots.length > 0 && (
                     <div className="space-y-2">
-                      <p className="text-xs font-semibold text-primary uppercase tracking-wider">Déjeuner</p>
+                      <p className="text-xs font-semibold text-primary uppercase tracking-wider">
+                        {t.reservation.lunch}
+                      </p>
                       <div className="flex flex-wrap gap-2">
                         {lunchSlots.map((slot) => {
                           const disabled = slot.available < guestsNum;
@@ -333,7 +440,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
                             >
                               <span>{slot.time}</span>
                               <span className={['text-xs', selected ? 'text-primary-foreground/80' : disabled ? 'text-muted-foreground/40' : 'text-muted-foreground'].join(' ')}>
-                                {slot.available} place{slot.available > 1 ? 's' : ''}
+                                {slot.available} {t.reservation.available}
                               </span>
                             </button>
                           );
@@ -344,7 +451,9 @@ export function ReservationForm({ content }: ReservationFormProps) {
 
                   {dinnerSlots.length > 0 && (
                     <div className="space-y-2">
-                      <p className="text-xs font-semibold text-primary uppercase tracking-wider">Dîner</p>
+                      <p className="text-xs font-semibold text-primary uppercase tracking-wider">
+                        {t.reservation.dinner}
+                      </p>
                       <div className="flex flex-wrap gap-2">
                         {dinnerSlots.map((slot) => {
                           const disabled = slot.available < guestsNum;
@@ -370,7 +479,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
                             >
                               <span>{slot.time}</span>
                               <span className={['text-xs', selected ? 'text-primary-foreground/80' : disabled ? 'text-muted-foreground/40' : 'text-muted-foreground'].join(' ')}>
-                                {slot.available} place{slot.available > 1 ? 's' : ''}
+                                {slot.available} {t.reservation.available}
                               </span>
                             </button>
                           );
@@ -386,7 +495,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
             <div className="space-y-2">
               <Label htmlFor="specialRequest" className="text-foreground flex items-center gap-2">
                 <MessageSquare size={16} className="text-primary" />
-                Demandes spéciales{' '}
+                {t.reservation.specialRequest}{' '}
                 <span className="text-muted-foreground text-xs">(optionnel)</span>
               </Label>
               <textarea
@@ -394,7 +503,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
                 value={formData.specialRequest}
                 onChange={(e) => setFormData({ ...formData, specialRequest: e.target.value })}
                 className="w-full bg-background/30 border border-primary/30 text-foreground rounded-md p-3 min-h-[80px] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
-                placeholder="Allergies, occasion spéciale, préférences de table..."
+                placeholder={t.reservation.specialRequestPlaceholder}
               />
             </div>
 
@@ -407,10 +516,10 @@ export function ReservationForm({ content }: ReservationFormProps) {
               {submitting ? (
                 <span className="flex items-center gap-2">
                   <Loader2 size={18} className="animate-spin" />
-                  En cours...
+                  {t.reservation.submitSubmitting}
                 </span>
               ) : (
-                'Confirmer la réservation'
+                t.reservation.submit
               )}
             </Button>
           </form>

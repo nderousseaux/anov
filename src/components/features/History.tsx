@@ -39,7 +39,7 @@ export function History({ content, originesContent }: { content?: HistoryContent
       <div className="relative">
         <div className="relative h-screen w-full">
           <img
-            src={c.chefImage ?? "https://images.unsplash.com/photo-1759521296047-89338c8e083d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGVmJTIwcG9ydHJhaXQlMjBwcm9mZXNzaW9uYWwlMjBraXRjaGVufGVufDF8fHx8MTc3MTQ3NTM2Nnww&ixlib=rb-4.1.0&q=80&w=1080"}
+            src={typeof c.chefImage === 'string' ? c.chefImage : "https://images.unsplash.com/photo-1759521296047-89338c8e083d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGVmJTIwcG9ydHJhaXQlMjBwcm9mZXNzaW9uYWwlMjBraXRjaGVufGVufDF8fHx8MTc3MTQ3NTM2Nnww&ixlib=rb-4.1.0&q=80&w=1080"}
             alt="Chef Antoine Dubois"
             className="w-full h-full object-cover"
           />
@@ -100,7 +100,7 @@ export function History({ content, originesContent }: { content?: HistoryContent
             </div>
             <div className="group overflow-hidden rounded-lg border-2 border-primary/30 shadow-2xl hover:border-primary transition-all duration-300">
               <img
-                src={c.visionImage1 ?? "https://images.unsplash.com/photo-1765099271664-614c541196ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwdGFibGUlMjBzZXR0aW5nJTIwYW1iaWFuY2V8ZW58MXx8fHwxNzcxNDMyNjA1fDA&ixlib=rb-4.1.0&q=80&w=1080"}
+                src={typeof c.visionImage1 === 'string' ? c.visionImage1 : "https://images.unsplash.com/photo-1765099271664-614c541196ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwdGFibGUlMjBzZXR0aW5nJTIwYW1iaWFuY2V8ZW58MXx8fHwxNzcxNDMyNjA1fDA&ixlib=rb-4.1.0&q=80&w=1080"}
                 alt="Table dressée"
                 className="w-full h-[560px] object-cover transform group-hover:scale-110 transition-transform duration-500"
               />
@@ -110,7 +110,7 @@ export function History({ content, originesContent }: { content?: HistoryContent
           {/* Image supplémentaire dans cette section */}
           <div className="w-full h-[480px] group overflow-hidden rounded-lg border-2 border-primary/30 shadow-2xl hover:border-primary transition-all duration-300 hidden sm:block">
             <img
-              src={c.visionImage2 ?? "https://images.unsplash.com/photo-1761095596849-608b6a337c36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmaW5lJTIwZGluaW5nJTIwZXhwZXJpZW5jZSUyMGVsZWdhbnQlMjB0YWJsZXxlbnwxfHx8fDE3NzE1OTQ1NzZ8MA&ixlib=rb-4.1.0&q=80&w=1080"}
+              src={typeof c.visionImage2 === 'string' ? c.visionImage2 : "https://images.unsplash.com/photo-1761095596849-608b6a337c36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmaW5lJTIwZGluaW5nJTIwZXhwZXJpZW5jZSUyMGVsZWdhbnQlMjB0YWJsZXxlbnwxfHx8fDE3NzE1OTQ1NzZ8MA&ixlib=rb-4.1.0&q=80&w=1080"}
               alt="Expérience gastronomique"
               className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
             />
@@ -126,7 +126,7 @@ export function History({ content, originesContent }: { content?: HistoryContent
       <div className="relative">
         <div className="relative h-screen w-full">
           <img
-            src={c.productsImage ?? "https://images.unsplash.com/photo-1758221055278-cfff8d83b091?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmcmVzaCUyMGluZ3JlZGllbnRzJTIwdmVnZXRhYmxlcyUyMGdvdXJtZXR8ZW58MXx8fHwxNzcxNTA5NTc4fDA&ixlib=rb-4.1.0&q=80&w=1080"}
+            src={typeof c.productsImage === 'string' ? c.productsImage : "https://images.unsplash.com/photo-1758221055278-cfff8d83b091?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmcmVzaCUyMGluZ3JlZGllbnRzJTIwdmVnZXRhYmxlcyUyMGdvdXJtZXR8ZW58MXx8fHwxNzcxNTA5NTc4fDA&ixlib=rb-4.1.0&q=80&w=1080"}
             alt="Ingrédients frais"
             className="w-full h-full object-cover"
           />
@@ -165,7 +165,7 @@ export function History({ content, originesContent }: { content?: HistoryContent
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-16 items-center mb-24">
             <div className="order-2 lg:order-1 group overflow-hidden rounded-lg border-2 border-primary/30 shadow-2xl hover:border-primary transition-all duration-300">
               <img
-                src={c.teamImage ?? "https://images.unsplash.com/photo-1762113246607-4299ec3f3214?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwdGVhbSUyMHN0YWZmJTIwc2VydmljZXxlbnwxfHx8fDE3NzE1OTQ1NzZ8MA&ixlib=rb-4.1.0&q=80&w=1080"}
+                src={typeof c.teamImage === 'string' ? c.teamImage : "https://images.unsplash.com/photo-1762113246607-4299ec3f3214?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwdGVhbSUyMHN0YWZmJTIwc2VydmljZXxlbnwxfHx8fDE3NzE1OTQ1NzZ8MA&ixlib=rb-4.1.0&q=80&w=1080"}
                 alt="Notre équipe"
                 className="w-full h-[560px] object-cover transform group-hover:scale-110 transition-transform duration-500"
               />
@@ -222,7 +222,7 @@ export function History({ content, originesContent }: { content?: HistoryContent
             </div>
             <div className="group overflow-hidden rounded-lg border-2 border-primary/30 shadow-2xl hover:border-primary transition-all duration-300">
               <img
-                src={c.wineImage ?? "https://images.unsplash.com/photo-1769697064243-889f2e25d44a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3aW5lJTIwY2VsbGFyJTIwYm90dGxlcyUyMGVsZWdhbnR8ZW58MXx8fHwxNzcxNDkzNTEwfDA&ixlib=rb-4.1.0&q=80&w=1080"}
+                src={typeof c.wineImage === 'string' ? c.wineImage : "https://images.unsplash.com/photo-1769697064243-889f2e25d44a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3aW5lJTIwY2VsbGFyJTIwYm90dGxlcyUyMGVsZWdhbnR8ZW58MXx8fHwxNzcxNDkzNTEwfDA&ixlib=rb-4.1.0&q=80&w=1080"}
                 alt="Cave à vins"
                 className="w-full h-[560px] object-cover transform group-hover:scale-110 transition-transform duration-500"
               />
@@ -235,7 +235,7 @@ export function History({ content, originesContent }: { content?: HistoryContent
       <div className="relative">
         <div className="relative h-screen w-full">
           <img
-            src={c.gestureImage ?? "https://images.unsplash.com/photo-1765448856945-481569592cf3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGVmJTIwY29va2luZyUyMGZpcmUlMjBraXRjaGVuJTIwcHJvZmVzc2lvbmFsfGVufDF8fHx8MTc3MTU5NDU3NXww&ixlib=rb-4.1.0&q=80&w=1080"}
+            src={typeof c.gestureImage === 'string' ? c.gestureImage : "https://images.unsplash.com/photo-1765448856945-481569592cf3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGVmJTIwY29va2luZyUyMGZpcmUlMjBraXRjaGVuJTIwcHJvZmVzc2lvbmFsfGVufDF8fHx8MTc3MTU5NDU3NXww&ixlib=rb-4.1.0&q=80&w=1080"}
             alt="Maîtrise du feu"
             className="w-full h-full object-cover"
           />

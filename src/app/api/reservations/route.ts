@@ -33,6 +33,20 @@ export async function POST(req: NextRequest) {
     // Calcul du dépôt: montant par couvert * nombre de couverts
     const depositAmount = DEPOSIT_PER_GUEST_CENTS * guestsNum;
 
+    // Créer d'abord la réservation en base pour obtenir le cancelToken
+    // (le token est généré automatiquement par Prisma grâce au default(cuid()))
+    const reservation = await prisma.reservation.create({
+      data: {
+        name: name,
+        email: email.trim().toLowerCase(),
+        phone: phone?.trim() || '',
+        date: reservationDate,
+        guests: guestsNum,
+        specialRequest: specialRequest?.trim() || '',
+        status: 'PENDING_PAYMENT',
+      },
+    });
+
     // Calculer l'expiration de la session (10 minutes pour le paiement)
     const sessionExpireAt = new Date();
     sessionExpireAt.setMinutes(sessionExpireAt.getMinutes() + 10);
@@ -56,7 +70,7 @@ export async function POST(req: NextRequest) {
       ],
       mode: 'payment',
       success_url: `${BASE_URL}/reservation/succes?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${BASE_URL}/reservation/cancel`,
+      cancel_url: `${BASE_URL}/reservation/cancel?token=${reservation.cancelToken}`,
       customer_email: email.trim().toLowerCase(),
       metadata: {
         name,
@@ -65,19 +79,14 @@ export async function POST(req: NextRequest) {
         date: reservationDate.toISOString(),
         guests: guestsNum.toString(),
         specialRequest: specialRequest?.trim() || '',
+        reservationId: reservation.id,
       },
     });
 
-    // Créer la réservation en base avec le statut PENDING_PAYMENT
-    const reservation = await prisma.reservation.create({
+    // Mettre à jour la réservation avec l'ID de la session Stripe
+    await prisma.reservation.update({
+      where: { id: reservation.id },
       data: {
-        name: name,
-        email: email.trim().toLowerCase(),
-        phone: phone?.trim() || '',
-        date: reservationDate,
-        guests: guestsNum,
-        specialRequest: specialRequest?.trim() || '',
-        status: 'PENDING_PAYMENT',
         stripeSessionId: stripeSession.id,
       },
     });

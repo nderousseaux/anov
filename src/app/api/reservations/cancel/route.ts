@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: 'already_cancelled' });
   }
 
-  if (reservation.status === 'COMPLETED') {
+  if (reservation.status === 'COMPLETED' || reservation.status === 'EXPIRED') {
     return NextResponse.json({ error: 'Réservation déjà passée' }, { status: 400 });
   }
 

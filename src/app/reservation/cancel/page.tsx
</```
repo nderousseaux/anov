@@ -1,0 +1,71 @@
+'use client';
+
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+
+function ReservationCancelRedirect() {
+const searchParams = useSearchParams();
+const router = useRouter();
+const token = searchParams.get('token');
+const [status, setStatus] = useState<'loading' | 'cancelled' | 'error'>('loading');
+
+  useEffect(() => {
+  if (!token) {
+  setStatus('error');
+  return;
+  }
+
+  fetch(`/api/reservations/cancel?token=${encodeURIComponent(token)}`)
+  .then((r) => r.json())
+  .then((data) => {
+  if (data.message === 'cancelled') setStatus('cancelled');
+  else setStatus('error');
+  })
+  .catch(() => setStatus('error'));
+  }, [token]);
+
+  useEffect(() => {
+  if (status !== 'loading') {
+  // Rediriger vers la page de réservation après un court délai
+  const timer = setTimeout(() => {
+  router.push('/reservation');
+  }, 1500);
+  return () => clearTimeout(timer);
+  }
+  }, [status, router]);
+
+  return (
+  <div className="min-h-screen bg-background flex items-center justify-center">
+    {status === 'loading' && (
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto mb-4"></div>
+      <p className="text-muted-foreground">Traitement de l'annulation...</p>
+    </div>
+    )}
+    {status === 'cancelled' && (
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto mb-4"></div>
+      <p className="text-muted-foreground">Redirection vers la page de réservation...</p>
+    </div>
+    )}
+    {status === 'error' && (
+    <div className="text-center">
+      <p className="text-muted-foreground mb-4">Redirection vers la page de réservation...</p>
+      <p className="text-sm text-muted-foreground">Si la redirection ne se fait pas, <a href="/reservation"
+          className="text-primary underline">cliquez ici</a></p>
+    </div>
+    )}
+  </div>
+  );
+  }
+
+  export default function ReservationCancelPage() {
+  return (
+  <Suspense fallback={ <div className="min-h-screen bg-background flex items-center justify-center">
+    <p className="text-foreground text-xl">Chargement...</p>
+    </div>
+    }>
+    <ReservationCancelRedirect />
+  </Suspense>
+  );
+  }

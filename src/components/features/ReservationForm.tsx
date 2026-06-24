@@ -261,7 +261,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
                   <Calendar
                     mode="single"
                     selected={formData.date ? new Date(formData.date + 'T00:00:00') : undefined}
-                    onSelect={(date) => {
+                    onSelect={(date: any) => {
                       if (!date) return;
                       const y = date.getFullYear();
                       const mo = String(date.getMonth() + 1).padStart(2, '0');
@@ -272,7 +272,8 @@ export function ReservationForm({ content }: ReservationFormProps) {
                     month={calendarMonth}
                     onMonthChange={setCalendarMonth}
                     weekStartsOn={1}
-                    disabled={(date) => {
+                    locale={locale}
+                    disabled={(date: any) => {
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
                       if (date < today) return true;

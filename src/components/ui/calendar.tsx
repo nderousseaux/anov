@@ -7,16 +7,37 @@ import { DayPicker } from "react-day-picker";
 import { cn } from "./utils";
 import { buttonVariants } from "./button";
 
+// Import date-fns locales
+import { fr } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
+import { de } from "date-fns/locale";
+
+// Map locale string to date-fns locale
+function getLocale(locale?: string): any {
+  switch (locale) {
+    case "en":
+      return enUS;
+    case "de":
+      return de;
+    default:
+      return fr;
+  }
+}
+
+// @ts-ignore - Type compatibility between our Locale and date-fns Locale
 function Calendar({
   className,
   classNames,
+  locale = "fr",
   showOutsideDays = true,
   ...props
-}: React.ComponentProps<typeof DayPicker>) {
+}: any) {
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
+      locale={getLocale(locale)}
       classNames={{
         months: "flex flex-col sm:flex-row gap-2",
         month: "flex flex-col gap-4",

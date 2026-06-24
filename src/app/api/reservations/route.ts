@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     const sessionExpireAt = new Date();
     sessionExpireAt.setMinutes(sessionExpireAt.getMinutes() + 10);
 
-    // Créer la session Stripe
+    // Créer la session Stripe avec image de nourriture
     const stripeSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -45,8 +45,9 @@ export async function POST(req: NextRequest) {
           price_data: {
             currency: 'eur',
             product_data: {
-              name: `Réservation ${name}`,
+              name: `Réservation au nom de ${name}`,
               description: `${date} à ${time} - ${guestsNum} couvert(s)`,
+              images: ['https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?w=400&q=80'],
             },
             unit_amount: depositAmount,
           },

@@ -2,10 +2,10 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
-  fullyParallel: true,
+  fullyParallel: false, // Exécuter les tests séquentiellement pour éviter les conflits
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1, // Un seul worker pour éviter les chevauchements
   reporter: 'html',
   use: {
     baseURL: 'http://localhost:3000',

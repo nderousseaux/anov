@@ -51,7 +51,7 @@ const fr = {
     subjectPlaceholder: 'Objet de votre message',
     messagePlaceholder: 'Votre message...',
     send: 'Envoyer le message',
-    sending: 'Envoi en cours…',
+    sending: 'Envoi en cours...',
     successTitle: 'Message envoyé !',
     successDesc: 'Nous vous répondrons dans les plus brefs délais.',
     errorTitle: 'Erreur',

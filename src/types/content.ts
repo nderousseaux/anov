@@ -153,3 +153,14 @@ export interface FooterContent {
   reviews?: Array<{ name: string; rating: string; reviewCount: string }> | null;
   paymentMethods?: string | null;
 }
+
+export interface ReservationContent {
+  [key: string]: unknown;
+  image?: string | null;
+  title_fr?: string | null;
+  title_en?: string | null;
+  title_de?: string | null;
+  subtitle_fr?: string | null;
+  subtitle_en?: string | null;
+  subtitle_de?: string | null;
+}

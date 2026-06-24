@@ -451,5 +451,22 @@ export default config({
         buttonAnother_de: fields.text({ label: 'Bouton Autre achat 🇩🇪', defaultValue: 'Einen weiteren Geschenkgutschein kaufen' }),
       },
     }),
+    reservation: singleton({
+      label: 'Page Réservation',
+      path: 'content/reservation',
+      schema: {
+        image: fields.image({
+          label: 'Image de fond',
+          directory: 'public/assets',
+          publicPath: '/assets/',
+        }),
+        title_fr: fields.text({ label: 'Titre 🇫🇷', defaultValue: 'Réservez votre table' }),
+        title_en: fields.text({ label: 'Titre 🇬🇧', defaultValue: 'Book your table' }),
+        title_de: fields.text({ label: 'Titre 🇩🇪', defaultValue: 'Reservieren Sie Ihren Tisch' }),
+        subtitle_fr: fields.text({ label: 'Sous-titre 🇫🇷', defaultValue: 'Du mardi au samedi · Service midi et soir' }),
+        subtitle_en: fields.text({ label: 'Sous-titre 🇬🇧', defaultValue: 'Tuesday to Saturday · Lunch and dinner service' }),
+        subtitle_de: fields.text({ label: 'Sous-titre 🇩🇪', defaultValue: 'Dienstag bis Samstag · Mittags- und Abendessen' }),
+      },
+    }),
   },
 });

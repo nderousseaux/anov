@@ -108,8 +108,8 @@ async function handleGiftCardPayment(giftCardId: string, sessionId: string) {
  */
 async function handleReservationPayment(session: any, meta: any) {
   try {
-    // Créer la réservation en base maintenant que le paiement est confirmé
     // Supporte les deux formats de metadata
+    const reservationId = meta.reservationId || meta.id;
     const name = meta.reservation_name || meta.name;
     const email = meta.reservation_email || meta.email;
     const phone = meta.reservation_phone || meta.phone || null;
@@ -117,19 +117,33 @@ async function handleReservationPayment(session: any, meta: any) {
     const guests = meta.reservation_guests || meta.guests;
     const specialRequest = meta.reservation_special_request || meta.specialRequest || null;
 
-    const reservation = await prisma.reservation.create({
-      data: {
-        name,
-        email,
-        phone,
-        date: new Date(date),
-        guests: parseInt(guests, 10),
-        specialRequest,
-        wantsSmsReminder: false,
-        status: 'CONFIRMED',
-        stripeSessionId: session.id,
-      },
-    });
+    let reservation;
+
+    // Si on a un reservationId, on met à jour l'existant
+    if (reservationId) {
+      reservation = await prisma.reservation.update({
+        where: { id: reservationId },
+        data: {
+          status: 'CONFIRMED',
+          stripeSessionId: session.id,
+        },
+      });
+    } else {
+      // Ancien format: créer la réservation
+      reservation = await prisma.reservation.create({
+        data: {
+          name,
+          email,
+          phone,
+          date: new Date(date),
+          guests: parseInt(guests, 10),
+          specialRequest,
+          wantsSmsReminder: false,
+          status: 'CONFIRMED',
+          stripeSessionId: session.id,
+        },
+      });
+    }
 
     // Envoyer l'email de confirmation
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';

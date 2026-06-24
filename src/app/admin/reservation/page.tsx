@@ -373,8 +373,8 @@ export default function AdminReservationsPage() {
                     setEditDepositPerGuest(raw);
                   }}
                   className={`w-32 bg-background/30 border-primary/30 text-foreground${editDepositPerGuest !== '' && (isNaN(Number(editDepositPerGuest)) || Number(editDepositPerGuest) < 0 || Number(editDepositPerGuest) > 500)
-                      ? ' border-destructive'
-                      : ''
+                    ? ' border-destructive'
+                    : ''
                     }`} />
                 <span className="text-sm text-muted-foreground">€ / couvert</span>
               </div>
@@ -382,7 +382,7 @@ export default function AdminReservationsPage() {
             {/* Meal duration */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Durée d&apos;un repas</label>
-              <p className="text-xs text-muted-foreground">Détermine l&apos;heure de fermeture affichée (dernier créneau + durée).</p>
+              <p className="text-xs text-muted-foreground">Détermine la durée d'occupation d'un créneau par réservation.</p>
               <div className="flex gap-1.5 flex-wrap">
                 {[30, 60, 90, 120, 150, 180].map((mins) => (
                   <button key={mins} type="button"

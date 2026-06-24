@@ -1,6 +1,0 @@
-{
-  "projectId": "anov",
-  "projectName": "anov",
-  "projectType": "nextjs",
-  "projectDescription": "Application Next.js avec gestion de contenu (Keystatic), authentification et base de données (Prisma)"
-}

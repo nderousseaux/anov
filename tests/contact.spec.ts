@@ -49,7 +49,6 @@ async function getMailcatcherEmails() {
 
 /**
  * Helper pour vider la boîte de réception Mailcatcher
- * Note: Mailcatcher utilise /messages.json pour l'API
  */
 async function clearMailcatcherEmails() {
   return new Promise<void>(async (resolve, reject) => {
@@ -76,6 +75,23 @@ async function clearMailcatcherEmails() {
     });
     req.end();
   });
+}
+
+/**
+ * Helper pour vider la boîte de réception Mailcatcher avec validation
+ * Vérifie que la suppression a bien eu lieu
+ */
+async function clearMailcatcherEmailsAndValidate() {
+  await clearMailcatcherEmails();
+  // Attendre un court instant pour la synchronisation
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  // Vérifier que la boîte est vide
+  const emails = await getMailcatcherEmails();
+  if (emails.length > 0) {
+    // Si encore des emails, tenter une seconde suppression
+    await clearMailcatcherEmails();
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
 }
 
 /**
@@ -133,7 +149,12 @@ async function getEmailContent(id: number): Promise<any> {
 
 // Nettoyer la boîte de réception avant chaque test
 test.beforeEach(async () => {
-  await clearMailcatcherEmails();
+  await clearMailcatcherEmailsAndValidate();
+});
+
+// Nettoyer la boîte de réception après chaque test
+test.afterEach(async () => {
+  await clearMailcatcherEmailsAndValidate();
 });
 
 test.describe('Formulaire de Contact - Page', () => {
@@ -386,8 +407,7 @@ test.describe('Formulaire de Contact - Envoi d\'emails', () => {
     let emails = await getMailcatcherEmails();
     expect(emails.length).toBeGreaterThanOrEqual(1);
 
-    // Nettoyer avant le prochain test
-    await clearMailcatcherEmails();
+    // Le afterAll du describe global se chargera du nettoyage
 
     // Test en allemand
     await page.goto('/?lang=de');
@@ -597,4 +617,16 @@ test.describe('Formulaire de Contact - Intégration complète', () => {
     expect(hasClient1).toBe(true);
     expect(hasClient2).toBe(true);
   });
+});
+
+// Nettoyer les emails à la fin de tous les tests
+test.afterAll(async () => {
+  console.log('*** AFTER ALL - Nettoyage des emails ***');
+  // Attendre que tous les emails asynchrones soient envoyés
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+  await clearMailcatcherEmailsAndValidate();
+
+  // Vérification finale
+  const finalEmails = await getMailcatcherEmails();
+  console.log(`*** AFTER ALL - Emails restants: ${finalEmails.length} ***`);
 });

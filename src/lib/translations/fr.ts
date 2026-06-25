@@ -80,7 +80,7 @@ const fr = {
     selectGuests: 'Nombre de personnes',
     loading: 'Chargement des horaires…',
     noSlots: 'Aucun horaire disponible',
-    available: 'places disponibles',
+    available: 'places',
     pleaseSelectDate: 'Choisissez d\'abord une date.',
     submitSubmitting: 'Réservation en cours…',
     placeholderPhone: '+33 6 12 34 56 78',

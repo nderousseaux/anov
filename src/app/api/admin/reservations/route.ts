@@ -90,6 +90,7 @@ export async function GET(req: NextRequest) {
       specialRequest: true,
       wantsSmsReminder: true,
       transactionExpireAt: true,
+      createdAt: true,
     },
   });
 

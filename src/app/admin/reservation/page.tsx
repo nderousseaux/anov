@@ -19,6 +19,7 @@ interface ReservationRow {
   date: string; guests: number; status: ReservationStatus;
   specialRequest: string | null; wantsSmsReminder: boolean;
   transactionExpireAt: string | null;
+  createdAt: string;
 }
 
 interface ApiResponse {
@@ -696,70 +697,170 @@ export default function AdminReservationsPage() {
                 </div>
 
                 {/* ── Reservations ── */}
-                <div className="p-5 space-y-3">
+                <div className="p-5 space-y-4">
                   <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">
                     Réservations ({selectedDayInfo.reservationCount})
                   </h3>
 
-                  {dayLoading ? (
-                    <div className="flex justify-center py-8"><Loader2 size={22} className="animate-spin text-primary" /></div>
-                  ) : dayReservations.length === 0 ? (
-                    <p className="text-sm text-muted-foreground py-6 text-center">Aucune réservation ce jour.</p>
-                  ) : (
-                    <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
-                      {dayReservations.map((r) => (
-                        <div key={r.id} className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3">
-                          <div className="text-sm font-semibold text-primary tabular-nums mt-0.5 min-w-[38px]">
-                            {formatTime(r.date)}
+                  {/* Midi section */}
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">Déjeuner (12h-14h)</h4>
+                    {dayLoading ? (
+                      <div className="flex justify-center py-4"><Loader2 size={18} className="animate-spin text-primary" /></div>
+                    ) : (
+                      <div className="space-y-2">
+                        {dayReservations.filter(r => {
+                          const d = new Date(r.date);
+                          const hour = d.getUTCHours();
+                          return hour >= 12 && hour < 15;
+                        }).length === 0 ? (
+                          <p className="text-xs text-muted-foreground/50 py-3 text-center italic">Aucune réservation à midi</p>
+                        ) : (
+                          <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                            {dayReservations.filter(r => {
+                              const d = new Date(r.date);
+                              const hour = d.getUTCHours();
+                              return hour >= 12 && hour < 15;
+                            }).map((r) => (
+                              <div key={r.id} className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3">
+                                <div className="flex flex-col items-center gap-1">
+                                  <div className="text-sm font-semibold text-primary tabular-nums min-w-[38px]" title="Créneau réservé">
+                                    {formatTime(r.date)}
+                                  </div>
+                                  <div className="text-[10px] text-muted-foreground/70" title="Heure de réservation">
+                                    {formatTime(r.createdAt)}
+                                  </div>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="font-medium text-sm">{r.name}</span>
+                                    <span className="text-xs text-muted-foreground">{r.guests} cvrt{r.guests > 1 ? 's' : ''}</span>
+                                    {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && new Date(r.transactionExpireAt) < new Date() ? (
+                                      <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}>
+                                        Expirée
+                                      </span>
+                                    ) : (
+                                      <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}>
+                                        {STATUS_LABELS[r.status]}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
+                                  {r.specialRequest && (
+                                    <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
+                                  )}
+                                </div>
+                                <div className="flex gap-1 flex-shrink-0">
+                                  {r.status === 'CONFIRMED' && (
+                                    <Button size="sm" variant="outline"
+                                      onClick={() => {
+                                        if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
+                                        updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined);
+                                      }}
+                                      className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs">Annuler</Button>
+                                  )}
+                                  {r.status === 'PENDING_PAYMENT' && !r.transactionExpireAt && (
+                                    <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
+                                      En attente
+                                    </span>
+                                  )}
+                                  {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && (
+                                    <span className={`text-[10px] px-2 py-1 rounded border leading-none ${
+                                      new Date(r.transactionExpireAt) < new Date()
+                                        ? 'bg-red-900/20 text-red-600 border-red-900/30'
+                                        : 'bg-amber-900/20 text-amber-600 border-amber-900/30'
+                                    }`}>
+                                      {new Date(r.transactionExpireAt) < new Date() ? 'Expirée' : 'Expiration: ' + new Date(r.transactionExpireAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="font-medium text-sm">{r.name}</span>
-                              <span className="text-xs text-muted-foreground">{r.guests} cvrt{r.guests > 1 ? 's' : ''}</span>
-                              {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && new Date(r.transactionExpireAt) < new Date() ? (
-                                <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}>
-                                  Expirée
-                                </span>
-                              ) : (
-                                <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}>
-                                  {STATUS_LABELS[r.status]}
-                                </span>
-                              )}
-                            </div>
-                            <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
-                            {r.specialRequest && (
-                              <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
-                            )}
+                        )}
+                      </div>
+                    )}
+                  </div>
 
+                  {/* Soir section */}
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">Dîner (19h-23h)</h4>
+                    {dayLoading ? (
+                      <div className="flex justify-center py-4"><Loader2 size={18} className="animate-spin text-primary" /></div>
+                    ) : (
+                      <div className="space-y-2">
+                        {dayReservations.filter(r => {
+                          const d = new Date(r.date);
+                          const hour = d.getUTCHours();
+                          return hour >= 19 && hour <= 23;
+                        }).length === 0 ? (
+                          <p className="text-xs text-muted-foreground/50 py-3 text-center italic">Aucune réservation au dîner</p>
+                        ) : (
+                          <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                            {dayReservations.filter(r => {
+                              const d = new Date(r.date);
+                              const hour = d.getUTCHours();
+                              return hour >= 19 && hour <= 23;
+                            }).map((r) => (
+                              <div key={r.id} className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3">
+                                <div className="flex flex-col items-center gap-1">
+                                  <div className="text-sm font-semibold text-primary tabular-nums min-w-[38px]" title="Créneau réservé">
+                                    {formatTime(r.date)}
+                                  </div>
+                                  <div className="text-[10px] text-muted-foreground/70" title="Heure de réservation">
+                                    {formatTime(r.createdAt)}
+                                  </div>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="font-medium text-sm">{r.name}</span>
+                                    <span className="text-xs text-muted-foreground">{r.guests} cvrt{r.guests > 1 ? 's' : ''}</span>
+                                    {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && new Date(r.transactionExpireAt) < new Date() ? (
+                                      <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}>
+                                        Expirée
+                                      </span>
+                                    ) : (
+                                      <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}>
+                                        {STATUS_LABELS[r.status]}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
+                                  {r.specialRequest && (
+                                    <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
+                                  )}
+                                </div>
+                                <div className="flex gap-1 flex-shrink-0">
+                                  {r.status === 'CONFIRMED' && (
+                                    <Button size="sm" variant="outline"
+                                      onClick={() => {
+                                        if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
+                                        updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined);
+                                      }}
+                                      className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs">Annuler</Button>
+                                  )}
+                                  {r.status === 'PENDING_PAYMENT' && !r.transactionExpireAt && (
+                                    <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
+                                      En attente
+                                    </span>
+                                  )}
+                                  {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && (
+                                    <span className={`text-[10px] px-2 py-1 rounded border leading-none ${
+                                      new Date(r.transactionExpireAt) < new Date()
+                                        ? 'bg-red-900/20 text-red-600 border-red-900/30'
+                                        : 'bg-amber-900/20 text-amber-600 border-amber-900/30'
+                                    }`}>
+                                      {new Date(r.transactionExpireAt) < new Date() ? 'Expirée' : 'Expiration: ' + new Date(r.transactionExpireAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                          <div className="flex gap-1 flex-shrink-0">
-                            {r.status === 'CONFIRMED' && (
-                              <Button size="sm" variant="outline"
-                                onClick={() => {
-                                  if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
-                                  updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined);
-                                }}
-                                className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs">Annuler</Button>
-                            )}
-                            {r.status === 'PENDING_PAYMENT' && !r.transactionExpireAt && (
-                              <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
-                                En attente
-                              </span>
-                            )}
-                            {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && (
-                              <span className={`text-[10px] px-2 py-1 rounded border leading-none ${
-                                new Date(r.transactionExpireAt) < new Date()
-                                  ? 'bg-red-900/20 text-red-600 border-red-900/30'
-                                  : 'bg-amber-900/20 text-amber-600 border-amber-900/30'
-                              }`}>
-                                {new Date(r.transactionExpireAt) < new Date() ? 'Expirée' : 'Expiration: ' + new Date(r.transactionExpireAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

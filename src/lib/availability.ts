@@ -54,7 +54,10 @@ function slotToMinutes(slot: string): number {
 
 /**
  * Builds a map of slot → total guests occupying that slot, accounting for meal duration.
- * A reservation at time R with duration D occupies all slots S where R <= S < R + D.
+ * A reservation at time R with duration D occupies all slots S where:
+ * - R - mealDuration <= S < R + mealDuration
+ * This ensures that if a group arrives late (at R - mealDuration), they don't find
+ * the table already taken - the blocking window extends X minutes before AND after.
  */
 function buildCoverageMap(
   reservations: { date: Date; guests: number }[],
@@ -64,9 +67,12 @@ function buildCoverageMap(
   const coverage: Record<string, number> = {};
   for (const r of reservations) {
     const resMin = r.date.getUTCHours() * 60 + r.date.getUTCMinutes();
+    // Blocking window: X minutes BEFORE the reservation time AND X minutes AFTER
+    const startMin = resMin - mealDuration;
+    const endMin = resMin + mealDuration;
     for (const slot of effectiveSlots) {
       const slotMin = slotToMinutes(slot);
-      if (slotMin >= resMin && slotMin < resMin + mealDuration) {
+      if (slotMin >= startMin && slotMin < endMin) {
         coverage[slot] = (coverage[slot] ?? 0) + r.guests;
       }
     }

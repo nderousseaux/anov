@@ -228,7 +228,7 @@ export default function AdminReservationsPage() {
     const now = new Date();
     const activeReservations = dayReservations.filter(
       (r) => r.status === 'CONFIRMED' ||
-             (r.status === 'PENDING_PAYMENT' && (!r.transactionExpireAt || new Date(r.transactionExpireAt) > now))
+        (r.status === 'PENDING_PAYMENT' && (!r.transactionExpireAt || new Date(r.transactionExpireAt) > now))
     );
 
     if (overrideMode === 'closed' && activeReservations.length > 0) {
@@ -704,7 +704,7 @@ export default function AdminReservationsPage() {
 
                   {/* Midi section */}
                   <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">Déjeuner (12h-14h)</h4>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">Déjeuner</h4>
                     {dayLoading ? (
                       <div className="flex justify-center py-4"><Loader2 size={18} className="animate-spin text-primary" /></div>
                     ) : (
@@ -765,11 +765,10 @@ export default function AdminReservationsPage() {
                                     </span>
                                   )}
                                   {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && (
-                                    <span className={`text-[10px] px-2 py-1 rounded border leading-none ${
-                                      new Date(r.transactionExpireAt) < new Date()
+                                    <span className={`text-[10px] px-2 py-1 rounded border leading-none ${new Date(r.transactionExpireAt) < new Date()
                                         ? 'bg-red-900/20 text-red-600 border-red-900/30'
                                         : 'bg-amber-900/20 text-amber-600 border-amber-900/30'
-                                    }`}>
+                                      }`}>
                                       {new Date(r.transactionExpireAt) < new Date() ? 'Expirée' : 'Expiration: ' + new Date(r.transactionExpireAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                                     </span>
                                   )}
@@ -784,7 +783,7 @@ export default function AdminReservationsPage() {
 
                   {/* Soir section */}
                   <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">Dîner (19h-23h)</h4>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">Dîner</h4>
                     {dayLoading ? (
                       <div className="flex justify-center py-4"><Loader2 size={18} className="animate-spin text-primary" /></div>
                     ) : (
@@ -845,11 +844,10 @@ export default function AdminReservationsPage() {
                                     </span>
                                   )}
                                   {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && (
-                                    <span className={`text-[10px] px-2 py-1 rounded border leading-none ${
-                                      new Date(r.transactionExpireAt) < new Date()
+                                    <span className={`text-[10px] px-2 py-1 rounded border leading-none ${new Date(r.transactionExpireAt) < new Date()
                                         ? 'bg-red-900/20 text-red-600 border-red-900/30'
                                         : 'bg-amber-900/20 text-amber-600 border-amber-900/30'
-                                    }`}>
+                                      }`}>
                                       {new Date(r.transactionExpireAt) < new Date() ? 'Expirée' : 'Expiration: ' + new Date(r.transactionExpireAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                                     </span>
                                   )}

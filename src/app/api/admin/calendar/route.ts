@@ -39,11 +39,22 @@ export async function GET(req: NextRequest) {
     overrides.map((o) => [o.date.toISOString().split('T')[0], o])
   );
 
-  // Reservations in range (PENDING or CONFIRMED)
+  const now = new Date();
+
+  // Reservations in range - SEULEMENT CONFIRMED et PENDING_PAYMENT non expirés
+  // PENDING_PAYMENT expirés (transactionExpireAt dépassé) sont ignorés
   const reservations = await prisma.reservation.findMany({
     where: {
       date: { gte: fromDate, lt: toDate },
-      status: 'CONFIRMED',
+      OR: [
+        { status: 'CONFIRMED' },
+        {
+          AND: [
+            { status: 'PENDING_PAYMENT' },
+            { OR: [{ transactionExpireAt: { gt: now } }, { transactionExpireAt: null }] },
+          ],
+        },
+      ],
     },
     select: { date: true, guests: true },
   });

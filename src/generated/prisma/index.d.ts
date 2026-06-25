@@ -48,8 +48,7 @@ export namespace $Enums {
   CONFIRMED: 'CONFIRMED',
   CANCELLED: 'CANCELLED',
   COMPLETED: 'COMPLETED',
-  IN_PROGRESS_PAYMENT: 'IN_PROGRESS_PAYMENT',
-  EXPIRED: 'EXPIRED'
+  IN_PROGRESS_PAYMENT: 'IN_PROGRESS_PAYMENT'
 };
 
 export type ReservationStatus = (typeof ReservationStatus)[keyof typeof ReservationStatus]
@@ -1299,6 +1298,7 @@ export namespace Prisma {
     status: $Enums.ReservationStatus | null
     stripeSessionId: string | null
     expiresAt: Date | null
+    transactionExpireAt: Date | null
     reminderEmailSent: boolean | null
     reminderSmsSent: boolean | null
     cancelToken: string | null
@@ -1318,6 +1318,7 @@ export namespace Prisma {
     status: $Enums.ReservationStatus | null
     stripeSessionId: string | null
     expiresAt: Date | null
+    transactionExpireAt: Date | null
     reminderEmailSent: boolean | null
     reminderSmsSent: boolean | null
     cancelToken: string | null
@@ -1337,6 +1338,7 @@ export namespace Prisma {
     status: number
     stripeSessionId: number
     expiresAt: number
+    transactionExpireAt: number
     reminderEmailSent: number
     reminderSmsSent: number
     cancelToken: number
@@ -1366,6 +1368,7 @@ export namespace Prisma {
     status?: true
     stripeSessionId?: true
     expiresAt?: true
+    transactionExpireAt?: true
     reminderEmailSent?: true
     reminderSmsSent?: true
     cancelToken?: true
@@ -1385,6 +1388,7 @@ export namespace Prisma {
     status?: true
     stripeSessionId?: true
     expiresAt?: true
+    transactionExpireAt?: true
     reminderEmailSent?: true
     reminderSmsSent?: true
     cancelToken?: true
@@ -1404,6 +1408,7 @@ export namespace Prisma {
     status?: true
     stripeSessionId?: true
     expiresAt?: true
+    transactionExpireAt?: true
     reminderEmailSent?: true
     reminderSmsSent?: true
     cancelToken?: true
@@ -1510,6 +1515,7 @@ export namespace Prisma {
     status: $Enums.ReservationStatus
     stripeSessionId: string | null
     expiresAt: Date | null
+    transactionExpireAt: Date | null
     reminderEmailSent: boolean
     reminderSmsSent: boolean
     cancelToken: string
@@ -1548,6 +1554,7 @@ export namespace Prisma {
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
+    transactionExpireAt?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
@@ -1567,6 +1574,7 @@ export namespace Prisma {
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
+    transactionExpireAt?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
@@ -1586,6 +1594,7 @@ export namespace Prisma {
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
+    transactionExpireAt?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
@@ -1605,12 +1614,13 @@ export namespace Prisma {
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
+    transactionExpireAt?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
   }
 
-  export type ReservationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "name" | "email" | "phone" | "date" | "guests" | "specialRequest" | "wantsSmsReminder" | "status" | "stripeSessionId" | "expiresAt" | "reminderEmailSent" | "reminderSmsSent" | "cancelToken", ExtArgs["result"]["reservation"]>
+  export type ReservationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "name" | "email" | "phone" | "date" | "guests" | "specialRequest" | "wantsSmsReminder" | "status" | "stripeSessionId" | "expiresAt" | "transactionExpireAt" | "reminderEmailSent" | "reminderSmsSent" | "cancelToken", ExtArgs["result"]["reservation"]>
 
   export type $ReservationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Reservation"
@@ -1629,6 +1639,7 @@ export namespace Prisma {
       status: $Enums.ReservationStatus
       stripeSessionId: string | null
       expiresAt: Date | null
+      transactionExpireAt: Date | null
       reminderEmailSent: boolean
       reminderSmsSent: boolean
       cancelToken: string
@@ -2068,6 +2079,7 @@ export namespace Prisma {
     readonly status: FieldRef<"Reservation", 'ReservationStatus'>
     readonly stripeSessionId: FieldRef<"Reservation", 'String'>
     readonly expiresAt: FieldRef<"Reservation", 'DateTime'>
+    readonly transactionExpireAt: FieldRef<"Reservation", 'DateTime'>
     readonly reminderEmailSent: FieldRef<"Reservation", 'Boolean'>
     readonly reminderSmsSent: FieldRef<"Reservation", 'Boolean'>
     readonly cancelToken: FieldRef<"Reservation", 'String'>
@@ -6726,6 +6738,7 @@ export namespace Prisma {
     status: 'status',
     stripeSessionId: 'stripeSessionId',
     expiresAt: 'expiresAt',
+    transactionExpireAt: 'transactionExpireAt',
     reminderEmailSent: 'reminderEmailSent',
     reminderSmsSent: 'reminderSmsSent',
     cancelToken: 'cancelToken'
@@ -6926,6 +6939,7 @@ export namespace Prisma {
     status?: EnumReservationStatusFilter<"Reservation"> | $Enums.ReservationStatus
     stripeSessionId?: StringNullableFilter<"Reservation"> | string | null
     expiresAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
+    transactionExpireAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
     reminderEmailSent?: BoolFilter<"Reservation"> | boolean
     reminderSmsSent?: BoolFilter<"Reservation"> | boolean
     cancelToken?: StringFilter<"Reservation"> | string
@@ -6945,6 +6959,7 @@ export namespace Prisma {
     status?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
     expiresAt?: SortOrderInput | SortOrder
+    transactionExpireAt?: SortOrderInput | SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -6968,6 +6983,7 @@ export namespace Prisma {
     wantsSmsReminder?: BoolFilter<"Reservation"> | boolean
     status?: EnumReservationStatusFilter<"Reservation"> | $Enums.ReservationStatus
     expiresAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
+    transactionExpireAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
     reminderEmailSent?: BoolFilter<"Reservation"> | boolean
     reminderSmsSent?: BoolFilter<"Reservation"> | boolean
   }, "id" | "stripeSessionId" | "cancelToken">
@@ -6986,6 +7002,7 @@ export namespace Prisma {
     status?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
     expiresAt?: SortOrderInput | SortOrder
+    transactionExpireAt?: SortOrderInput | SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -7013,6 +7030,7 @@ export namespace Prisma {
     status?: EnumReservationStatusWithAggregatesFilter<"Reservation"> | $Enums.ReservationStatus
     stripeSessionId?: StringNullableWithAggregatesFilter<"Reservation"> | string | null
     expiresAt?: DateTimeNullableWithAggregatesFilter<"Reservation"> | Date | string | null
+    transactionExpireAt?: DateTimeNullableWithAggregatesFilter<"Reservation"> | Date | string | null
     reminderEmailSent?: BoolWithAggregatesFilter<"Reservation"> | boolean
     reminderSmsSent?: BoolWithAggregatesFilter<"Reservation"> | boolean
     cancelToken?: StringWithAggregatesFilter<"Reservation"> | string
@@ -7288,6 +7306,7 @@ export namespace Prisma {
     status?: $Enums.ReservationStatus
     stripeSessionId?: string | null
     expiresAt?: Date | string | null
+    transactionExpireAt?: Date | string | null
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: string
@@ -7307,6 +7326,7 @@ export namespace Prisma {
     status?: $Enums.ReservationStatus
     stripeSessionId?: string | null
     expiresAt?: Date | string | null
+    transactionExpireAt?: Date | string | null
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: string
@@ -7326,6 +7346,7 @@ export namespace Prisma {
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
@@ -7345,6 +7366,7 @@ export namespace Prisma {
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
@@ -7364,6 +7386,7 @@ export namespace Prisma {
     status?: $Enums.ReservationStatus
     stripeSessionId?: string | null
     expiresAt?: Date | string | null
+    transactionExpireAt?: Date | string | null
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: string
@@ -7383,6 +7406,7 @@ export namespace Prisma {
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
@@ -7402,6 +7426,7 @@ export namespace Prisma {
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
@@ -7775,6 +7800,7 @@ export namespace Prisma {
     status?: SortOrder
     stripeSessionId?: SortOrder
     expiresAt?: SortOrder
+    transactionExpireAt?: SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -7798,6 +7824,7 @@ export namespace Prisma {
     status?: SortOrder
     stripeSessionId?: SortOrder
     expiresAt?: SortOrder
+    transactionExpireAt?: SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
@@ -7817,6 +7844,7 @@ export namespace Prisma {
     status?: SortOrder
     stripeSessionId?: SortOrder
     expiresAt?: SortOrder
+    transactionExpireAt?: SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder

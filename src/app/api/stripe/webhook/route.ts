@@ -126,6 +126,7 @@ async function handleReservationPayment(session: any, meta: any) {
         data: {
           status: 'CONFIRMED',
           stripeSessionId: session.id,
+          transactionExpireAt: null, // La transaction est terminée
         },
       });
     } else {

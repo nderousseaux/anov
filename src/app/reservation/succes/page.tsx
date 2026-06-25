@@ -17,6 +17,7 @@ type Reservation = {
   date: string;
   guests: number;
   status: string;
+  transactionExpireAt: string | null;
 };
 
 function ReservationSuccessForm() {
@@ -26,6 +27,7 @@ function ReservationSuccessForm() {
   const [reservation, setReservation] = useState<Reservation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isExpired, setIsExpired] = useState(false);
 
   useEffect(() => {
     // Vérifier le statut de la session Stripe
@@ -35,6 +37,13 @@ function ReservationSuccessForm() {
         .then(data => {
           if (data.id) {
             setReservation(data);
+            // Vérifier si la réservation est expirée
+            // EXPIRED est nowait le statut, mais on vérifie PENDING_PAYMENT + transactionExpireAt dépassé
+            const now = new Date();
+            const isExpired = data.status === 'PENDING_PAYMENT' &&
+                              data.transactionExpireAt &&
+                              new Date(data.transactionExpireAt) < now;
+            setIsExpired(isExpired);
           } else {
             setError(data.error || 'Session introuvable');
           }
@@ -80,6 +89,40 @@ function ReservationSuccessForm() {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
   });
   const formattedTime = `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
+
+  // Si la réservation est expirée (PENDING_PAYMENT + transactionExpireAt dépassé)
+  if (isExpired) {
+    return (
+      <div className="min-h-screen bg-background pt-24 pb-16 px-4">
+        <div className="max-w-lg mx-auto">
+          <div className="text-center mb-10">
+            <Clock size={72} className="text-amber-500 mx-auto mb-4" />
+            <h1
+              className="text-4xl sm:text-5xl text-amber-500 mb-3"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              Transaction expirée
+            </h1>
+            <p className="text-muted-foreground">
+              Votre paiement n'a pas été complété dans les 10 minutes. La réservation a été annulée.
+            </p>
+          </div>
+          <div className="bg-card border border-primary/20 rounded-lg p-8 space-y-5">
+            <p className="text-foreground">
+              Votre acompte n'a pas été débité. Le créneau est de nouveau disponible.
+            </p>
+          </div>
+          <div className="text-center mt-8">
+            <Link href="/reservation">
+              <Button className="bg-primary text-primary-foreground">
+                Faire une nouvelle réservation
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-16 px-4">

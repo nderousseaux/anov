@@ -33,6 +33,10 @@ export async function POST(req: NextRequest) {
     // Calcul du dépôt: montant par couvert * nombre de couverts
     const depositAmount = DEPOSIT_PER_GUEST_CENTS * guestsNum;
 
+    // Calculer l'expiration de la transaction (10 minutes pour le paiement)
+    const transactionExpireAt = new Date();
+    transactionExpireAt.setMinutes(transactionExpireAt.getMinutes() + 10);
+
     // Créer d'abord la réservation en base pour obtenir le cancelToken
     // (le token est généré automatiquement par Prisma grâce au default(cuid()))
     const reservation = await prisma.reservation.create({
@@ -44,6 +48,7 @@ export async function POST(req: NextRequest) {
         guests: guestsNum,
         specialRequest: specialRequest?.trim() || '',
         status: 'PENDING_PAYMENT',
+        transactionExpireAt,
       },
     });
 

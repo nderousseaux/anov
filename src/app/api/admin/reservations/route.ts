@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
   const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10));
   const perPage = 25;
 
+  const now = new Date();
   const where: Record<string, unknown> = {};
   if (status) where.status = status;
   if (dateStr) {
@@ -21,16 +22,75 @@ export async function GET(req: NextRequest) {
     where.date = { gte: start, lte: end };
   }
 
-  const [total, reservations] = await Promise.all([
-    prisma.reservation.count({ where }),
-    prisma.reservation.findMany({
-      where,
-      orderBy: { date: 'asc' },
-      skip: (page - 1) * perPage,
-      take: perPage,
+  // Exclure les réservations expirées (PENDING_PAYMENT avec transactionExpireAt dépassé)
+  // Elles restent en PENDING_PAYMENT en base mais ne sont pas affichées
+  where.AND = [
+    {
+      OR: [
+        { status: { not: 'PENDING_PAYMENT' } },
+        { transactionExpireAt: { gt: now } },
+        { transactionExpireAt: null },
+      ],
+    },
+  ];
 
-    }),
-  ]);
+  // Compter les réservations (CONFIRMED + PENDING_PAYMENT non expirés) pour les disponibilités
+  const reservationCountWhere = {
+    ...where,
+    AND: [
+      {
+        OR: [
+          { status: 'CONFIRMED' },
+          {
+            AND: [
+              { status: 'PENDING_PAYMENT' },
+              { OR: [{ transactionExpireAt: { gt: now } }, { transactionExpireAt: null }] },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  // Compter SEULEMENT les réservations non expirées (CONFIRMED + PENDING_PAYMENT non expirés)
+  // Pour les réservations affichées, on compte celles qui ne sont pas expirées
+  const total = await prisma.reservation.count({
+    where: {
+      ...where,
+      AND: [
+        {
+          OR: [
+            { status: 'CONFIRMED' },
+            {
+              AND: [
+                { status: 'PENDING_PAYMENT' },
+                { OR: [{ transactionExpireAt: { gt: now } }, { transactionExpireAt: null }] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  });
+
+  const reservations = await prisma.reservation.findMany({
+    where,
+    orderBy: { date: 'asc' },
+    skip: (page - 1) * perPage,
+    take: perPage,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      date: true,
+      guests: true,
+      status: true,
+      specialRequest: true,
+      wantsSmsReminder: true,
+      transactionExpireAt: true,
+    },
+  });
 
   return NextResponse.json({ data: reservations, total, page, pageSize: perPage });
 }

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { sendCancellationEmail } from '@/lib/email';
 
 export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get('token');
@@ -20,26 +19,21 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: 'already_cancelled' });
   }
 
-  if (reservation.status === 'COMPLETED' || reservation.status === 'EXPIRED') {
+  // Les réservations PENDING_PAYMENT avec transactionExpireAt dépassé ne peuvent pas être annulées
+  // (elles sont automatiquement considérées comme expirées)
+  const now = new Date();
+  const isExpired = reservation.status === 'PENDING_PAYMENT' &&
+                    reservation.transactionExpireAt &&
+                    new Date(reservation.transactionExpireAt) < now;
+  if (reservation.status === 'COMPLETED' || isExpired) {
     return NextResponse.json({ error: 'Réservation déjà passée' }, { status: 400 });
   }
 
-  await prisma.reservation.update({
+  // Supprimer la réservation (au lieu de la marquer comme CANCELLED)
+  // et ne pas envoyer d'email
+  await prisma.reservation.delete({
     where: { id: reservation.id },
-    data: { status: 'CANCELLED' },
   });
 
-  const formattedDate = reservation.date.toLocaleDateString('fr-FR', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-  });
-  const time = reservation.date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-
-  await sendCancellationEmail({
-    to: reservation.email,
-    name: reservation.name,
-    date: formattedDate,
-    time,
-  });
-
-  return NextResponse.json({ message: 'cancelled' });
+  return NextResponse.json({ message: 'deleted' });
 }

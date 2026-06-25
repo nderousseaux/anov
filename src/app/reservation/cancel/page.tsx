@@ -7,7 +7,7 @@ function ReservationCancelRedirect() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get('token');
-  const [status, setStatus] = useState<'loading' | 'cancelled' | 'already_cancelled' | 'error'>('loading');
+  const [status, setStatus] = useState<'loading' | 'cancelled' | 'already_cancelled' | 'error' | 'deleted'>('loading');
 
   useEffect(() => {
     if (!token) {
@@ -18,7 +18,8 @@ function ReservationCancelRedirect() {
     fetch(`/api/reservations/cancel?token=${encodeURIComponent(token)}`)
       .then((r) => r.json())
       .then((data) => {
-        if (data.message === 'cancelled') setStatus('cancelled');
+        if (data.message === 'deleted') setStatus('deleted');
+        else if (data.message === 'cancelled') setStatus('cancelled');
         else if (data.message === 'already_cancelled') setStatus('already_cancelled');
         else setStatus('error');
       })
@@ -41,6 +42,12 @@ function ReservationCancelRedirect() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Traitement de l'annulation...</p>
+        </div>
+      )}
+      {status === 'deleted' && (
+        <div className="text-center">
+          <p className="text-muted-foreground">Votre réservation a été supprimée.</p>
+          <p className="text-muted-foreground mt-2">Redirection vers la page de réservation...</p>
         </div>
       )}
       {status === 'cancelled' && (

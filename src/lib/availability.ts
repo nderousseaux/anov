@@ -86,9 +86,23 @@ export async function getAvailableSlots(dateStr: string): Promise<string[]> {
 
   const dayStart = new Date(dateStr + 'T00:00:00.000Z');
   const dayEnd = new Date(dateStr + 'T23:59:59.999Z');
+  const now = new Date();
 
+  // Compter les réservations CONFIRMED et PENDING_PAYMENT non expirés
+  // Exclure les PENDING_PAYMENT avec transactionExpireAt dépassé
   const reservations = await prisma.reservation.findMany({
-    where: { date: { gte: dayStart, lte: dayEnd }, status: 'CONFIRMED' },
+    where: {
+      date: { gte: dayStart, lte: dayEnd },
+      OR: [
+        { status: 'CONFIRMED' },
+        {
+          AND: [
+            { status: 'PENDING_PAYMENT' },
+            { OR: [{ transactionExpireAt: { gt: now } }, { transactionExpireAt: null }] },
+          ],
+        },
+      ],
+    },
     select: { date: true, guests: true },
   });
 
@@ -131,8 +145,21 @@ export async function getSlotsWithAvailability(dateStr: string): Promise<{ time:
   const dayStart = new Date(dateStr + 'T00:00:00.000Z');
   const dayEnd = new Date(dateStr + 'T23:59:59.999Z');
 
+  // Compter les réservations CONFIRMED et PENDING_PAYMENT non expirés
+  // Exclure les PENDING_PAYMENT avec transactionExpireAt dépassé
   const reservations = await prisma.reservation.findMany({
-    where: { date: { gte: dayStart, lte: dayEnd }, status: 'CONFIRMED' },
+    where: {
+      date: { gte: dayStart, lte: dayEnd },
+      OR: [
+        { status: 'CONFIRMED' },
+        {
+          AND: [
+            { status: 'PENDING_PAYMENT' },
+            { OR: [{ transactionExpireAt: { gt: now } }, { transactionExpireAt: null }] },
+          ],
+        },
+      ],
+    },
     select: { date: true, guests: true },
   });
 
@@ -162,8 +189,20 @@ export async function getUnavailableDatesForMonth(monthStr: string): Promise<str
   const [dbSettings, overrides, reservations] = await Promise.all([
     prisma.restaurantSettings.findFirst({ where: { id: 1 } }),
     prisma.dayOverride.findMany({ where: { date: { gte: monthStart, lte: monthEnd } } }),
+    // Compter les réservations CONFIRMED et PENDING_PAYMENT non expirés
     prisma.reservation.findMany({
-      where: { date: { gte: monthStart, lte: monthEnd }, status: 'CONFIRMED' },
+      where: {
+        date: { gte: monthStart, lte: monthEnd },
+        OR: [
+          { status: 'CONFIRMED' },
+          {
+            AND: [
+              { status: 'PENDING_PAYMENT' },
+              { OR: [{ transactionExpireAt: { gt: now } }, { transactionExpireAt: null }] },
+            ],
+          },
+        ],
+      },
       select: { date: true, guests: true },
     }),
   ]);

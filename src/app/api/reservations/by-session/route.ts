@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
       date: true,
       guests: true,
       status: true,
+      transactionExpireAt: true,
     },
   });
 

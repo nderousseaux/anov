@@ -18,6 +18,7 @@ interface ReservationRow {
   id: string; name: string; email: string; phone: string;
   date: string; guests: number; status: ReservationStatus;
   specialRequest: string | null; wantsSmsReminder: boolean;
+  transactionExpireAt: string | null;
 }
 
 interface ApiResponse {
@@ -43,7 +44,8 @@ interface DayInfo {
 const STATUS_LABELS: Record<ReservationStatus, string> = {
   PENDING_PAYMENT: 'En attente',
   CONFIRMED: 'Confirmé',
-  CANCELLED: 'Annulé', COMPLETED: 'Terminé',
+  CANCELLED: 'Annulé',
+  COMPLETED: 'Terminé',
 };
 
 const STATUS_COLORS: Record<ReservationStatus, string> = {
@@ -220,8 +222,12 @@ export default function AdminReservationsPage() {
   const saveOverride = async () => {
     if (!selectedDate) return;
 
+    // Compter les réservations ACTIVE (CONFIRMED + PENDING_PAYMENT non expirés)
+    // Les PENDING_PAYMENT expirés (transactionExpireAt dépassé) sont exclus
+    const now = new Date();
     const activeReservations = dayReservations.filter(
-      (r) => r.status === 'CONFIRMED'
+      (r) => r.status === 'CONFIRMED' ||
+             (r.status === 'PENDING_PAYMENT' && (!r.transactionExpireAt || new Date(r.transactionExpireAt) > now))
     );
 
     if (overrideMode === 'closed' && activeReservations.length > 0) {
@@ -266,6 +272,13 @@ export default function AdminReservationsPage() {
   };
 
   const updateStatus = async (id: string, status: ReservationStatus, refreshDay?: string) => {
+    // Ne pas autoriser la modification des réservations EXPIRED (PENDING_PAYMENT avec transactionExpireAt dépassé)
+    const reservation = dayReservations.find(r => r.id === id);
+    const isExpired = reservation?.status === 'PENDING_PAYMENT' && reservation?.transactionExpireAt && new Date(reservation.transactionExpireAt) < new Date();
+    if (isExpired && status !== 'CANCELLED') {
+      alert('Impossible de modifier une réservation expirée. Elle doit être annulée.');
+      return;
+    }
     await fetch('/api/admin/reservations', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -703,9 +716,15 @@ export default function AdminReservationsPage() {
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="font-medium text-sm">{r.name}</span>
                               <span className="text-xs text-muted-foreground">{r.guests} cvrt{r.guests > 1 ? 's' : ''}</span>
-                              <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}>
-                                {STATUS_LABELS[r.status]}
-                              </span>
+                              {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && new Date(r.transactionExpireAt) < new Date() ? (
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}>
+                                  Expirée
+                                </span>
+                              ) : (
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}>
+                                  {STATUS_LABELS[r.status]}
+                                </span>
+                              )}
                             </div>
                             <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
                             {r.specialRequest && (
@@ -721,6 +740,20 @@ export default function AdminReservationsPage() {
                                   updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined);
                                 }}
                                 className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs">Annuler</Button>
+                            )}
+                            {r.status === 'PENDING_PAYMENT' && !r.transactionExpireAt && (
+                              <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
+                                En attente
+                              </span>
+                            )}
+                            {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && (
+                              <span className={`text-[10px] px-2 py-1 rounded border leading-none ${
+                                new Date(r.transactionExpireAt) < new Date()
+                                  ? 'bg-red-900/20 text-red-600 border-red-900/30'
+                                  : 'bg-amber-900/20 text-amber-600 border-amber-900/30'
+                              }`}>
+                                {new Date(r.transactionExpireAt) < new Date() ? 'Expirée' : 'Expiration: ' + new Date(r.transactionExpireAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                              </span>
                             )}
                           </div>
                         </div>

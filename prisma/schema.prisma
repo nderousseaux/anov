@@ -35,6 +35,9 @@ model Reservation {
   // Expiration (pour IN_PROGRESS_PAYMENT)
   expiresAt         DateTime?
 
+  // Expiration de la transaction (pending payment)
+  transactionExpireAt DateTime?
+
   // Rappels envoyés
   reminderEmailSent Boolean           @default(false)
   reminderSmsSent   Boolean           @default(false)
@@ -49,7 +52,6 @@ enum ReservationStatus {
   CANCELLED
   COMPLETED
   IN_PROGRESS_PAYMENT
-  EXPIRED
 }
 
 // ─── Compte administrateur ────────────────────────────────────────────────────

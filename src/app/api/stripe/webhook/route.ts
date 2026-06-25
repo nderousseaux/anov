@@ -149,20 +149,23 @@ async function handleReservationPayment(session: any, meta: any) {
     // Envoyer l'email de confirmation
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
     const resDate = new Date(reservation.date);
+    const formattedDate = resDate.toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    });
     try {
       await sendConfirmationEmail({
         to: reservation.email,
         name: reservation.name,
-        date: resDate.toLocaleDateString('fr-FR', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-          timeZone: 'UTC',
-        }),
+        date: formattedDate,
         time: `${String(resDate.getUTCHours()).padStart(2, '0')}:${String(resDate.getUTCMinutes()).padStart(2, '0')}`,
         guests: reservation.guests,
         cancelUrl: `${baseUrl}/reservation/cancel?token=${reservation.cancelToken}`,
+        // Passer la date ISO pour le fichier .ics
+        icsDate: reservation.date.toISOString(),
       });
       console.log(`[WEBHOOK] Email de confirmation envoyé à ${reservation.email}`);
     } catch (emailError) {

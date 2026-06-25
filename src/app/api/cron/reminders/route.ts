@@ -42,6 +42,7 @@ export async function GET(req: NextRequest) {
         time,
         guests: r.guests,
         cancelUrl,
+        icsDate: r.date.toISOString(),
       });
       await prisma.reservation.update({
         where: { id: r.id },

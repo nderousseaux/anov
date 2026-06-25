@@ -75,6 +75,7 @@ export async function sendConfirmationEmail({
   time,
   guests,
   cancelUrl,
+  icsDate,
 }: {
   to: string;
   name: string;
@@ -82,6 +83,7 @@ export async function sendConfirmationEmail({
   time: string;
   guests: number;
   cancelUrl?: string;
+  icsDate?: string;
 }) {
   const t = getTransporter();
   if (!t) {
@@ -89,8 +91,13 @@ export async function sendConfirmationEmail({
     return null;
   }
 
-  // Générer le fichier .ics
-  const icsContent = generateICS({ date, time, name, guests });
+  // Générer le fichier .ics (utiliser icsDate si fourni, sinon date)
+  const icsContent = generateICS({
+    date: icsDate || date,
+    time,
+    name,
+    guests
+  });
 
   console.log(`[EMAIL] Envoi de l'email de confirmation à ${to}`);
   console.log(`[EMAIL] Contenu ICS:\n${icsContent}`);
@@ -110,9 +117,6 @@ export async function sendConfirmationEmail({
           <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Heure</td><td style="padding:8px;border-bottom:1px solid #eee;">${time}</td></tr>
           <tr><td style="padding:8px;font-weight:bold;">Couverts</td><td style="padding:8px;">${guests} personne${guests > 1 ? 's' : ''}</td></tr>
         </table>
-        ${cancelUrl ? `<p>Pour vous faire rembourser :<br/>
-          <a href="${cancelUrl}" style="color:#e3cb6b;">Annuler ma réservation</a>
-        </p>` : ''}
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
         <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
       </div>
@@ -134,6 +138,7 @@ export async function sendReminderEmail({
   time,
   guests,
   cancelUrl,
+  icsDate,
 }: {
   to: string;
   name: string;
@@ -141,6 +146,7 @@ export async function sendReminderEmail({
   time: string;
   guests: number;
   cancelUrl: string;
+  icsDate?: string;
 }) {
   const t = getTransporter();
   if (!t) {
@@ -148,8 +154,13 @@ export async function sendReminderEmail({
     return null;
   }
 
-  // Générer le fichier .ics
-  const icsContent = generateICS({ date, time, name, guests });
+  // Générer le fichier .ics (utiliser icsDate si fourni, sinon date)
+  const icsContent = generateICS({
+    date: icsDate || date,
+    time,
+    name,
+    guests
+  });
 
   return t.sendMail({
     from: FROM,

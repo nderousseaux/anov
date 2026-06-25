@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import {
   Loader2, RefreshCw, ChevronLeft, ChevronRight,
   Settings, Save, X, CheckSquare, CalendarDays,
-  RotateCcw, AlertTriangle,
+  RotateCw, AlertTriangle, House,
 } from 'lucide-react';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -479,11 +479,11 @@ export default function AdminReservationsPage() {
             <div className="flex gap-1 ml-auto">
               <Button variant="ghost" size="sm" onClick={() => { const n = new Date(); setCurrentMonth({ year: n.getFullYear(), month: n.getMonth() }); setSelectedDate(null); }}
                 className="text-muted-foreground hover:text-foreground text-xs">
-                <RotateCcw size={11} className="mr-1" />Aujourd&apos;hui
+                <House size={11} className="mr-1" />Aujourd&apos;hui
               </Button>
-              <Button variant="ghost" size="sm" onClick={fetchCalendar}
+              <Button variant="ghost" size="sm" onClick={() => { fetchCalendar(); if (selectedDate) fetchDayReservations(selectedDate); }}
                 className="text-muted-foreground hover:text-foreground text-xs">
-                <RefreshCw size={11} className="mr-1" />Actualiser
+                <RotateCw size={11} className="mr-1" />Actualiser
               </Button>
             </div>
           </div>

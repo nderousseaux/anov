@@ -18,6 +18,7 @@ interface ReservationRow {
   id: string; name: string; email: string; phone: string;
   date: string; guests: number; status: ReservationStatus;
   specialRequest: string | null; wantsSmsReminder: boolean;
+  depositPaidCents: number | null;
   transactionExpireAt: string | null;
   createdAt: string;
 }
@@ -746,6 +747,11 @@ export default function AdminReservationsPage() {
                                     )}
                                   </div>
                                   <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
+                                  {r.depositPaidCents && (
+                                    <div className="text-xs text-green-400 font-medium mt-0.5">
+                                      &#10004; Acompte: {(r.depositPaidCents / 100).toFixed(2)}€
+                                    </div>
+                                  )}
                                   {r.specialRequest && (
                                     <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
                                   )}
@@ -825,6 +831,11 @@ export default function AdminReservationsPage() {
                                     )}
                                   </div>
                                   <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
+                                  {r.depositPaidCents && (
+                                    <div className="text-xs text-green-400 font-medium mt-0.5">
+                                      &#10004; Acompte: {(r.depositPaidCents / 100).toFixed(2)}€
+                                    </div>
+                                  )}
                                   {r.specialRequest && (
                                     <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
                                   )}

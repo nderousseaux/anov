@@ -89,6 +89,7 @@ export async function GET(req: NextRequest) {
       status: true,
       specialRequest: true,
       wantsSmsReminder: true,
+      depositPaidCents: true,
       transactionExpireAt: true,
       createdAt: true,
     },

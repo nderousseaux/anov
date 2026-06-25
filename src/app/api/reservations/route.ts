@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
         guests: guestsNum,
         specialRequest: specialRequest?.trim() || '',
         status: 'PENDING_PAYMENT',
+        depositPaidCents: depositAmount,
         transactionExpireAt,
       },
     });

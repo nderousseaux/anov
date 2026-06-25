@@ -16,6 +16,7 @@ export async function GET(
       date: true,
       guests: true,
       status: true,
+      depositPaidCents: true,
     },
   });
 

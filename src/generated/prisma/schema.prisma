@@ -7,54 +7,27 @@ datasource db {
   provider = "postgresql"
 }
 
-// ─── Réservation client ────────────────────────────────────────────────────────
 model Reservation {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Coordonnées client
-  name  String
-  email String
-  phone String?
-
-  // Détails de la réservation
-  date           DateTime
-  guests         Int
-  specialRequest String?
-
-  // Options
-  wantsSmsReminder Boolean @default(false)
-
-  // Statut
-  status ReservationStatus @default(PENDING_PAYMENT)
-
-  // Paiement Stripe
-  stripeSessionId String? @unique
-
-  // Expiration (pour IN_PROGRESS_PAYMENT)
-  expiresAt DateTime?
-
-  // Expiration de la transaction (pending payment)
+  id                  String            @id @default(cuid())
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  name                String
+  email               String
+  phone               String?
+  date                DateTime
+  guests              Int
+  specialRequest      String?
+  wantsSmsReminder    Boolean           @default(false)
+  status              ReservationStatus @default(PENDING_PAYMENT)
+  stripeSessionId     String?           @unique
+  expiresAt           DateTime?
+  reminderEmailSent   Boolean           @default(false)
+  reminderSmsSent     Boolean           @default(false)
+  cancelToken         String            @unique @default(cuid())
   transactionExpireAt DateTime?
-
-  // Rappels envoyés
-  reminderEmailSent Boolean @default(false)
-  reminderSmsSent   Boolean @default(false)
-
-  // Token d'annulation (lien dans l'email)
-  cancelToken String @unique @default(cuid())
+  depositPaidCents    Int?
 }
 
-enum ReservationStatus {
-  PENDING_PAYMENT
-  CONFIRMED
-  CANCELLED
-  COMPLETED
-  IN_PROGRESS_PAYMENT
-}
-
-// ─── Compte administrateur ────────────────────────────────────────────────────
 model Admin {
   id           Int      @id @default(autoincrement())
   email        String   @unique
@@ -62,8 +35,6 @@ model Admin {
   createdAt    DateTime @default(now())
 }
 
-// ─── Paramètres du restaurant ─────────────────────────────────────────────────
-// Singleton (id = 1 toujours)
 model RestaurantSettings {
   id                   Int    @id @default(1)
   maxCovers            Int    @default(20)
@@ -73,9 +44,6 @@ model RestaurantSettings {
   depositPerGuestCents Int    @default(2000)
 }
 
-// ─── Override pour un jour spécifique ─────────────────────────────────────────
-// Permet de fermer un jour habituellement ouvert, ou d'ouvrir/personnaliser
-// un jour avec des créneaux et/ou des couverts différents.
 model DayOverride {
   id           Int      @id @default(autoincrement())
   date         DateTime @unique
@@ -84,24 +52,29 @@ model DayOverride {
   openingSlots String?
 }
 
-// ─── Chèques Cadeaux ──────────────────────────────────────────────────────────
 model GiftCard {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  code            String  @unique
-  amount          Float
-  recipientEmail  String?
-  personalMessage String?
-  isPaid          Boolean @default(false)
-
-  status GiftCardStatus @default(IN_PROGRESS_PAYMENT)
-
-  stripeSessionId     String?   @unique
+  id                  String         @id @default(cuid())
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  code                String         @unique
+  amount              Float
+  recipientEmail      String?
+  personalMessage     String?
+  isPaid              Boolean        @default(false)
+  status              GiftCardStatus @default(IN_PROGRESS_PAYMENT)
+  stripeSessionId     String?        @unique
   expiresAt           DateTime?
   transactionExpireAt DateTime?
   usedAt              DateTime?
+}
+
+enum ReservationStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  IN_PROGRESS_PAYMENT
+  EXPIRED
 }
 
 enum GiftCardStatus {

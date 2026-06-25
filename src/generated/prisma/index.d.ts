@@ -48,7 +48,8 @@ export namespace $Enums {
   CONFIRMED: 'CONFIRMED',
   CANCELLED: 'CANCELLED',
   COMPLETED: 'COMPLETED',
-  IN_PROGRESS_PAYMENT: 'IN_PROGRESS_PAYMENT'
+  IN_PROGRESS_PAYMENT: 'IN_PROGRESS_PAYMENT',
+  EXPIRED: 'EXPIRED'
 };
 
 export type ReservationStatus = (typeof ReservationStatus)[keyof typeof ReservationStatus]
@@ -1278,10 +1279,12 @@ export namespace Prisma {
 
   export type ReservationAvgAggregateOutputType = {
     guests: number | null
+    depositPaidCents: number | null
   }
 
   export type ReservationSumAggregateOutputType = {
     guests: number | null
+    depositPaidCents: number | null
   }
 
   export type ReservationMinAggregateOutputType = {
@@ -1298,10 +1301,11 @@ export namespace Prisma {
     status: $Enums.ReservationStatus | null
     stripeSessionId: string | null
     expiresAt: Date | null
-    transactionExpireAt: Date | null
     reminderEmailSent: boolean | null
     reminderSmsSent: boolean | null
     cancelToken: string | null
+    transactionExpireAt: Date | null
+    depositPaidCents: number | null
   }
 
   export type ReservationMaxAggregateOutputType = {
@@ -1318,10 +1322,11 @@ export namespace Prisma {
     status: $Enums.ReservationStatus | null
     stripeSessionId: string | null
     expiresAt: Date | null
-    transactionExpireAt: Date | null
     reminderEmailSent: boolean | null
     reminderSmsSent: boolean | null
     cancelToken: string | null
+    transactionExpireAt: Date | null
+    depositPaidCents: number | null
   }
 
   export type ReservationCountAggregateOutputType = {
@@ -1338,20 +1343,23 @@ export namespace Prisma {
     status: number
     stripeSessionId: number
     expiresAt: number
-    transactionExpireAt: number
     reminderEmailSent: number
     reminderSmsSent: number
     cancelToken: number
+    transactionExpireAt: number
+    depositPaidCents: number
     _all: number
   }
 
 
   export type ReservationAvgAggregateInputType = {
     guests?: true
+    depositPaidCents?: true
   }
 
   export type ReservationSumAggregateInputType = {
     guests?: true
+    depositPaidCents?: true
   }
 
   export type ReservationMinAggregateInputType = {
@@ -1368,10 +1376,11 @@ export namespace Prisma {
     status?: true
     stripeSessionId?: true
     expiresAt?: true
-    transactionExpireAt?: true
     reminderEmailSent?: true
     reminderSmsSent?: true
     cancelToken?: true
+    transactionExpireAt?: true
+    depositPaidCents?: true
   }
 
   export type ReservationMaxAggregateInputType = {
@@ -1388,10 +1397,11 @@ export namespace Prisma {
     status?: true
     stripeSessionId?: true
     expiresAt?: true
-    transactionExpireAt?: true
     reminderEmailSent?: true
     reminderSmsSent?: true
     cancelToken?: true
+    transactionExpireAt?: true
+    depositPaidCents?: true
   }
 
   export type ReservationCountAggregateInputType = {
@@ -1408,10 +1418,11 @@ export namespace Prisma {
     status?: true
     stripeSessionId?: true
     expiresAt?: true
-    transactionExpireAt?: true
     reminderEmailSent?: true
     reminderSmsSent?: true
     cancelToken?: true
+    transactionExpireAt?: true
+    depositPaidCents?: true
     _all?: true
   }
 
@@ -1515,10 +1526,11 @@ export namespace Prisma {
     status: $Enums.ReservationStatus
     stripeSessionId: string | null
     expiresAt: Date | null
-    transactionExpireAt: Date | null
     reminderEmailSent: boolean
     reminderSmsSent: boolean
     cancelToken: string
+    transactionExpireAt: Date | null
+    depositPaidCents: number | null
     _count: ReservationCountAggregateOutputType | null
     _avg: ReservationAvgAggregateOutputType | null
     _sum: ReservationSumAggregateOutputType | null
@@ -1554,10 +1566,11 @@ export namespace Prisma {
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
-    transactionExpireAt?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
+    transactionExpireAt?: boolean
+    depositPaidCents?: boolean
   }, ExtArgs["result"]["reservation"]>
 
   export type ReservationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1574,10 +1587,11 @@ export namespace Prisma {
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
-    transactionExpireAt?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
+    transactionExpireAt?: boolean
+    depositPaidCents?: boolean
   }, ExtArgs["result"]["reservation"]>
 
   export type ReservationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1594,10 +1608,11 @@ export namespace Prisma {
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
-    transactionExpireAt?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
+    transactionExpireAt?: boolean
+    depositPaidCents?: boolean
   }, ExtArgs["result"]["reservation"]>
 
   export type ReservationSelectScalar = {
@@ -1614,13 +1629,14 @@ export namespace Prisma {
     status?: boolean
     stripeSessionId?: boolean
     expiresAt?: boolean
-    transactionExpireAt?: boolean
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: boolean
+    transactionExpireAt?: boolean
+    depositPaidCents?: boolean
   }
 
-  export type ReservationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "name" | "email" | "phone" | "date" | "guests" | "specialRequest" | "wantsSmsReminder" | "status" | "stripeSessionId" | "expiresAt" | "transactionExpireAt" | "reminderEmailSent" | "reminderSmsSent" | "cancelToken", ExtArgs["result"]["reservation"]>
+  export type ReservationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "name" | "email" | "phone" | "date" | "guests" | "specialRequest" | "wantsSmsReminder" | "status" | "stripeSessionId" | "expiresAt" | "reminderEmailSent" | "reminderSmsSent" | "cancelToken" | "transactionExpireAt" | "depositPaidCents", ExtArgs["result"]["reservation"]>
 
   export type $ReservationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Reservation"
@@ -1639,10 +1655,11 @@ export namespace Prisma {
       status: $Enums.ReservationStatus
       stripeSessionId: string | null
       expiresAt: Date | null
-      transactionExpireAt: Date | null
       reminderEmailSent: boolean
       reminderSmsSent: boolean
       cancelToken: string
+      transactionExpireAt: Date | null
+      depositPaidCents: number | null
     }, ExtArgs["result"]["reservation"]>
     composites: {}
   }
@@ -2079,10 +2096,11 @@ export namespace Prisma {
     readonly status: FieldRef<"Reservation", 'ReservationStatus'>
     readonly stripeSessionId: FieldRef<"Reservation", 'String'>
     readonly expiresAt: FieldRef<"Reservation", 'DateTime'>
-    readonly transactionExpireAt: FieldRef<"Reservation", 'DateTime'>
     readonly reminderEmailSent: FieldRef<"Reservation", 'Boolean'>
     readonly reminderSmsSent: FieldRef<"Reservation", 'Boolean'>
     readonly cancelToken: FieldRef<"Reservation", 'String'>
+    readonly transactionExpireAt: FieldRef<"Reservation", 'DateTime'>
+    readonly depositPaidCents: FieldRef<"Reservation", 'Int'>
   }
     
 
@@ -6738,10 +6756,11 @@ export namespace Prisma {
     status: 'status',
     stripeSessionId: 'stripeSessionId',
     expiresAt: 'expiresAt',
-    transactionExpireAt: 'transactionExpireAt',
     reminderEmailSent: 'reminderEmailSent',
     reminderSmsSent: 'reminderSmsSent',
-    cancelToken: 'cancelToken'
+    cancelToken: 'cancelToken',
+    transactionExpireAt: 'transactionExpireAt',
+    depositPaidCents: 'depositPaidCents'
   };
 
   export type ReservationScalarFieldEnum = (typeof ReservationScalarFieldEnum)[keyof typeof ReservationScalarFieldEnum]
@@ -6939,10 +6958,11 @@ export namespace Prisma {
     status?: EnumReservationStatusFilter<"Reservation"> | $Enums.ReservationStatus
     stripeSessionId?: StringNullableFilter<"Reservation"> | string | null
     expiresAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
-    transactionExpireAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
     reminderEmailSent?: BoolFilter<"Reservation"> | boolean
     reminderSmsSent?: BoolFilter<"Reservation"> | boolean
     cancelToken?: StringFilter<"Reservation"> | string
+    transactionExpireAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
+    depositPaidCents?: IntNullableFilter<"Reservation"> | number | null
   }
 
   export type ReservationOrderByWithRelationInput = {
@@ -6959,10 +6979,11 @@ export namespace Prisma {
     status?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
     expiresAt?: SortOrderInput | SortOrder
-    transactionExpireAt?: SortOrderInput | SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
+    transactionExpireAt?: SortOrderInput | SortOrder
+    depositPaidCents?: SortOrderInput | SortOrder
   }
 
   export type ReservationWhereUniqueInput = Prisma.AtLeast<{
@@ -6983,9 +7004,10 @@ export namespace Prisma {
     wantsSmsReminder?: BoolFilter<"Reservation"> | boolean
     status?: EnumReservationStatusFilter<"Reservation"> | $Enums.ReservationStatus
     expiresAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
-    transactionExpireAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
     reminderEmailSent?: BoolFilter<"Reservation"> | boolean
     reminderSmsSent?: BoolFilter<"Reservation"> | boolean
+    transactionExpireAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
+    depositPaidCents?: IntNullableFilter<"Reservation"> | number | null
   }, "id" | "stripeSessionId" | "cancelToken">
 
   export type ReservationOrderByWithAggregationInput = {
@@ -7002,10 +7024,11 @@ export namespace Prisma {
     status?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
     expiresAt?: SortOrderInput | SortOrder
-    transactionExpireAt?: SortOrderInput | SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
+    transactionExpireAt?: SortOrderInput | SortOrder
+    depositPaidCents?: SortOrderInput | SortOrder
     _count?: ReservationCountOrderByAggregateInput
     _avg?: ReservationAvgOrderByAggregateInput
     _max?: ReservationMaxOrderByAggregateInput
@@ -7030,10 +7053,11 @@ export namespace Prisma {
     status?: EnumReservationStatusWithAggregatesFilter<"Reservation"> | $Enums.ReservationStatus
     stripeSessionId?: StringNullableWithAggregatesFilter<"Reservation"> | string | null
     expiresAt?: DateTimeNullableWithAggregatesFilter<"Reservation"> | Date | string | null
-    transactionExpireAt?: DateTimeNullableWithAggregatesFilter<"Reservation"> | Date | string | null
     reminderEmailSent?: BoolWithAggregatesFilter<"Reservation"> | boolean
     reminderSmsSent?: BoolWithAggregatesFilter<"Reservation"> | boolean
     cancelToken?: StringWithAggregatesFilter<"Reservation"> | string
+    transactionExpireAt?: DateTimeNullableWithAggregatesFilter<"Reservation"> | Date | string | null
+    depositPaidCents?: IntNullableWithAggregatesFilter<"Reservation"> | number | null
   }
 
   export type AdminWhereInput = {
@@ -7306,10 +7330,11 @@ export namespace Prisma {
     status?: $Enums.ReservationStatus
     stripeSessionId?: string | null
     expiresAt?: Date | string | null
-    transactionExpireAt?: Date | string | null
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: string
+    transactionExpireAt?: Date | string | null
+    depositPaidCents?: number | null
   }
 
   export type ReservationUncheckedCreateInput = {
@@ -7326,10 +7351,11 @@ export namespace Prisma {
     status?: $Enums.ReservationStatus
     stripeSessionId?: string | null
     expiresAt?: Date | string | null
-    transactionExpireAt?: Date | string | null
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: string
+    transactionExpireAt?: Date | string | null
+    depositPaidCents?: number | null
   }
 
   export type ReservationUpdateInput = {
@@ -7346,10 +7372,11 @@ export namespace Prisma {
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    depositPaidCents?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ReservationUncheckedUpdateInput = {
@@ -7366,10 +7393,11 @@ export namespace Prisma {
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    depositPaidCents?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ReservationCreateManyInput = {
@@ -7386,10 +7414,11 @@ export namespace Prisma {
     status?: $Enums.ReservationStatus
     stripeSessionId?: string | null
     expiresAt?: Date | string | null
-    transactionExpireAt?: Date | string | null
     reminderEmailSent?: boolean
     reminderSmsSent?: boolean
     cancelToken?: string
+    transactionExpireAt?: Date | string | null
+    depositPaidCents?: number | null
   }
 
   export type ReservationUpdateManyMutationInput = {
@@ -7406,10 +7435,11 @@ export namespace Prisma {
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    depositPaidCents?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ReservationUncheckedUpdateManyInput = {
@@ -7426,10 +7456,11 @@ export namespace Prisma {
     status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
     reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
     cancelToken?: StringFieldUpdateOperationsInput | string
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    depositPaidCents?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type AdminCreateInput = {
@@ -7781,6 +7812,17 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -7800,14 +7842,16 @@ export namespace Prisma {
     status?: SortOrder
     stripeSessionId?: SortOrder
     expiresAt?: SortOrder
-    transactionExpireAt?: SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
+    transactionExpireAt?: SortOrder
+    depositPaidCents?: SortOrder
   }
 
   export type ReservationAvgOrderByAggregateInput = {
     guests?: SortOrder
+    depositPaidCents?: SortOrder
   }
 
   export type ReservationMaxOrderByAggregateInput = {
@@ -7824,10 +7868,11 @@ export namespace Prisma {
     status?: SortOrder
     stripeSessionId?: SortOrder
     expiresAt?: SortOrder
-    transactionExpireAt?: SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
+    transactionExpireAt?: SortOrder
+    depositPaidCents?: SortOrder
   }
 
   export type ReservationMinOrderByAggregateInput = {
@@ -7844,14 +7889,16 @@ export namespace Prisma {
     status?: SortOrder
     stripeSessionId?: SortOrder
     expiresAt?: SortOrder
-    transactionExpireAt?: SortOrder
     reminderEmailSent?: SortOrder
     reminderSmsSent?: SortOrder
     cancelToken?: SortOrder
+    transactionExpireAt?: SortOrder
+    depositPaidCents?: SortOrder
   }
 
   export type ReservationSumOrderByAggregateInput = {
     guests?: SortOrder
+    depositPaidCents?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -7952,6 +7999,22 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
   export type AdminCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
@@ -8022,17 +8085,6 @@ export namespace Prisma {
     depositPerGuestCents?: SortOrder
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type DayOverrideCountOrderByAggregateInput = {
     id?: SortOrder
     date?: SortOrder
@@ -8065,22 +8117,6 @@ export namespace Prisma {
   export type DayOverrideSumOrderByAggregateInput = {
     id?: SortOrder
     maxCovers?: SortOrder
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type FloatFilter<$PrismaModel = never> = {
@@ -8308,6 +8344,17 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -8354,17 +8401,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {

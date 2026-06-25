@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAdminFromCookies } from '@/lib/auth';
+import { sendCancellationEmail } from '@/lib/email';
 
 export async function GET(req: NextRequest) {
   const admin = await getAdminFromCookies();
@@ -108,6 +109,28 @@ export async function PATCH(req: NextRequest) {
   const updated = await prisma.reservation.update({
     where: { id },
     data: { status },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      date: true,
+      status: true,
+    },
   });
+
+  // Envoyer un email si la réservation est annulée
+  if (status === 'CANCELLED' && updated.email) {
+    const d = new Date(updated.date);
+    const dateFr = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+    const time = `${d.getUTCHours().toString().padStart(2, '0')}:${d.getUTCMinutes().toString().padStart(2, '0')}`;
+
+    await sendCancellationEmail({
+      to: updated.email,
+      name: updated.name,
+      date: dateFr,
+      time: time,
+    });
+  }
+
   return NextResponse.json(updated);
 }

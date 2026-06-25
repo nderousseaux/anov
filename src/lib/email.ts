@@ -66,7 +66,8 @@ function getTransporter() {
 const RESTAURANT_ADDRESS = process.env.RESTAURANT_ADDRESS || '12 Rue de la République, 25000 Besançon';
 
 const FROM = process.env.SMTP_FROM || "l'Anøv <noreply@anov.fr>";
-const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'contact@anov.fr';
+const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'contact@anovrestaurant.fr';
+const RESTAURANT_PHONE = process.env.RESTAURANT_PHONE || '+33 1 45 67 89 00';
 
 export async function sendConfirmationEmail({
   to,
@@ -117,6 +118,9 @@ export async function sendConfirmationEmail({
           <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Heure</td><td style="padding:8px;border-bottom:1px solid #eee;">${time}</td></tr>
           <tr><td style="padding:8px;font-weight:bold;">Couverts</td><td style="padding:8px;">${guests} personne${guests > 1 ? 's' : ''}</td></tr>
         </table>
+        <p style="margin-top:16px;">Besoin d'annuler ?<br/>
+          Appeler nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>
+        </p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
         <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
       </div>
@@ -177,8 +181,8 @@ export async function sendReminderEmail({
           <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Heure</td><td style="padding:8px;border-bottom:1px solid #eee;">${time}</td></tr>
           <tr><td style="padding:8px;font-weight:bold;">Couverts</td><td style="padding:8px;">${guests} personne${guests > 1 ? 's' : ''}</td></tr>
         </table>
-        <p>Besoin d'annuler ?<br/>
-          <a href="${cancelUrl}" style="color:#e3cb6b;">Annuler ma réservation</a>
+        <p style="margin-top:16px;">Besoin d'annuler ?<br/>
+          Appeler nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>
         </p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
         <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
@@ -221,7 +225,7 @@ export async function sendCancellationEmail({
         <h2 style="font-size:20px;font-weight:normal;">Réservation annulée</h2>
         <p>Bonjour ${name},</p>
         <p>Votre réservation du <strong>${date} à ${time}</strong> a bien été annulée.</p>
-        <p>Nous espérons vous accueillir prochainement.</p>
+        <p>Pour toute modification future, appelez-nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>.</p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
         <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
       </div>

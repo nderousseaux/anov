@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import {
   Loader2, RefreshCw, ChevronLeft, ChevronRight,
   Settings, Save, X, CheckSquare, CalendarDays,
-  RotateCw, AlertTriangle, House,
+  RotateCw, RotateCcw, AlertTriangle, House,
 } from 'lucide-react';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -90,6 +90,13 @@ function formatFullDate(dateStr: string): string {
 
 function isToday(dateStr: string): boolean {
   return dateStr === new Date().toISOString().split('T')[0];
+}
+
+function isPast(dateStr: string): boolean {
+  const d = new Date(dateStr + 'T00:00:00.000Z');
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return d < today;
 }
 
 function formatTime(iso: string) {
@@ -187,6 +194,7 @@ export default function AdminReservationsPage() {
     if (!selectedDate) return;
     const day = calendarDays.find((d) => d.date === selectedDate);
     if (!day) return;
+    // For past days, show current override in read-only mode
     if (!day.hasOverride) {
       setOverrideMode('global');
     } else if (day.override?.closed) {
@@ -223,6 +231,12 @@ export default function AdminReservationsPage() {
 
   const saveOverride = async () => {
     if (!selectedDate) return;
+
+    // Prevent modification of past days
+    if (isPast(selectedDate)) {
+      alert('Impossible de modifier le calendrier d\'un jour déjà passé.');
+      return;
+    }
 
     // Compter les réservations ACTIVE (CONFIRMED + PENDING_PAYMENT non expirés)
     // Les PENDING_PAYMENT expirés (transactionExpireAt dépassé) sont exclus
@@ -515,14 +529,17 @@ export default function AdminReservationsPage() {
                     const almostFull = fillPct >= 75;
                     const full = fillPct >= 100;
 
+                    const past = isPast(day.date);
                     return (
                       <button key={day.date} type="button"
                         onClick={() => setSelectedDate(selected ? null : day.date)}
                         className={`relative p-2 rounded-lg border text-left transition-all min-h-[96px] flex flex-col ${selected
                           ? 'border-primary bg-primary/10 ring-1 ring-primary/30'
-                          : today
-                            ? 'border-primary/40 bg-primary/5'
-                            : 'border-primary/10 bg-card hover:border-primary/30 hover:bg-card/80'
+                          : past
+                            ? 'border-primary/10 bg-muted/30 opacity-60'
+                            : today
+                              ? 'border-primary/40 bg-primary/5'
+                              : 'border-primary/10 bg-card hover:border-primary/30 hover:bg-card/80'
                           }`}>
 
                         {/* Date */}
@@ -574,11 +591,13 @@ export default function AdminReservationsPage() {
           )}
 
           {/* ── Day detail panel ── */}
-          {selectedDate && selectedDayInfo && (
-            <div className="bg-card border border-primary/20 rounded-xl overflow-hidden mt-4">
+          {selectedDate && selectedDayInfo && (() => {
+            const past = isPast(selectedDate);
+            return (
+              <div className="bg-card border border-primary/20 rounded-xl overflow-hidden mt-4">
 
-              {/* Header */}
-              <div className="px-5 py-4 border-b border-primary/10 flex items-center justify-between bg-card/50">
+                {/* Header */}
+                <div className="px-5 py-4 border-b border-primary/10 flex items-center justify-between bg-card/50">
                 <div className="flex items-center gap-2.5 flex-wrap">
                   <h2 className="text-lg font-semibold capitalize" style={{ fontFamily: 'var(--font-display)' }}>
                     {formatFullDate(selectedDate)}
@@ -617,6 +636,7 @@ export default function AdminReservationsPage() {
                       { mode: 'custom' as const, label: 'Horaires personnalisés', emoji: '✏️' },
                     ]).map(({ mode, label, emoji }) => (
                       <button key={mode} type="button"
+                        disabled={past}
                         onClick={() => {
                           if (mode === 'custom' && overrideMode !== 'custom') {
                             setOverrideMaxCovers(selectedDayInfo.effectiveMaxCovers);
@@ -624,9 +644,11 @@ export default function AdminReservationsPage() {
                           }
                           setOverrideMode(mode);
                         }}
-                        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm transition-colors text-left ${overrideMode === mode
-                          ? 'bg-primary/15 border-primary/40 text-primary'
-                          : 'border-primary/10 text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm transition-colors text-left ${past
+                          ? 'opacity-50 cursor-not-allowed'
+                          : overrideMode === mode
+                            ? 'bg-primary/15 border-primary/40 text-primary'
+                            : 'border-primary/10 text-muted-foreground hover:border-primary/30 hover:text-foreground'
                           }`}>
                         <span className="w-5 text-center text-base">{emoji}</span>{label}
                         {overrideMode === mode && <span className="ml-auto text-primary text-xs">✓</span>}
@@ -634,13 +656,14 @@ export default function AdminReservationsPage() {
                     ))}
                   </div>
 
-                  {overrideMode === 'custom' && (
+                  {(overrideMode === 'custom' || overrideMode === 'closed') && (
                     <div className="space-y-4 pt-1">
                       <div className="space-y-1.5">
                         <label className="text-xs font-medium">Couverts max par créneau</label>
                         <Input type="number" min={1} max={500} value={overrideMaxCovers}
                           onChange={(e) => setOverrideMaxCovers(Math.max(1, parseInt(e.target.value) || 1))}
-                          className="w-28 bg-background/30 border-primary/30 text-foreground h-8 text-sm" />
+                          disabled={past}
+                          className={`w-28 bg-background/30 border-primary/30 text-foreground h-8 text-sm ${past ? 'opacity-50 cursor-not-allowed' : ''}`} />
                       </div>
                       <div className="space-y-2">
                         <label className="text-xs font-medium">Créneaux</label>
@@ -651,7 +674,8 @@ export default function AdminReservationsPage() {
                             return (
                               <div key={service} className="space-y-1.5">
                                 <button type="button" onClick={() => toggleOverrideService(slots)}
-                                  className="flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wide hover:opacity-80">
+                                  disabled={past}
+                                  className={`flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wide ${past ? 'opacity-50' : 'hover:opacity-80'}`}>
                                   <span className={`w-3 h-3 rounded border flex items-center justify-center ${allSel ? 'bg-primary border-primary' : someSel ? 'bg-primary/40 border-primary/40' : 'border-primary/40'
                                     }`}>
                                     {(allSel || someSel) && <CheckSquare size={8} className="text-background" />}
@@ -662,7 +686,10 @@ export default function AdminReservationsPage() {
                                     const active = overrideSlots.includes(slot);
                                     return (
                                       <button key={slot} type="button" onClick={() => toggleOverrideSlot(slot)}
-                                        className={`text-xs px-1.5 py-1 rounded border transition-colors ${active ? 'bg-primary/20 border-primary/50 text-primary font-medium' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40'
+                                        disabled={past}
+                                        className={`text-xs px-1.5 py-1 rounded border transition-colors ${past
+                                          ? 'opacity-50 cursor-not-allowed'
+                                          : active ? 'bg-primary/20 border-primary/50 text-primary font-medium' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40'
                                           }`}>{slot}</button>
                                     );
                                   })}
@@ -690,8 +717,15 @@ export default function AdminReservationsPage() {
                     </div>
                   )}
 
-                  <Button onClick={saveOverride} disabled={savingOverride}
-                    className="w-full bg-primary/20 text-primary border border-primary/40 hover:bg-primary/30" size="sm">
+                  {past && (
+                    <div className="flex items-start gap-2 text-xs text-muted-foreground/80 bg-muted/30 border border-primary/10 rounded-lg px-3 py-2.5">
+                      <AlertTriangle size={13} className="mt-0.5 flex-shrink-0" />
+                      Ce jour est déjà passé. L'override ne peut plus être modifié, mais vous pouvez annuler les réservations.
+                    </div>
+                  )}
+
+                  <Button onClick={saveOverride} disabled={savingOverride || past}
+                    className={`w-full bg-primary/20 text-primary border border-primary/40 hover:bg-primary/30 ${past ? 'opacity-50 cursor-not-allowed' : ''}`} size="sm">
                     {savingOverride ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Save size={14} className="mr-1.5" />}
                     {overrideSaved ? 'Enregistré ✓' : 'Enregistrer'}
                   </Button>
@@ -872,8 +906,9 @@ export default function AdminReservationsPage() {
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+              </div>
+            );
+          })()}
         </div>
 
       </main>

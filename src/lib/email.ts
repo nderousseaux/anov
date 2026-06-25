@@ -3,16 +3,67 @@ import nodemailer from 'nodemailer';
 // Configuration du serveur SMTP
 // SMTP is configured via environment variables - logs handled externally if needed
 
-// Créer le transporteur nodemailer avec les paramètres SMTP personnalisés
-const transporter = process.env.SMTP_HOST ? nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: process.env.SMTP_SECURE === 'true', // true pour port 465, false pour autres ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD,
-  },
-}) : null;
+function createTransporter() {
+  if (!process.env.SMTP_HOST) {
+    return null;
+  }
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: process.env.SMTP_USER && process.env.SMTP_PASSWORD ? {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASSWORD,
+    } : undefined,
+  });
+}
+
+// Générer un fichier .ics pour le calendrier
+function generateICS({
+  date,
+  time,
+  name,
+  guests,
+}: {
+  date: string;
+  time: string;
+  name: string;
+  guests: number;
+}): string {
+  // Parse la date pour créer l'ID unique ICS
+  const dateObj = new Date(date);
+  const uid = `${dateObj.getTime()}@anov.fr`;
+  const dtstamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  const dtstart = dateObj.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  const dtend = new Date(dateObj.getTime() + 3 * 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'; // 3 heures
+
+  return `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//l'Anøv//Reservation//FR
+BEGIN:VEVENT
+UID:${uid}
+DTSTAMP:${dtstamp}
+DTSTART:${dtstart}
+DTEND:${dtend}
+SUMMARY:Réservation chez l'Anøv
+DESCRIPTION:Réservation de ${name} pour ${guests} personne${guests > 1 ? 's' : ''}.
+LOCATION:${RESTAURANT_ADDRESS}
+END:VEVENT
+END:VCALENDAR`;
+}
+
+// Transporteur nodemailer (crée dynamiquement pour charger les variables d'environnement)
+let transporter: any = null;
+
+function getTransporter() {
+  if (!transporter) {
+    transporter = createTransporter();
+  }
+  return transporter;
+}
+
+// Adresse du restaurant (variable d'environnement)
+const RESTAURANT_ADDRESS = process.env.RESTAURANT_ADDRESS || '12 Rue de la République, 25000 Besançon';
 
 const FROM = process.env.SMTP_FROM || "l'Anøv <noreply@anov.fr>";
 const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'contact@anov.fr';
@@ -30,14 +81,21 @@ export async function sendConfirmationEmail({
   date: string;
   time: string;
   guests: number;
-  cancelUrl: string;
+  cancelUrl?: string;
 }) {
-  if (!transporter) {
-    // Email service disabled - SMTP not configured
+  const t = getTransporter();
+  if (!t) {
+    console.log('[EMAIL] Transporteur SMTP non configuré, email non envoyé à', to);
     return null;
   }
 
-  return transporter.sendMail({
+  // Générer le fichier .ics
+  const icsContent = generateICS({ date, time, name, guests });
+
+  console.log(`[EMAIL] Envoi de l'email de confirmation à ${to}`);
+  console.log(`[EMAIL] Contenu ICS:\n${icsContent}`);
+
+  return t.sendMail({
     from: FROM,
     to,
     subject: `Confirmation de votre réservation — l'Anøv`,
@@ -52,10 +110,20 @@ export async function sendConfirmationEmail({
           <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Heure</td><td style="padding:8px;border-bottom:1px solid #eee;">${time}</td></tr>
           <tr><td style="padding:8px;font-weight:bold;">Couverts</td><td style="padding:8px;">${guests} personne${guests > 1 ? 's' : ''}</td></tr>
         </table>
+        ${cancelUrl ? `<p>Pour vous faire rembourser :<br/>
+          <a href="${cancelUrl}" style="color:#e3cb6b;">Annuler ma réservation</a>
+        </p>` : ''}
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
         <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
       </div>
     `,
+    attachments: [
+      {
+        filename: 'reservation.ics',
+        content: icsContent,
+        contentType: 'text/calendar; charset=utf-8',
+      },
+    ],
   });
 }
 
@@ -74,12 +142,16 @@ export async function sendReminderEmail({
   guests: number;
   cancelUrl: string;
 }) {
-  if (!transporter) {
+  const t = getTransporter();
+  if (!t) {
     // Email service disabled - SMTP not configured
     return null;
   }
 
-  return transporter.sendMail({
+  // Générer le fichier .ics
+  const icsContent = generateICS({ date, time, name, guests });
+
+  return t.sendMail({
     from: FROM,
     to,
     subject: `Rappel — Votre réservation demain chez l'Anøv`,
@@ -101,6 +173,13 @@ export async function sendReminderEmail({
         <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
       </div>
     `,
+    attachments: [
+      {
+        filename: 'reservation.ics',
+        content: icsContent,
+        contentType: 'text/calendar; charset=utf-8',
+      },
+    ],
   });
 }
 
@@ -115,12 +194,13 @@ export async function sendCancellationEmail({
   date: string;
   time: string;
 }) {
-  if (!transporter) {
+  const t = getTransporter();
+  if (!t) {
     // Email service disabled - SMTP not configured
     return null;
   }
 
-  return transporter.sendMail({
+  return t.sendMail({
     from: FROM,
     to,
     subject: `Annulation de votre réservation — l'Anøv`,
@@ -151,12 +231,13 @@ export async function sendContactNotification({
   subject: string;
   message: string;
 }) {
-  if (!transporter) {
+  const t = getTransporter();
+  if (!t) {
     // Email service disabled - SMTP not configured
     return null;
   }
 
-  return transporter.sendMail({
+  return t.sendMail({
     from: FROM,
     to: CONTACT_EMAIL,
     replyTo: email,
@@ -187,12 +268,13 @@ export async function sendContactConfirmation({
   to: string;
   name: string;
 }) {
-  if (!transporter) {
+  const t = getTransporter();
+  if (!t) {
     // Email service disabled - SMTP not configured
     return null;
   }
 
-  return transporter.sendMail({
+  return t.sendMail({
     from: FROM,
     to,
     subject: `Message reçu — l'Anøv`,
@@ -225,12 +307,13 @@ export async function sendGiftCardEmail({
   personalMessage?: string;
   expiresAt: string;
 }) {
-  if (!transporter) {
+  const t = getTransporter();
+  if (!t) {
     // Email service disabled - SMTP not configured
     return null;
   }
 
-  return transporter.sendMail({
+  return t.sendMail({
     from: FROM,
     to,
     subject: `Vous avez reçu un chèque cadeau l'Anøv`,

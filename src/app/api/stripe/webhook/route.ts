@@ -149,23 +149,28 @@ async function handleReservationPayment(session: any, meta: any) {
     // Envoyer l'email de confirmation
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
     const resDate = new Date(reservation.date);
-    await sendConfirmationEmail({
-      to: reservation.email,
-      name: reservation.name,
-      date: resDate.toLocaleDateString('fr-FR', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        timeZone: 'UTC',
-      }),
-      time: `${String(resDate.getUTCHours()).padStart(2, '0')}:${String(resDate.getUTCMinutes()).padStart(2, '0')}`,
-      guests: reservation.guests,
-      cancelUrl: `${baseUrl}/reservation/cancel?token=${reservation.cancelToken}`,
-    });
+    try {
+      await sendConfirmationEmail({
+        to: reservation.email,
+        name: reservation.name,
+        date: resDate.toLocaleDateString('fr-FR', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          timeZone: 'UTC',
+        }),
+        time: `${String(resDate.getUTCHours()).padStart(2, '0')}:${String(resDate.getUTCMinutes()).padStart(2, '0')}`,
+        guests: reservation.guests,
+        cancelUrl: `${baseUrl}/reservation/cancel?token=${reservation.cancelToken}`,
+      });
+      console.log(`[WEBHOOK] Email de confirmation envoyé à ${reservation.email}`);
+    } catch (emailError) {
+      console.error(`[WEBHOOK] Erreur lors de l'envoi de l'email à ${reservation.email}:`, emailError);
+    }
 
     // Reservation confirmed (for monitoring)
   } catch (error) {
-    // Log error (for monitoring)
+    console.error('[WEBHOOK] Erreur dans handleReservationPayment:', error);
   }
 }

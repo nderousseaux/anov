@@ -52,9 +52,6 @@ export async function sendConfirmationEmail({
           <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Heure</td><td style="padding:8px;border-bottom:1px solid #eee;">${time}</td></tr>
           <tr><td style="padding:8px;font-weight:bold;">Couverts</td><td style="padding:8px;">${guests} personne${guests > 1 ? 's' : ''}</td></tr>
         </table>
-        <p>Pour annuler votre réservation :<br/>
-          <a href="${cancelUrl}" style="color:#e3cb6b;">Annuler ma réservation</a>
-        </p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
         <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
       </div>

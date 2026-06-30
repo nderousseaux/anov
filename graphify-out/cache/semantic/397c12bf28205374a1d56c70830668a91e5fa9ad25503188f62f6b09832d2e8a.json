@@ -1,0 +1,1 @@
+{"nodes": [{"id": "content:origines.yaml", "label": "origines.yaml", "type": "file", "source_file": "content/origines.yaml", "confidence": "EXTRACTED", "description": "Origins map YAML content file", "metadata": {"line_start": 1, "line_end": 1}}], "edges": [], "hyperedges": []}

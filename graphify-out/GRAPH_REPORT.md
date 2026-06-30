@@ -1,377 +1,151 @@
-# Graph Report - .  (2026-06-24)
+# Graph Report - .  (2026-06-25)
 
 ## Corpus Check
-- 196 files · ~255,054 words
+- 35 files · ~272,804 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2787 nodes · 4774 edges · 236 communities (118 shown, 118 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 94 edges (avg confidence: 0.8)
-- Token cost: 0 input · 0 output
+- 832 nodes · 875 edges · 43 communities (31 shown, 12 thin omitted)
+- Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.8)
+- Token cost: 0 input · 70,678 output
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Package Config|Package Config]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Package Config|Package Config]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Features|Features]]
-- [[_COMMUNITY_Features|Features]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Params|Params]]
-- [[_COMMUNITY_Reservation|Reservation]]
-- [[_COMMUNITY_Tsconfig|Tsconfig]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Admin Dashboard|Admin Dashboard]]
-- [[_COMMUNITY_Library|Library]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_App Router|App Router]]
-- [[_COMMUNITY_Shared|Shared]]
-- [[_COMMUNITY_Utilities|Utilities]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Succes|Succes]]
-- [[_COMMUNITY_Date|Date]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Library|Library]]
-- [[_COMMUNITY_Webhook|Webhook]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Library|Library]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Admin Dashboard|Admin Dashboard]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Ui|Ui]]
+- [[_COMMUNITY_Frontend Layout Components|Frontend Layout Components]]
+- [[_COMMUNITY_Reservation System|Reservation System]]
+- [[_COMMUNITY_Gift Card Payment|Gift Card Payment]]
+- [[_COMMUNITY_Contact Form|Contact Form]]
+- [[_COMMUNITY_CMS Configuration|CMS Configuration]]
+- [[_COMMUNITY_Test Infrastructure|Test Infrastructure]]
+- [[_COMMUNITY_API Endpoints|API Endpoints]]
 - [[_COMMUNITY_Authentication|Authentication]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Types|Types]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Scripts|Scripts]]
-- [[_COMMUNITY_Types|Types]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Admin Dashboard|Admin Dashboard]]
-- [[_COMMUNITY_Gift Cards|Gift Cards]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Prisma Schema|Prisma Schema]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Scripts|Scripts]]
-- [[_COMMUNITY_Succes|Succes]]
-- [[_COMMUNITY_Src|Src]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Scripts|Scripts]]
-- [[_COMMUNITY_Ui|Ui]]
-- [[_COMMUNITY_Next.js|Next.js]]
-- [[_COMMUNITY_Package Config|Package Config]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Runtime Types|Runtime Types]]
-- [[_COMMUNITY_Claude|Claude]]
-- [[_COMMUNITY_Claude|Claude]]
-- [[_COMMUNITY_Claude|Claude]]
-- [[_COMMUNITY_Claude|Claude]]
-- [[_COMMUNITY_Claude|Claude]]
-- [[_COMMUNITY_Claude|Claude]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Docs|Docs]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Draft|Draft]]
-- [[_COMMUNITY_Readme|Readme]]
-- [[_COMMUNITY_Readme|Readme]]
-- [[_COMMUNITY_Readme|Readme]]
-- [[_COMMUNITY_Readme|Readme]]
-- [[_COMMUNITY_Readme|Readme]]
+- [[_COMMUNITY_Email Integration|Email Integration]]
+- [[_COMMUNITY_Menu Content|Menu Content]]
+- [[_COMMUNITY_Page Navigation|Page Navigation]]
+- [[_COMMUNITY_Database Schema|Database Schema]]
+- [[_COMMUNITY_Localization|Localization]]
+- [[_COMMUNITY_Footer Content|Footer Content]]
+- [[_COMMUNITY_Hero Content|Hero Content]]
+- [[_COMMUNITY_Gallery|Gallery]]
+- [[_COMMUNITY_History Section|History Section]]
+- [[_COMMUNITY_Origins Map|Origins Map]]
+- [[_COMMUNITY_Navigation Menu|Navigation Menu]]
+- [[_COMMUNITY_Language Selector|Language Selector]]
+- [[_COMMUNITY_Admin Interface|Admin Interface]]
+- [[_COMMUNITY_Gift Card Admin|Gift Card Admin]]
+- [[_COMMUNITY_Webhook Processing|Webhook Processing]]
+- [[_COMMUNITY_Reservation Actions|Reservation Actions]]
+- [[_COMMUNITY_Content Management|Content Management]]
+- [[_COMMUNITY_UI Components|UI Components]]
+- [[_COMMUNITY_Utils|Utils]]
+- [[_COMMUNITY_Middleware|Middleware]]
+- [[_COMMUNITY_Error Handling|Error Handling]]
+- [[_COMMUNITY_Cache|Cache]]
+- [[_COMMUNITY_Constants|Constants]]
+- [[_COMMUNITY_Migration|Migration]]
+- [[_COMMUNITY_Documentation|Documentation]]
+- [[_COMMUNITY_Playwright Test|Playwright Test]]
+- [[_COMMUNITY_API Routes|API Routes]]
+- [[_COMMUNITY_Payment|Payment]]
+- [[_COMMUNITY_Security|Security]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `_()` - 487 edges
-2. `$()` - 455 edges
-3. `cn()` - 223 edges
-4. `$()` - 42 edges
-5. `L()` - 36 edges
-6. `useLanguage()` - 30 edges
-7. `slice()` - 23 edges
-8. `interpretNode()` - 23 edges
-9. `interpretNode()` - 22 edges
-10. `from()` - 20 edges
+1. `exports` - 15 edges
+2. `scripts` - 11 edges
+3. `Keystatic Configuration` - 11 edges
+4. `getTransporter()` - 8 edges
+5. `require` - 7 edges
+6. `import` - 7 edges
+7. `require` - 7 edges
+8. `import` - 7 edges
+9. `require` - 7 edges
+10. `import` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `main()` --calls--> `hashPassword()`  [INFERRED]
-  prisma/seed.ts → src/app/api/admin/auth/route.ts
-- `GET()` --calls--> `getAdminFromCookies()`  [EXTRACTED]
-  src/app/api/admin/gift-cards/route.ts → src/lib/auth.ts
-- `PATCH()` --calls--> `getAdminFromCookies()`  [EXTRACTED]
-  src/app/api/admin/gift-cards/route.ts → src/lib/auth.ts
-- `GET()` --calls--> `getAdminFromCookies()`  [EXTRACTED]
-  src/app/api/admin/gift-cards/stats/route.ts → src/lib/auth.ts
-- `GET()` --calls--> `getAdminFromCookies()`  [INFERRED]
-  src/app/api/admin/reservations/route.ts → src/lib/auth.ts
+- `Language Selector` ----> `Multilingual Support`  [EXTRACTED]
+  tests/homepage.spec.ts → docs/draft.md
+- `PATCH()` --calls--> `sendCancellationEmail()`  [INFERRED]
+  src/app/api/admin/reservations/route.ts → src/lib/email.ts
+- `GET()` --calls--> `sendReminderEmail()`  [EXTRACTED]
+  src/app/api/cron/reminders/route.ts → src/lib/email.ts
+- `POST()` --calls--> `sendConfirmationEmail()`  [EXTRACTED]
+  src/app/api/test-email/route.ts → src/lib/email.ts
+- `handleGiftCardPayment()` --calls--> `sendGiftCardEmail()`  [EXTRACTED]
+  src/app/api/stripe/webhook/route.ts → src/lib/email.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (236 total, 118 thin omitted)
+## Hyperedges (group relationships)
+- **** — function:getMailcatcherEmails, function:clearMailcatcherEmails, function:waitForEmailWithSubject [INFERRED]
+- **** — page:home, component:hero-section, component:history-section, component:origins-map, component:contact-section [INFERRED]
+- **** — config:keystatic-config, singleton:hero, singleton:histoire, singleton:origines, singleton:galerie, singleton:contact, singleton:menu, singleton:footer [INFERRED]
+- **** — concept:anov-restaurant, concept:single-page-site, concept:contact-form, concept:keystatic-cms, concept:admin-interface, concept:gift-card-system, concept:reservation-system [INFERRED]
+- **** — concept:multilingual, concept:multilingual-content, component:language-selector [INFERRED]
+- **** — config:playwright-baseurl, page:home, page:menu, page:contact [INFERRED]
+- **** — component:contact-form, component:email-validator, api:mailcatcher-messages, api:mailcatcher-delete, api:mailcatcher-messages-id [INFERRED]
+- **** — singleton:menu, content:menu.yaml, component:menu-tabs, component:dish-card [INFERRED]
 
-### Community 0 - "Prisma Schema"
+## Communities (43 total, 12 thin omitted)
+
+### Community 0 - "Frontend Layout Components"
 Cohesion: 0.00
 Nodes (448): Admin, AdminAggregateArgs, AdminAvgAggregateInputType, AdminAvgAggregateOutputType, AdminAvgOrderByAggregateInput, AdminCountAggregateInputType, AdminCountAggregateOutputType, AdminCountArgs (+440 more)
 
-### Community 1 - "Runtime Types"
-Cohesion: 0.01
-Nodes (313): AccelerateExtensionFetch, AccelerateExtensionFetchDecorator, Action, ActiveConnectorType, Aggregate, AllModelsToStringIndex, ApplyOmit, Args (+305 more)
-
-### Community 2 - "Runtime Types"
-Cohesion: 0.02
-Nodes (50): $(), Ad(), ai(), Bp(), Cd(), clone(), _cloneInto(), dm() (+42 more)
-
-### Community 3 - "Runtime Types"
-Cohesion: 0.02
-Nodes (38): _(), Bm(), bu(), clone(), _cloneInto(), constructor(), dd(), deserialize() (+30 more)
-
-### Community 4 - "Runtime Types"
-Cohesion: 0.09
-Nodes (66): ac(), addErrorMessage(), addField(), addSuggestion(), asObject(), Be(), cc(), co() (+58 more)
-
-### Community 5 - "Ui"
-Cohesion: 0.05
-Nodes (47): AccordionContent(), AccordionItem(), AccordionTrigger(), Avatar(), AvatarFallback(), AvatarImage(), Card(), CardAction() (+39 more)
-
-### Community 6 - "Package Config"
+### Community 1 - "Reservation System"
 Cohesion: 0.03
-Nodes (59): dependencies, class-variance-authority, clsx, cmdk, d3, date-fns, dotenv, embla-carousel-react (+51 more)
+Nodes (60): dependencies, class-variance-authority, clsx, cmdk, d3, date-fns, dotenv, embla-carousel-react (+52 more)
 
-### Community 7 - "Runtime Types"
-Cohesion: 0.07
-Nodes (51): _a(), cm(), connect(), dm(), Dp(), emit(), enumValues(), equals() (+43 more)
-
-### Community 8 - "Ui"
-Cohesion: 0.05
-Nodes (41): Separator(), Sheet(), SheetContent(), SheetDescription(), SheetFooter(), SheetHeader(), SheetOverlay(), SheetTitle() (+33 more)
-
-### Community 9 - "Package Config"
+### Community 2 - "Gift Card Payment"
 Cohesion: 0.04
-Nodes (45): devDependencies, eslint, eslint-config-next, jsdom, pg, prisma, @prisma/adapter-pg, tailwindcss (+37 more)
+Nodes (48): devDependencies, eslint, eslint-config-next, jsdom, pg, @playwright/test, prisma, @prisma/adapter-pg (+40 more)
 
-### Community 10 - "Runtime Types"
-Cohesion: 0.13
-Nodes (45): ac(), addErrorMessage(), addField(), addSuggestion(), asObject(), _c(), cc(), dc() (+37 more)
-
-### Community 11 - "Runtime Types"
+### Community 3 - "Contact Form"
 Cohesion: 0.07
-Nodes (44): oe(), addItem(), allocUnsafeSlow(), am(), ao(), Bt(), byteLength(), construct() (+36 more)
+Nodes (29): Mailcatcher DELETE /messages API, Mailcatcher /messages API, Mailcatcher /messages/{id}.html API, Contact Form, Contact Section, Dish Card, Email Validator, Footer (+21 more)
 
-### Community 12 - "Prisma Schema"
-Cohesion: 0.08
-Nodes (18): $(), a(), F, g, ge(), I(), J(), k() (+10 more)
-
-### Community 13 - "Features"
-Cohesion: 0.16
-Nodes (17): ContactContent, ReservationFormProps, SlotInfo, BoutiqueContent, Button(), buttonVariants, Calendar(), Input() (+9 more)
-
-### Community 14 - "Features"
-Cohesion: 0.11
-Nodes (22): Hero(), HeroProps, useLanguage(), Contact(), Gallery(), History(), MobileCarousel(), PropType (+14 more)
-
-### Community 15 - "Runtime Types"
-Cohesion: 0.08
-Nodes (32): bl(), br(), Bu(), en(), fm(), fromContent(), Gd(), highlight() (+24 more)
-
-### Community 16 - "Runtime Types"
-Cohesion: 0.11
-Nodes (31): #a(), apiKey(), Ba(), cm(), connect(), Da(), deserialize(), em() (+23 more)
-
-### Community 17 - "Runtime Types"
-Cohesion: 0.07
-Nodes (31): aa(), Ae(), ap(), cr(), em(), execute(), fu(), getBatch() (+23 more)
-
-### Community 18 - "Runtime Types"
-Cohesion: 0.08
-Nodes (29): ce(), N(), aa(), cancelAllTransactions(), cl(), disconnect(), eo(), execute() (+21 more)
-
-### Community 19 - "Runtime Types"
-Cohesion: 0.11
-Nodes (28): an(), Bd(), bs(), Dd(), Ei(), Ep(), Gs(), H() (+20 more)
-
-### Community 20 - "Runtime Types"
-Cohesion: 0.13
-Nodes (28): bp(), concat(), de(), El(), ep(), findField(), Gc(), getAllComputedFields() (+20 more)
-
-### Community 21 - "Runtime Types"
-Cohesion: 0.14
-Nodes (26): addMarginSymbol(), afterNextNewline(), compare(), copy(), G(), getCurrentLineLength(), indent(), readIntBE() (+18 more)
-
-### Community 22 - "Runtime Types"
+### Community 4 - "CMS Configuration"
 Cohesion: 0.10
-Nodes (24): alloc(), allocUnsafe(), au(), _d(), destroy(), digest(), digestInto(), eo() (+16 more)
+Nodes (27): browser, import, dependencies, @prisma/client-runtime-utils, import, browser, default, edge-light (+19 more)
 
-### Community 23 - "Runtime Types"
+### Community 5 - "Test Infrastructure"
 Cohesion: 0.09
-Nodes (24): as(), bc(), Bn(), cancelAllTransactions(), cp(), cs(), disconnect(), ec() (+16 more)
+Nodes (12): Multilingual Content Fields, Keystatic Configuration, Boutique Singleton, Contact Singleton, Footer Singleton, Galerie Singleton, Gift Card Success Singleton, Hero Singleton (+4 more)
 
-### Community 24 - "Runtime Types"
-Cohesion: 0.13
-Nodes (23): build(), commitTransaction(), dispatchEngineSpans(), #f(), G(), getActiveContext(), getConnectionInfo(), getTraceParent() (+15 more)
+### Community 6 - "API Endpoints"
+Cohesion: 0.18
+Nodes (16): createTransporter(), generateICS(), getTransporter(), sendCancellationEmail(), sendConfirmationEmail(), sendContactConfirmation(), sendContactNotification(), sendGiftCardEmail() (+8 more)
 
-### Community 25 - "Runtime Types"
-Cohesion: 0.12
-Nodes (23): build(), commitTransaction(), dispatchEngineSpans(), #f(), fl(), getActiveContext(), getGlobalOmit(), getTraceParent() (+15 more)
-
-### Community 26 - "Runtime Types"
+### Community 7 - "Authentication"
 Cohesion: 0.10
-Nodes (22): ap(), cp(), es(), Fd(), getAllClientExtensions(), getAllComputedFields(), getAllModelExtensions(), getAllQueryCallbacks() (+14 more)
+Nodes (13): ALL_SLOTS, ApiResponse, DayInfo, DAYS_FULL, DAYS_SHORT, MONTHS_ABBR, MONTHS_FULL, ReservationRow (+5 more)
 
-### Community 27 - "Runtime Types"
-Cohesion: 0.10
-Nodes (21): bo(), e(), ee(), Go(), hr(), Ie(), rp(), Sd() (+13 more)
+### Community 8 - "Email Integration"
+Cohesion: 0.14
+Nodes (8): ReservationFormProps, SlotInfo, TranslationData, de, en, fr, Calendar(), getLocale()
 
-### Community 28 - "Runtime Types"
-Cohesion: 0.10
-Nodes (21): generate(), Bd(), cu(), ea(), Eu(), Gd(), Hd(), ii() (+13 more)
+### Community 9 - "Menu Content"
+Cohesion: 0.33
+Nodes (9): buildCoverageMap(), DEFAULT_OPENING_DAYS, DEFAULT_SLOTS, EffectiveConfig, getAvailableSlots(), getEffectiveConfig(), getSlotsWithAvailability(), getUnavailableDatesForMonth() (+1 more)
 
-### Community 29 - "Ui"
-Cohesion: 0.12
-Nodes (14): Command(), CommandGroup(), CommandInput(), CommandItem(), CommandList(), CommandSeparator(), CommandShortcut(), Dialog() (+6 more)
+### Community 10 - "Page Navigation"
+Cohesion: 0.20
+Nodes (10): default, default, exports, ./client, ./package.json, ./runtime/index-browser, default, import (+2 more)
 
-### Community 30 - "Prisma Schema"
-Cohesion: 0.12
-Nodes (10): createPrismaClient(), expandEnv(), globalForPrisma, config, path, Prisma, PrismaClient, {
+### Community 11 - "Database Schema"
+Cohesion: 0.50
+Nodes (9): require, require, require, browser, default, edge-light, node, worker (+1 more)
+
+### Community 12 - "Localization"
+Cohesion: 0.25
+Nodes (8): Admin Interface, l'Anøv Restaurant, Contact Form, Gift Card System, Keystatic CMS, Mailcatcher, Reservation System, Single Page Site (Landing + Menu)
+
+### Community 13 - "Footer Content"
+Cohesion: 0.25
+Nodes (8): ./runtime/client, default, require, default, import, node, require, types
+
+### Community 14 - "Hero Content"
+Cohesion: 0.33
+Nodes (5): config, path, Prisma, PrismaClient, {
   PrismaClientKnownRequestError,
   PrismaClientUnknownRequestError,
   PrismaClientRustPanicError,
@@ -396,143 +170,44 @@ Nodes (10): createPrismaClient(), expandEnv(), globalForPrisma, config, path, Pr
   Public,
   getRuntime,
   createParam,
-} (+2 more)
+}
 
-### Community 31 - "Params"
-Cohesion: 0.15
-Nodes (7): { GET, POST }, KeystaticPage, { GET, POST }, components, config, LegalDocumentRenderer(), LegalLanguageNotice()
-
-### Community 32 - "Reservation"
-Cohesion: 0.11
-Nodes (15): AdminReservationsPage(), ALL_SLOTS, ApiResponse, DayInfo, DAYS_FULL, DAYS_SHORT, formatFullDate(), MONTHS_ABBR (+7 more)
-
-### Community 33 - "Tsconfig"
-Cohesion: 0.10
-Nodes (19): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+11 more)
-
-### Community 34 - "Runtime Types"
-Cohesion: 0.12
-Nodes (18): $c(), Di(), el(), Fo(), getLocation(), getPlaceholderValues(), ii(), ka() (+10 more)
-
-### Community 35 - "Runtime Types"
-Cohesion: 0.12
-Nodes (18): Cl(), da(), Gp(), includes(), indexOf(), isEncoding(), isPreviewFeatureOn(), isRawAction() (+10 more)
-
-### Community 36 - "Admin Dashboard"
-Cohesion: 0.15
-Nodes (10): checkIsExpired(), GiftCardCard(), GiftCardCardProps, GiftCardFilters(), GiftCardFiltersProps, GiftCardStatus, GiftCard, GiftCardListResponse (+2 more)
-
-### Community 37 - "Library"
-Cohesion: 0.17
-Nodes (12): LanguageContext, LanguageContextValue, Translations, detectBrowserLocale(), getLocaleFromString(), Locale, LOCALE_LABELS, LOCALE_NAMES (+4 more)
-
-### Community 38 - "Ui"
-Cohesion: 0.15
-Nodes (11): DropdownMenu(), DropdownMenuCheckboxItem(), DropdownMenuContent(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuRadioItem(), DropdownMenuSeparator(), DropdownMenuShortcut() (+3 more)
-
-### Community 39 - "Runtime Types"
-Cohesion: 0.12
-Nodes (17): bs(), fm(), Fr(), Fs(), getAllModelExtensions(), getAllQueryCallbacks(), getOrCreate(), isEmpty() (+9 more)
-
-### Community 40 - "Ui"
-Cohesion: 0.12
-Nodes (11): Menubar(), MenubarCheckboxItem(), MenubarContent(), MenubarItem(), MenubarLabel(), MenubarRadioItem(), MenubarSeparator(), MenubarShortcut() (+3 more)
-
-### Community 41 - "App Router"
-Cohesion: 0.17
-Nodes (8): ClientLayout(), metadata, LanguageProvider(), Footer(), FooterContent, SplashScreen(), SplashScreenProps, Toaster()
-
-### Community 42 - "Shared"
-Cohesion: 0.17
-Nodes (10): Category, Dish, DishCard(), MenuContent(), MenuData, Tab, Tabs(), TabsContent() (+2 more)
-
-### Community 43 - "Utilities"
+### Community 15 - "Gallery"
 Cohesion: 0.33
-Nodes (12): formatCurrency(), formatDate(), formatDateShort(), formatReservationDate(), formatTime(), getPreviousMonday(), isToday(), isInRange() (+4 more)
+Nodes (6): Prisma__AdminClient, Prisma__DayOverrideClient, Prisma__GiftCardClient, Prisma__ReservationClient, Prisma__RestaurantSettingsClient, PrismaPromise
 
-### Community 44 - "Ui"
-Cohesion: 0.12
-Nodes (9): ContextMenuCheckboxItem(), ContextMenuContent(), ContextMenuItem(), ContextMenuLabel(), ContextMenuRadioItem(), ContextMenuSeparator(), ContextMenuShortcut(), ContextMenuSubContent() (+1 more)
+### Community 16 - "History Section"
+Cohesion: 0.40
+Nodes (4): config, Prisma, PrismaClient, {
+  PrismaClientKnownRequestError,
+  PrismaClientUnknownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientInitializationError,
+  PrismaClientValidationError,
+  getPrismaClient,
+  sqltag,
+  empty,
+  join,
+  raw,
+  skip,
+  Decimal,
+  Debug,
+  DbNull,
+  JsonNull,
+  AnyNull,
+  NullTypes,
+  makeStrictEnum,
+  Extensions,
+  warnOnce,
+  defineDmmfProperty,
+  Public,
+  getRuntime,
+  createParam,
+}
 
-### Community 45 - "Succes"
-Cohesion: 0.14
-Nodes (6): ReservationForm(), pickField(), BoutiqueContent, ChequesCadeauxContent(), GiftCardSuccessContent(), GiftCardSuccessContentProps
-
-### Community 46 - "Date"
-Cohesion: 0.22
-Nodes (11): addMinutes(), GET(), DELETE(), GET(), Params, PUT(), getAdminFromCookies(), GET() (+3 more)
-
-### Community 47 - "Runtime Types"
-Cohesion: 0.16
-Nodes (14): addItem(), ae(), append(), At(), bc(), de(), Fe(), getGlobalOmit() (+6 more)
-
-### Community 48 - "Ui"
-Cohesion: 0.19
-Nodes (13): Carousel(), CarouselApi, CarouselContent(), CarouselContext, CarouselContextProps, CarouselItem(), CarouselNext(), CarouselOptions (+5 more)
-
-### Community 49 - "Library"
-Cohesion: 0.28
-Nodes (8): GET(), POST(), sendCancellationEmail(), sendContactConfirmation(), sendContactNotification(), sendReminderEmail(), sendSmsReminder(), GET()
-
-### Community 50 - "Webhook"
-Cohesion: 0.24
-Nodes (8): generateGiftCardCode(), POST(), sendConfirmationEmail(), stripe, config, handleGiftCardPayment(), handleReservationPayment(), POST()
-
-### Community 51 - "Runtime Types"
-Cohesion: 0.26
-Nodes (13): addMarginSymbol(), afterNextNewline(), getCurrentLineLength(), indent(), setColor(), underline(), unindent(), withIndent() (+5 more)
-
-### Community 52 - "Runtime Types"
-Cohesion: 0.17
-Nodes (13): constructor(), ds(), forSql(), Ge(), Hd(), il(), ji(), nl() (+5 more)
-
-### Community 53 - "Runtime Types"
-Cohesion: 0.19
-Nodes (13): append(), ei(), getAllClientExtensions(), ie(), Ke(), Ms(), rp(), Wp() (+5 more)
-
-### Community 54 - "Library"
-Cohesion: 0.32
-Nodes (10): GET(), buildCoverageMap(), DEFAULT_OPENING_DAYS, DEFAULT_SLOTS, EffectiveConfig, getAvailableSlots(), getEffectiveConfig(), getSlotsWithAvailability() (+2 more)
-
-### Community 55 - "Ui"
-Cohesion: 0.17
-Nodes (8): AlertDialogAction(), AlertDialogCancel(), AlertDialogContent(), AlertDialogDescription(), AlertDialogFooter(), AlertDialogHeader(), AlertDialogOverlay(), AlertDialogTitle()
-
-### Community 56 - "Ui"
-Cohesion: 0.23
-Nodes (10): FormControl(), FormDescription(), FormFieldContext, FormFieldContextValue, FormItem(), FormItemContext, FormItemContextValue, FormLabel() (+2 more)
-
-### Community 57 - "Admin Dashboard"
-Cohesion: 0.27
-Nodes (7): formatCurrency(), GiftCardStats(), GiftCardStatsProps, GiftCardStatusBadgeProps, statusConfig, GiftCardStats, GiftCardStatus
-
-### Community 58 - "Prisma Schema"
-Cohesion: 0.18
-Nodes (11): default, default, exports, ./client, ./generator-build, ./package.json, ./sql, default (+3 more)
-
-### Community 59 - "Prisma Schema"
-Cohesion: 0.38
-Nodes (11): import, import, browser, default, edge-light, node, types, worker (+3 more)
-
-### Community 60 - "Prisma Schema"
-Cohesion: 0.38
-Nodes (11): require, require, require, browser, default, edge-light, node, types (+3 more)
-
-### Community 61 - "Ui"
-Cohesion: 0.22
-Nodes (8): ChartConfig, ChartContainer(), ChartContext, ChartContextProps, ChartLegendContent(), ChartTooltipContent(), THEMES, useChart()
-
-### Community 62 - "Ui"
-Cohesion: 0.18
-Nodes (6): DrawerContent(), DrawerDescription(), DrawerFooter(), DrawerHeader(), DrawerOverlay(), DrawerTitle()
-
-### Community 63 - "Authentication"
-Cohesion: 0.27
-Nodes (6): hashPassword(), POST(), SECRET, signAdminToken(), verifyAdminToken(), main()
-
-### Community 64 - "Prisma Schema"
-Cohesion: 0.22
-Nodes (5): {
+### Community 17 - "Origins Map"
+Cohesion: 0.40
+Nodes (3): {
   Decimal,
   DbNull,
   JsonNull,
@@ -542,156 +217,55 @@ Nodes (5): {
   Public,
   getRuntime,
   skip
-}, Prisma, PrismaClient, c(), k()
+}, Prisma, PrismaClient
 
-### Community 65 - "Runtime Types"
-Cohesion: 0.22
-Nodes (10): Am(), ar(), Fl(), Gu(), handleAndLogRequestError(), handleRequestError(), sanitizeMessage(), vm() (+2 more)
-
-### Community 66 - "Types"
-Cohesion: 0.24
-Nodes (9): ContactContent, ContentLocalization, GalleryImage, HeroContent, HistoryContent, LegalDocumentContent, MenuContent, ReservationContent (+1 more)
-
-### Community 67 - "Ui"
-Cohesion: 0.22
-Nodes (9): NavigationMenu(), NavigationMenuContent(), NavigationMenuIndicator(), NavigationMenuItem(), NavigationMenuLink(), NavigationMenuList(), NavigationMenuTrigger(), navigationMenuTriggerStyle (+1 more)
-
-### Community 68 - "Prisma Schema"
-Cohesion: 0.22
-Nodes (8): browser, dependencies, @prisma/client-runtime-utils, main, name, sideEffects, types, version
-
-### Community 69 - "Runtime Types"
-Cohesion: 0.25
-Nodes (9): destroy(), digest(), digestInto(), finish(), keccak(), update(), writeInto(), xof() (+1 more)
-
-### Community 70 - "Runtime Types"
-Cohesion: 0.28
-Nodes (9): Id(), kd(), kr(), Nd(), Od(), Sa(), Ta(), Xe() (+1 more)
-
-### Community 71 - "Scripts"
-Cohesion: 0.22
-Nodes (8): child, command, envFileByMode, isPotentialWrite, joinedCommand, MODE_ALIASES, modeArg, writeOps
-
-### Community 72 - "Types"
-Cohesion: 0.22
-Nodes (8): ApiPaginationResponse, ApiResponse, GiftCard, GiftCardActionRequest, GiftCardCreateRequest, Reservation, StripeWebhookEvent, StripeWebhookSession
-
-### Community 73 - "Prisma Schema"
-Cohesion: 0.25
-Nodes (8): ./runtime/client, default, require, default, import, node, require, types
-
-### Community 74 - "Prisma Schema"
-Cohesion: 0.25
-Nodes (8): imports, #main-entry-point, #wasm-compiler-loader, default, default, edge-light, worker, workerd
-
-### Community 75 - "Ui"
-Cohesion: 0.25
-Nodes (6): BreadcrumbEllipsis(), BreadcrumbItem(), BreadcrumbLink(), BreadcrumbList(), BreadcrumbPage(), BreadcrumbSeparator()
-
-### Community 77 - "Gift Cards"
-Cohesion: 0.38
-Nodes (5): generateAdminGiftCardCode(), GET(), PATCH(), POST(), sendGiftCardEmail()
-
-### Community 78 - "Runtime Types"
-Cohesion: 0.33
-Nodes (7): AdapterInfo, DriverAdapterFactory, Queryable, SqlDriverAdapter, SqlDriverAdapterFactory, SqlQueryable, Transaction
-
-### Community 79 - "Runtime Types"
-Cohesion: 0.29
-Nodes (6): Args, Exact, GetRuntimeOutput, Narrowable, Operation, RuntimeName
-
-### Community 80 - "Ui"
-Cohesion: 0.43
-Nodes (5): ToggleGroup(), ToggleGroupContext, ToggleGroupItem(), Toggle(), toggleVariants
-
-### Community 81 - "Prisma Schema"
-Cohesion: 0.33
-Nodes (5): config, Prisma, PrismaClient, {
-  PrismaClientKnownRequestError,
-  PrismaClientUnknownRequestError,
-  PrismaClientRustPanicError,
-  PrismaClientInitializationError,
-  PrismaClientValidationError,
-  getPrismaClient,
-  sqltag,
-  empty,
-  join,
-  raw,
-  skip,
-  Decimal,
-  Debug,
-  DbNull,
-  JsonNull,
-  AnyNull,
-  NullTypes,
-  makeStrictEnum,
-  Extensions,
-  warnOnce,
-  defineDmmfProperty,
-  Public,
-  getRuntime,
-  createParam,
-}, empty()
-
-### Community 82 - "Prisma Schema"
-Cohesion: 0.33
-Nodes (6): Prisma__AdminClient, Prisma__DayOverrideClient, Prisma__GiftCardClient, Prisma__ReservationClient, Prisma__RestaurantSettingsClient, PrismaPromise
-
-### Community 83 - "Prisma Schema"
-Cohesion: 0.50
-Nodes (3): MODE_ALIASES, resolveAppMode(), resolveEnvFile()
-
-### Community 84 - "Prisma Schema"
+### Community 18 - "Navigation Menu"
 Cohesion: 0.40
 Nodes (5): default, import, require, types, ./edge
 
-### Community 85 - "Prisma Schema"
+### Community 19 - "Language Selector"
 Cohesion: 0.40
 Nodes (5): ./extension, default, import, require, types
 
-### Community 86 - "Prisma Schema"
+### Community 20 - "Admin Interface"
 Cohesion: 0.40
 Nodes (5): ./index, default, import, require, types
 
-### Community 87 - "Prisma Schema"
+### Community 21 - "Gift Card Admin"
 Cohesion: 0.40
 Nodes (5): ./index-browser, default, import, require, types
 
-### Community 88 - "Prisma Schema"
-Cohesion: 0.40
-Nodes (5): ./runtime/index-browser, default, import, require, types
-
-### Community 89 - "Prisma Schema"
+### Community 22 - "Webhook Processing"
 Cohesion: 0.40
 Nodes (5): ./runtime/wasm-compiler-edge, default, import, require, types
 
-### Community 90 - "Ui"
+### Community 23 - "Reservation Actions"
 Cohesion: 0.50
-Nodes (4): Alert(), AlertDescription(), AlertTitle(), alertVariants
+Nodes (4): ./generator-build, default, import, require
 
-### Community 91 - "Scripts"
+### Community 24 - "Content Management"
 Cohesion: 0.50
-Nodes (3): content, emptyFallback, withDefaults
+Nodes (4): ./sql, types, default, require
 
 ## Knowledge Gaps
-- **1154 isolated node(s):** `nextConfig`, `name`, `private`, `version`, `type` (+1149 more)
+- **660 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+655 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **118 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **12 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `$()` connect `Runtime Types` to `Prisma Schema`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Runtime Types`, `Prisma Schema`?**
-  _High betweenness centrality (0.332) - this node is a cross-community bridge._
-- **Why does `$()` connect `Prisma Schema` to `Runtime Types`, `Runtime Types`, `Features`?**
-  _High betweenness centrality (0.216) - this node is a cross-community bridge._
-- **Why does `P()` connect `Features` to `Prisma Schema`?**
-  _High betweenness centrality (0.210) - this node is a cross-community bridge._
-- **What connects `nextConfig`, `name`, `private` to the rest of the system?**
-  _1154 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Prisma Schema` be split into smaller, more focused modules?**
+- **Why does `dependencies` connect `Reservation System` to `Gift Card Payment`?**
+  _High betweenness centrality (0.013) - this node is a cross-community bridge._
+- **Why does `exports` connect `Page Navigation` to `CMS Configuration`, `Database Schema`, `Footer Content`, `Navigation Menu`, `Language Selector`, `Admin Interface`, `Gift Card Admin`, `Webhook Processing`, `Reservation Actions`, `Content Management`?**
+  _High betweenness centrality (0.009) - this node is a cross-community bridge._
+- **What connects `name`, `private`, `version` to the rest of the system?**
+  _660 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `Frontend Layout Components` be split into smaller, more focused modules?**
   _Cohesion score 0.004454342984409799 - nodes in this community are weakly interconnected._
-- **Should `Runtime Types` be split into smaller, more focused modules?**
-  _Cohesion score 0.006369426751592357 - nodes in this community are weakly interconnected._
-- **Should `Runtime Types` be split into smaller, more focused modules?**
-  _Cohesion score 0.021074380165289255 - nodes in this community are weakly interconnected._
+- **Should `Reservation System` be split into smaller, more focused modules?**
+  _Cohesion score 0.03333333333333333 - nodes in this community are weakly interconnected._
+- **Should `Gift Card Payment` be split into smaller, more focused modules?**
+  _Cohesion score 0.04081632653061224 - nodes in this community are weakly interconnected._
+- **Should `Contact Form` be split into smaller, more focused modules?**
+  _Cohesion score 0.07301587301587302 - nodes in this community are weakly interconnected._

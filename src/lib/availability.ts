@@ -234,6 +234,9 @@ export async function getUnavailableDatesForMonth(monthStr: string): Promise<str
     resByDate.get(d)!.push(r);
   }
 
+  const today = new Date();
+  const currentMin = today.getHours() * 60 + today.getMinutes();
+
   const unavailable: string[] = [];
 
   for (let day = 1; day <= daysInMonth; day++) {
@@ -258,8 +261,17 @@ export async function getUnavailableDatesForMonth(monthStr: string): Promise<str
       effectiveMaxCovers = globalMaxCovers;
     }
 
-    const coverage = buildCoverageMap(resByDate.get(dateStr) ?? [], effectiveSlots, mealDuration);
-    const hasAvailability = effectiveSlots.some((slot) => (coverage[slot] ?? 0) < effectiveMaxCovers);
+    // Pour aujourd'hui, filtrer les créneaux déjà passés
+    let filteredSlots = effectiveSlots;
+    if (dateStr === todayStr) {
+      filteredSlots = effectiveSlots.filter((slot) => {
+        const [h, m] = slot.split(':').map(Number);
+        return h * 60 + m > currentMin;
+      });
+    }
+
+    const coverage = buildCoverageMap(resByDate.get(dateStr) ?? [], filteredSlots, mealDuration);
+    const hasAvailability = filteredSlots.some((slot) => (coverage[slot] ?? 0) < effectiveMaxCovers);
     if (!hasAvailability) unavailable.push(dateStr);
   }
 

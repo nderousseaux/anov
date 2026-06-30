@@ -150,6 +150,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
     () => { const now = new Date(); return new Date(now.getFullYear(), now.getMonth(), 1); },
   );
   const [unavailableDates, setUnavailableDates] = useState<Date[]>([]);
+  const [todaySlots, setTodaySlots] = useState<SlotInfo[] | null>(null);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -179,6 +180,25 @@ export function ReservationForm({ content }: ReservationFormProps) {
       setLoadingSlots(false);
     }
   }, []);
+
+  // Charger les slots de la date du jour au montage (pour désactiver si plus de créneaux)
+  useEffect(() => {
+    if (isClient) {
+      const today = new Date();
+      const y = today.getFullYear();
+      const m = String(today.getMonth() + 1).padStart(2, '0');
+      const d = String(today.getDate()).padStart(2, '0');
+      const todayStr = `${y}-${m}-${d}`;
+      fetch(`/api/reservations/availability?date=${todayStr}`)
+        .then((r) => r.json())
+        .then((data) => {
+          setTodaySlots(data.slots ?? null);
+        })
+        .catch(() => {
+          setTodaySlots(null);
+        });
+    }
+  }, [isClient]);
 
   useEffect(() => {
     if (formData.date) loadSlots(formData.date);
@@ -382,12 +402,27 @@ export function ReservationForm({ content }: ReservationFormProps) {
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
                       if (date < today) return true;
-                      return unavailableDates.some(
+                      // Vérifier si la date est dans unavailableDates (incluant aujourd'hui si plus de créneaux)
+                      if (unavailableDates.some(
                         (u) =>
                           u.getFullYear() === date.getFullYear() &&
                           u.getMonth() === date.getMonth() &&
                           u.getDate() === date.getDate(),
-                      );
+                      )) {
+                        return true;
+                      }
+                      // Pour la date du jour, vérifier s'il reste des créneaux futurs
+                      if (date.getTime() === today.getTime()) {
+                        // Si on ne connaît pas encore la disponibilité d'aujourd'hui, ne pas désactiver la date
+                        if (todaySlots === null) return false;
+                        const currentMin = today.getHours() * 60 + today.getMinutes();
+                        const hasFutureSlots = todaySlots.some((s) => {
+                          const [hours, minutes] = s.time.split(':').map(Number);
+                          return hours * 60 + minutes > currentMin;
+                        });
+                        return !hasFutureSlots;
+                      }
+                      return false;
                     }}
                   />
                 </PopoverContent>

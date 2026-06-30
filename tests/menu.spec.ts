@@ -17,7 +17,8 @@ test.describe('Site vitrine - Page Menu', () => {
 
   test('Affiche le titre de la page menu', async ({ page }) => {
     // Vérifier que le titre de la page est visible (h1 dans le hero)
-    await expect(page.locator('div[style*="36vh"] h1').first()).toHaveText(/./);
+    // Le h1 est dans un div avec h-[36vh] (classes Tailwind, pas style inline)
+    await expect(page.locator('.h-\\[36vh\\] h1').first()).toHaveText(/./);
   });
 
   test('Affiche les onglets de carte', async ({ page }) => {

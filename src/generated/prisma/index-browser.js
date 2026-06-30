@@ -154,7 +154,8 @@ exports.Prisma.RestaurantSettingsScalarFieldEnum = {
   mealDuration: 'mealDuration',
   openingDays: 'openingDays',
   openingSlots: 'openingSlots',
-  depositPerGuestCents: 'depositPerGuestCents'
+  depositPerGuestCents: 'depositPerGuestCents',
+  daysBeforeReminder: 'daysBeforeReminder'
 };
 
 exports.Prisma.DayOverrideScalarFieldEnum = {

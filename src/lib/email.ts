@@ -227,6 +227,7 @@ export async function sendReminderEmail({
   cancelUrl,
   icsDate,
   durationMinutes = 90,
+  daysBefore = 1,
 }: {
   to: string;
   name: string;
@@ -236,6 +237,7 @@ export async function sendReminderEmail({
   cancelUrl: string;
   icsDate?: string;
   durationMinutes?: number;
+  daysBefore?: number;
 }) {
   const t = getTransporter();
   if (!t) {
@@ -252,22 +254,28 @@ export async function sendReminderEmail({
     durationMinutes
   });
 
+  // Message différent selon le nombre de jours avant
+  const messageIntro = daysBefore === 1
+    ? "Votre réservation est prévue demain"
+    : `Votre réservation est prévue dans ${daysBefore} jours`;
+
   return t.sendMail({
     from: FROM,
     to,
-    subject: `Rappel — Votre réservation demain chez l'Anøv`,
+    subject: `Rappel — Votre réservation chez l'Anøv`,
     html: `
       <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
         <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
-        <h2 style="font-size:20px;font-weight:normal;">Votre réservation est demain</h2>
+        <h2 style="font-size:20px;font-weight:normal;">Rappel de votre réservation</h2>
         <p>Bonjour ${name},</p>
-        <p>Nous vous rappelons votre réservation pour demain :</p>
+        <p>Nous vous rappelons votre prochaine réservation :</p>
         <table style="border-collapse:collapse;width:100%;margin:16px 0;">
           <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Date</td><td style="padding:8px;border-bottom:1px solid #eee;">${date}</td></tr>
           <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Heure</td><td style="padding:8px;border-bottom:1px solid #eee;">${time}</td></tr>
           <tr><td style="padding:8px;font-weight:bold;">Couverts</td><td style="padding:8px;">${guests} personne${guests > 1 ? 's' : ''}</td></tr>
         </table>
-        <p style="margin-top:16px;">Besoin d'annuler ?<br/>
+        <p style="margin-top:16px;">${messageIntro}.</p>
+        <p style="margin-top:16px;">Besoin d'annuler ou modifier ?<br/>
           Appeler nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>
         </p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>

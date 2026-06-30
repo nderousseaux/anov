@@ -18,6 +18,7 @@ export async function GET() {
     openingDays: JSON.parse(settings.openingDays) as number[],
     openingSlots: JSON.parse(settings.openingSlots) as string[],
     depositPerGuestCents: settings.depositPerGuestCents,
+    daysBeforeReminder: settings.daysBeforeReminder,
   });
 }
 
@@ -26,7 +27,7 @@ export async function PUT(req: NextRequest) {
   if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
 
   const body = await req.json();
-  const { maxCovers, mealDuration, openingDays, openingSlots, depositPerGuestCents } = body;
+  const { maxCovers, mealDuration, openingDays, openingSlots, depositPerGuestCents, daysBeforeReminder } = body;
 
   if (
     typeof maxCovers !== 'number' ||
@@ -39,7 +40,10 @@ export async function PUT(req: NextRequest) {
     !Array.isArray(openingSlots) ||
     openingSlots.some((s: unknown) => typeof s !== 'string') ||
     typeof depositPerGuestCents !== 'number' ||
-    depositPerGuestCents < 0
+    depositPerGuestCents < 0 ||
+    typeof daysBeforeReminder !== 'number' ||
+    daysBeforeReminder < 0 ||
+    daysBeforeReminder > 30
   ) {
     return NextResponse.json({ error: 'Paramètres invalides' }, { status: 400 });
   }
@@ -99,6 +103,7 @@ export async function PUT(req: NextRequest) {
       openingDays: JSON.stringify(openingDays),
       openingSlots: JSON.stringify(openingSlots),
       depositPerGuestCents,
+      daysBeforeReminder,
     },
     create: {
       id: 1,
@@ -107,6 +112,7 @@ export async function PUT(req: NextRequest) {
       openingDays: JSON.stringify(openingDays),
       openingSlots: JSON.stringify(openingSlots),
       depositPerGuestCents,
+      daysBeforeReminder,
     },
   });
 
@@ -116,5 +122,6 @@ export async function PUT(req: NextRequest) {
     openingDays: JSON.parse(settings.openingDays) as number[],
     openingSlots: JSON.parse(settings.openingSlots) as string[],
     depositPerGuestCents: settings.depositPerGuestCents,
+    daysBeforeReminder: settings.daysBeforeReminder,
   });
 }

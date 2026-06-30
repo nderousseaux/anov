@@ -28,7 +28,7 @@ interface ApiResponse {
 }
 
 interface RestaurantSettings {
-  maxCovers: number; mealDuration: number; openingDays: number[]; openingSlots: string[]; depositPerGuestCents: number;
+  maxCovers: number; mealDuration: number; openingDays: number[]; openingSlots: string[]; depositPerGuestCents: number; daysBeforeReminder: number;
 }
 
 interface DayInfo {
@@ -116,6 +116,7 @@ export default function AdminReservationsPage() {
   const [editMealDuration, setEditMealDuration] = useState(90);
   const [editSlots, setEditSlots] = useState<string[]>([]);
   const [editDays, setEditDays] = useState<number[]>([]);
+  const [editDaysBeforeReminder, setEditDaysBeforeReminder] = useState(1);
   const [savingSettings, setSavingSettings] = useState(false);
   const [settingsSaved, setSettingsSaved] = useState(false);
 
@@ -161,6 +162,7 @@ export default function AdminReservationsPage() {
       setEditMealDuration(s.mealDuration);
       setEditSlots(s.openingSlots);
       setEditDays(s.openingDays);
+      setEditDaysBeforeReminder(s.daysBeforeReminder ?? 1);
     }
   }, []);
 
@@ -212,7 +214,7 @@ export default function AdminReservationsPage() {
     const res = await fetch('/api/admin/settings', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ maxCovers: editMaxCovers, mealDuration: editMealDuration, openingDays: editDays, openingSlots: editSlots, depositPerGuestCents: Math.max(0, parseInt(editDepositPerGuest, 10) || 0) * 100 }),
+      body: JSON.stringify({ maxCovers: editMaxCovers, mealDuration: editMealDuration, openingDays: editDays, openingSlots: editSlots, depositPerGuestCents: Math.max(0, parseInt(editDepositPerGuest, 10) || 0) * 100, daysBeforeReminder: editDaysBeforeReminder }),
     });
     if (res.status === 409) {
       const data = await res.json();
@@ -357,7 +359,7 @@ export default function AdminReservationsPage() {
                 Paramètres globaux
               </h2>
               <Button variant="ghost" size="sm"
-                onClick={() => { if (settings) { setEditMaxCovers(settings.maxCovers); setEditDepositPerGuest(String(Math.round((settings.depositPerGuestCents ?? 2000) / 100))); setEditMealDuration(settings.mealDuration); setEditSlots(settings.openingSlots); setEditDays(settings.openingDays); } setShowSettings(false); }}
+                onClick={() => { if (settings) { setEditMaxCovers(settings.maxCovers); setEditDepositPerGuest(String(Math.round((settings.depositPerGuestCents ?? 2000) / 100))); setEditMealDuration(settings.mealDuration); setEditSlots(settings.openingSlots); setEditDays(settings.openingDays); setEditDaysBeforeReminder(settings.daysBeforeReminder ?? 1); } setShowSettings(false); }}
                 className="text-muted-foreground hover:text-foreground"><X size={14} /></Button>
             </div>
 
@@ -421,6 +423,23 @@ export default function AdminReservationsPage() {
                       : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground'
                       }`}>
                     {mins < 60 ? `${mins}min` : mins % 60 === 0 ? `${mins / 60}h` : `${Math.floor(mins / 60)}h${String(mins % 60).padStart(2, '0')}`}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* Days before reminder */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Jours avant rappel</label>
+              <p className="text-xs text-muted-foreground">Nombre de jours avant la réservation pour envoyer un email/SMS de rappel.</p>
+              <div className="flex gap-1.5 flex-wrap">
+                {[0, 1, 2, 3, 7].map((days) => (
+                  <button key={days} type="button"
+                    onClick={() => setEditDaysBeforeReminder(days)}
+                    className={`px-3 py-1.5 rounded border text-xs font-medium transition-colors ${editDaysBeforeReminder === days
+                      ? 'bg-primary/20 border-primary/50 text-primary'
+                      : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                      }`}>
+                    {days === 0 ? 'Aujourd\'hui' : days === 1 ? 'Demain' : `${days} jours`}
                   </button>
                 ))}
               </div>

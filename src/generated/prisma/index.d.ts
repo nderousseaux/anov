@@ -3510,6 +3510,7 @@ export namespace Prisma {
     maxCovers: number | null
     mealDuration: number | null
     depositPerGuestCents: number | null
+    daysBeforeReminder: number | null
   }
 
   export type RestaurantSettingsSumAggregateOutputType = {
@@ -3517,6 +3518,7 @@ export namespace Prisma {
     maxCovers: number | null
     mealDuration: number | null
     depositPerGuestCents: number | null
+    daysBeforeReminder: number | null
   }
 
   export type RestaurantSettingsMinAggregateOutputType = {
@@ -3526,6 +3528,7 @@ export namespace Prisma {
     openingDays: string | null
     openingSlots: string | null
     depositPerGuestCents: number | null
+    daysBeforeReminder: number | null
   }
 
   export type RestaurantSettingsMaxAggregateOutputType = {
@@ -3535,6 +3538,7 @@ export namespace Prisma {
     openingDays: string | null
     openingSlots: string | null
     depositPerGuestCents: number | null
+    daysBeforeReminder: number | null
   }
 
   export type RestaurantSettingsCountAggregateOutputType = {
@@ -3544,6 +3548,7 @@ export namespace Prisma {
     openingDays: number
     openingSlots: number
     depositPerGuestCents: number
+    daysBeforeReminder: number
     _all: number
   }
 
@@ -3553,6 +3558,7 @@ export namespace Prisma {
     maxCovers?: true
     mealDuration?: true
     depositPerGuestCents?: true
+    daysBeforeReminder?: true
   }
 
   export type RestaurantSettingsSumAggregateInputType = {
@@ -3560,6 +3566,7 @@ export namespace Prisma {
     maxCovers?: true
     mealDuration?: true
     depositPerGuestCents?: true
+    daysBeforeReminder?: true
   }
 
   export type RestaurantSettingsMinAggregateInputType = {
@@ -3569,6 +3576,7 @@ export namespace Prisma {
     openingDays?: true
     openingSlots?: true
     depositPerGuestCents?: true
+    daysBeforeReminder?: true
   }
 
   export type RestaurantSettingsMaxAggregateInputType = {
@@ -3578,6 +3586,7 @@ export namespace Prisma {
     openingDays?: true
     openingSlots?: true
     depositPerGuestCents?: true
+    daysBeforeReminder?: true
   }
 
   export type RestaurantSettingsCountAggregateInputType = {
@@ -3587,6 +3596,7 @@ export namespace Prisma {
     openingDays?: true
     openingSlots?: true
     depositPerGuestCents?: true
+    daysBeforeReminder?: true
     _all?: true
   }
 
@@ -3683,6 +3693,7 @@ export namespace Prisma {
     openingDays: string
     openingSlots: string
     depositPerGuestCents: number
+    daysBeforeReminder: number
     _count: RestaurantSettingsCountAggregateOutputType | null
     _avg: RestaurantSettingsAvgAggregateOutputType | null
     _sum: RestaurantSettingsSumAggregateOutputType | null
@@ -3711,6 +3722,7 @@ export namespace Prisma {
     openingDays?: boolean
     openingSlots?: boolean
     depositPerGuestCents?: boolean
+    daysBeforeReminder?: boolean
   }, ExtArgs["result"]["restaurantSettings"]>
 
   export type RestaurantSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3720,6 +3732,7 @@ export namespace Prisma {
     openingDays?: boolean
     openingSlots?: boolean
     depositPerGuestCents?: boolean
+    daysBeforeReminder?: boolean
   }, ExtArgs["result"]["restaurantSettings"]>
 
   export type RestaurantSettingsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3729,6 +3742,7 @@ export namespace Prisma {
     openingDays?: boolean
     openingSlots?: boolean
     depositPerGuestCents?: boolean
+    daysBeforeReminder?: boolean
   }, ExtArgs["result"]["restaurantSettings"]>
 
   export type RestaurantSettingsSelectScalar = {
@@ -3738,9 +3752,10 @@ export namespace Prisma {
     openingDays?: boolean
     openingSlots?: boolean
     depositPerGuestCents?: boolean
+    daysBeforeReminder?: boolean
   }
 
-  export type RestaurantSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "maxCovers" | "mealDuration" | "openingDays" | "openingSlots" | "depositPerGuestCents", ExtArgs["result"]["restaurantSettings"]>
+  export type RestaurantSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "maxCovers" | "mealDuration" | "openingDays" | "openingSlots" | "depositPerGuestCents" | "daysBeforeReminder", ExtArgs["result"]["restaurantSettings"]>
 
   export type $RestaurantSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "RestaurantSettings"
@@ -3752,6 +3767,7 @@ export namespace Prisma {
       openingDays: string
       openingSlots: string
       depositPerGuestCents: number
+      daysBeforeReminder: number
     }, ExtArgs["result"]["restaurantSettings"]>
     composites: {}
   }
@@ -4181,6 +4197,7 @@ export namespace Prisma {
     readonly openingDays: FieldRef<"RestaurantSettings", 'String'>
     readonly openingSlots: FieldRef<"RestaurantSettings", 'String'>
     readonly depositPerGuestCents: FieldRef<"RestaurantSettings", 'Int'>
+    readonly daysBeforeReminder: FieldRef<"RestaurantSettings", 'Int'>
   }
     
 
@@ -6782,7 +6799,8 @@ export namespace Prisma {
     mealDuration: 'mealDuration',
     openingDays: 'openingDays',
     openingSlots: 'openingSlots',
-    depositPerGuestCents: 'depositPerGuestCents'
+    depositPerGuestCents: 'depositPerGuestCents',
+    daysBeforeReminder: 'daysBeforeReminder'
   };
 
   export type RestaurantSettingsScalarFieldEnum = (typeof RestaurantSettingsScalarFieldEnum)[keyof typeof RestaurantSettingsScalarFieldEnum]
@@ -7119,6 +7137,7 @@ export namespace Prisma {
     openingDays?: StringFilter<"RestaurantSettings"> | string
     openingSlots?: StringFilter<"RestaurantSettings"> | string
     depositPerGuestCents?: IntFilter<"RestaurantSettings"> | number
+    daysBeforeReminder?: IntFilter<"RestaurantSettings"> | number
   }
 
   export type RestaurantSettingsOrderByWithRelationInput = {
@@ -7128,6 +7147,7 @@ export namespace Prisma {
     openingDays?: SortOrder
     openingSlots?: SortOrder
     depositPerGuestCents?: SortOrder
+    daysBeforeReminder?: SortOrder
   }
 
   export type RestaurantSettingsWhereUniqueInput = Prisma.AtLeast<{
@@ -7140,6 +7160,7 @@ export namespace Prisma {
     openingDays?: StringFilter<"RestaurantSettings"> | string
     openingSlots?: StringFilter<"RestaurantSettings"> | string
     depositPerGuestCents?: IntFilter<"RestaurantSettings"> | number
+    daysBeforeReminder?: IntFilter<"RestaurantSettings"> | number
   }, "id">
 
   export type RestaurantSettingsOrderByWithAggregationInput = {
@@ -7149,6 +7170,7 @@ export namespace Prisma {
     openingDays?: SortOrder
     openingSlots?: SortOrder
     depositPerGuestCents?: SortOrder
+    daysBeforeReminder?: SortOrder
     _count?: RestaurantSettingsCountOrderByAggregateInput
     _avg?: RestaurantSettingsAvgOrderByAggregateInput
     _max?: RestaurantSettingsMaxOrderByAggregateInput
@@ -7166,6 +7188,7 @@ export namespace Prisma {
     openingDays?: StringWithAggregatesFilter<"RestaurantSettings"> | string
     openingSlots?: StringWithAggregatesFilter<"RestaurantSettings"> | string
     depositPerGuestCents?: IntWithAggregatesFilter<"RestaurantSettings"> | number
+    daysBeforeReminder?: IntWithAggregatesFilter<"RestaurantSettings"> | number
   }
 
   export type DayOverrideWhereInput = {
@@ -7516,6 +7539,7 @@ export namespace Prisma {
     openingDays?: string
     openingSlots?: string
     depositPerGuestCents?: number
+    daysBeforeReminder?: number
   }
 
   export type RestaurantSettingsUncheckedCreateInput = {
@@ -7525,6 +7549,7 @@ export namespace Prisma {
     openingDays?: string
     openingSlots?: string
     depositPerGuestCents?: number
+    daysBeforeReminder?: number
   }
 
   export type RestaurantSettingsUpdateInput = {
@@ -7534,6 +7559,7 @@ export namespace Prisma {
     openingDays?: StringFieldUpdateOperationsInput | string
     openingSlots?: StringFieldUpdateOperationsInput | string
     depositPerGuestCents?: IntFieldUpdateOperationsInput | number
+    daysBeforeReminder?: IntFieldUpdateOperationsInput | number
   }
 
   export type RestaurantSettingsUncheckedUpdateInput = {
@@ -7543,6 +7569,7 @@ export namespace Prisma {
     openingDays?: StringFieldUpdateOperationsInput | string
     openingSlots?: StringFieldUpdateOperationsInput | string
     depositPerGuestCents?: IntFieldUpdateOperationsInput | number
+    daysBeforeReminder?: IntFieldUpdateOperationsInput | number
   }
 
   export type RestaurantSettingsCreateManyInput = {
@@ -7552,6 +7579,7 @@ export namespace Prisma {
     openingDays?: string
     openingSlots?: string
     depositPerGuestCents?: number
+    daysBeforeReminder?: number
   }
 
   export type RestaurantSettingsUpdateManyMutationInput = {
@@ -7561,6 +7589,7 @@ export namespace Prisma {
     openingDays?: StringFieldUpdateOperationsInput | string
     openingSlots?: StringFieldUpdateOperationsInput | string
     depositPerGuestCents?: IntFieldUpdateOperationsInput | number
+    daysBeforeReminder?: IntFieldUpdateOperationsInput | number
   }
 
   export type RestaurantSettingsUncheckedUpdateManyInput = {
@@ -7570,6 +7599,7 @@ export namespace Prisma {
     openingDays?: StringFieldUpdateOperationsInput | string
     openingSlots?: StringFieldUpdateOperationsInput | string
     depositPerGuestCents?: IntFieldUpdateOperationsInput | number
+    daysBeforeReminder?: IntFieldUpdateOperationsInput | number
   }
 
   export type DayOverrideCreateInput = {
@@ -8051,6 +8081,7 @@ export namespace Prisma {
     openingDays?: SortOrder
     openingSlots?: SortOrder
     depositPerGuestCents?: SortOrder
+    daysBeforeReminder?: SortOrder
   }
 
   export type RestaurantSettingsAvgOrderByAggregateInput = {
@@ -8058,6 +8089,7 @@ export namespace Prisma {
     maxCovers?: SortOrder
     mealDuration?: SortOrder
     depositPerGuestCents?: SortOrder
+    daysBeforeReminder?: SortOrder
   }
 
   export type RestaurantSettingsMaxOrderByAggregateInput = {
@@ -8067,6 +8099,7 @@ export namespace Prisma {
     openingDays?: SortOrder
     openingSlots?: SortOrder
     depositPerGuestCents?: SortOrder
+    daysBeforeReminder?: SortOrder
   }
 
   export type RestaurantSettingsMinOrderByAggregateInput = {
@@ -8076,6 +8109,7 @@ export namespace Prisma {
     openingDays?: SortOrder
     openingSlots?: SortOrder
     depositPerGuestCents?: SortOrder
+    daysBeforeReminder?: SortOrder
   }
 
   export type RestaurantSettingsSumOrderByAggregateInput = {
@@ -8083,6 +8117,7 @@ export namespace Prisma {
     maxCovers?: SortOrder
     mealDuration?: SortOrder
     depositPerGuestCents?: SortOrder
+    daysBeforeReminder?: SortOrder
   }
 
   export type DayOverrideCountOrderByAggregateInput = {

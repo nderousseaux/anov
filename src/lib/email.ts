@@ -33,18 +33,59 @@ function generateICS({
   // Parse la date pour créer l'ID unique ICS
   const dateObj = new Date(date);
   const uid = `${dateObj.getTime()}@anov.fr`;
+
+  // Construire la datetime ICS en heure de Paris (équivalent à UTC+1 ou UTC+2)
+  // On utilise un format avec timezone info: YYYYMMDDTHHMMSS avec TZID=Europe/Paris
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+
+  // Extraire l'heure à partir du paramètre time (format: "19:00" ou "19h00")
+  let hours = '19';
+  let minutes = '00';
+  const timeParts = time.split(/[:h]/).filter(Boolean);
+  if (timeParts.length >= 2) {
+    hours = String(parseInt(timeParts[0])).padStart(2, '0');
+    minutes = String(parseInt(timeParts[1])).padStart(2, '0');
+  }
+
+  // Format ICS avec timezone Europe/Paris
+  // DTSTAMP doit être en UTC (suffixe 'Z')
   const dtstamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-  const dtstart = dateObj.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-  const dtend = new Date(dateObj.getTime() + 3 * 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'; // 3 heures
+
+  // Les dates d'événement utilisent le timezone Europe/Paris
+  const dtstart = `${year}${month}${day}T${hours}${minutes}00`;
+  const dtend = `${year}${month}${day}T${String(parseInt(hours) + 3).padStart(2, '0')}${minutes}00`;
+
+  // Ajouter les props de timezone pour Europe/Paris
+  const timezoneProps = `
+BEGIN:VTIMEZONE
+TZID:Europe/Paris
+X-LIC-LOCATION:Europe/Paris
+BEGIN:STANDARD
+DTSTART:19701026T030000
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=10
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:19700329T020000
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3
+END:DAYLIGHT
+END:VTIMEZONE
+`.trim();
 
   return `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//l'Anøv//Reservation//FR
+${timezoneProps}
 BEGIN:VEVENT
 UID:${uid}
 DTSTAMP:${dtstamp}
-DTSTART:${dtstart}
-DTEND:${dtend}
+DTSTART;TZID=Europe/Paris:${dtstart}
+DTEND;TZID=Europe/Paris:${dtend}
 SUMMARY:Réservation chez l'Anøv
 DESCRIPTION:Réservation de ${name} pour ${guests} personne${guests > 1 ? 's' : ''}.
 LOCATION:${RESTAURANT_ADDRESS}

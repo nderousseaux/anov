@@ -10,6 +10,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
   }
 
+  // Récupérer la durée du repas depuis les paramètres du restaurant
+  const restaurantSettings = await prisma.restaurantSettings.findUnique({
+    where: { id: 1 },
+  });
+  const mealDuration = restaurantSettings?.mealDuration || 90;
+
   const now = new Date();
   const in48h = new Date(now.getTime() + 48 * 60 * 60 * 1000);
   const in47h = new Date(now.getTime() + 47 * 60 * 60 * 1000);
@@ -43,6 +49,7 @@ export async function GET(req: NextRequest) {
         guests: r.guests,
         cancelUrl,
         icsDate: r.date.toISOString(),
+        durationMinutes: mealDuration,
       });
       await prisma.reservation.update({
         where: { id: r.id },

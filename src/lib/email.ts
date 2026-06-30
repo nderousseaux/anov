@@ -24,11 +24,13 @@ function generateICS({
   time,
   name,
   guests,
+  durationMinutes = 90,
 }: {
   date: string;
   time: string;
   name: string;
   guests: number;
+  durationMinutes?: number;
 }): string {
   // Parse la date pour créer l'ID unique ICS
   const dateObj = new Date(date);
@@ -53,9 +55,19 @@ function generateICS({
   // DTSTAMP doit être en UTC (suffixe 'Z')
   const dtstamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 
-  // Les dates d'événement utilisent le timezone Europe/Paris
+  // Calculer l'heure de fin en ajoutant la durée du repas
+  const durationMs = durationMinutes * 60 * 1000;
+  const startDate = new Date(Date.parse(`${year}-${month}-${day}T${hours}:${minutes}:00`));
+  const endDate = new Date(startDate.getTime() + durationMs);
+
+  // Format ICS avec timezone Europe/Paris
   const dtstart = `${year}${month}${day}T${hours}${minutes}00`;
-  const dtend = `${year}${month}${day}T${String(parseInt(hours) + 3).padStart(2, '0')}${minutes}00`;
+  const dtendYear = endDate.getFullYear();
+  const dtendMonth = String(endDate.getMonth() + 1).padStart(2, '0');
+  const dtendDay = String(endDate.getDate()).padStart(2, '0');
+  const dtendHours = String(endDate.getHours()).padStart(2, '0');
+  const dtendMinutes = String(endDate.getMinutes()).padStart(2, '0');
+  const dtend = `${dtendYear}${dtendMonth}${dtendDay}T${dtendHours}${dtendMinutes}00`;
 
   // Ajouter les props de timezone pour Europe/Paris
   const timezoneProps = `
@@ -77,6 +89,25 @@ END:DAYLIGHT
 END:VTIMEZONE
 `.trim();
 
+  // Description complète avecBesoin d'annuler et numéro de téléphone + adresse complète
+  const description = `Réservation de ${name} pour ${guests} personne${guests > 1 ? 's' : ''}.\n\nLieu: ${RESTAURANT_ADDRESS}\n\nBesoin d'annuler ?\nAppelez-nous au ${RESTAURANT_PHONE}`;
+
+  // Échapper les caractères spéciaux pour iCalendar (backslash, newline, etc.)
+  const escapeIcsText = (text: string) => {
+    return text
+      .replace(/\\/g, '\\\\')
+      .replace(/\n/g, '\\n')
+      .replace(/,/g, '\\,')
+      .replace(/;/g, '\\;')
+      .replace(/\r/g, '');
+  };
+
+  // LOCATION avec échappement des virgules pour Apple Calendar
+  // En iCalendar, les virgules dans LOCATION doivent être échappées avec \
+  // Apple Calendar affiche souvent seulement 50-100 caractères pour LOCATION
+  // Donc on échappe les virgules avec \, pour préserver l'adresse complète
+  const locationValue = RESTAURANT_ADDRESS.replace(/,/g, '\\,');
+
   return `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//l'Anøv//Reservation//FR
@@ -87,8 +118,8 @@ DTSTAMP:${dtstamp}
 DTSTART;TZID=Europe/Paris:${dtstart}
 DTEND;TZID=Europe/Paris:${dtend}
 SUMMARY:Réservation chez l'Anøv
-DESCRIPTION:Réservation de ${name} pour ${guests} personne${guests > 1 ? 's' : ''}.
-LOCATION:${RESTAURANT_ADDRESS}
+DESCRIPTION:${escapeIcsText(description)}
+LOCATION:${locationValue}
 END:VEVENT
 END:VCALENDAR`;
 }
@@ -104,11 +135,19 @@ function getTransporter() {
 }
 
 // Adresse du restaurant (variable d'environnement)
-const RESTAURANT_ADDRESS = process.env.RESTAURANT_ADDRESS || '12 Rue de la République, 25000 Besançon';
+// On garde l'adresse complète sans guillemets, mais on s'assure que le format est correct
+// L'adresse complète sera: 12 Rue de la République, 75001 Paris, France
+const RESTAURANT_ADDRESS_RAW = (process.env.RESTAURANT_ADDRESS || '12 Rue de la République, 25000 Besançon').replace(/^"|"$/g, '');
+
+// Pour l'affichage dans le calendrier, on formate l'adresse pour éviter que Google Calendar ne la tronque
+// Google Calendar affiche environ 100-150 caractères pour LOCATION
+const RESTAURANT_ADDRESS = RESTAURANT_ADDRESS_RAW;
+
+// Téléphone du restaurant
+const RESTAURANT_PHONE = (process.env.RESTAURANT_PHONE || '+33 1 45 67 89 00').replace(/^"|"$/g, '');
 
 const FROM = process.env.SMTP_FROM || "l'Anøv <noreply@anov.fr>";
 const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'contact@anovrestaurant.fr';
-const RESTAURANT_PHONE = process.env.RESTAURANT_PHONE || '+33 1 45 67 89 00';
 
 export async function sendConfirmationEmail({
   to,
@@ -118,6 +157,7 @@ export async function sendConfirmationEmail({
   guests,
   cancelUrl,
   icsDate,
+  durationMinutes = 90,
 }: {
   to: string;
   name: string;
@@ -126,6 +166,7 @@ export async function sendConfirmationEmail({
   guests: number;
   cancelUrl?: string;
   icsDate?: string;
+  durationMinutes?: number;
 }) {
   const t = getTransporter();
   if (!t) {
@@ -138,7 +179,8 @@ export async function sendConfirmationEmail({
     date: icsDate || date,
     time,
     name,
-    guests
+    guests,
+    durationMinutes
   });
 
   console.log(`[EMAIL] Envoi de l'email de confirmation à ${to}`);
@@ -184,6 +226,7 @@ export async function sendReminderEmail({
   guests,
   cancelUrl,
   icsDate,
+  durationMinutes = 90,
 }: {
   to: string;
   name: string;
@@ -192,6 +235,7 @@ export async function sendReminderEmail({
   guests: number;
   cancelUrl: string;
   icsDate?: string;
+  durationMinutes?: number;
 }) {
   const t = getTransporter();
   if (!t) {
@@ -204,7 +248,8 @@ export async function sendReminderEmail({
     date: icsDate || date,
     time,
     name,
-    guests
+    guests,
+    durationMinutes
   });
 
   return t.sendMail({

@@ -146,6 +146,12 @@ async function handleReservationPayment(session: any, meta: any) {
       });
     }
 
+    // Récupérer la durée du repas depuis les paramètres du restaurant
+    const restaurantSettings = await prisma.restaurantSettings.findUnique({
+      where: { id: 1 },
+    });
+    const mealDuration = restaurantSettings?.mealDuration || 90;
+
     // Envoyer l'email de confirmation
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
     const resDate = new Date(reservation.date);
@@ -166,6 +172,7 @@ async function handleReservationPayment(session: any, meta: any) {
         cancelUrl: `${baseUrl}/reservation/cancel?token=${reservation.cancelToken}`,
         // Passer la date ISO pour le fichier .ics
         icsDate: reservation.date.toISOString(),
+        durationMinutes: mealDuration,
       });
       console.log(`[WEBHOOK] Email de confirmation envoyé à ${reservation.email}`);
     } catch (emailError) {

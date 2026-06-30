@@ -131,7 +131,6 @@ export async function PATCH(req: NextRequest) {
       name: updated.name,
       date: dateFr,
       time: time,
-      icsDate: updated.date.toISOString(),
     });
   }
 

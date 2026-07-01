@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { 
+      {
         message: 'Message envoyé avec succès',
         details: {
           notificationSent: notificationResult.status === 'fulfilled',

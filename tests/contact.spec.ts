@@ -232,11 +232,10 @@ test.describe('Formulaire de Contact - Page', () => {
     await page.locator('#message').fill('Test message');
 
     await page.locator('#contact form button[type="submit"]').click();
-    await page.waitForTimeout(300);
 
-    // Le backend devrait rejetter
-    const toast = page.getByText(/Erreur/);
-    await expect(toast).toBeVisible();
+    // Le backend rejette - attendre que le toast d'erreur s'affiche
+    // Le message d'erreur contient "Un ou plusieurs champs dépassent la longueur maximale"
+    await expect(page.getByText('Un ou plusieurs champs dépassent la longueur maximale')).toBeVisible({ timeout: 10000 });
   });
 
   test('Valide la longueur du sujet (> 200 chars)', async ({ page }) => {
@@ -246,10 +245,10 @@ test.describe('Formulaire de Contact - Page', () => {
     await page.locator('#message').fill('Test message');
 
     await page.locator('#contact form button[type="submit"]').click();
-    await page.waitForTimeout(300);
 
-    const toast = page.getByText(/Erreur/);
-    await expect(toast).toBeVisible();
+    // Le backend rejette - attendre que le toast d'erreur s'affiche
+    // Le message d'erreur contient "Un ou plusieurs champs dépassent la longueur maximale"
+    await expect(page.getByText('Un ou plusieurs champs dépassent la longueur maximale')).toBeVisible({ timeout: 10000 });
   });
 });
 

@@ -10,8 +10,9 @@
     "db:init": "pnpm db:migrate && tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset --force && tsx prisma/seed.ts",
     "build": "next build",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
+    "test": "pnpm test:unit && pnpm test:e2e",
+    "test:unit": "vitest",
+    "test:unit:ui": "vitest --ui",
     "test:e2e": "playwright test",
     "test:e2e:headless": "playwright test --headless",
     "cron:reminders": "tsx scripts/run-cron-reminders.ts"

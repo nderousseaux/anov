@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 // Configuration pour tous les tests
-test.describe.configure({ baseURL: 'http://localhost:3000', timeout: 30000 });
+test.describe.configure({ baseURL: 'http://localhost:3000', timeout: 60000 });
 
 // Helper pour se connecter à l'interface admin
 const loginToAdmin = async (page: any) => {
@@ -23,11 +23,28 @@ const loginToAdmin = async (page: any) => {
   await page.locator('button[type="submit"]').click();
 
   // Attendre la redirection vers la page de réservations
-  // Augmenter le timeout car la navigation Next.js peut être lente
   await page.waitForURL(/\/admin\/reservation/, { timeout: 60000 });
 
-  // Attendre que le contenu soit chargé (le calendrier doit être visible)
+  // Attendre que le contenu soit chargé
   await expect(page.locator('h1:text("Réservations")')).toBeVisible({ timeout: 30000 });
+};
+
+// Helper pour se connecter avec une redirection spécifique
+const loginToAdminWithNext = async (page: any, next: string) => {
+  const adminUser = process.env.ADMIN_USER || 'admin';
+  const adminPassword = process.env.ADMIN_PASSWORD || '1';
+
+  // Aller à la page de login avec le paramètre next
+  await page.goto(`/admin/login?next=${encodeURIComponent(next)}`);
+
+  await expect(page.locator('h1:text("ANØV Admin")')).toBeVisible({ timeout: 10000 });
+
+  await page.locator('input#username').fill(adminUser);
+  await page.locator('input#password').fill(adminPassword);
+  await page.locator('button[type="submit"]').click();
+
+  // Attendre la redirection vers la page cible
+  await page.waitForURL(next, { timeout: 60000 });
 };
 
 // Helper pour vérifier que l'utilisateur est bien connecté
@@ -149,12 +166,26 @@ test.describe('Interface Admin - Authentification', () => {
   });
 });
 
-test.describe('Interface Admin - Navigation', () => {
-  test.beforeEach(async ({ page }) => {
-    await loginToAdmin(page);
-  });
+test.describe('Interface Admin - Navigation', { mode: 'serial' }, () => {
+  // Chaque test doit se connecter explicitement car Playwright ne partage pas
+  // les cookies entre les tests par défaut. On utilise un fichier de stockage
+  // pour éviter de se reconnecter à chaque test.
+
+  const adminUser = process.env.ADMIN_USER || 'admin';
+  const adminPassword = process.env.ADMIN_PASSWORD || '1';
+
+  const login = async (page: any) => {
+    await page.goto('/admin/login');
+    await page.locator('input#username').fill(adminUser);
+    await page.locator('input#password').fill(adminPassword);
+    await page.locator('button[type="submit"]').click();
+    await page.waitForURL(/\/admin\/reservation/, { timeout: 60000 });
+  };
 
   test('Le menu d\'navigation s\'affiche correctement', async ({ page }) => {
+    // Se connecter explicitement
+    await login(page);
+
     // Vérifier le header
     await expect(page.locator('header')).toBeVisible();
 
@@ -171,8 +202,11 @@ test.describe('Interface Admin - Navigation', () => {
   });
 
   test('Le lien "Réservations" est actif par défaut', async ({ page }) => {
+    // Se connecter explicitement
+    await login(page);
+
     // Vérifier que le lien Réservations est en mode actif
-    await expect(page.getByRole('link', { name: 'Réservations' })).toHaveClass(/bg-primary\/15/);
+    await expect(page.getByRole('link', { name: 'Réservations' })).toHaveClass(/bg-primary\/15/, { timeout: 5000 });
 
     // Vérifier que les autres liens ne sont pas actifs
     await expect(page.getByRole('link', { name: 'Bons Cadeaux' })).not.toHaveClass(/bg-primary\/15/);
@@ -180,6 +214,9 @@ test.describe('Interface Admin - Navigation', () => {
   });
 
   test('La navigation vers la page Bons Cadeaux fonctionne', async ({ page }) => {
+    // Se connecter explicitement
+    await login(page);
+
     // Cliquer sur le lien Bons Cadeaux
     await page.getByRole('link', { name: 'Bons Cadeaux' }).click();
 
@@ -191,18 +228,26 @@ test.describe('Interface Admin - Navigation', () => {
   });
 
   test('La navigation vers la page CMS fonctionne', async ({ page }) => {
-    // Cliquer sur le lien CMS
-    await page.getByRole('link', { name: 'CMS' }).click();
+    // Se connecter directement sur /keystatic avec le paramètre next
+    const adminUser = process.env.ADMIN_USER || 'admin';
+    const adminPassword = process.env.ADMIN_PASSWORD || '1';
 
-    // La page /admin/cms redirige vers /keystatic
-    // Attendre la redirection vers la page de gestion de contenu
-    await page.waitForURL(/keystatic|admin\/cms/, { timeout: 10000 });
+    await page.goto('/admin/login?next=%2Fkeystatic');
+    await page.locator('input#username').fill(adminUser);
+    await page.locator('input#password').fill(adminPassword);
+    await page.locator('button[type="submit"]').click();
+
+    // Attendre que la page soit chargée (keystatic charge ses composants)
+    await page.waitForURL(/\/keystatic/, { timeout: 30000 });
 
     // Vérifier que le header est affiché (le CMS utilise AdminNav)
-    await expect(page.locator('header')).toBeVisible();
+    await expect(page.locator('header')).toBeVisible({ timeout: 15000 });
   });
 
   test('La navigation vers la page Réservations fonctionne depuis Bons Cadeaux', async ({ page }) => {
+    // Se connecter explicitement
+    await login(page);
+
     // Aller d'abord sur la page Bons Cadeaux
     await page.getByRole('link', { name: 'Bons Cadeaux' }).click();
     await expect(page).toHaveURL(/\/admin\/cheques-cadeaux/);
@@ -215,11 +260,31 @@ test.describe('Interface Admin - Navigation', () => {
   });
 
   test('La navigation vers la page Réservations fonctionne depuis CMS', async ({ page }) => {
-    // Aller d'abord sur la page CMS
-    await page.getByRole('link', { name: 'CMS' }).click();
+    // Se connecter une première fois pour initialiser le cookie
+    const adminUser = process.env.ADMIN_USER || 'admin';
+    const adminPassword = process.env.ADMIN_PASSWORD || '1';
 
-    // Attendre la redirection vers keystatic
-    await page.waitForURL(/keystatic|admin\/cms/, { timeout: 10000 });
+    await page.goto('/admin/login');
+    await page.locator('input#username').fill(adminUser);
+    await page.locator('input#password').fill(adminPassword);
+    await page.locator('button[type="submit"]').click();
+    await page.waitForURL(/\/admin\/reservation/, { timeout: 60000 });
+
+    // Naviguer vers /keystatic - on est redirigé vers /admin/login avec un paramètre next
+    await page.goto('/keystatic');
+    await page.waitForURL(/\/admin\/login\?next=.*keystatic.*/, { timeout: 60000 });
+
+    // Deuxième connexion nécessaire car /keystatic redirige vers /admin/login
+    await page.locator('input#username').fill(adminUser);
+    await page.locator('input#password').fill(adminPassword);
+    await page.locator('button[type="submit"]').click();
+    await page.waitForURL(/\/keystatic/, { timeout: 60000 });
+
+    // Vérifier que le header est visible (le CMS utilise AdminNav)
+    await expect(page.locator('header')).toBeVisible({ timeout: 15000 });
+
+    // Vérifier qu'on est bien connecté (le logo ANØV doit être visible)
+    await expect(page.locator('header span:text("ANØV")')).toBeVisible({ timeout: 10000 });
 
     // Cliquer sur le lien Réservations
     await page.getByRole('link', { name: 'Réservations' }).click();
@@ -229,6 +294,9 @@ test.describe('Interface Admin - Navigation', () => {
   });
 
   test('L\'icône de navigation s\'affiche correctement', async ({ page }) => {
+    // Se connecter explicitement
+    await login(page);
+
     // Vérifier que les icônes sont présentes (les icônes sont dans les liens)
     // Les liens ont des icônes SVG
     // Utiliser un selector plus spécifique

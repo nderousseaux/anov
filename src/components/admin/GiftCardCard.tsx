@@ -39,7 +39,7 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, formatDateT
   const isExpired = checkIsExpired(giftCard.expiresAt); // Carte ACTIVE expirée à 1 an
 
   return (
-    <div className="bg-card border border-border rounded-lg p-5 hover:border-gold/30 transition-colors group relative">
+    <div className="bg-card border border-border rounded-lg p-5 hover:border-gold/30 transition-colors group relative" data-testid="gift-card-card">
       {/* Actions buttons */}
       <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
         {/* Marquer comme utilisé pour ACTIVE ou EXPIRED */}

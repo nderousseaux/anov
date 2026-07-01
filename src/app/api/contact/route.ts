@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendContactNotification, sendContactConfirmation } from '@/lib/email';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,6 +30,13 @@ export async function POST(request: NextRequest) {
         { error: 'Un ou plusieurs champs dépassent la longueur maximale' },
         { status: 400 }
       );
+    }
+
+    // Persistance du message (pour la fiche client), sans bloquer l'envoi des emails
+    try {
+      await prisma.contactMessage.create({ data: { name, email, subject, message } });
+    } catch (persistError) {
+      console.error('Erreur lors de la persistance du message de contact:', persistError);
     }
 
     // Envoi des emails

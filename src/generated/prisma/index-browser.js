@@ -191,6 +191,23 @@ exports.Prisma.GiftCardScalarFieldEnum = {
   usedAt: 'usedAt'
 };
 
+exports.Prisma.ContactMessageScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  name: 'name',
+  email: 'email',
+  subject: 'subject',
+  message: 'message'
+};
+
+exports.Prisma.CustomerNoteScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  content: 'content',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -227,7 +244,9 @@ exports.Prisma.ModelName = {
   Admin: 'Admin',
   RestaurantSettings: 'RestaurantSettings',
   DayOverride: 'DayOverride',
-  GiftCard: 'GiftCard'
+  GiftCard: 'GiftCard',
+  ContactMessage: 'ContactMessage',
+  CustomerNote: 'CustomerNote'
 };
 
 /**

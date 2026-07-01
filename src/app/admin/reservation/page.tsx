@@ -166,6 +166,15 @@ function TableFloorPlan({ label, tables, reservations }: {
             </div>
           );
         })}
+        {/* Table de réserve — visuelle uniquement, non géolocalisée en base et non prise en compte par l'algorithme */}
+        <div
+          style={{ left: `${RESERVE_TABLE.posX}%`, top: `${RESERVE_TABLE.posY}%` }}
+          className="absolute -translate-x-1/2 -translate-y-1/2 w-16 h-12 rounded-lg border border-dashed border-muted-foreground/40 bg-muted/10 flex flex-col items-center justify-center gap-0"
+          title="Table de réserve (appoint) — non gérée par l'algorithme de réservation"
+        >
+          <span className="text-[10px] font-semibold text-muted-foreground">{RESERVE_TABLE.name}</span>
+          <span className="text-[8px] text-muted-foreground/60 italic">appoint</span>
+        </div>
       </div>
     </div>
   );

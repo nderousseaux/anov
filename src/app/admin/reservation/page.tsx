@@ -117,6 +117,10 @@ const TABLE_SIZE_CLASSES: Record<number, string> = {
   4: 'w-28 h-28',
 };
 
+// Table de réserve : élément purement visuel affiché uniquement dans le schéma
+// (aucune donnée en base, aucun impact sur l'algorithme d'attribution de table).
+const RESERVE_TABLE = { name: 'Réserve', posX: 50, posY: 97 };
+
 function TableFloorPlan({ label, tables, reservations }: {
   label: string; tables: TableInfo[]; reservations: ReservationRow[];
 }) {
@@ -687,343 +691,343 @@ export default function AdminReservationsPage() {
 
                 {/* Header */}
                 <div className="px-5 py-4 border-b border-primary/10 flex items-center justify-between bg-card/50">
-                <div className="flex items-center gap-2.5 flex-wrap">
-                  <h2 className="text-lg font-semibold capitalize" style={{ fontFamily: 'var(--font-display)' }}>
-                    {formatFullDate(selectedDate)}
-                  </h2>
-                  <span className={`text-xs px-2 py-0.5 rounded border ${selectedDayInfo.effectiveOpen
-                    ? 'bg-green-600/20 text-green-400 border-green-600/30'
-                    : 'bg-red-600/20 text-red-400 border-red-600/30'
-                    }`}>
-                    {selectedDayInfo.effectiveOpen ? 'OUVERT' : 'FERMÉ'}
-                  </span>
-                  {selectedDayInfo.hasOverride && (
-                    <span className="text-xs px-2 py-0.5 rounded border bg-amber-600/20 text-amber-400 border-amber-600/30">
-                      Override actif
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <h2 className="text-lg font-semibold capitalize" style={{ fontFamily: 'var(--font-display)' }}>
+                      {formatFullDate(selectedDate)}
+                    </h2>
+                    <span className={`text-xs px-2 py-0.5 rounded border ${selectedDayInfo.effectiveOpen
+                      ? 'bg-green-600/20 text-green-400 border-green-600/30'
+                      : 'bg-red-600/20 text-red-400 border-red-600/30'
+                      }`}>
+                      {selectedDayInfo.effectiveOpen ? 'OUVERT' : 'FERMÉ'}
                     </span>
-                  )}
-                  {selectedDayInfo.effectiveOpen && (
-                    <span className="text-xs text-muted-foreground">
-                      {selectedDayInfo.reservedGuests} / {selectedDayInfo.totalCapacity} couverts réservés
-                    </span>
-                  )}
-                </div>
-                <Button variant="ghost" size="sm" onClick={() => setSelectedDate(null)}
-                  className="text-muted-foreground hover:text-foreground flex-shrink-0"><X size={14} /></Button>
-              </div>
-
-              <div className="grid lg:grid-cols-[360px_1fr] divide-y lg:divide-y-0 lg:divide-x divide-primary/10">
-
-                {/* ── Override panel ── */}
-                <div className="p-5 space-y-4">
-                  <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">Override du jour</h3>
-
-                  <div className="flex flex-col gap-1.5">
-                    {([
-                      { mode: 'global' as const, label: 'Suivre les paramètres globaux', emoji: '🌐' },
-                      { mode: 'closed' as const, label: 'Fermer ce jour', emoji: '🔒' },
-                      { mode: 'custom' as const, label: 'Horaires personnalisés', emoji: '✏️' },
-                    ]).map(({ mode, label, emoji }) => (
-                      <button key={mode} type="button"
-                        disabled={past}
-                        onClick={() => {
-                          if (mode === 'custom' && overrideMode !== 'custom') {
-                            setOverrideMaxCovers(selectedDayInfo.effectiveMaxCovers);
-                            setOverrideSlots(selectedDayInfo.effectiveSlots);
-                          }
-                          setOverrideMode(mode);
-                        }}
-                        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm transition-colors text-left ${past
-                          ? 'opacity-50 cursor-not-allowed'
-                          : overrideMode === mode
-                            ? 'bg-primary/15 border-primary/40 text-primary'
-                            : 'border-primary/10 text-muted-foreground hover:border-primary/30 hover:text-foreground'
-                          }`}>
-                        <span className="w-5 text-center text-base">{emoji}</span>{label}
-                        {overrideMode === mode && <span className="ml-auto text-primary text-xs">✓</span>}
-                      </button>
-                    ))}
+                    {selectedDayInfo.hasOverride && (
+                      <span className="text-xs px-2 py-0.5 rounded border bg-amber-600/20 text-amber-400 border-amber-600/30">
+                        Override actif
+                      </span>
+                    )}
+                    {selectedDayInfo.effectiveOpen && (
+                      <span className="text-xs text-muted-foreground">
+                        {selectedDayInfo.reservedGuests} / {selectedDayInfo.totalCapacity} couverts réservés
+                      </span>
+                    )}
                   </div>
+                  <Button variant="ghost" size="sm" onClick={() => setSelectedDate(null)}
+                    className="text-muted-foreground hover:text-foreground flex-shrink-0"><X size={14} /></Button>
+                </div>
 
-                  {(overrideMode === 'custom' || overrideMode === 'closed') && (
-                    <div className="space-y-4 pt-1">
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-medium">Couverts max par créneau</label>
-                        <Input type="number" min={1} max={500} value={overrideMaxCovers}
-                          onChange={(e) => setOverrideMaxCovers(Math.max(1, parseInt(e.target.value) || 1))}
+                <div className="grid lg:grid-cols-[360px_1fr] divide-y lg:divide-y-0 lg:divide-x divide-primary/10">
+
+                  {/* ── Override panel ── */}
+                  <div className="p-5 space-y-4">
+                    <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">Override du jour</h3>
+
+                    <div className="flex flex-col gap-1.5">
+                      {([
+                        { mode: 'global' as const, label: 'Suivre les paramètres globaux', emoji: '🌐' },
+                        { mode: 'closed' as const, label: 'Fermer ce jour', emoji: '🔒' },
+                        { mode: 'custom' as const, label: 'Horaires personnalisés', emoji: '✏️' },
+                      ]).map(({ mode, label, emoji }) => (
+                        <button key={mode} type="button"
                           disabled={past}
-                          className={`w-28 bg-background/30 border-primary/30 text-foreground h-8 text-sm ${past ? 'opacity-50 cursor-not-allowed' : ''}`} />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium">Créneaux</label>
-                        <div className="space-y-3">
-                          {Object.entries(ALL_SLOTS).map(([service, slots]) => {
-                            const allSel = slots.every((s) => overrideSlots.includes(s));
-                            const someSel = slots.some((s) => overrideSlots.includes(s));
-                            return (
-                              <div key={service} className="space-y-1.5">
-                                <button type="button" onClick={() => toggleOverrideService(slots)}
-                                  disabled={past}
-                                  className={`flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wide ${past ? 'opacity-50' : 'hover:opacity-80'}`}>
-                                  <span className={`w-3 h-3 rounded border flex items-center justify-center ${allSel ? 'bg-primary border-primary' : someSel ? 'bg-primary/40 border-primary/40' : 'border-primary/40'
-                                    }`}>
-                                    {(allSel || someSel) && <CheckSquare size={8} className="text-background" />}
-                                  </span>{service}
-                                </button>
-                                <div className="grid grid-cols-4 gap-1">
-                                  {slots.map((slot) => {
-                                    const active = overrideSlots.includes(slot);
-                                    return (
-                                      <button key={slot} type="button" onClick={() => toggleOverrideSlot(slot)}
-                                        disabled={past}
-                                        className={`text-xs px-1.5 py-1 rounded border transition-colors ${past
-                                          ? 'opacity-50 cursor-not-allowed'
-                                          : active ? 'bg-primary/20 border-primary/50 text-primary font-medium' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40'
-                                          }`}>{slot}</button>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            );
-                          })}
+                          onClick={() => {
+                            if (mode === 'custom' && overrideMode !== 'custom') {
+                              setOverrideMaxCovers(selectedDayInfo.effectiveMaxCovers);
+                              setOverrideSlots(selectedDayInfo.effectiveSlots);
+                            }
+                            setOverrideMode(mode);
+                          }}
+                          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm transition-colors text-left ${past
+                            ? 'opacity-50 cursor-not-allowed'
+                            : overrideMode === mode
+                              ? 'bg-primary/15 border-primary/40 text-primary'
+                              : 'border-primary/10 text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                            }`}>
+                          <span className="w-5 text-center text-base">{emoji}</span>{label}
+                          {overrideMode === mode && <span className="ml-auto text-primary text-xs">✓</span>}
+                        </button>
+                      ))}
+                    </div>
+
+                    {(overrideMode === 'custom' || overrideMode === 'closed') && (
+                      <div className="space-y-4 pt-1">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-medium">Couverts max par créneau</label>
+                          <Input type="number" min={1} max={500} value={overrideMaxCovers}
+                            onChange={(e) => setOverrideMaxCovers(Math.max(1, parseInt(e.target.value) || 1))}
+                            disabled={past}
+                            className={`w-28 bg-background/30 border-primary/30 text-foreground h-8 text-sm ${past ? 'opacity-50 cursor-not-allowed' : ''}`} />
                         </div>
-                        <p className="text-xs text-muted-foreground">{overrideSlots.length} créneau{overrideSlots.length !== 1 ? 'x' : ''}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {overrideMode === 'closed' && (
-                    <div className="flex items-start gap-2 text-xs text-red-400/80 bg-red-600/10 border border-red-600/20 rounded-lg px-3 py-2.5">
-                      <AlertTriangle size={13} className="mt-0.5 flex-shrink-0" />
-                      Ce jour sera fermé quelle que soit la configuration globale.
-                    </div>
-                  )}
-
-                  {overrideMode === 'global' && selectedDayInfo.hasOverride && (
-                    <div className="flex items-start gap-2 text-xs text-muted-foreground bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5">
-                      <RotateCcw size={13} className="mt-0.5 flex-shrink-0" />
-                      Enregistrer supprimera l&apos;override et restaurera les paramètres globaux.
-                    </div>
-                  )}
-
-                  {past && (
-                    <div className="flex items-start gap-2 text-xs text-muted-foreground/80 bg-muted/30 border border-primary/10 rounded-lg px-3 py-2.5">
-                      <AlertTriangle size={13} className="mt-0.5 flex-shrink-0" />
-                      Ce jour est déjà passé. L'override ne peut plus être modifié, mais vous pouvez annuler les réservations.
-                    </div>
-                  )}
-
-                  <Button onClick={saveOverride} disabled={savingOverride || past}
-                    className={`w-full bg-primary/20 text-primary border border-primary/40 hover:bg-primary/30 ${past ? 'opacity-50 cursor-not-allowed' : ''}`} size="sm">
-                    {savingOverride ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Save size={14} className="mr-1.5" />}
-                    {overrideSaved ? 'Enregistré ✓' : 'Enregistrer'}
-                  </Button>
-                </div>
-
-                {/* ── Reservations ── */}
-                <div className="p-5 space-y-4">
-                  <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">
-                    Réservations ({selectedDayInfo.reservationCount})
-                  </h3>
-
-                  <Tabs defaultValue="liste">
-                    <TabsList>
-                      <TabsTrigger value="liste">Liste</TabsTrigger>
-                      <TabsTrigger value="schema">Schéma</TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="liste" className="space-y-4 mt-4">
-
-                  {/* Midi section */}
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">Déjeuner</h4>
-                    {dayLoading ? (
-                      <div className="flex justify-center py-4"><Loader2 size={18} className="animate-spin text-primary" /></div>
-                    ) : (
-                      <div className="space-y-2">
-                        {dayReservations.filter(r => {
-                          const d = new Date(r.date);
-                          const hour = d.getUTCHours();
-                          return hour >= 12 && hour < 15;
-                        }).length === 0 ? (
-                          <p className="text-xs text-muted-foreground/50 py-3 text-center italic">Aucune réservation à midi</p>
-                        ) : (
-                          <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-                            {dayReservations.filter(r => {
-                              const d = new Date(r.date);
-                              const hour = d.getUTCHours();
-                              return hour >= 12 && hour < 15;
-                            }).map((r) => (
-                              <div key={r.id} className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3">
-                                <div className="flex flex-col items-center gap-1">
-                                  <div className="text-sm font-semibold text-primary tabular-nums min-w-[38px]" title="Créneau réservé">
-                                    {formatTime(r.date)}
-                                  </div>
-                                  <div className="text-[10px] text-muted-foreground/70" title="Heure de réservation">
-                                    {formatTime(r.createdAt)}
-                                  </div>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-1.5 flex-wrap">
-                                    <span className="font-medium text-sm">{r.name}</span>
-                                    <span className="text-xs text-muted-foreground">{r.guests} cvrt{r.guests > 1 ? 's' : ''}</span>
-                                    {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && new Date(r.transactionExpireAt) < new Date() ? (
-                                      <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}>
-                                        Expirée
-                                      </span>
-                                    ) : (
-                                      <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}>
-                                        {STATUS_LABELS[r.status]}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
-                                  {r.depositPaidCents && (
-                                    <div className="text-xs text-green-400 font-medium mt-0.5">
-                                      &#10004; Acompte: {(r.depositPaidCents / 100).toFixed(2)}€
-                                    </div>
-                                  )}
-                                  {r.specialRequest && (
-                                    <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
-                                  )}
-                                </div>
-                                <div className="flex gap-1 flex-shrink-0">
-                                  {r.status === 'CONFIRMED' && (
-                                    <Button size="sm" variant="outline"
-                                      onClick={() => {
-                                        if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
-                                        updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined);
-                                      }}
-                                      className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs">Annuler</Button>
-                                  )}
-                                  {r.status === 'PENDING_PAYMENT' && !r.transactionExpireAt && (
-                                    <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
-                                      En attente
-                                    </span>
-                                  )}
-                                  {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && (
-                                    <span className={`text-[10px] px-2 py-1 rounded border leading-none ${new Date(r.transactionExpireAt) < new Date()
-                                        ? 'bg-red-900/20 text-red-600 border-red-900/30'
-                                        : 'bg-amber-900/20 text-amber-600 border-amber-900/30'
+                        <div className="space-y-2">
+                          <label className="text-xs font-medium">Créneaux</label>
+                          <div className="space-y-3">
+                            {Object.entries(ALL_SLOTS).map(([service, slots]) => {
+                              const allSel = slots.every((s) => overrideSlots.includes(s));
+                              const someSel = slots.some((s) => overrideSlots.includes(s));
+                              return (
+                                <div key={service} className="space-y-1.5">
+                                  <button type="button" onClick={() => toggleOverrideService(slots)}
+                                    disabled={past}
+                                    className={`flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wide ${past ? 'opacity-50' : 'hover:opacity-80'}`}>
+                                    <span className={`w-3 h-3 rounded border flex items-center justify-center ${allSel ? 'bg-primary border-primary' : someSel ? 'bg-primary/40 border-primary/40' : 'border-primary/40'
                                       }`}>
-                                      {new Date(r.transactionExpireAt) < new Date() ? 'Expirée' : 'Expiration: ' + new Date(r.transactionExpireAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                                    </span>
-                                  )}
+                                      {(allSel || someSel) && <CheckSquare size={8} className="text-background" />}
+                                    </span>{service}
+                                  </button>
+                                  <div className="grid grid-cols-4 gap-1">
+                                    {slots.map((slot) => {
+                                      const active = overrideSlots.includes(slot);
+                                      return (
+                                        <button key={slot} type="button" onClick={() => toggleOverrideSlot(slot)}
+                                          disabled={past}
+                                          className={`text-xs px-1.5 py-1 rounded border transition-colors ${past
+                                            ? 'opacity-50 cursor-not-allowed'
+                                            : active ? 'bg-primary/20 border-primary/50 text-primary font-medium' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40'
+                                            }`}>{slot}</button>
+                                      );
+                                    })}
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
-                        )}
+                          <p className="text-xs text-muted-foreground">{overrideSlots.length} créneau{overrideSlots.length !== 1 ? 'x' : ''}</p>
+                        </div>
                       </div>
                     )}
-                  </div>
 
-                  {/* Soir section */}
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">Dîner</h4>
-                    {dayLoading ? (
-                      <div className="flex justify-center py-4"><Loader2 size={18} className="animate-spin text-primary" /></div>
-                    ) : (
-                      <div className="space-y-2">
-                        {dayReservations.filter(r => {
-                          const d = new Date(r.date);
-                          const hour = d.getUTCHours();
-                          return hour >= 19 && hour <= 23;
-                        }).length === 0 ? (
-                          <p className="text-xs text-muted-foreground/50 py-3 text-center italic">Aucune réservation au dîner</p>
-                        ) : (
-                          <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-                            {dayReservations.filter(r => {
-                              const d = new Date(r.date);
-                              const hour = d.getUTCHours();
-                              return hour >= 19 && hour <= 23;
-                            }).map((r) => (
-                              <div key={r.id} className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3">
-                                <div className="flex flex-col items-center gap-1">
-                                  <div className="text-sm font-semibold text-primary tabular-nums min-w-[38px]" title="Créneau réservé">
-                                    {formatTime(r.date)}
-                                  </div>
-                                  <div className="text-[10px] text-muted-foreground/70" title="Heure de réservation">
-                                    {formatTime(r.createdAt)}
-                                  </div>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-1.5 flex-wrap">
-                                    <span className="font-medium text-sm">{r.name}</span>
-                                    <span className="text-xs text-muted-foreground">{r.guests} cvrt{r.guests > 1 ? 's' : ''}</span>
-                                    {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && new Date(r.transactionExpireAt) < new Date() ? (
-                                      <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}>
-                                        Expirée
-                                      </span>
-                                    ) : (
-                                      <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}>
-                                        {STATUS_LABELS[r.status]}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
-                                  {r.depositPaidCents && (
-                                    <div className="text-xs text-green-400 font-medium mt-0.5">
-                                      &#10004; Acompte: {(r.depositPaidCents / 100).toFixed(2)}€
-                                    </div>
-                                  )}
-                                  {r.specialRequest && (
-                                    <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
-                                  )}
-                                </div>
-                                <div className="flex gap-1 flex-shrink-0">
-                                  {r.status === 'CONFIRMED' && (
-                                    <Button size="sm" variant="outline"
-                                      onClick={() => {
-                                        if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
-                                        updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined);
-                                      }}
-                                      className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs">Annuler</Button>
-                                  )}
-                                  {r.status === 'PENDING_PAYMENT' && !r.transactionExpireAt && (
-                                    <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
-                                      En attente
-                                    </span>
-                                  )}
-                                  {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && (
-                                    <span className={`text-[10px] px-2 py-1 rounded border leading-none ${new Date(r.transactionExpireAt) < new Date()
-                                        ? 'bg-red-900/20 text-red-600 border-red-900/30'
-                                        : 'bg-amber-900/20 text-amber-600 border-amber-900/30'
-                                      }`}>
-                                      {new Date(r.transactionExpireAt) < new Date() ? 'Expirée' : 'Expiration: ' + new Date(r.transactionExpireAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                    {overrideMode === 'closed' && (
+                      <div className="flex items-start gap-2 text-xs text-red-400/80 bg-red-600/10 border border-red-600/20 rounded-lg px-3 py-2.5">
+                        <AlertTriangle size={13} className="mt-0.5 flex-shrink-0" />
+                        Ce jour sera fermé quelle que soit la configuration globale.
                       </div>
                     )}
-                  </div>
-                    </TabsContent>
 
-                    <TabsContent value="schema" className="space-y-6 mt-4">
-                      <TableFloorPlan
-                        label="Déjeuner"
-                        tables={tables}
-                        reservations={dayReservations.filter((r) => {
-                          const hour = new Date(r.date).getUTCHours();
-                          return hour >= 12 && hour < 15;
-                        })}
-                      />
-                      <TableFloorPlan
-                        label="Dîner"
-                        tables={tables}
-                        reservations={dayReservations.filter((r) => {
-                          const hour = new Date(r.date).getUTCHours();
-                          return hour >= 19 && hour <= 23;
-                        })}
-                      />
-                    </TabsContent>
-                  </Tabs>
+                    {overrideMode === 'global' && selectedDayInfo.hasOverride && (
+                      <div className="flex items-start gap-2 text-xs text-muted-foreground bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5">
+                        <RotateCcw size={13} className="mt-0.5 flex-shrink-0" />
+                        Enregistrer supprimera l&apos;override et restaurera les paramètres globaux.
+                      </div>
+                    )}
+
+                    {past && (
+                      <div className="flex items-start gap-2 text-xs text-muted-foreground/80 bg-muted/30 border border-primary/10 rounded-lg px-3 py-2.5">
+                        <AlertTriangle size={13} className="mt-0.5 flex-shrink-0" />
+                        Ce jour est déjà passé. L'override ne peut plus être modifié, mais vous pouvez annuler les réservations.
+                      </div>
+                    )}
+
+                    <Button onClick={saveOverride} disabled={savingOverride || past}
+                      className={`w-full bg-primary/20 text-primary border border-primary/40 hover:bg-primary/30 ${past ? 'opacity-50 cursor-not-allowed' : ''}`} size="sm">
+                      {savingOverride ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Save size={14} className="mr-1.5" />}
+                      {overrideSaved ? 'Enregistré ✓' : 'Enregistrer'}
+                    </Button>
+                  </div>
+
+                  {/* ── Reservations ── */}
+                  <div className="p-5 space-y-4">
+                    <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">
+                      Réservations ({selectedDayInfo.reservationCount})
+                    </h3>
+
+                    <Tabs defaultValue="liste">
+                      <TabsList>
+                        <TabsTrigger value="liste">Liste</TabsTrigger>
+                        <TabsTrigger value="schema">Schéma</TabsTrigger>
+                      </TabsList>
+
+                      <TabsContent value="liste" className="space-y-4 mt-4">
+
+                        {/* Midi section */}
+                        <div>
+                          <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">Déjeuner</h4>
+                          {dayLoading ? (
+                            <div className="flex justify-center py-4"><Loader2 size={18} className="animate-spin text-primary" /></div>
+                          ) : (
+                            <div className="space-y-2">
+                              {dayReservations.filter(r => {
+                                const d = new Date(r.date);
+                                const hour = d.getUTCHours();
+                                return hour >= 12 && hour < 15;
+                              }).length === 0 ? (
+                                <p className="text-xs text-muted-foreground/50 py-3 text-center italic">Aucune réservation à midi</p>
+                              ) : (
+                                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                                  {dayReservations.filter(r => {
+                                    const d = new Date(r.date);
+                                    const hour = d.getUTCHours();
+                                    return hour >= 12 && hour < 15;
+                                  }).map((r) => (
+                                    <div key={r.id} className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3">
+                                      <div className="flex flex-col items-center gap-1">
+                                        <div className="text-sm font-semibold text-primary tabular-nums min-w-[38px]" title="Créneau réservé">
+                                          {formatTime(r.date)}
+                                        </div>
+                                        <div className="text-[10px] text-muted-foreground/70" title="Heure de réservation">
+                                          {formatTime(r.createdAt)}
+                                        </div>
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-1.5 flex-wrap">
+                                          <span className="font-medium text-sm">{r.name}</span>
+                                          <span className="text-xs text-muted-foreground">{r.guests} cvrt{r.guests > 1 ? 's' : ''}</span>
+                                          {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && new Date(r.transactionExpireAt) < new Date() ? (
+                                            <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}>
+                                              Expirée
+                                            </span>
+                                          ) : (
+                                            <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}>
+                                              {STATUS_LABELS[r.status]}
+                                            </span>
+                                          )}
+                                        </div>
+                                        <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
+                                        {r.depositPaidCents && (
+                                          <div className="text-xs text-green-400 font-medium mt-0.5">
+                                            &#10004; Acompte: {(r.depositPaidCents / 100).toFixed(2)}€
+                                          </div>
+                                        )}
+                                        {r.specialRequest && (
+                                          <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
+                                        )}
+                                      </div>
+                                      <div className="flex gap-1 flex-shrink-0">
+                                        {r.status === 'CONFIRMED' && (
+                                          <Button size="sm" variant="outline"
+                                            onClick={() => {
+                                              if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
+                                              updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined);
+                                            }}
+                                            className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs">Annuler</Button>
+                                        )}
+                                        {r.status === 'PENDING_PAYMENT' && !r.transactionExpireAt && (
+                                          <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
+                                            En attente
+                                          </span>
+                                        )}
+                                        {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && (
+                                          <span className={`text-[10px] px-2 py-1 rounded border leading-none ${new Date(r.transactionExpireAt) < new Date()
+                                            ? 'bg-red-900/20 text-red-600 border-red-900/30'
+                                            : 'bg-amber-900/20 text-amber-600 border-amber-900/30'
+                                            }`}>
+                                            {new Date(r.transactionExpireAt) < new Date() ? 'Expirée' : 'Expiration: ' + new Date(r.transactionExpireAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Soir section */}
+                        <div>
+                          <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">Dîner</h4>
+                          {dayLoading ? (
+                            <div className="flex justify-center py-4"><Loader2 size={18} className="animate-spin text-primary" /></div>
+                          ) : (
+                            <div className="space-y-2">
+                              {dayReservations.filter(r => {
+                                const d = new Date(r.date);
+                                const hour = d.getUTCHours();
+                                return hour >= 19 && hour <= 23;
+                              }).length === 0 ? (
+                                <p className="text-xs text-muted-foreground/50 py-3 text-center italic">Aucune réservation au dîner</p>
+                              ) : (
+                                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                                  {dayReservations.filter(r => {
+                                    const d = new Date(r.date);
+                                    const hour = d.getUTCHours();
+                                    return hour >= 19 && hour <= 23;
+                                  }).map((r) => (
+                                    <div key={r.id} className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3">
+                                      <div className="flex flex-col items-center gap-1">
+                                        <div className="text-sm font-semibold text-primary tabular-nums min-w-[38px]" title="Créneau réservé">
+                                          {formatTime(r.date)}
+                                        </div>
+                                        <div className="text-[10px] text-muted-foreground/70" title="Heure de réservation">
+                                          {formatTime(r.createdAt)}
+                                        </div>
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-1.5 flex-wrap">
+                                          <span className="font-medium text-sm">{r.name}</span>
+                                          <span className="text-xs text-muted-foreground">{r.guests} cvrt{r.guests > 1 ? 's' : ''}</span>
+                                          {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && new Date(r.transactionExpireAt) < new Date() ? (
+                                            <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}>
+                                              Expirée
+                                            </span>
+                                          ) : (
+                                            <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}>
+                                              {STATUS_LABELS[r.status]}
+                                            </span>
+                                          )}
+                                        </div>
+                                        <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
+                                        {r.depositPaidCents && (
+                                          <div className="text-xs text-green-400 font-medium mt-0.5">
+                                            &#10004; Acompte: {(r.depositPaidCents / 100).toFixed(2)}€
+                                          </div>
+                                        )}
+                                        {r.specialRequest && (
+                                          <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
+                                        )}
+                                      </div>
+                                      <div className="flex gap-1 flex-shrink-0">
+                                        {r.status === 'CONFIRMED' && (
+                                          <Button size="sm" variant="outline"
+                                            onClick={() => {
+                                              if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
+                                              updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined);
+                                            }}
+                                            className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs">Annuler</Button>
+                                        )}
+                                        {r.status === 'PENDING_PAYMENT' && !r.transactionExpireAt && (
+                                          <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
+                                            En attente
+                                          </span>
+                                        )}
+                                        {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && (
+                                          <span className={`text-[10px] px-2 py-1 rounded border leading-none ${new Date(r.transactionExpireAt) < new Date()
+                                            ? 'bg-red-900/20 text-red-600 border-red-900/30'
+                                            : 'bg-amber-900/20 text-amber-600 border-amber-900/30'
+                                            }`}>
+                                            {new Date(r.transactionExpireAt) < new Date() ? 'Expirée' : 'Expiration: ' + new Date(r.transactionExpireAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="schema" className="space-y-6 mt-4">
+                        <TableFloorPlan
+                          label="Déjeuner"
+                          tables={tables}
+                          reservations={dayReservations.filter((r) => {
+                            const hour = new Date(r.date).getUTCHours();
+                            return hour >= 12 && hour < 15;
+                          })}
+                        />
+                        <TableFloorPlan
+                          label="Dîner"
+                          tables={tables}
+                          reservations={dayReservations.filter((r) => {
+                            const hour = new Date(r.date).getUTCHours();
+                            return hour >= 19 && hour <= 23;
+                          })}
+                        />
+                      </TabsContent>
+                    </Tabs>
+                  </div>
                 </div>
-              </div>
               </div>
             );
           })()}

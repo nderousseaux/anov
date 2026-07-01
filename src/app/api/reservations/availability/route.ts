@@ -4,12 +4,18 @@ import { getSlotsWithAvailability, getUnavailableDatesForMonth } from '@/lib/ava
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
 
+  const guestsParam = searchParams.get('guests');
+  const guests = parseInt(guestsParam ?? '', 10);
+  if (!guestsParam || isNaN(guests) || guests < 1 || guests > 4) {
+    return NextResponse.json({ error: 'guests invalide (1 à 4)' }, { status: 400 });
+  }
+
   const month = searchParams.get('month');
   if (month) {
     if (!/^\d{4}-\d{2}$/.test(month)) {
       return NextResponse.json({ error: 'month invalide' }, { status: 400 });
     }
-    const unavailableDates = await getUnavailableDatesForMonth(month);
+    const unavailableDates = await getUnavailableDatesForMonth(month, guests);
     return NextResponse.json({ unavailableDates });
   }
 
@@ -24,6 +30,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ slots: [] });
   }
 
-  const slots = await getSlotsWithAvailability(date);
+  const slots = await getSlotsWithAvailability(date, guests);
   return NextResponse.json({ slots });
 }

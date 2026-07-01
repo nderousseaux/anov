@@ -138,7 +138,16 @@ exports.Prisma.ReservationScalarFieldEnum = {
   reminderSmsSent: 'reminderSmsSent',
   cancelToken: 'cancelToken',
   transactionExpireAt: 'transactionExpireAt',
-  depositPaidCents: 'depositPaidCents'
+  depositPaidCents: 'depositPaidCents',
+  tableId: 'tableId'
+};
+
+exports.Prisma.TableScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  capacity: 'capacity',
+  posX: 'posX',
+  posY: 'posY'
 };
 
 exports.Prisma.AdminScalarFieldEnum = {
@@ -214,6 +223,7 @@ exports.GiftCardStatus = exports.$Enums.GiftCardStatus = {
 
 exports.Prisma.ModelName = {
   Reservation: 'Reservation',
+  Table: 'Table',
   Admin: 'Admin',
   RestaurantSettings: 'RestaurantSettings',
   DayOverride: 'DayOverride',

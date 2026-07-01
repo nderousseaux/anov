@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { stripe, DEPOSIT_PER_GUEST_CENTS } from '@/lib/stripe';
+import { assignTable } from '@/lib/tables';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
 
@@ -14,7 +15,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Champs manquants' }, { status: 400 });
     }
     const guestsNum = parseInt(guests, 10);
-    if (isNaN(guestsNum) || guestsNum < 1 || guestsNum > 30) {
+    if (isNaN(guestsNum) || guestsNum < 1 || guestsNum > 4) {
       return NextResponse.json({ error: 'Nombre de couverts invalide' }, { status: 400 });
     }
     if (!/^[\w.+\-]+@[\w\-]+\.[a-z]{2,}$/i.test(email)) {
@@ -37,21 +38,47 @@ export async function POST(req: NextRequest) {
     const transactionExpireAt = new Date();
     transactionExpireAt.setMinutes(transactionExpireAt.getMinutes() + 10);
 
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const isToday = date === todayStr;
+
+    const settings = await prisma.restaurantSettings.findFirst({ where: { id: 1 } });
+    const mealDuration = settings?.mealDuration ?? 90;
+
     // Créer d'abord la réservation en base pour obtenir le cancelToken
     // (le token est généré automatiquement par Prisma grâce au default(cuid()))
-    const reservation = await prisma.reservation.create({
-      data: {
-        name: name,
-        email: email.trim().toLowerCase(),
-        phone: phone?.trim() || '',
-        date: reservationDate,
+    // Attribution de la table dans la même transaction que la création, pour éviter
+    // toute race condition entre la vérification de disponibilité et l'écriture.
+    const reservation = await prisma.$transaction(async (tx) => {
+      const table = await assignTable({
+        db: tx,
+        dateStr: date,
+        time,
         guests: guestsNum,
-        specialRequest: specialRequest?.trim() || '',
-        status: 'PENDING_PAYMENT',
-        depositPaidCents: depositAmount,
-        transactionExpireAt,
-      },
+        mealDuration,
+        isToday,
+      });
+      if (!table) return null;
+
+      return tx.reservation.create({
+        data: {
+          name: name,
+          email: email.trim().toLowerCase(),
+          phone: phone?.trim() || '',
+          date: reservationDate,
+          guests: guestsNum,
+          specialRequest: specialRequest?.trim() || '',
+          status: 'PENDING_PAYMENT',
+          depositPaidCents: depositAmount,
+          transactionExpireAt,
+          tableId: table.id,
+        },
+      });
     });
+
+    if (!reservation) {
+      return NextResponse.json({ error: 'Créneau complet pour ce nombre de couverts' }, { status: 409 });
+    }
 
     // Calculer l'expiration de la session (10 minutes pour le paiement)
     const sessionExpireAt = new Date();

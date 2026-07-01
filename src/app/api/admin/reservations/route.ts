@@ -93,6 +93,8 @@ export async function GET(req: NextRequest) {
       depositPaidCents: true,
       transactionExpireAt: true,
       createdAt: true,
+      tableId: true,
+      table: { select: { name: true, capacity: true } },
     },
   });
 

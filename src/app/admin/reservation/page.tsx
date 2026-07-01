@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AdminNav } from '@/components/admin/AdminNav';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   Loader2, RefreshCw, ChevronLeft, ChevronRight,
   Settings, Save, X, CheckSquare, CalendarDays,
@@ -21,6 +22,11 @@ interface ReservationRow {
   depositPaidCents: number | null;
   transactionExpireAt: string | null;
   createdAt: string;
+  tableId: number | null;
+}
+
+interface TableInfo {
+  id: number; name: string; capacity: number; posX: number; posY: number;
 }
 
 interface ApiResponse {
@@ -104,6 +110,63 @@ function formatTime(iso: string) {
   return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
 }
 
+// ── Table floor plan (vue Schéma) ──────────────────────────────────────────────
+const TABLE_SIZE_CLASSES: Record<number, string> = {
+  2: 'w-20 h-20',
+  3: 'w-24 h-24',
+  4: 'w-28 h-28',
+};
+
+function TableFloorPlan({ label, tables, reservations }: {
+  label: string; tables: TableInfo[]; reservations: ReservationRow[];
+}) {
+  const reservationsByTable = useMemo(() => {
+    const map = new Map<number, ReservationRow[]>();
+    for (const r of reservations) {
+      if (r.tableId == null) continue;
+      if (!map.has(r.tableId)) map.set(r.tableId, []);
+      map.get(r.tableId)!.push(r);
+    }
+    for (const list of map.values()) list.sort((a, b) => a.date.localeCompare(b.date));
+    return map;
+  }, [reservations]);
+
+  return (
+    <div className="space-y-2">
+      <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</h4>
+      <div className="relative w-full aspect-[4/3] bg-background/20 border border-primary/10 rounded-xl">
+        {tables.map((table) => {
+          const tableReservations = reservationsByTable.get(table.id) ?? [];
+          const occupied = tableReservations.length > 0;
+          return (
+            <div key={table.id}
+              style={{ left: `${table.posX}%`, top: `${table.posY}%` }}
+              className={`absolute -translate-x-1/2 -translate-y-1/2 ${TABLE_SIZE_CLASSES[table.capacity] ?? 'w-20 h-20'} rounded-lg border p-1.5 flex flex-col gap-0.5 overflow-hidden ${occupied ? 'bg-primary/10 border-primary/40' : 'bg-background/40 border-primary/15'
+                }`}>
+              <div className="flex items-center justify-between shrink-0">
+                <span className="text-xs font-semibold text-primary">{table.name}</span>
+                <span className="text-[10px] text-muted-foreground">{table.capacity}p</span>
+              </div>
+              {occupied ? (
+                <div className="space-y-0.5 overflow-y-auto text-[10px] leading-tight">
+                  {tableReservations.map((r) => (
+                    <div key={r.id} className="truncate" title={`${r.name} · ${r.guests} cvrt${r.guests > 1 ? 's' : ''}`}>
+                      <span className="font-medium text-primary/90">{formatTime(r.date)}</span> {r.name}
+                      <span className={`ml-1 px-1 rounded border text-[9px] ${STATUS_COLORS[r.status]}`}>{STATUS_LABELS[r.status]}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <span className="text-[10px] text-muted-foreground/40 italic">Libre</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function AdminReservationsPage() {
   const router = useRouter();
@@ -150,7 +213,8 @@ export default function AdminReservationsPage() {
   const [overrideSlots, setOverrideSlots] = useState<string[]>([]);
   const [savingOverride, setSavingOverride] = useState(false);
   const [overrideSaved, setOverrideSaved] = useState(false);
-
+  // Tables (vue Schéma)
+  const [tables, setTables] = useState<TableInfo[]>([]);
   // ── Fetchers ─────────────────────────────────────────────────────────────────
   const fetchSettings = useCallback(async () => {
     const res = await fetch('/api/admin/settings');
@@ -174,6 +238,11 @@ export default function AdminReservationsPage() {
     setCalendarLoading(false);
   }, [calendarStart, calendarDaysCount, router]);
 
+  const fetchTables = useCallback(async () => {
+    const res = await fetch('/api/admin/tables');
+    if (res.ok) setTables(await res.json());
+  }, []);
+
   const fetchDayReservations = useCallback(async (date: string) => {
     setDayLoading(true);
     const res = await fetch(`/api/admin/reservations?date=${date}&page=1`);
@@ -184,6 +253,7 @@ export default function AdminReservationsPage() {
   // ── Effects ──────────────────────────────────────────────────────────────────
   useEffect(() => { fetchSettings(); }, [fetchSettings]);
   useEffect(() => { fetchCalendar(); }, [fetchCalendar]);
+  useEffect(() => { fetchTables(); }, [fetchTables]);
 
   // Fetch day reservations when selected date changes
   useEffect(() => {
@@ -756,6 +826,14 @@ export default function AdminReservationsPage() {
                     Réservations ({selectedDayInfo.reservationCount})
                   </h3>
 
+                  <Tabs defaultValue="liste">
+                    <TabsList>
+                      <TabsTrigger value="liste">Liste</TabsTrigger>
+                      <TabsTrigger value="schema">Schéma</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="liste" className="space-y-4 mt-4">
+
                   {/* Midi section */}
                   <div>
                     <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">Déjeuner</h4>
@@ -923,6 +1001,27 @@ export default function AdminReservationsPage() {
                       </div>
                     )}
                   </div>
+                    </TabsContent>
+
+                    <TabsContent value="schema" className="space-y-6 mt-4">
+                      <TableFloorPlan
+                        label="Déjeuner"
+                        tables={tables}
+                        reservations={dayReservations.filter((r) => {
+                          const hour = new Date(r.date).getUTCHours();
+                          return hour >= 12 && hour < 15;
+                        })}
+                      />
+                      <TableFloorPlan
+                        label="Dîner"
+                        tables={tables}
+                        reservations={dayReservations.filter((r) => {
+                          const hour = new Date(r.date).getUTCHours();
+                          return hour >= 19 && hour <= 23;
+                        })}
+                      />
+                    </TabsContent>
+                  </Tabs>
                 </div>
               </div>
               </div>

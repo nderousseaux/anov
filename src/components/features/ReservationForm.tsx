@@ -45,7 +45,8 @@ interface TranslationData {
   };
 }
 
-type SlotInfo = { time: string; available: number };
+type SlotInfo = { time: string; available: boolean };
+const MAX_GUESTS = 4;
 
 interface ReservationFormProps {
   content?: Record<string, unknown> | null;
@@ -157,21 +158,12 @@ export function ReservationForm({ content }: ReservationFormProps) {
     setIsClient(true);
   }, []);
 
-  const guestsNum = parseInt(formData.guests, 10);
-
-  const selectedSlot = slots.find((s) => s.time === formData.time);
-  const maxGuests = selectedSlot
-    ? selectedSlot.available
-    : slots.length > 0
-      ? Math.max(...slots.map((s) => s.available))
-      : 20;
-
-  const loadSlots = useCallback(async (date: string) => {
-    if (!date) return;
+  const loadSlots = useCallback(async (date: string, guests: string) => {
+    if (!date || !guests) return;
     setLoadingSlots(true);
     setFormData((prev) => ({ ...prev, time: '' }));
     try {
-      const res = await fetch(`/api/reservations/availability?date=${date}`);
+      const res = await fetch(`/api/reservations/availability?date=${date}&guests=${guests}`);
       const data = await res.json();
       setSlots(data.slots ?? []);
     } catch {
@@ -183,13 +175,13 @@ export function ReservationForm({ content }: ReservationFormProps) {
 
   // Charger les slots de la date du jour au montage (pour désactiver si plus de créneaux)
   useEffect(() => {
-    if (isClient) {
+    if (isClient && formData.guests) {
       const today = new Date();
       const y = today.getFullYear();
       const m = String(today.getMonth() + 1).padStart(2, '0');
       const d = String(today.getDate()).padStart(2, '0');
       const todayStr = `${y}-${m}-${d}`;
-      fetch(`/api/reservations/availability?date=${todayStr}`)
+      fetch(`/api/reservations/availability?date=${todayStr}&guests=${formData.guests}`)
         .then((r) => r.json())
         .then((data) => {
           setTodaySlots(data.slots ?? null);
@@ -198,16 +190,17 @@ export function ReservationForm({ content }: ReservationFormProps) {
           setTodaySlots(null);
         });
     }
-  }, [isClient]);
+  }, [isClient, formData.guests]);
 
   useEffect(() => {
-    if (formData.date) loadSlots(formData.date);
-  }, [formData.date, loadSlots]);
+    if (formData.date && formData.guests) loadSlots(formData.date, formData.guests);
+  }, [formData.date, formData.guests, loadSlots]);
 
   useEffect(() => {
+    if (!formData.guests) return;
     const y = calendarMonth.getFullYear();
     const m = String(calendarMonth.getMonth() + 1).padStart(2, '0');
-    fetch(`/api/reservations/availability?month=${y}-${m}`)
+    fetch(`/api/reservations/availability?month=${y}-${m}&guests=${formData.guests}`)
       .then((r) => r.json())
       .then((data) => {
         setUnavailableDates(
@@ -215,7 +208,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
         );
       })
       .catch(() => { });
-  }, [calendarMonth]);
+  }, [calendarMonth, formData.guests]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -349,7 +342,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
                   <SelectValue placeholder={t.reservation.guests} />
                 </SelectTrigger>
                 <SelectContent className="bg-secondary border-primary/30">
-                  {Array.from({ length: maxGuests }, (_, i) => i + 1).map((n) => (
+                  {Array.from({ length: MAX_GUESTS }, (_, i) => i + 1).map((n) => (
                     <SelectItem key={n} value={String(n)} className="text-foreground focus:bg-primary/20 data-[highlighted]:text-primary">
                       {n} personne{n > 1 ? 's' : ''}
                     </SelectItem>
@@ -452,7 +445,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {lunchSlots.map((slot) => {
-                          const disabled = slot.available < guestsNum;
+                          const disabled = !slot.available;
                           const selected = formData.time === slot.time;
                           return (
                             <button
@@ -461,22 +454,18 @@ export function ReservationForm({ content }: ReservationFormProps) {
                               disabled={disabled}
                               onClick={() => {
                                 if (disabled) return;
-                                const newGuests = guestsNum > slot.available ? '' : formData.guests;
-                                setFormData({ ...formData, time: slot.time, guests: newGuests });
+                                setFormData({ ...formData, time: slot.time });
                               }}
                               className={[
-                                'flex flex-col items-center justify-center w-20 h-14 rounded border text-sm font-medium transition-all',
+                                'flex items-center justify-center w-20 h-14 rounded border text-sm font-medium transition-all',
                                 selected
                                   ? 'bg-primary border-primary text-primary-foreground shadow-md'
                                   : disabled
-                                    ? 'bg-background/10 border-primary/10 text-muted-foreground/40 cursor-not-allowed'
+                                    ? 'bg-background/10 border-primary/10 text-muted-foreground/40 cursor-not-allowed line-through'
                                     : 'bg-background/30 border-primary/30 text-foreground hover:border-primary/70 hover:bg-primary/10',
                               ].join(' ')}
                             >
                               <span>{slot.time}</span>
-                              <span className={['text-xs', selected ? 'text-primary-foreground/80' : disabled ? 'text-muted-foreground/40' : 'text-muted-foreground'].join(' ')}>
-                                {slot.available} {t.reservation.available}
-                              </span>
                             </button>
                           );
                         })}
@@ -491,7 +480,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {dinnerSlots.map((slot) => {
-                          const disabled = slot.available < guestsNum;
+                          const disabled = !slot.available;
                           const selected = formData.time === slot.time;
                           return (
                             <button
@@ -500,22 +489,18 @@ export function ReservationForm({ content }: ReservationFormProps) {
                               disabled={disabled}
                               onClick={() => {
                                 if (disabled) return;
-                                const newGuests = guestsNum > slot.available ? '' : formData.guests;
-                                setFormData({ ...formData, time: slot.time, guests: newGuests });
+                                setFormData({ ...formData, time: slot.time });
                               }}
                               className={[
-                                'flex flex-col items-center justify-center w-20 h-14 rounded border text-sm font-medium transition-all',
+                                'flex items-center justify-center w-20 h-14 rounded border text-sm font-medium transition-all',
                                 selected
                                   ? 'bg-primary border-primary text-primary-foreground shadow-md'
                                   : disabled
-                                    ? 'bg-background/10 border-primary/10 text-muted-foreground/40 cursor-not-allowed'
+                                    ? 'bg-background/10 border-primary/10 text-muted-foreground/40 cursor-not-allowed line-through'
                                     : 'bg-background/30 border-primary/30 text-foreground hover:border-primary/70 hover:bg-primary/10',
                               ].join(' ')}
                             >
                               <span>{slot.time}</span>
-                              <span className={['text-xs', selected ? 'text-primary-foreground/80' : disabled ? 'text-muted-foreground/40' : 'text-muted-foreground'].join(' ')}>
-                                {slot.available} {t.reservation.available}
-                              </span>
                             </button>
                           );
                         })}

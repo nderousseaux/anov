@@ -1,4 +1,5 @@
 import { prisma } from './prisma';
+import { getTables, getDayReservationsForTables, computeBusyTableIds, pickTable } from './tables';
 
 const DEFAULT_SLOTS = [
   '12:00', '12:30', '13:00', '13:30',
@@ -45,85 +46,14 @@ async function getEffectiveConfig(dateStr: string): Promise<EffectiveConfig | nu
 }
 
 /**
- * Converts a "HH:MM" slot string to minutes since midnight.
+ * Returns all configured slots for a given date with a boolean indicating whether a
+ * suitable table is available for the requested number of guests (table-based logic,
+ * see src/lib/tables.ts). Closed days / slots return an empty array.
  */
-function slotToMinutes(slot: string): number {
-  const [h, m] = slot.split(':').map(Number);
-  return h * 60 + m;
-}
-
-/**
- * Builds a map of slot → total guests occupying that slot, accounting for meal duration.
- * A reservation at time R with duration D occupies all slots S where:
- * - R - mealDuration <= S < R + mealDuration
- * This ensures that if a group arrives late (at R - mealDuration), they don't find
- * the table already taken - the blocking window extends X minutes before AND after.
- */
-function buildCoverageMap(
-  reservations: { date: Date; guests: number }[],
-  effectiveSlots: string[],
-  mealDuration: number,
-): Record<string, number> {
-  const coverage: Record<string, number> = {};
-  for (const r of reservations) {
-    const resMin = r.date.getUTCHours() * 60 + r.date.getUTCMinutes();
-    // Blocking window: X minutes BEFORE the reservation time AND X minutes AFTER
-    const startMin = resMin - mealDuration;
-    const endMin = resMin + mealDuration;
-    for (const slot of effectiveSlots) {
-      const slotMin = slotToMinutes(slot);
-      if (slotMin >= startMin && slotMin < endMin) {
-        coverage[slot] = (coverage[slot] ?? 0) + r.guests;
-      }
-    }
-  }
-  return coverage;
-}
-
-/**
- * Returns a list of available time slots for a given date.
- * Respects global settings (openingDays, openingSlots, maxCovers)
- * and per-day DayOverride (closed, custom slots, custom maxCovers).
- */
-export async function getAvailableSlots(dateStr: string): Promise<string[]> {
+export async function getSlotsWithAvailability(dateStr: string, guests: number): Promise<{ time: string; available: boolean }[]> {
   const config = await getEffectiveConfig(dateStr);
   if (!config) return [];
-  const { effectiveSlots, effectiveMaxCovers, mealDuration } = config;
-
-  const dayStart = new Date(dateStr + 'T00:00:00.000Z');
-  const dayEnd = new Date(dateStr + 'T23:59:59.999Z');
-  const now = new Date();
-
-  // Compter les réservations CONFIRMED et PENDING_PAYMENT non expirés
-  // Exclure les PENDING_PAYMENT avec transactionExpireAt dépassé
-  const reservations = await prisma.reservation.findMany({
-    where: {
-      date: { gte: dayStart, lte: dayEnd },
-      OR: [
-        { status: 'CONFIRMED' },
-        {
-          AND: [
-            { status: 'PENDING_PAYMENT' },
-            { OR: [{ transactionExpireAt: { gt: now } }, { transactionExpireAt: null }] },
-          ],
-        },
-      ],
-    },
-    select: { date: true, guests: true },
-  });
-
-  const coverage = buildCoverageMap(reservations, effectiveSlots, mealDuration);
-  return effectiveSlots.filter((slot) => (coverage[slot] ?? 0) + 1 <= effectiveMaxCovers);
-}
-
-/**
- * Returns all configured slots for a given date with the number of remaining available places.
- * Closed days / slots return an empty array.
- */
-export async function getSlotsWithAvailability(dateStr: string): Promise<{ time: string; available: number }[]> {
-  const config = await getEffectiveConfig(dateStr);
-  if (!config) return [];
-  let { effectiveSlots, effectiveMaxCovers } = config;
+  let { effectiveSlots } = config;
 
   // Pour le jour J : supprimer les services déjà entamés
   const now = new Date();
@@ -148,39 +78,24 @@ export async function getSlotsWithAvailability(dateStr: string): Promise<{ time:
       .flat();
   }
 
-  const dayStart = new Date(dateStr + 'T00:00:00.000Z');
-  const dayEnd = new Date(dateStr + 'T23:59:59.999Z');
+  const isToday = dateStr === localToday;
+  const [tables, reservations] = await Promise.all([
+    getTables(),
+    getDayReservationsForTables(prisma, dateStr),
+  ]);
 
-  // Compter les réservations CONFIRMED et PENDING_PAYMENT non expirés
-  // Exclure les PENDING_PAYMENT avec transactionExpireAt dépassé
-  const reservations = await prisma.reservation.findMany({
-    where: {
-      date: { gte: dayStart, lte: dayEnd },
-      OR: [
-        { status: 'CONFIRMED' },
-        {
-          AND: [
-            { status: 'PENDING_PAYMENT' },
-            { OR: [{ transactionExpireAt: { gt: now } }, { transactionExpireAt: null }] },
-          ],
-        },
-      ],
-    },
-    select: { date: true, guests: true },
+  return effectiveSlots.map((slot) => {
+    const busy = computeBusyTableIds(reservations, slot, config.mealDuration);
+    const table = pickTable(tables, busy, guests, isToday);
+    return { time: slot, available: table !== null };
   });
-
-  const coverage = buildCoverageMap(reservations, effectiveSlots, config.mealDuration);
-  return effectiveSlots.map((slot) => ({
-    time: slot,
-    available: Math.max(0, effectiveMaxCovers - (coverage[slot] ?? 0)),
-  }));
 }
 
 /**
  * Returns the list of date strings (YYYY-MM-DD) in a given month that have no availability.
  * Only 3 DB queries regardless of the number of days in the month.
  */
-export async function getUnavailableDatesForMonth(monthStr: string): Promise<string[]> {
+export async function getUnavailableDatesForMonth(monthStr: string, guests: number): Promise<string[]> {
   const [year, month] = monthStr.split('-').map(Number);
   // new Date(year, month, 0) → last day of the 1-indexed month (JS month index is month-1, day 0 = last day of month-1)
   const daysInMonth = new Date(year, month, 0).getDate();
@@ -192,7 +107,7 @@ export async function getUnavailableDatesForMonth(monthStr: string): Promise<str
   const monthStart = new Date(`${year}-${paddedMonth}-01T00:00:00.000Z`);
   const monthEnd = new Date(`${year}-${paddedMonth}-${String(daysInMonth).padStart(2, '0')}T23:59:59.999Z`);
 
-  const [dbSettings, overrides, reservations] = await Promise.all([
+  const [dbSettings, overrides, reservations, tables] = await Promise.all([
     prisma.restaurantSettings.findFirst({ where: { id: 1 } }),
     prisma.dayOverride.findMany({ where: { date: { gte: monthStart, lte: monthEnd } } }),
     // Compter les réservations CONFIRMED et PENDING_PAYMENT non expirés
@@ -209,11 +124,11 @@ export async function getUnavailableDatesForMonth(monthStr: string): Promise<str
           },
         ],
       },
-      select: { date: true, guests: true },
+      select: { date: true, tableId: true },
     }),
+    getTables(),
   ]);
 
-  const globalMaxCovers: number = dbSettings?.maxCovers ?? 20;
   const mealDuration: number = dbSettings?.mealDuration ?? DEFAULT_MEAL_DURATION;
   const globalOpeningDays: number[] = dbSettings
     ? (JSON.parse(dbSettings.openingDays) as number[])
@@ -227,7 +142,7 @@ export async function getUnavailableDatesForMonth(monthStr: string): Promise<str
     overrideByDate.set(o.date.toISOString().split('T')[0], o);
   }
 
-  const resByDate = new Map<string, { date: Date; guests: number }[]>();
+  const resByDate = new Map<string, { date: Date; tableId: number | null }[]>();
   for (const r of reservations) {
     const d = r.date.toISOString().split('T')[0];
     if (!resByDate.has(d)) resByDate.set(d, []);
@@ -247,31 +162,32 @@ export async function getUnavailableDatesForMonth(monthStr: string): Promise<str
     const override = overrideByDate.get(dateStr);
 
     let effectiveSlots: string[];
-    let effectiveMaxCovers: number;
 
     if (override) {
       if (override.closed) { unavailable.push(dateStr); continue; }
       effectiveSlots = override.openingSlots
         ? (JSON.parse(override.openingSlots) as string[])
         : globalSlots;
-      effectiveMaxCovers = override.maxCovers ?? globalMaxCovers;
     } else {
       if (!globalOpeningDays.includes(dow)) { unavailable.push(dateStr); continue; }
       effectiveSlots = globalSlots;
-      effectiveMaxCovers = globalMaxCovers;
     }
 
     // Pour aujourd'hui, filtrer les créneaux déjà passés
     let filteredSlots = effectiveSlots;
-    if (dateStr === todayStr) {
+    const isToday = dateStr === todayStr;
+    if (isToday) {
       filteredSlots = effectiveSlots.filter((slot) => {
         const [h, m] = slot.split(':').map(Number);
         return h * 60 + m > currentMin;
       });
     }
 
-    const coverage = buildCoverageMap(resByDate.get(dateStr) ?? [], filteredSlots, mealDuration);
-    const hasAvailability = filteredSlots.some((slot) => (coverage[slot] ?? 0) < effectiveMaxCovers);
+    const dayReservations = resByDate.get(dateStr) ?? [];
+    const hasAvailability = filteredSlots.some((slot) => {
+      const busy = computeBusyTableIds(dayReservations, slot, mealDuration);
+      return pickTable(tables, busy, guests, isToday) !== null;
+    });
     if (!hasAvailability) unavailable.push(dateStr);
   }
 

@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type Reservation = $Result.DefaultSelection<Prisma.$ReservationPayload>
 /**
+ * Model Table
+ * 
+ */
+export type Table = $Result.DefaultSelection<Prisma.$TablePayload>
+/**
  * Model Admin
  * 
  */
@@ -204,6 +209,16 @@ export class PrismaClient<
     * ```
     */
   get reservation(): Prisma.ReservationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.table`: Exposes CRUD operations for the **Table** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Tables
+    * const tables = await prisma.table.findMany()
+    * ```
+    */
+  get table(): Prisma.TableDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.admin`: Exposes CRUD operations for the **Admin** model.
@@ -679,6 +694,7 @@ export namespace Prisma {
 
   export const ModelName: {
     Reservation: 'Reservation',
+    Table: 'Table',
     Admin: 'Admin',
     RestaurantSettings: 'RestaurantSettings',
     DayOverride: 'DayOverride',
@@ -698,7 +714,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "reservation" | "admin" | "restaurantSettings" | "dayOverride" | "giftCard"
+      modelProps: "reservation" | "table" | "admin" | "restaurantSettings" | "dayOverride" | "giftCard"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -773,6 +789,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ReservationCountArgs<ExtArgs>
             result: $Utils.Optional<ReservationCountAggregateOutputType> | number
+          }
+        }
+      }
+      Table: {
+        payload: Prisma.$TablePayload<ExtArgs>
+        fields: Prisma.TableFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TableFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TablePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TableFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TablePayload>
+          }
+          findFirst: {
+            args: Prisma.TableFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TablePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TableFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TablePayload>
+          }
+          findMany: {
+            args: Prisma.TableFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TablePayload>[]
+          }
+          create: {
+            args: Prisma.TableCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TablePayload>
+          }
+          createMany: {
+            args: Prisma.TableCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TableCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TablePayload>[]
+          }
+          delete: {
+            args: Prisma.TableDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TablePayload>
+          }
+          update: {
+            args: Prisma.TableUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TablePayload>
+          }
+          deleteMany: {
+            args: Prisma.TableDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TableUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TableUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TablePayload>[]
+          }
+          upsert: {
+            args: Prisma.TableUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TablePayload>
+          }
+          aggregate: {
+            args: Prisma.TableAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTable>
+          }
+          groupBy: {
+            args: Prisma.TableGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TableGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TableCountArgs<ExtArgs>
+            result: $Utils.Optional<TableCountAggregateOutputType> | number
           }
         }
       }
@@ -1181,6 +1271,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     reservation?: ReservationOmit
+    table?: TableOmit
     admin?: AdminOmit
     restaurantSettings?: RestaurantSettingsOmit
     dayOverride?: DayOverrideOmit
@@ -1260,6 +1351,36 @@ export namespace Prisma {
    */
 
 
+  /**
+   * Count Type TableCountOutputType
+   */
+
+  export type TableCountOutputType = {
+    reservations: number
+  }
+
+  export type TableCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reservations?: boolean | TableCountOutputTypeCountReservationsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TableCountOutputType without action
+   */
+  export type TableCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TableCountOutputType
+     */
+    select?: TableCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TableCountOutputType without action
+   */
+  export type TableCountOutputTypeCountReservationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ReservationWhereInput
+  }
+
 
   /**
    * Models
@@ -1280,11 +1401,13 @@ export namespace Prisma {
   export type ReservationAvgAggregateOutputType = {
     guests: number | null
     depositPaidCents: number | null
+    tableId: number | null
   }
 
   export type ReservationSumAggregateOutputType = {
     guests: number | null
     depositPaidCents: number | null
+    tableId: number | null
   }
 
   export type ReservationMinAggregateOutputType = {
@@ -1306,6 +1429,7 @@ export namespace Prisma {
     cancelToken: string | null
     transactionExpireAt: Date | null
     depositPaidCents: number | null
+    tableId: number | null
   }
 
   export type ReservationMaxAggregateOutputType = {
@@ -1327,6 +1451,7 @@ export namespace Prisma {
     cancelToken: string | null
     transactionExpireAt: Date | null
     depositPaidCents: number | null
+    tableId: number | null
   }
 
   export type ReservationCountAggregateOutputType = {
@@ -1348,6 +1473,7 @@ export namespace Prisma {
     cancelToken: number
     transactionExpireAt: number
     depositPaidCents: number
+    tableId: number
     _all: number
   }
 
@@ -1355,11 +1481,13 @@ export namespace Prisma {
   export type ReservationAvgAggregateInputType = {
     guests?: true
     depositPaidCents?: true
+    tableId?: true
   }
 
   export type ReservationSumAggregateInputType = {
     guests?: true
     depositPaidCents?: true
+    tableId?: true
   }
 
   export type ReservationMinAggregateInputType = {
@@ -1381,6 +1509,7 @@ export namespace Prisma {
     cancelToken?: true
     transactionExpireAt?: true
     depositPaidCents?: true
+    tableId?: true
   }
 
   export type ReservationMaxAggregateInputType = {
@@ -1402,6 +1531,7 @@ export namespace Prisma {
     cancelToken?: true
     transactionExpireAt?: true
     depositPaidCents?: true
+    tableId?: true
   }
 
   export type ReservationCountAggregateInputType = {
@@ -1423,6 +1553,7 @@ export namespace Prisma {
     cancelToken?: true
     transactionExpireAt?: true
     depositPaidCents?: true
+    tableId?: true
     _all?: true
   }
 
@@ -1531,6 +1662,7 @@ export namespace Prisma {
     cancelToken: string
     transactionExpireAt: Date | null
     depositPaidCents: number | null
+    tableId: number | null
     _count: ReservationCountAggregateOutputType | null
     _avg: ReservationAvgAggregateOutputType | null
     _sum: ReservationSumAggregateOutputType | null
@@ -1571,6 +1703,8 @@ export namespace Prisma {
     cancelToken?: boolean
     transactionExpireAt?: boolean
     depositPaidCents?: boolean
+    tableId?: boolean
+    table?: boolean | Reservation$tableArgs<ExtArgs>
   }, ExtArgs["result"]["reservation"]>
 
   export type ReservationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1592,6 +1726,8 @@ export namespace Prisma {
     cancelToken?: boolean
     transactionExpireAt?: boolean
     depositPaidCents?: boolean
+    tableId?: boolean
+    table?: boolean | Reservation$tableArgs<ExtArgs>
   }, ExtArgs["result"]["reservation"]>
 
   export type ReservationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1613,6 +1749,8 @@ export namespace Prisma {
     cancelToken?: boolean
     transactionExpireAt?: boolean
     depositPaidCents?: boolean
+    tableId?: boolean
+    table?: boolean | Reservation$tableArgs<ExtArgs>
   }, ExtArgs["result"]["reservation"]>
 
   export type ReservationSelectScalar = {
@@ -1634,13 +1772,25 @@ export namespace Prisma {
     cancelToken?: boolean
     transactionExpireAt?: boolean
     depositPaidCents?: boolean
+    tableId?: boolean
   }
 
-  export type ReservationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "name" | "email" | "phone" | "date" | "guests" | "specialRequest" | "wantsSmsReminder" | "status" | "stripeSessionId" | "expiresAt" | "reminderEmailSent" | "reminderSmsSent" | "cancelToken" | "transactionExpireAt" | "depositPaidCents", ExtArgs["result"]["reservation"]>
+  export type ReservationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "name" | "email" | "phone" | "date" | "guests" | "specialRequest" | "wantsSmsReminder" | "status" | "stripeSessionId" | "expiresAt" | "reminderEmailSent" | "reminderSmsSent" | "cancelToken" | "transactionExpireAt" | "depositPaidCents" | "tableId", ExtArgs["result"]["reservation"]>
+  export type ReservationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    table?: boolean | Reservation$tableArgs<ExtArgs>
+  }
+  export type ReservationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    table?: boolean | Reservation$tableArgs<ExtArgs>
+  }
+  export type ReservationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    table?: boolean | Reservation$tableArgs<ExtArgs>
+  }
 
   export type $ReservationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Reservation"
-    objects: {}
+    objects: {
+      table: Prisma.$TablePayload<ExtArgs> | null
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       createdAt: Date
@@ -1660,6 +1810,7 @@ export namespace Prisma {
       cancelToken: string
       transactionExpireAt: Date | null
       depositPaidCents: number | null
+      tableId: number | null
     }, ExtArgs["result"]["reservation"]>
     composites: {}
   }
@@ -2054,6 +2205,7 @@ export namespace Prisma {
    */
   export interface Prisma__ReservationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    table<T extends Reservation$tableArgs<ExtArgs> = {}>(args?: Subset<T, Reservation$tableArgs<ExtArgs>>): Prisma__TableClient<$Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2101,6 +2253,7 @@ export namespace Prisma {
     readonly cancelToken: FieldRef<"Reservation", 'String'>
     readonly transactionExpireAt: FieldRef<"Reservation", 'DateTime'>
     readonly depositPaidCents: FieldRef<"Reservation", 'Int'>
+    readonly tableId: FieldRef<"Reservation", 'Int'>
   }
     
 
@@ -2117,6 +2270,10 @@ export namespace Prisma {
      * Omit specific fields from the Reservation
      */
     omit?: ReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReservationInclude<ExtArgs> | null
     /**
      * Filter, which Reservation to fetch.
      */
@@ -2136,6 +2293,10 @@ export namespace Prisma {
      */
     omit?: ReservationOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReservationInclude<ExtArgs> | null
+    /**
      * Filter, which Reservation to fetch.
      */
     where: ReservationWhereUniqueInput
@@ -2153,6 +2314,10 @@ export namespace Prisma {
      * Omit specific fields from the Reservation
      */
     omit?: ReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReservationInclude<ExtArgs> | null
     /**
      * Filter, which Reservation to fetch.
      */
@@ -2202,6 +2367,10 @@ export namespace Prisma {
      */
     omit?: ReservationOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReservationInclude<ExtArgs> | null
+    /**
      * Filter, which Reservation to fetch.
      */
     where?: ReservationWhereInput
@@ -2249,6 +2418,10 @@ export namespace Prisma {
      * Omit specific fields from the Reservation
      */
     omit?: ReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReservationInclude<ExtArgs> | null
     /**
      * Filter, which Reservations to fetch.
      */
@@ -2298,6 +2471,10 @@ export namespace Prisma {
      */
     omit?: ReservationOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReservationInclude<ExtArgs> | null
+    /**
      * The data needed to create a Reservation.
      */
     data: XOR<ReservationCreateInput, ReservationUncheckedCreateInput>
@@ -2331,6 +2508,10 @@ export namespace Prisma {
      */
     data: ReservationCreateManyInput | ReservationCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReservationIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -2345,6 +2526,10 @@ export namespace Prisma {
      * Omit specific fields from the Reservation
      */
     omit?: ReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReservationInclude<ExtArgs> | null
     /**
      * The data needed to update a Reservation.
      */
@@ -2397,6 +2582,10 @@ export namespace Prisma {
      * Limit how many Reservations to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReservationIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -2411,6 +2600,10 @@ export namespace Prisma {
      * Omit specific fields from the Reservation
      */
     omit?: ReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReservationInclude<ExtArgs> | null
     /**
      * The filter to search for the Reservation to update in case it exists.
      */
@@ -2438,6 +2631,10 @@ export namespace Prisma {
      */
     omit?: ReservationOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReservationInclude<ExtArgs> | null
+    /**
      * Filter which Reservation to delete.
      */
     where: ReservationWhereUniqueInput
@@ -2458,6 +2655,25 @@ export namespace Prisma {
   }
 
   /**
+   * Reservation.table
+   */
+  export type Reservation$tableArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Table
+     */
+    select?: TableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table
+     */
+    omit?: TableOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TableInclude<ExtArgs> | null
+    where?: TableWhereInput
+  }
+
+  /**
    * Reservation without action
    */
   export type ReservationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2469,6 +2685,1131 @@ export namespace Prisma {
      * Omit specific fields from the Reservation
      */
     omit?: ReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReservationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Table
+   */
+
+  export type AggregateTable = {
+    _count: TableCountAggregateOutputType | null
+    _avg: TableAvgAggregateOutputType | null
+    _sum: TableSumAggregateOutputType | null
+    _min: TableMinAggregateOutputType | null
+    _max: TableMaxAggregateOutputType | null
+  }
+
+  export type TableAvgAggregateOutputType = {
+    id: number | null
+    capacity: number | null
+    posX: number | null
+    posY: number | null
+  }
+
+  export type TableSumAggregateOutputType = {
+    id: number | null
+    capacity: number | null
+    posX: number | null
+    posY: number | null
+  }
+
+  export type TableMinAggregateOutputType = {
+    id: number | null
+    name: string | null
+    capacity: number | null
+    posX: number | null
+    posY: number | null
+  }
+
+  export type TableMaxAggregateOutputType = {
+    id: number | null
+    name: string | null
+    capacity: number | null
+    posX: number | null
+    posY: number | null
+  }
+
+  export type TableCountAggregateOutputType = {
+    id: number
+    name: number
+    capacity: number
+    posX: number
+    posY: number
+    _all: number
+  }
+
+
+  export type TableAvgAggregateInputType = {
+    id?: true
+    capacity?: true
+    posX?: true
+    posY?: true
+  }
+
+  export type TableSumAggregateInputType = {
+    id?: true
+    capacity?: true
+    posX?: true
+    posY?: true
+  }
+
+  export type TableMinAggregateInputType = {
+    id?: true
+    name?: true
+    capacity?: true
+    posX?: true
+    posY?: true
+  }
+
+  export type TableMaxAggregateInputType = {
+    id?: true
+    name?: true
+    capacity?: true
+    posX?: true
+    posY?: true
+  }
+
+  export type TableCountAggregateInputType = {
+    id?: true
+    name?: true
+    capacity?: true
+    posX?: true
+    posY?: true
+    _all?: true
+  }
+
+  export type TableAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Table to aggregate.
+     */
+    where?: TableWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tables to fetch.
+     */
+    orderBy?: TableOrderByWithRelationInput | TableOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TableWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tables from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tables.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Tables
+    **/
+    _count?: true | TableCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TableAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TableSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TableMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TableMaxAggregateInputType
+  }
+
+  export type GetTableAggregateType<T extends TableAggregateArgs> = {
+        [P in keyof T & keyof AggregateTable]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTable[P]>
+      : GetScalarType<T[P], AggregateTable[P]>
+  }
+
+
+
+
+  export type TableGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TableWhereInput
+    orderBy?: TableOrderByWithAggregationInput | TableOrderByWithAggregationInput[]
+    by: TableScalarFieldEnum[] | TableScalarFieldEnum
+    having?: TableScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TableCountAggregateInputType | true
+    _avg?: TableAvgAggregateInputType
+    _sum?: TableSumAggregateInputType
+    _min?: TableMinAggregateInputType
+    _max?: TableMaxAggregateInputType
+  }
+
+  export type TableGroupByOutputType = {
+    id: number
+    name: string
+    capacity: number
+    posX: number
+    posY: number
+    _count: TableCountAggregateOutputType | null
+    _avg: TableAvgAggregateOutputType | null
+    _sum: TableSumAggregateOutputType | null
+    _min: TableMinAggregateOutputType | null
+    _max: TableMaxAggregateOutputType | null
+  }
+
+  type GetTableGroupByPayload<T extends TableGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TableGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TableGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TableGroupByOutputType[P]>
+            : GetScalarType<T[P], TableGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TableSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    capacity?: boolean
+    posX?: boolean
+    posY?: boolean
+    reservations?: boolean | Table$reservationsArgs<ExtArgs>
+    _count?: boolean | TableCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["table"]>
+
+  export type TableSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    capacity?: boolean
+    posX?: boolean
+    posY?: boolean
+  }, ExtArgs["result"]["table"]>
+
+  export type TableSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    capacity?: boolean
+    posX?: boolean
+    posY?: boolean
+  }, ExtArgs["result"]["table"]>
+
+  export type TableSelectScalar = {
+    id?: boolean
+    name?: boolean
+    capacity?: boolean
+    posX?: boolean
+    posY?: boolean
+  }
+
+  export type TableOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "capacity" | "posX" | "posY", ExtArgs["result"]["table"]>
+  export type TableInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reservations?: boolean | Table$reservationsArgs<ExtArgs>
+    _count?: boolean | TableCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type TableIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type TableIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $TablePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Table"
+    objects: {
+      reservations: Prisma.$ReservationPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      name: string
+      capacity: number
+      posX: number
+      posY: number
+    }, ExtArgs["result"]["table"]>
+    composites: {}
+  }
+
+  type TableGetPayload<S extends boolean | null | undefined | TableDefaultArgs> = $Result.GetResult<Prisma.$TablePayload, S>
+
+  type TableCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TableFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TableCountAggregateInputType | true
+    }
+
+  export interface TableDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Table'], meta: { name: 'Table' } }
+    /**
+     * Find zero or one Table that matches the filter.
+     * @param {TableFindUniqueArgs} args - Arguments to find a Table
+     * @example
+     * // Get one Table
+     * const table = await prisma.table.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TableFindUniqueArgs>(args: SelectSubset<T, TableFindUniqueArgs<ExtArgs>>): Prisma__TableClient<$Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Table that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TableFindUniqueOrThrowArgs} args - Arguments to find a Table
+     * @example
+     * // Get one Table
+     * const table = await prisma.table.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TableFindUniqueOrThrowArgs>(args: SelectSubset<T, TableFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TableClient<$Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Table that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TableFindFirstArgs} args - Arguments to find a Table
+     * @example
+     * // Get one Table
+     * const table = await prisma.table.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TableFindFirstArgs>(args?: SelectSubset<T, TableFindFirstArgs<ExtArgs>>): Prisma__TableClient<$Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Table that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TableFindFirstOrThrowArgs} args - Arguments to find a Table
+     * @example
+     * // Get one Table
+     * const table = await prisma.table.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TableFindFirstOrThrowArgs>(args?: SelectSubset<T, TableFindFirstOrThrowArgs<ExtArgs>>): Prisma__TableClient<$Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Tables that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TableFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Tables
+     * const tables = await prisma.table.findMany()
+     * 
+     * // Get first 10 Tables
+     * const tables = await prisma.table.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const tableWithIdOnly = await prisma.table.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TableFindManyArgs>(args?: SelectSubset<T, TableFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Table.
+     * @param {TableCreateArgs} args - Arguments to create a Table.
+     * @example
+     * // Create one Table
+     * const Table = await prisma.table.create({
+     *   data: {
+     *     // ... data to create a Table
+     *   }
+     * })
+     * 
+     */
+    create<T extends TableCreateArgs>(args: SelectSubset<T, TableCreateArgs<ExtArgs>>): Prisma__TableClient<$Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Tables.
+     * @param {TableCreateManyArgs} args - Arguments to create many Tables.
+     * @example
+     * // Create many Tables
+     * const table = await prisma.table.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TableCreateManyArgs>(args?: SelectSubset<T, TableCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Tables and returns the data saved in the database.
+     * @param {TableCreateManyAndReturnArgs} args - Arguments to create many Tables.
+     * @example
+     * // Create many Tables
+     * const table = await prisma.table.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Tables and only return the `id`
+     * const tableWithIdOnly = await prisma.table.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TableCreateManyAndReturnArgs>(args?: SelectSubset<T, TableCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Table.
+     * @param {TableDeleteArgs} args - Arguments to delete one Table.
+     * @example
+     * // Delete one Table
+     * const Table = await prisma.table.delete({
+     *   where: {
+     *     // ... filter to delete one Table
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TableDeleteArgs>(args: SelectSubset<T, TableDeleteArgs<ExtArgs>>): Prisma__TableClient<$Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Table.
+     * @param {TableUpdateArgs} args - Arguments to update one Table.
+     * @example
+     * // Update one Table
+     * const table = await prisma.table.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TableUpdateArgs>(args: SelectSubset<T, TableUpdateArgs<ExtArgs>>): Prisma__TableClient<$Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Tables.
+     * @param {TableDeleteManyArgs} args - Arguments to filter Tables to delete.
+     * @example
+     * // Delete a few Tables
+     * const { count } = await prisma.table.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TableDeleteManyArgs>(args?: SelectSubset<T, TableDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Tables.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TableUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Tables
+     * const table = await prisma.table.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TableUpdateManyArgs>(args: SelectSubset<T, TableUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Tables and returns the data updated in the database.
+     * @param {TableUpdateManyAndReturnArgs} args - Arguments to update many Tables.
+     * @example
+     * // Update many Tables
+     * const table = await prisma.table.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Tables and only return the `id`
+     * const tableWithIdOnly = await prisma.table.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TableUpdateManyAndReturnArgs>(args: SelectSubset<T, TableUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Table.
+     * @param {TableUpsertArgs} args - Arguments to update or create a Table.
+     * @example
+     * // Update or create a Table
+     * const table = await prisma.table.upsert({
+     *   create: {
+     *     // ... data to create a Table
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Table we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TableUpsertArgs>(args: SelectSubset<T, TableUpsertArgs<ExtArgs>>): Prisma__TableClient<$Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Tables.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TableCountArgs} args - Arguments to filter Tables to count.
+     * @example
+     * // Count the number of Tables
+     * const count = await prisma.table.count({
+     *   where: {
+     *     // ... the filter for the Tables we want to count
+     *   }
+     * })
+    **/
+    count<T extends TableCountArgs>(
+      args?: Subset<T, TableCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TableCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Table.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TableAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TableAggregateArgs>(args: Subset<T, TableAggregateArgs>): Prisma.PrismaPromise<GetTableAggregateType<T>>
+
+    /**
+     * Group by Table.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TableGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TableGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TableGroupByArgs['orderBy'] }
+        : { orderBy?: TableGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TableGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTableGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Table model
+   */
+  readonly fields: TableFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Table.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TableClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    reservations<T extends Table$reservationsArgs<ExtArgs> = {}>(args?: Subset<T, Table$reservationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Table model
+   */
+  interface TableFieldRefs {
+    readonly id: FieldRef<"Table", 'Int'>
+    readonly name: FieldRef<"Table", 'String'>
+    readonly capacity: FieldRef<"Table", 'Int'>
+    readonly posX: FieldRef<"Table", 'Float'>
+    readonly posY: FieldRef<"Table", 'Float'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Table findUnique
+   */
+  export type TableFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Table
+     */
+    select?: TableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table
+     */
+    omit?: TableOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TableInclude<ExtArgs> | null
+    /**
+     * Filter, which Table to fetch.
+     */
+    where: TableWhereUniqueInput
+  }
+
+  /**
+   * Table findUniqueOrThrow
+   */
+  export type TableFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Table
+     */
+    select?: TableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table
+     */
+    omit?: TableOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TableInclude<ExtArgs> | null
+    /**
+     * Filter, which Table to fetch.
+     */
+    where: TableWhereUniqueInput
+  }
+
+  /**
+   * Table findFirst
+   */
+  export type TableFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Table
+     */
+    select?: TableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table
+     */
+    omit?: TableOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TableInclude<ExtArgs> | null
+    /**
+     * Filter, which Table to fetch.
+     */
+    where?: TableWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tables to fetch.
+     */
+    orderBy?: TableOrderByWithRelationInput | TableOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Tables.
+     */
+    cursor?: TableWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tables from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tables.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tables.
+     */
+    distinct?: TableScalarFieldEnum | TableScalarFieldEnum[]
+  }
+
+  /**
+   * Table findFirstOrThrow
+   */
+  export type TableFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Table
+     */
+    select?: TableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table
+     */
+    omit?: TableOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TableInclude<ExtArgs> | null
+    /**
+     * Filter, which Table to fetch.
+     */
+    where?: TableWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tables to fetch.
+     */
+    orderBy?: TableOrderByWithRelationInput | TableOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Tables.
+     */
+    cursor?: TableWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tables from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tables.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tables.
+     */
+    distinct?: TableScalarFieldEnum | TableScalarFieldEnum[]
+  }
+
+  /**
+   * Table findMany
+   */
+  export type TableFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Table
+     */
+    select?: TableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table
+     */
+    omit?: TableOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TableInclude<ExtArgs> | null
+    /**
+     * Filter, which Tables to fetch.
+     */
+    where?: TableWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tables to fetch.
+     */
+    orderBy?: TableOrderByWithRelationInput | TableOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Tables.
+     */
+    cursor?: TableWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tables from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tables.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tables.
+     */
+    distinct?: TableScalarFieldEnum | TableScalarFieldEnum[]
+  }
+
+  /**
+   * Table create
+   */
+  export type TableCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Table
+     */
+    select?: TableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table
+     */
+    omit?: TableOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TableInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Table.
+     */
+    data: XOR<TableCreateInput, TableUncheckedCreateInput>
+  }
+
+  /**
+   * Table createMany
+   */
+  export type TableCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Tables.
+     */
+    data: TableCreateManyInput | TableCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Table createManyAndReturn
+   */
+  export type TableCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Table
+     */
+    select?: TableSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table
+     */
+    omit?: TableOmit<ExtArgs> | null
+    /**
+     * The data used to create many Tables.
+     */
+    data: TableCreateManyInput | TableCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Table update
+   */
+  export type TableUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Table
+     */
+    select?: TableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table
+     */
+    omit?: TableOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TableInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Table.
+     */
+    data: XOR<TableUpdateInput, TableUncheckedUpdateInput>
+    /**
+     * Choose, which Table to update.
+     */
+    where: TableWhereUniqueInput
+  }
+
+  /**
+   * Table updateMany
+   */
+  export type TableUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Tables.
+     */
+    data: XOR<TableUpdateManyMutationInput, TableUncheckedUpdateManyInput>
+    /**
+     * Filter which Tables to update
+     */
+    where?: TableWhereInput
+    /**
+     * Limit how many Tables to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Table updateManyAndReturn
+   */
+  export type TableUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Table
+     */
+    select?: TableSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table
+     */
+    omit?: TableOmit<ExtArgs> | null
+    /**
+     * The data used to update Tables.
+     */
+    data: XOR<TableUpdateManyMutationInput, TableUncheckedUpdateManyInput>
+    /**
+     * Filter which Tables to update
+     */
+    where?: TableWhereInput
+    /**
+     * Limit how many Tables to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Table upsert
+   */
+  export type TableUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Table
+     */
+    select?: TableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table
+     */
+    omit?: TableOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TableInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Table to update in case it exists.
+     */
+    where: TableWhereUniqueInput
+    /**
+     * In case the Table found by the `where` argument doesn't exist, create a new Table with this data.
+     */
+    create: XOR<TableCreateInput, TableUncheckedCreateInput>
+    /**
+     * In case the Table was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TableUpdateInput, TableUncheckedUpdateInput>
+  }
+
+  /**
+   * Table delete
+   */
+  export type TableDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Table
+     */
+    select?: TableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table
+     */
+    omit?: TableOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TableInclude<ExtArgs> | null
+    /**
+     * Filter which Table to delete.
+     */
+    where: TableWhereUniqueInput
+  }
+
+  /**
+   * Table deleteMany
+   */
+  export type TableDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Tables to delete
+     */
+    where?: TableWhereInput
+    /**
+     * Limit how many Tables to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Table.reservations
+   */
+  export type Table$reservationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Reservation
+     */
+    select?: ReservationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Reservation
+     */
+    omit?: ReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReservationInclude<ExtArgs> | null
+    where?: ReservationWhereInput
+    orderBy?: ReservationOrderByWithRelationInput | ReservationOrderByWithRelationInput[]
+    cursor?: ReservationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ReservationScalarFieldEnum | ReservationScalarFieldEnum[]
+  }
+
+  /**
+   * Table without action
+   */
+  export type TableDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Table
+     */
+    select?: TableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table
+     */
+    omit?: TableOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TableInclude<ExtArgs> | null
   }
 
 
@@ -6777,10 +8118,22 @@ export namespace Prisma {
     reminderSmsSent: 'reminderSmsSent',
     cancelToken: 'cancelToken',
     transactionExpireAt: 'transactionExpireAt',
-    depositPaidCents: 'depositPaidCents'
+    depositPaidCents: 'depositPaidCents',
+    tableId: 'tableId'
   };
 
   export type ReservationScalarFieldEnum = (typeof ReservationScalarFieldEnum)[keyof typeof ReservationScalarFieldEnum]
+
+
+  export const TableScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    capacity: 'capacity',
+    posX: 'posX',
+    posY: 'posY'
+  };
+
+  export type TableScalarFieldEnum = (typeof TableScalarFieldEnum)[keyof typeof TableScalarFieldEnum]
 
 
   export const AdminScalarFieldEnum: {
@@ -6981,6 +8334,8 @@ export namespace Prisma {
     cancelToken?: StringFilter<"Reservation"> | string
     transactionExpireAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
     depositPaidCents?: IntNullableFilter<"Reservation"> | number | null
+    tableId?: IntNullableFilter<"Reservation"> | number | null
+    table?: XOR<TableNullableScalarRelationFilter, TableWhereInput> | null
   }
 
   export type ReservationOrderByWithRelationInput = {
@@ -7002,6 +8357,8 @@ export namespace Prisma {
     cancelToken?: SortOrder
     transactionExpireAt?: SortOrderInput | SortOrder
     depositPaidCents?: SortOrderInput | SortOrder
+    tableId?: SortOrderInput | SortOrder
+    table?: TableOrderByWithRelationInput
   }
 
   export type ReservationWhereUniqueInput = Prisma.AtLeast<{
@@ -7026,6 +8383,8 @@ export namespace Prisma {
     reminderSmsSent?: BoolFilter<"Reservation"> | boolean
     transactionExpireAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
     depositPaidCents?: IntNullableFilter<"Reservation"> | number | null
+    tableId?: IntNullableFilter<"Reservation"> | number | null
+    table?: XOR<TableNullableScalarRelationFilter, TableWhereInput> | null
   }, "id" | "stripeSessionId" | "cancelToken">
 
   export type ReservationOrderByWithAggregationInput = {
@@ -7047,6 +8406,7 @@ export namespace Prisma {
     cancelToken?: SortOrder
     transactionExpireAt?: SortOrderInput | SortOrder
     depositPaidCents?: SortOrderInput | SortOrder
+    tableId?: SortOrderInput | SortOrder
     _count?: ReservationCountOrderByAggregateInput
     _avg?: ReservationAvgOrderByAggregateInput
     _max?: ReservationMaxOrderByAggregateInput
@@ -7076,6 +8436,64 @@ export namespace Prisma {
     cancelToken?: StringWithAggregatesFilter<"Reservation"> | string
     transactionExpireAt?: DateTimeNullableWithAggregatesFilter<"Reservation"> | Date | string | null
     depositPaidCents?: IntNullableWithAggregatesFilter<"Reservation"> | number | null
+    tableId?: IntNullableWithAggregatesFilter<"Reservation"> | number | null
+  }
+
+  export type TableWhereInput = {
+    AND?: TableWhereInput | TableWhereInput[]
+    OR?: TableWhereInput[]
+    NOT?: TableWhereInput | TableWhereInput[]
+    id?: IntFilter<"Table"> | number
+    name?: StringFilter<"Table"> | string
+    capacity?: IntFilter<"Table"> | number
+    posX?: FloatFilter<"Table"> | number
+    posY?: FloatFilter<"Table"> | number
+    reservations?: ReservationListRelationFilter
+  }
+
+  export type TableOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    capacity?: SortOrder
+    posX?: SortOrder
+    posY?: SortOrder
+    reservations?: ReservationOrderByRelationAggregateInput
+  }
+
+  export type TableWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    name?: string
+    AND?: TableWhereInput | TableWhereInput[]
+    OR?: TableWhereInput[]
+    NOT?: TableWhereInput | TableWhereInput[]
+    capacity?: IntFilter<"Table"> | number
+    posX?: FloatFilter<"Table"> | number
+    posY?: FloatFilter<"Table"> | number
+    reservations?: ReservationListRelationFilter
+  }, "id" | "name">
+
+  export type TableOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    capacity?: SortOrder
+    posX?: SortOrder
+    posY?: SortOrder
+    _count?: TableCountOrderByAggregateInput
+    _avg?: TableAvgOrderByAggregateInput
+    _max?: TableMaxOrderByAggregateInput
+    _min?: TableMinOrderByAggregateInput
+    _sum?: TableSumOrderByAggregateInput
+  }
+
+  export type TableScalarWhereWithAggregatesInput = {
+    AND?: TableScalarWhereWithAggregatesInput | TableScalarWhereWithAggregatesInput[]
+    OR?: TableScalarWhereWithAggregatesInput[]
+    NOT?: TableScalarWhereWithAggregatesInput | TableScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Table"> | number
+    name?: StringWithAggregatesFilter<"Table"> | string
+    capacity?: IntWithAggregatesFilter<"Table"> | number
+    posX?: FloatWithAggregatesFilter<"Table"> | number
+    posY?: FloatWithAggregatesFilter<"Table"> | number
   }
 
   export type AdminWhereInput = {
@@ -7358,6 +8776,7 @@ export namespace Prisma {
     cancelToken?: string
     transactionExpireAt?: Date | string | null
     depositPaidCents?: number | null
+    table?: TableCreateNestedOneWithoutReservationsInput
   }
 
   export type ReservationUncheckedCreateInput = {
@@ -7379,6 +8798,7 @@ export namespace Prisma {
     cancelToken?: string
     transactionExpireAt?: Date | string | null
     depositPaidCents?: number | null
+    tableId?: number | null
   }
 
   export type ReservationUpdateInput = {
@@ -7400,6 +8820,7 @@ export namespace Prisma {
     cancelToken?: StringFieldUpdateOperationsInput | string
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     depositPaidCents?: NullableIntFieldUpdateOperationsInput | number | null
+    table?: TableUpdateOneWithoutReservationsNestedInput
   }
 
   export type ReservationUncheckedUpdateInput = {
@@ -7421,6 +8842,7 @@ export namespace Prisma {
     cancelToken?: StringFieldUpdateOperationsInput | string
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     depositPaidCents?: NullableIntFieldUpdateOperationsInput | number | null
+    tableId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ReservationCreateManyInput = {
@@ -7442,6 +8864,7 @@ export namespace Prisma {
     cancelToken?: string
     transactionExpireAt?: Date | string | null
     depositPaidCents?: number | null
+    tableId?: number | null
   }
 
   export type ReservationUpdateManyMutationInput = {
@@ -7484,6 +8907,64 @@ export namespace Prisma {
     cancelToken?: StringFieldUpdateOperationsInput | string
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     depositPaidCents?: NullableIntFieldUpdateOperationsInput | number | null
+    tableId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type TableCreateInput = {
+    name: string
+    capacity: number
+    posX?: number
+    posY?: number
+    reservations?: ReservationCreateNestedManyWithoutTableInput
+  }
+
+  export type TableUncheckedCreateInput = {
+    id?: number
+    name: string
+    capacity: number
+    posX?: number
+    posY?: number
+    reservations?: ReservationUncheckedCreateNestedManyWithoutTableInput
+  }
+
+  export type TableUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    posX?: FloatFieldUpdateOperationsInput | number
+    posY?: FloatFieldUpdateOperationsInput | number
+    reservations?: ReservationUpdateManyWithoutTableNestedInput
+  }
+
+  export type TableUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    posX?: FloatFieldUpdateOperationsInput | number
+    posY?: FloatFieldUpdateOperationsInput | number
+    reservations?: ReservationUncheckedUpdateManyWithoutTableNestedInput
+  }
+
+  export type TableCreateManyInput = {
+    id?: number
+    name: string
+    capacity: number
+    posX?: number
+    posY?: number
+  }
+
+  export type TableUpdateManyMutationInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    posX?: FloatFieldUpdateOperationsInput | number
+    posY?: FloatFieldUpdateOperationsInput | number
+  }
+
+  export type TableUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    posX?: FloatFieldUpdateOperationsInput | number
+    posY?: FloatFieldUpdateOperationsInput | number
   }
 
   export type AdminCreateInput = {
@@ -7853,6 +9334,11 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type TableNullableScalarRelationFilter = {
+    is?: TableWhereInput | null
+    isNot?: TableWhereInput | null
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -7877,11 +9363,13 @@ export namespace Prisma {
     cancelToken?: SortOrder
     transactionExpireAt?: SortOrder
     depositPaidCents?: SortOrder
+    tableId?: SortOrder
   }
 
   export type ReservationAvgOrderByAggregateInput = {
     guests?: SortOrder
     depositPaidCents?: SortOrder
+    tableId?: SortOrder
   }
 
   export type ReservationMaxOrderByAggregateInput = {
@@ -7903,6 +9391,7 @@ export namespace Prisma {
     cancelToken?: SortOrder
     transactionExpireAt?: SortOrder
     depositPaidCents?: SortOrder
+    tableId?: SortOrder
   }
 
   export type ReservationMinOrderByAggregateInput = {
@@ -7924,11 +9413,13 @@ export namespace Prisma {
     cancelToken?: SortOrder
     transactionExpireAt?: SortOrder
     depositPaidCents?: SortOrder
+    tableId?: SortOrder
   }
 
   export type ReservationSumOrderByAggregateInput = {
     guests?: SortOrder
     depositPaidCents?: SortOrder
+    tableId?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -8045,6 +9536,81 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type ReservationListRelationFilter = {
+    every?: ReservationWhereInput
+    some?: ReservationWhereInput
+    none?: ReservationWhereInput
+  }
+
+  export type ReservationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TableCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    capacity?: SortOrder
+    posX?: SortOrder
+    posY?: SortOrder
+  }
+
+  export type TableAvgOrderByAggregateInput = {
+    id?: SortOrder
+    capacity?: SortOrder
+    posX?: SortOrder
+    posY?: SortOrder
+  }
+
+  export type TableMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    capacity?: SortOrder
+    posX?: SortOrder
+    posY?: SortOrder
+  }
+
+  export type TableMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    capacity?: SortOrder
+    posX?: SortOrder
+    posY?: SortOrder
+  }
+
+  export type TableSumOrderByAggregateInput = {
+    id?: SortOrder
+    capacity?: SortOrder
+    posX?: SortOrder
+    posY?: SortOrder
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type AdminCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
@@ -8154,17 +9720,6 @@ export namespace Prisma {
     maxCovers?: SortOrder
   }
 
-  export type FloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type EnumGiftCardStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.GiftCardStatus | EnumGiftCardStatusFieldRefInput<$PrismaModel>
     in?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
@@ -8228,22 +9783,6 @@ export namespace Prisma {
     amount?: SortOrder
   }
 
-  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
-  }
-
   export type EnumGiftCardStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.GiftCardStatus | EnumGiftCardStatusFieldRefInput<$PrismaModel>
     in?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
@@ -8252,6 +9791,12 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumGiftCardStatusFilter<$PrismaModel>
     _max?: NestedEnumGiftCardStatusFilter<$PrismaModel>
+  }
+
+  export type TableCreateNestedOneWithoutReservationsInput = {
+    create?: XOR<TableCreateWithoutReservationsInput, TableUncheckedCreateWithoutReservationsInput>
+    connectOrCreate?: TableCreateOrConnectWithoutReservationsInput
+    connect?: TableWhereUniqueInput
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -8294,12 +9839,64 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type TableUpdateOneWithoutReservationsNestedInput = {
+    create?: XOR<TableCreateWithoutReservationsInput, TableUncheckedCreateWithoutReservationsInput>
+    connectOrCreate?: TableCreateOrConnectWithoutReservationsInput
+    upsert?: TableUpsertWithoutReservationsInput
+    disconnect?: TableWhereInput | boolean
+    delete?: TableWhereInput | boolean
+    connect?: TableWhereUniqueInput
+    update?: XOR<XOR<TableUpdateToOneWithWhereWithoutReservationsInput, TableUpdateWithoutReservationsInput>, TableUncheckedUpdateWithoutReservationsInput>
+  }
+
+  export type ReservationCreateNestedManyWithoutTableInput = {
+    create?: XOR<ReservationCreateWithoutTableInput, ReservationUncheckedCreateWithoutTableInput> | ReservationCreateWithoutTableInput[] | ReservationUncheckedCreateWithoutTableInput[]
+    connectOrCreate?: ReservationCreateOrConnectWithoutTableInput | ReservationCreateOrConnectWithoutTableInput[]
+    createMany?: ReservationCreateManyTableInputEnvelope
+    connect?: ReservationWhereUniqueInput | ReservationWhereUniqueInput[]
+  }
+
+  export type ReservationUncheckedCreateNestedManyWithoutTableInput = {
+    create?: XOR<ReservationCreateWithoutTableInput, ReservationUncheckedCreateWithoutTableInput> | ReservationCreateWithoutTableInput[] | ReservationUncheckedCreateWithoutTableInput[]
+    connectOrCreate?: ReservationCreateOrConnectWithoutTableInput | ReservationCreateOrConnectWithoutTableInput[]
+    createMany?: ReservationCreateManyTableInputEnvelope
+    connect?: ReservationWhereUniqueInput | ReservationWhereUniqueInput[]
+  }
+
   export type FloatFieldUpdateOperationsInput = {
     set?: number
     increment?: number
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type ReservationUpdateManyWithoutTableNestedInput = {
+    create?: XOR<ReservationCreateWithoutTableInput, ReservationUncheckedCreateWithoutTableInput> | ReservationCreateWithoutTableInput[] | ReservationUncheckedCreateWithoutTableInput[]
+    connectOrCreate?: ReservationCreateOrConnectWithoutTableInput | ReservationCreateOrConnectWithoutTableInput[]
+    upsert?: ReservationUpsertWithWhereUniqueWithoutTableInput | ReservationUpsertWithWhereUniqueWithoutTableInput[]
+    createMany?: ReservationCreateManyTableInputEnvelope
+    set?: ReservationWhereUniqueInput | ReservationWhereUniqueInput[]
+    disconnect?: ReservationWhereUniqueInput | ReservationWhereUniqueInput[]
+    delete?: ReservationWhereUniqueInput | ReservationWhereUniqueInput[]
+    connect?: ReservationWhereUniqueInput | ReservationWhereUniqueInput[]
+    update?: ReservationUpdateWithWhereUniqueWithoutTableInput | ReservationUpdateWithWhereUniqueWithoutTableInput[]
+    updateMany?: ReservationUpdateManyWithWhereWithoutTableInput | ReservationUpdateManyWithWhereWithoutTableInput[]
+    deleteMany?: ReservationScalarWhereInput | ReservationScalarWhereInput[]
+  }
+
+  export type ReservationUncheckedUpdateManyWithoutTableNestedInput = {
+    create?: XOR<ReservationCreateWithoutTableInput, ReservationUncheckedCreateWithoutTableInput> | ReservationCreateWithoutTableInput[] | ReservationUncheckedCreateWithoutTableInput[]
+    connectOrCreate?: ReservationCreateOrConnectWithoutTableInput | ReservationCreateOrConnectWithoutTableInput[]
+    upsert?: ReservationUpsertWithWhereUniqueWithoutTableInput | ReservationUpsertWithWhereUniqueWithoutTableInput[]
+    createMany?: ReservationCreateManyTableInputEnvelope
+    set?: ReservationWhereUniqueInput | ReservationWhereUniqueInput[]
+    disconnect?: ReservationWhereUniqueInput | ReservationWhereUniqueInput[]
+    delete?: ReservationWhereUniqueInput | ReservationWhereUniqueInput[]
+    connect?: ReservationWhereUniqueInput | ReservationWhereUniqueInput[]
+    update?: ReservationUpdateWithWhereUniqueWithoutTableInput | ReservationUpdateWithWhereUniqueWithoutTableInput[]
+    updateMany?: ReservationUpdateManyWithWhereWithoutTableInput | ReservationUpdateManyWithWhereWithoutTableInput[]
+    deleteMany?: ReservationScalarWhereInput | ReservationScalarWhereInput[]
   }
 
   export type EnumGiftCardStatusFieldUpdateOperationsInput = {
@@ -8524,13 +10121,6 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedEnumGiftCardStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.GiftCardStatus | EnumGiftCardStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumGiftCardStatusFilter<$PrismaModel> | $Enums.GiftCardStatus
-  }
-
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -8547,6 +10137,13 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
+  export type NestedEnumGiftCardStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.GiftCardStatus | EnumGiftCardStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumGiftCardStatusFilter<$PrismaModel> | $Enums.GiftCardStatus
+  }
+
   export type NestedEnumGiftCardStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.GiftCardStatus | EnumGiftCardStatusFieldRefInput<$PrismaModel>
     in?: $Enums.GiftCardStatus[] | ListEnumGiftCardStatusFieldRefInput<$PrismaModel>
@@ -8555,6 +10152,229 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumGiftCardStatusFilter<$PrismaModel>
     _max?: NestedEnumGiftCardStatusFilter<$PrismaModel>
+  }
+
+  export type TableCreateWithoutReservationsInput = {
+    name: string
+    capacity: number
+    posX?: number
+    posY?: number
+  }
+
+  export type TableUncheckedCreateWithoutReservationsInput = {
+    id?: number
+    name: string
+    capacity: number
+    posX?: number
+    posY?: number
+  }
+
+  export type TableCreateOrConnectWithoutReservationsInput = {
+    where: TableWhereUniqueInput
+    create: XOR<TableCreateWithoutReservationsInput, TableUncheckedCreateWithoutReservationsInput>
+  }
+
+  export type TableUpsertWithoutReservationsInput = {
+    update: XOR<TableUpdateWithoutReservationsInput, TableUncheckedUpdateWithoutReservationsInput>
+    create: XOR<TableCreateWithoutReservationsInput, TableUncheckedCreateWithoutReservationsInput>
+    where?: TableWhereInput
+  }
+
+  export type TableUpdateToOneWithWhereWithoutReservationsInput = {
+    where?: TableWhereInput
+    data: XOR<TableUpdateWithoutReservationsInput, TableUncheckedUpdateWithoutReservationsInput>
+  }
+
+  export type TableUpdateWithoutReservationsInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    posX?: FloatFieldUpdateOperationsInput | number
+    posY?: FloatFieldUpdateOperationsInput | number
+  }
+
+  export type TableUncheckedUpdateWithoutReservationsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    posX?: FloatFieldUpdateOperationsInput | number
+    posY?: FloatFieldUpdateOperationsInput | number
+  }
+
+  export type ReservationCreateWithoutTableInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    name: string
+    email: string
+    phone?: string | null
+    date: Date | string
+    guests: number
+    specialRequest?: string | null
+    wantsSmsReminder?: boolean
+    status?: $Enums.ReservationStatus
+    stripeSessionId?: string | null
+    expiresAt?: Date | string | null
+    reminderEmailSent?: boolean
+    reminderSmsSent?: boolean
+    cancelToken?: string
+    transactionExpireAt?: Date | string | null
+    depositPaidCents?: number | null
+  }
+
+  export type ReservationUncheckedCreateWithoutTableInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    name: string
+    email: string
+    phone?: string | null
+    date: Date | string
+    guests: number
+    specialRequest?: string | null
+    wantsSmsReminder?: boolean
+    status?: $Enums.ReservationStatus
+    stripeSessionId?: string | null
+    expiresAt?: Date | string | null
+    reminderEmailSent?: boolean
+    reminderSmsSent?: boolean
+    cancelToken?: string
+    transactionExpireAt?: Date | string | null
+    depositPaidCents?: number | null
+  }
+
+  export type ReservationCreateOrConnectWithoutTableInput = {
+    where: ReservationWhereUniqueInput
+    create: XOR<ReservationCreateWithoutTableInput, ReservationUncheckedCreateWithoutTableInput>
+  }
+
+  export type ReservationCreateManyTableInputEnvelope = {
+    data: ReservationCreateManyTableInput | ReservationCreateManyTableInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ReservationUpsertWithWhereUniqueWithoutTableInput = {
+    where: ReservationWhereUniqueInput
+    update: XOR<ReservationUpdateWithoutTableInput, ReservationUncheckedUpdateWithoutTableInput>
+    create: XOR<ReservationCreateWithoutTableInput, ReservationUncheckedCreateWithoutTableInput>
+  }
+
+  export type ReservationUpdateWithWhereUniqueWithoutTableInput = {
+    where: ReservationWhereUniqueInput
+    data: XOR<ReservationUpdateWithoutTableInput, ReservationUncheckedUpdateWithoutTableInput>
+  }
+
+  export type ReservationUpdateManyWithWhereWithoutTableInput = {
+    where: ReservationScalarWhereInput
+    data: XOR<ReservationUpdateManyMutationInput, ReservationUncheckedUpdateManyWithoutTableInput>
+  }
+
+  export type ReservationScalarWhereInput = {
+    AND?: ReservationScalarWhereInput | ReservationScalarWhereInput[]
+    OR?: ReservationScalarWhereInput[]
+    NOT?: ReservationScalarWhereInput | ReservationScalarWhereInput[]
+    id?: StringFilter<"Reservation"> | string
+    createdAt?: DateTimeFilter<"Reservation"> | Date | string
+    updatedAt?: DateTimeFilter<"Reservation"> | Date | string
+    name?: StringFilter<"Reservation"> | string
+    email?: StringFilter<"Reservation"> | string
+    phone?: StringNullableFilter<"Reservation"> | string | null
+    date?: DateTimeFilter<"Reservation"> | Date | string
+    guests?: IntFilter<"Reservation"> | number
+    specialRequest?: StringNullableFilter<"Reservation"> | string | null
+    wantsSmsReminder?: BoolFilter<"Reservation"> | boolean
+    status?: EnumReservationStatusFilter<"Reservation"> | $Enums.ReservationStatus
+    stripeSessionId?: StringNullableFilter<"Reservation"> | string | null
+    expiresAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
+    reminderEmailSent?: BoolFilter<"Reservation"> | boolean
+    reminderSmsSent?: BoolFilter<"Reservation"> | boolean
+    cancelToken?: StringFilter<"Reservation"> | string
+    transactionExpireAt?: DateTimeNullableFilter<"Reservation"> | Date | string | null
+    depositPaidCents?: IntNullableFilter<"Reservation"> | number | null
+    tableId?: IntNullableFilter<"Reservation"> | number | null
+  }
+
+  export type ReservationCreateManyTableInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    name: string
+    email: string
+    phone?: string | null
+    date: Date | string
+    guests: number
+    specialRequest?: string | null
+    wantsSmsReminder?: boolean
+    status?: $Enums.ReservationStatus
+    stripeSessionId?: string | null
+    expiresAt?: Date | string | null
+    reminderEmailSent?: boolean
+    reminderSmsSent?: boolean
+    cancelToken?: string
+    transactionExpireAt?: Date | string | null
+    depositPaidCents?: number | null
+  }
+
+  export type ReservationUpdateWithoutTableInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    guests?: IntFieldUpdateOperationsInput | number
+    specialRequest?: NullableStringFieldUpdateOperationsInput | string | null
+    wantsSmsReminder?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
+    reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
+    cancelToken?: StringFieldUpdateOperationsInput | string
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    depositPaidCents?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type ReservationUncheckedUpdateWithoutTableInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    guests?: IntFieldUpdateOperationsInput | number
+    specialRequest?: NullableStringFieldUpdateOperationsInput | string | null
+    wantsSmsReminder?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
+    reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
+    cancelToken?: StringFieldUpdateOperationsInput | string
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    depositPaidCents?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type ReservationUncheckedUpdateManyWithoutTableInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    guests?: IntFieldUpdateOperationsInput | number
+    specialRequest?: NullableStringFieldUpdateOperationsInput | string | null
+    wantsSmsReminder?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
+    reminderSmsSent?: BoolFieldUpdateOperationsInput | boolean
+    cancelToken?: StringFieldUpdateOperationsInput | string
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    depositPaidCents?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
 

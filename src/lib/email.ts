@@ -319,7 +319,7 @@ export async function sendCancellationEmail({
         <h2 style="font-size:20px;font-weight:normal;">Réservation annulée</h2>
         <p>Bonjour ${name},</p>
         <p>Votre réservation du <strong>${date} à ${time}</strong> a bien été annulée.</p>
-        <p>Pour toute modification future, appelez-nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>.</p>
+        <p>Pour toute information, appelez-nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>.</p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
         <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
       </div>

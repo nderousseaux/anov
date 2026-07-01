@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAdminFromCookies } from '@/lib/auth';
 import { sendCancellationEmail } from '@/lib/email';
+import { stripe } from '@/lib/stripe';
 
 export async function GET(req: NextRequest) {
   const admin = await getAdminFromCookies();
@@ -117,6 +118,8 @@ export async function PATCH(req: NextRequest) {
       email: true,
       date: true,
       status: true,
+      stripeSessionId: true,
+      depositPaidCents: true,
     },
   });
 
@@ -132,6 +135,29 @@ export async function PATCH(req: NextRequest) {
       date: dateFr,
       time: time,
     });
+
+    // Effectuer un remboursement Stripe si une session de paiement existe
+    if (updated.stripeSessionId && updated.depositPaidCents && updated.depositPaidCents > 0) {
+      try {
+        // Récupérer la session Stripe pour obtenir le payment_intent
+        const session = await stripe.checkout.sessions.retrieve(updated.stripeSessionId);
+        const paymentIntentId = session.payment_intent as string;
+
+        if (paymentIntentId) {
+          const refund = await stripe.refunds.create({
+            payment_intent: paymentIntentId,
+            amount: updated.depositPaidCents,
+          });
+
+          console.log(`[REFUND] Remboursement de ${updated.depositPaidCents} cents créé: ${refund.id}`);
+        } else {
+          console.warn(`[REFUND] Aucun payment_intent trouvé pour la session ${updated.stripeSessionId}`);
+        }
+      } catch (refundError) {
+        console.error('[REFUND] Erreur lors du remboursement Stripe:', refundError);
+        // On ne bloque pas l'annulation si le refund échoue
+      }
+    }
   }
 
   return NextResponse.json(updated);

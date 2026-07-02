@@ -55,8 +55,8 @@ export async function GET(req: NextRequest) {
     // Vérifier si la réservation a été faite aujourd'hui (quelque soit l'heure)
     const reservationCreatedAt = new Date(r.createdAt);
     const isSameDayReservation = reservationCreatedAt.getDate() === now.getDate() &&
-                                  reservationCreatedAt.getMonth() === now.getMonth() &&
-                                  reservationCreatedAt.getFullYear() === now.getFullYear();
+      reservationCreatedAt.getMonth() === now.getMonth() &&
+      reservationCreatedAt.getFullYear() === now.getFullYear();
 
     if (isSameDayReservation) {
       console.log(`[Cron] Réservation ${r.id} exclue : réservée aujourd'hui`);

@@ -2,6 +2,7 @@
 const GATEWAYAPI_URL = 'https://messaging.gatewayapi.com/mobile/single';
 const token = process.env.GATEWAYAPI_TOKEN;
 const sender = process.env.GATEWAYAPI_SENDER || 'ANOV';
+const phone = process.env.RESTAURANT_PHONE || '+33612345678'; // Numéro de téléphone du restaurant pour les SMS sortants (ex: "+33 6 12 34 56 78")
 
 /**
  * Normalise un numéro de téléphone français en MSISDN numérique (sans "+"),
@@ -41,7 +42,7 @@ export async function sendSmsReminder({
     ? 'est prévue demain'
     : `est prévue dans ${daysBefore} jours`;
 
-  const message = `ANØV — Bonjour ${name}, votre réservation pour ${guests} personne${guests > 1 ? 's' : ''} ${messageIntro}, le ${date} à ${time}. À bientôt !`;
+  const message = `ANØV — Bonjour ${name}, votre réservation pour ${guests} personne${guests > 1 ? 's' : ''} ${messageIntro}, le ${date} à ${time}. À bientôt ! Pour nous contacter : ${phone}`;
 
   const body = {
     sender,

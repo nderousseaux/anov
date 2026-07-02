@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AdminNav } from '@/components/admin/AdminNav';
@@ -35,7 +35,7 @@ function formatDateTime(iso: string): string {
   });
 }
 
-export default function ClientsPage() {
+function ClientsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -184,5 +184,13 @@ export default function ClientsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ClientsPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <ClientsContent />
+    </Suspense>
   );
 }

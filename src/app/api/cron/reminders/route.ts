@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
   // Réservations pour le jour ciblé
   // Conditions :
   // - status = CONFIRMED (pas annulée, pas expirée)
-  // - reminderEmailSent = false (pas encore envoyé)
+  // - reminderEmailSent = false ET reminderSmsSent = false (pas encore de rappel envoyé, quel que soit le canal)
   // - Si l'utilisateur a réservé aujourd'hui (quelque soit l'heure), pas de rappel
   const reservations = await prisma.reservation.findMany({
     where: {
@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
         lte: endOfDay,
       },
       reminderEmailSent: false,
+      reminderSmsSent: false,
     },
   });
 
@@ -69,6 +70,30 @@ export async function GET(req: NextRequest) {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
     const cancelUrl = `${BASE_URL}/reservation/cancel?token=${r.cancelToken}`;
 
+    // Si l'utilisateur a renseigné un numéro de téléphone, on envoie un SMS de rappel
+    // à la place du mail (mêmes modalités). Sinon, on envoie le mail.
+    if (r.phone) {
+      try {
+        await sendSmsReminder({
+          to: r.phone,
+          name: r.name,
+          date: formattedDate,
+          time,
+          guests: r.guests,
+          daysBefore: daysBeforeReminder,
+        });
+        await prisma.reservation.update({
+          where: { id: r.id },
+          data: { reminderSmsSent: true },
+        });
+        smsSent++;
+        console.log(`[Cron] SMS de rappel envoyé à ${r.phone} pour ${formattedDate}`);
+      } catch (err) {
+        console.error(`[Cron] SMS failed for ${r.id}`, err);
+      }
+      continue;
+    }
+
     try {
       await sendReminderEmail({
         to: r.email,
@@ -89,20 +114,6 @@ export async function GET(req: NextRequest) {
       console.log(`[Cron] Email de rappel envoyé à ${r.email} pour ${formattedDate}`);
     } catch (err) {
       console.error(`[Cron] Email failed for ${r.id}`, err);
-    }
-
-    if (r.wantsSmsReminder && r.phone) {
-      try {
-        await sendSmsReminder({ to: r.phone, name: r.name, date: formattedDate, time });
-        await prisma.reservation.update({
-          where: { id: r.id },
-          data: { reminderSmsSent: true },
-        });
-        smsSent++;
-        console.log(`[Cron] SMS de rappel envoyé à ${r.phone} pour ${formattedDate}`);
-      } catch (err) {
-        console.error(`[Cron] SMS failed for ${r.id}`, err);
-      }
     }
   }
 

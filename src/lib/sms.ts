@@ -1,12 +1,20 @@
-import twilio from 'twilio';
+// Envoi de SMS via GatewayAPI (https://gatewayapi.com)
+const GATEWAYAPI_URL = 'https://messaging.gatewayapi.com/mobile/single';
+const token = process.env.GATEWAYAPI_TOKEN;
+const sender = process.env.GATEWAYAPI_SENDER || 'ANOV';
 
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const fromNumber = process.env.TWILIO_PHONE_NUMBER || '+33757000000';
-
-let client: ReturnType<typeof twilio> | null = null;
-if (accountSid && authToken) {
-  client = twilio(accountSid, authToken);
+/**
+ * Normalise un numéro de téléphone français en MSISDN numérique (sans "+"),
+ * tel qu'attendu par GatewayAPI (ex: "+33 6 12 34 56 78" ou "0612345678" -> 33612345678).
+ */
+function normalizePhoneNumber(phone: string): number {
+  const digits = phone.replace(/[^\d+]/g, '');
+  const normalized = digits.startsWith('+')
+    ? digits.slice(1)
+    : digits.startsWith('0')
+      ? `33${digits.slice(1)}`
+      : digits;
+  return Number(normalized);
 }
 
 export async function sendSmsReminder({
@@ -14,19 +22,46 @@ export async function sendSmsReminder({
   name,
   date,
   time,
+  guests,
+  daysBefore = 1,
 }: {
   to: string;
   name: string;
   date: string;
   time: string;
+  guests: number;
+  daysBefore?: number;
 }) {
-  if (!client) {
-    console.warn('Twilio not configured, skipping SMS');
-    return;
+  if (!token) {
+    console.warn('GatewayAPI non configuré, SMS ignoré');
+    return null;
   }
-  return client.messages.create({
-    body: `ANØV — Rappel : votre réservation est demain ${date} à ${time}. À bientôt, ${name} !`,
-    from: fromNumber,
-    to,
+
+  const messageIntro = daysBefore === 1
+    ? 'est prévue demain'
+    : `est prévue dans ${daysBefore} jours`;
+
+  const message = `ANØV — Bonjour ${name}, votre réservation pour ${guests} personne${guests > 1 ? 's' : ''} ${messageIntro}, le ${date} à ${time}. À bientôt !`;
+
+  const body = {
+    sender,
+    message,
+    recipient: normalizePhoneNumber(to),
+  };
+
+  const response = await fetch(GATEWAYAPI_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Token ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
   });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`GatewayAPI error (${response.status}): ${errorText}`);
+  }
+
+  return response.json();
 }

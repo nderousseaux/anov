@@ -44,26 +44,41 @@ Pour chaque réservation, les conditions suivantes sont vérifiées :
 
 1. **Status** : `CONFIRMED` (pas `CANCELLED`, `EXPIRED`, etc.)
 2. **Date** : La réservation est pour `J + daysBeforeReminder` (par défaut, demain)
-3. **Rappel déjà envoyé** : `reminderEmailSent = false`
+3. **Rappel déjà envoyé** : `reminderEmailSent = false` ET `reminderSmsSent = false`
 4. **Réservation le même jour** : Si la réservation a été créée le même jour (avant le dernier 17h), aucun rappel n'est envoyé
+
+### Choix du canal (SMS ou email)
+
+- Si le client a renseigné un **numéro de téléphone** : le rappel est envoyé **par SMS** (via GatewayAPI), à la place du mail.
+- Si le client **n'a pas renseigné de numéro** : le rappel est envoyé **par email**.
+- Un seul canal est utilisé par réservation (jamais les deux).
 
 ### Exceptions
 
 - Si la réservation est **annulée** ou **expirée** : pas de rappel
 - Si la réservation a été créée **le même jour avant 17h** : pas de rappel (l'utilisateur est déjà informé)
 
-## Format du mail de rappel
+## Format du rappel
 
-Le mail de rappel contient les mêmes informations que le mail de confirmation :
+Le rappel (mail ou SMS) contient les mêmes informations :
 
 - Date et heure de la réservation
 - Nom du client
 - Nombre de couverts
-- Instructions pour annuler/modifier
+- Instructions pour annuler/modifier (le mail inclut un lien, le SMS renvoie vers le téléphone du restaurant)
 
-**Message supplémentaire dans le mail de rappel :**
+**Message supplémentaire dans le rappel :**
 - Pour 1 jour avant : "Votre réservation est prévue demain."
 - Pour plusieurs jours avant : "Votre réservation est prévue dans X jours."
+
+## Configuration SMS (GatewayAPI)
+
+Le rappel SMS utilise [GatewayAPI](https://gatewayapi.com). Variables d'environnement :
+
+- `GATEWAYAPI_TOKEN` : token d'authentification (requis pour activer l'envoi de SMS)
+- `GATEWAYAPI_SENDER` : nom de l'expéditeur affiché (défaut : `ANOV`)
+
+Si `GATEWAYAPI_TOKEN` n'est pas défini, l'envoi de SMS est ignoré (avec un warning en log) — mais comme le rappel ne part alors ni par SMS ni par mail pour les réservations avec téléphone, pensez à configurer ce token en production.
 
 ## Scripts de test
 
@@ -104,8 +119,12 @@ Ou utilisez la variable d'environnement `CRON_SECRET` pour sécuriser l'appel.
 
 Le modèle `Reservation` dispose des champs suivants pour les rappels :
 
+- `phone` (String, optionnel) : si renseigné, détermine l'envoi du rappel par SMS plutôt que par email
 - `reminderEmailSent` (Boolean) : indique si le rappel email a été envoyé
 - `reminderSmsSent` (Boolean) : indique si le rappel SMS a été envoyé
+
+> Note : le champ `wantsSmsReminder` existe toujours en base mais n'est plus utilisé pour déterminer le canal de rappel (remplacé par la simple présence d'un numéro de téléphone).
+
 
 ### Modèle RestaurantSettings
 

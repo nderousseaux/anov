@@ -71,14 +71,15 @@ Le rappel (mail ou SMS) contient les mêmes informations :
 - Pour 1 jour avant : "Votre réservation est prévue demain."
 - Pour plusieurs jours avant : "Votre réservation est prévue dans X jours."
 
-## Configuration SMS (GatewayAPI)
+## Configuration SMS (Twilio)
 
-Le rappel SMS utilise [GatewayAPI](https://gatewayapi.com). Variables d'environnement :
+Le rappel SMS utilise [Twilio](https://www.twilio.com). Variables d'environnement :
 
-- `GATEWAYAPI_TOKEN` : token d'authentification (requis pour activer l'envoi de SMS)
-- `GATEWAYAPI_SENDER` : nom de l'expéditeur affiché (défaut : `ANOV`)
+- `TWILO_SID` : SID du compte Twilio (requis pour activer l'envoi de SMS)
+- `TWILO_AUTH` : token d'authentification Twilio (requis pour activer l'envoi de SMS)
+- `TWILO_PHONE_NUMBER` : numéro Twilio expéditeur (défaut : `+33757000000`)
 
-Si `GATEWAYAPI_TOKEN` n'est pas défini, l'envoi de SMS est ignoré (avec un warning en log) — mais comme le rappel ne part alors ni par SMS ni par mail pour les réservations avec téléphone, pensez à configurer ce token en production.
+Si `TWILO_SID` ou `TWILO_AUTH` ne sont pas définis, l'envoi de SMS est ignoré (avec un warning en log) — mais comme le rappel ne part alors ni par SMS ni par mail pour les réservations avec téléphone, pensez à configurer ces variables en production.
 
 ## Scripts de test
 

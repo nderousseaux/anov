@@ -40,9 +40,9 @@
     "semantic_hash": "9552b376d4514000ba16dd6b3db57919"
   },
   "prisma/seed.ts": {
-    "mtime": 1782943422.673984,
-    "ast_hash": "71c03b1a2dacfa732b499322a8c4cfdf",
-    "semantic_hash": ""
+    "mtime": 1782057457.223387,
+    "ast_hash": "09055fb253169e13a7430bf82528c723",
+    "semantic_hash": "09055fb253169e13a7430bf82528c723"
   },
   "src/app/ClientLayout.tsx": {
     "mtime": 1782155744.5285022,
@@ -75,8 +75,8 @@
     "semantic_hash": "e94d3e1f43d9bfcbe5f6c0ac66f4cf41"
   },
   "src/app/admin/reservation/page.tsx": {
-    "mtime": 1782944785.2169964,
-    "ast_hash": "c7373509b1973d44f780cf6479aca2e9",
+    "mtime": 1782848128.664744,
+    "ast_hash": "e4b152210ab93c185ddbcc9e3fa7f911",
     "semantic_hash": ""
   },
   "src/app/api/admin/auth/route.ts": {
@@ -105,8 +105,8 @@
     "semantic_hash": "f6a31e52a918e3bded3c000268bdcf8b"
   },
   "src/app/api/admin/reservations/route.ts": {
-    "mtime": 1782943421.7453005,
-    "ast_hash": "fe835c1f7b6f5dab87df6c9aeda5dbeb",
+    "mtime": 1782802630.422941,
+    "ast_hash": "7bf552fbd89f6e81c5f9ef47c0b5e3be",
     "semantic_hash": ""
   },
   "src/app/api/admin/settings/route.ts": {
@@ -115,9 +115,9 @@
     "semantic_hash": ""
   },
   "src/app/api/contact/route.ts": {
-    "mtime": 1782944784.8283432,
-    "ast_hash": "724ad52ce9f3d73a5123faf18cf200cd",
-    "semantic_hash": ""
+    "mtime": 1782057457.242802,
+    "ast_hash": "4cb7f3703f59c8d10a39f498858df179",
+    "semantic_hash": "4cb7f3703f59c8d10a39f498858df179"
   },
   "src/app/api/cron/reminders/route.ts": {
     "mtime": 1782848547.5207372,
@@ -145,9 +145,9 @@
     "semantic_hash": "80ca326faccd2696d3f0956f3577a05c"
   },
   "src/app/api/reservations/availability/route.ts": {
-    "mtime": 1782943421.6775293,
-    "ast_hash": "3214b76e049e52b5a5cd6363f610a604",
-    "semantic_hash": ""
+    "mtime": 1779710542.8830533,
+    "ast_hash": "20efb4a2b05bda4dc2a5bf7bc5b661ae",
+    "semantic_hash": "20efb4a2b05bda4dc2a5bf7bc5b661ae"
   },
   "src/app/api/reservations/by-session/route.ts": {
     "mtime": 1782407470.9760983,
@@ -160,9 +160,9 @@
     "semantic_hash": "f8b5bf2f2039696106ce45ac563f3adb"
   },
   "src/app/api/reservations/route.ts": {
-    "mtime": 1782943421.677564,
-    "ast_hash": "c0fc38b1b557850d313fab8415c2c0f1",
-    "semantic_hash": ""
+    "mtime": 1782802299.2297058,
+    "ast_hash": "f5176472fcebf3600046e1a417ea7b48",
+    "semantic_hash": "f5176472fcebf3600046e1a417ea7b48"
   },
   "src/app/api/stripe/webhook/route.ts": {
     "mtime": 1782802582.8935623,
@@ -255,9 +255,9 @@
     "semantic_hash": "c7d24d4e57038d75997d5991b0a56092"
   },
   "src/components/admin/AdminNav.tsx": {
-    "mtime": 1782944784.8544204,
-    "ast_hash": "0ecc17bdb19d733e9eceacc4ed496078",
-    "semantic_hash": ""
+    "mtime": 1782153569.1847432,
+    "ast_hash": "ccc489f8b52ccf257a8dc42588b3df87",
+    "semantic_hash": "ccc489f8b52ccf257a8dc42588b3df87"
   },
   "src/components/admin/GiftCardCard.tsx": {
     "mtime": 1782909366.8548844,
@@ -600,97 +600,97 @@
     "semantic_hash": "d76b221ac1dc581acfc02073d7c8355c"
   },
   "src/generated/prisma/client.d.ts": {
-    "mtime": 1782944183.7325203,
+    "mtime": 1782847954.2778141,
     "ast_hash": "6cfa5c5e0b5de6abfc20f2532414712c",
     "semantic_hash": "6cfa5c5e0b5de6abfc20f2532414712c"
   },
   "src/generated/prisma/client.js": {
-    "mtime": 1782944183.7323837,
+    "mtime": 1782847954.277693,
     "ast_hash": "71012b991c297f14db46de6593c7c4c5",
     "semantic_hash": "71012b991c297f14db46de6593c7c4c5"
   },
   "src/generated/prisma/default.d.ts": {
-    "mtime": 1782944183.7322316,
+    "mtime": 1782847954.2778976,
     "ast_hash": "6cfa5c5e0b5de6abfc20f2532414712c",
     "semantic_hash": "6cfa5c5e0b5de6abfc20f2532414712c"
   },
   "src/generated/prisma/default.js": {
-    "mtime": 1782944183.7325377,
+    "mtime": 1782847954.2776399,
     "ast_hash": "6f1901c5c19c7c76db1470cefa5357bb",
     "semantic_hash": "6f1901c5c19c7c76db1470cefa5357bb"
   },
   "src/generated/prisma/edge.d.ts": {
-    "mtime": 1782944183.732506,
+    "mtime": 1782847954.2779915,
     "ast_hash": "b1a34f9b323447f227db5aa901d5f3a9",
     "semantic_hash": "b1a34f9b323447f227db5aa901d5f3a9"
   },
   "src/generated/prisma/edge.js": {
-    "mtime": 1782944183.7325609,
-    "ast_hash": "3a027f069d247b1b9c0f11bf4dd82ebb",
+    "mtime": 1782847954.2780037,
+    "ast_hash": "45be5e5001f369d8c2843f46f323d208",
     "semantic_hash": ""
   },
   "src/generated/prisma/index-browser.js": {
-    "mtime": 1782944183.732379,
-    "ast_hash": "a575696dd16c8548eaf275c88a9eb566",
+    "mtime": 1782847954.277868,
+    "ast_hash": "bf7e2da5d72e4dc484a76385d014bc0e",
     "semantic_hash": ""
   },
   "src/generated/prisma/index.d.ts": {
-    "mtime": 1782944183.7323425,
-    "ast_hash": "8b4ced42245d03632d27ba0d792f9132",
+    "mtime": 1782847954.2777035,
+    "ast_hash": "dfbf7a83ac7e3b2749da93dd4777b249",
     "semantic_hash": ""
   },
   "src/generated/prisma/index.js": {
-    "mtime": 1782944183.7322202,
-    "ast_hash": "b34a135ad3f10f2d29bd1993d505d97f",
+    "mtime": 1782847954.2776172,
+    "ast_hash": "4aed409ae2d576f03a785ab3bd675a99",
     "semantic_hash": ""
   },
   "src/generated/prisma/package.json": {
-    "mtime": 1782944183.7325861,
-    "ast_hash": "81ea930b3df62f30667a652aa84a31a8",
+    "mtime": 1782847954.278336,
+    "ast_hash": "a5aab3e7ffbd40f5d0133c7f64cd820d",
     "semantic_hash": ""
   },
   "src/generated/prisma/query_compiler_fast_bg.js": {
-    "mtime": 1782944183.7910445,
+    "mtime": 1782847954.3285918,
     "ast_hash": "d219f4698fc7a0d166df612de3481683",
     "semantic_hash": "d219f4698fc7a0d166df612de3481683"
   },
   "src/generated/prisma/query_compiler_fast_bg.wasm-base64.js": {
-    "mtime": 1782944183.7991202,
+    "mtime": 1782847954.3357415,
     "ast_hash": "9ff8860fa2dacced42ae2a25e3c4e169",
     "semantic_hash": "9ff8860fa2dacced42ae2a25e3c4e169"
   },
   "src/generated/prisma/runtime/client.d.ts": {
-    "mtime": 1782944183.7352788,
+    "mtime": 1782847954.2804902,
     "ast_hash": "0f923c8532fe8dd1ede40f7ce432a401",
     "semantic_hash": "0f923c8532fe8dd1ede40f7ce432a401"
   },
   "src/generated/prisma/runtime/client.js": {
-    "mtime": 1782944183.7358005,
+    "mtime": 1782847954.2812219,
     "ast_hash": "2629e23c298c5befee1988f763a5e9c5",
     "semantic_hash": "2629e23c298c5befee1988f763a5e9c5"
   },
   "src/generated/prisma/runtime/index-browser.d.ts": {
-    "mtime": 1782944183.7344933,
+    "mtime": 1782847954.2798142,
     "ast_hash": "20bfb41519655090035a71a8754a05f0",
     "semantic_hash": "20bfb41519655090035a71a8754a05f0"
   },
   "src/generated/prisma/runtime/index-browser.js": {
-    "mtime": 1782944183.7351964,
+    "mtime": 1782847954.2812808,
     "ast_hash": "e993c7a18b214f2ea03ff86cb2bee0ef",
     "semantic_hash": "e993c7a18b214f2ea03ff86cb2bee0ef"
   },
   "src/generated/prisma/runtime/wasm-compiler-edge.js": {
-    "mtime": 1782944183.7357671,
+    "mtime": 1782847954.2811654,
     "ast_hash": "2a1a838948606f38d90b7471c48d7185",
     "semantic_hash": "2a1a838948606f38d90b7471c48d7185"
   },
   "src/generated/prisma/wasm-edge-light-loader.mjs": {
-    "mtime": 1782944183.7325363,
+    "mtime": 1782847954.2779913,
     "ast_hash": "e1ffa9e3e86a79525c28d495840af9b6",
     "semantic_hash": "e1ffa9e3e86a79525c28d495840af9b6"
   },
   "src/generated/prisma/wasm-worker-loader.mjs": {
-    "mtime": 1782944183.7324061,
+    "mtime": 1782847954.2778552,
     "ast_hash": "567365abdd6a02725b3e9adb6e4f8a69",
     "semantic_hash": "567365abdd6a02725b3e9adb6e4f8a69"
   },
@@ -710,13 +710,13 @@
     "semantic_hash": "5492e43dfa235ed38bfac3006da70274"
   },
   "src/lib/availability.ts": {
-    "mtime": 1782943422.7151825,
-    "ast_hash": "884c09a7c12424e8021aaf1136c1439e",
+    "mtime": 1782844678.8813434,
+    "ast_hash": "e70f3517a8269429269766f3a8a431e1",
     "semantic_hash": ""
   },
   "src/lib/email.ts": {
-    "mtime": 1782938493.2581916,
-    "ast_hash": "09a41e89a4dbe14dfa15d5ad06ecff6a",
+    "mtime": 1782845942.96083,
+    "ast_hash": "78e3eae73453a047f7ddeda59b6f5891",
     "semantic_hash": ""
   },
   "src/lib/langs.ts": {
@@ -925,8 +925,8 @@
     "semantic_hash": "4e6ce087c74fe28fa676681b0895aaad"
   },
   "src/components/features/ReservationForm.tsx": {
-    "mtime": 1782943421.7905078,
-    "ast_hash": "20732f14f8342e91fb2333f117ff440b",
+    "mtime": 1782845058.9372723,
+    "ast_hash": "41fe50cf38f9cc6d6cfbed42fe36e5c0",
     "semantic_hash": ""
   },
   "claude.md": {
@@ -1027,51 +1027,6 @@
   "docs/bons cadeaux.md": {
     "mtime": 1782842856.025057,
     "ast_hash": "c248dfa4d6dcd92479168f178b7804a1",
-    "semantic_hash": ""
-  },
-  "prisma/migrations/20260701213857_add_table_model/migration.sql": {
-    "mtime": 1782941937.0165737,
-    "ast_hash": "2942bbdc27880682e28a76f9404d762b",
-    "semantic_hash": ""
-  },
-  "prisma/migrations/20260701221409_add_contact_message_and_customer_note/migration.sql": {
-    "mtime": 1782944049.0056045,
-    "ast_hash": "90007d29b5e4c512ff944125af22e81f",
-    "semantic_hash": ""
-  },
-  "src/app/admin/clients/[email]/page.tsx": {
-    "mtime": 1782944784.8776908,
-    "ast_hash": "eeb350161a054e17c9753a96ce82abcc",
-    "semantic_hash": ""
-  },
-  "src/app/admin/clients/page.tsx": {
-    "mtime": 1782944184.0467768,
-    "ast_hash": "6fa7c28943cb8d5aa4afcd263a6cafaa",
-    "semantic_hash": ""
-  },
-  "src/app/api/admin/customers/[email]/note/route.ts": {
-    "mtime": 1782944784.8321283,
-    "ast_hash": "51f493005b921111d44e3ebd0fd5ea71",
-    "semantic_hash": ""
-  },
-  "src/app/api/admin/customers/[email]/route.ts": {
-    "mtime": 1782944784.8320873,
-    "ast_hash": "02e17227abb90ae5178a10461ac1713b",
-    "semantic_hash": ""
-  },
-  "src/app/api/admin/customers/route.ts": {
-    "mtime": 1782944784.8294291,
-    "ast_hash": "969de232a730e8cd2b9d238902e42d11",
-    "semantic_hash": ""
-  },
-  "src/app/api/admin/tables/route.ts": {
-    "mtime": 1782943421.7655845,
-    "ast_hash": "8cc404cf9b59c24f2670af42a9ddbafd",
-    "semantic_hash": ""
-  },
-  "src/lib/tables.ts": {
-    "mtime": 1782943422.671084,
-    "ast_hash": "70af0347a09e030aef8661a4df357dbf",
     "semantic_hash": ""
   }
 }

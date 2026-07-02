@@ -34,14 +34,14 @@ interface ApiResponse {
 }
 
 interface RestaurantSettings {
-  maxCovers: number; mealDuration: number; openingDays: number[]; openingSlots: string[]; depositPerGuestCents: number; daysBeforeReminder: number;
+  mealDuration: number; openingDays: number[]; openingSlots: string[]; depositPerGuestCents: number; daysBeforeReminder: number;
 }
 
 interface DayInfo {
   date: string; dayOfWeek: number;
   isGloballyOpen: boolean; hasOverride: boolean;
-  override: { closed: boolean; maxCovers: number | null; openingSlots: string[] | null } | null;
-  effectiveOpen: boolean; effectiveMaxCovers: number; effectiveSlots: string[];
+  override: { closed: boolean; openingSlots: string[] | null } | null;
+  effectiveOpen: boolean; effectiveSlots: string[];
   mealDuration: number;
   lunchOpen: string | null; lunchClose: string | null;
   dinnerOpen: string | null; dinnerClose: string | null;
@@ -119,7 +119,7 @@ const TABLE_SIZE_CLASSES: Record<number, string> = {
 
 // Table de réserve : élément purement visuel affiché uniquement dans le schéma
 // (aucune donnée en base, aucun impact sur l'algorithme d'attribution de table).
-const RESERVE_TABLE = { name: 'Réserve', posX: 50, posY: 97 };
+const RESERVE_TABLE = { name: 'Réserve', posX: 50, posY: 85 };
 
 function TableFloorPlan({ label, tables, reservations }: {
   label: string; tables: TableInfo[]; reservations: ReservationRow[];
@@ -169,11 +169,11 @@ function TableFloorPlan({ label, tables, reservations }: {
         {/* Table de réserve — visuelle uniquement, non géolocalisée en base et non prise en compte par l'algorithme */}
         <div
           style={{ left: `${RESERVE_TABLE.posX}%`, top: `${RESERVE_TABLE.posY}%` }}
-          className="absolute -translate-x-1/2 -translate-y-1/2 w-16 h-12 rounded-lg border border-dashed border-muted-foreground/40 bg-muted/10 flex flex-col items-center justify-center gap-0"
+          className="absolute -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-lg border border-dashed border-muted-foreground/40 bg-muted/10 flex flex-col items-center justify-center gap-0.5"
           title="Table de réserve (appoint) — non gérée par l'algorithme de réservation"
         >
-          <span className="text-[10px] font-semibold text-muted-foreground">{RESERVE_TABLE.name}</span>
-          <span className="text-[8px] text-muted-foreground/60 italic">appoint</span>
+          <span className="text-xs font-semibold text-muted-foreground">{RESERVE_TABLE.name}</span>
+          <span className="text-[9px] text-muted-foreground/60 italic">appoint</span>
         </div>
       </div>
     </div>
@@ -187,7 +187,6 @@ export default function AdminReservationsPage() {
   // Settings
   const [showSettings, setShowSettings] = useState(false);
   const [settings, setSettings] = useState<RestaurantSettings | null>(null);
-  const [editMaxCovers, setEditMaxCovers] = useState(20);
   const [editDepositPerGuest, setEditDepositPerGuest] = useState('20'); // en euros pour l'UI, stocké en string pour permettre la saisie libre
   const [editMealDuration, setEditMealDuration] = useState(90);
   const [editSlots, setEditSlots] = useState<string[]>([]);
@@ -222,7 +221,6 @@ export default function AdminReservationsPage() {
   const [dayReservations, setDayReservations] = useState<ReservationRow[]>([]);
   const [dayLoading, setDayLoading] = useState(false);
   const [overrideMode, setOverrideMode] = useState<'global' | 'closed' | 'custom'>('global');
-  const [overrideMaxCovers, setOverrideMaxCovers] = useState(20);
   const [overrideSlots, setOverrideSlots] = useState<string[]>([]);
   const [savingOverride, setSavingOverride] = useState(false);
   const [overrideSaved, setOverrideSaved] = useState(false);
@@ -234,7 +232,6 @@ export default function AdminReservationsPage() {
     if (res.ok) {
       const s: RestaurantSettings = await res.json();
       setSettings(s);
-      setEditMaxCovers(s.maxCovers);
       setEditDepositPerGuest(String(Math.round((s.depositPerGuestCents ?? 2000) / 100)));
       setEditMealDuration(s.mealDuration);
       setEditSlots(s.openingSlots);
@@ -286,7 +283,6 @@ export default function AdminReservationsPage() {
       setOverrideMode('closed');
     } else {
       setOverrideMode('custom');
-      setOverrideMaxCovers(day.override?.maxCovers ?? day.effectiveMaxCovers);
       setOverrideSlots(day.override?.openingSlots ?? day.effectiveSlots);
     }
   }, [selectedDate, calendarDays]);
@@ -297,7 +293,7 @@ export default function AdminReservationsPage() {
     const res = await fetch('/api/admin/settings', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ maxCovers: editMaxCovers, mealDuration: editMealDuration, openingDays: editDays, openingSlots: editSlots, depositPerGuestCents: Math.max(0, parseInt(editDepositPerGuest, 10) || 0) * 100, daysBeforeReminder: editDaysBeforeReminder }),
+      body: JSON.stringify({ mealDuration: editMealDuration, openingDays: editDays, openingSlots: editSlots, depositPerGuestCents: Math.max(0, parseInt(editDepositPerGuest, 10) || 0) * 100, daysBeforeReminder: editDaysBeforeReminder }),
     });
     if (res.status === 409) {
       const data = await res.json();
@@ -361,7 +357,6 @@ export default function AdminReservationsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           closed: overrideMode === 'closed',
-          maxCovers: overrideMode === 'custom' ? overrideMaxCovers : null,
           openingSlots: overrideMode === 'custom' ? overrideSlots : null,
         }),
       });
@@ -442,7 +437,7 @@ export default function AdminReservationsPage() {
                 Paramètres globaux
               </h2>
               <Button variant="ghost" size="sm"
-                onClick={() => { if (settings) { setEditMaxCovers(settings.maxCovers); setEditDepositPerGuest(String(Math.round((settings.depositPerGuestCents ?? 2000) / 100))); setEditMealDuration(settings.mealDuration); setEditSlots(settings.openingSlots); setEditDays(settings.openingDays); setEditDaysBeforeReminder(settings.daysBeforeReminder ?? 1); } setShowSettings(false); }}
+                onClick={() => { if (settings) { setEditDepositPerGuest(String(Math.round((settings.depositPerGuestCents ?? 2000) / 100))); setEditMealDuration(settings.mealDuration); setEditSlots(settings.openingSlots); setEditDays(settings.openingDays); setEditDaysBeforeReminder(settings.daysBeforeReminder ?? 1); } setShowSettings(false); }}
                 className="text-muted-foreground hover:text-foreground"><X size={14} /></Button>
             </div>
 
@@ -463,15 +458,6 @@ export default function AdminReservationsPage() {
                   );
                 })}
               </div>
-            </div>
-
-            {/* Max covers */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Couverts maximum par créneau</label>
-              <p className="text-xs text-muted-foreground">Au-delà de ce nombre, le créneau est complet.</p>
-              <Input type="number" min={1} max={500} value={editMaxCovers}
-                onChange={(e) => setEditMaxCovers(Math.max(1, parseInt(e.target.value) || 1))}
-                className="w-32 bg-background/30 border-primary/30 text-foreground" />
             </div>
 
             {/* Deposit per guest */}
@@ -571,7 +557,7 @@ export default function AdminReservationsPage() {
               </Button>
               {settings && (
                 <span className="text-xs text-muted-foreground">
-                  Actuellement : {settings.openingDays.length}j/sem &middot; {settings.maxCovers} cvrt &middot;
+                  Actuellement : {settings.openingDays.length}j/sem &middot;
                   {settings.mealDuration < 60 ? `${settings.mealDuration}min` : settings.mealDuration % 60 === 0 ? `${settings.mealDuration / 60}h` : `${Math.floor(settings.mealDuration / 60)}h${String(settings.mealDuration % 60).padStart(2, '0')}`}/repas &middot;
                   {settings.openingSlots.length} créneaux
                 </span>
@@ -741,7 +727,6 @@ export default function AdminReservationsPage() {
                           disabled={past}
                           onClick={() => {
                             if (mode === 'custom' && overrideMode !== 'custom') {
-                              setOverrideMaxCovers(selectedDayInfo.effectiveMaxCovers);
                               setOverrideSlots(selectedDayInfo.effectiveSlots);
                             }
                             setOverrideMode(mode);
@@ -760,13 +745,6 @@ export default function AdminReservationsPage() {
 
                     {(overrideMode === 'custom' || overrideMode === 'closed') && (
                       <div className="space-y-4 pt-1">
-                        <div className="space-y-1.5">
-                          <label className="text-xs font-medium">Couverts max par créneau</label>
-                          <Input type="number" min={1} max={500} value={overrideMaxCovers}
-                            onChange={(e) => setOverrideMaxCovers(Math.max(1, parseInt(e.target.value) || 1))}
-                            disabled={past}
-                            className={`w-28 bg-background/30 border-primary/30 text-foreground h-8 text-sm ${past ? 'opacity-50 cursor-not-allowed' : ''}`} />
-                        </div>
                         <div className="space-y-2">
                           <label className="text-xs font-medium">Créneaux</label>
                           <div className="space-y-3">

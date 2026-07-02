@@ -13,7 +13,6 @@ export async function GET() {
   });
 
   return NextResponse.json({
-    maxCovers: settings.maxCovers,
     mealDuration: settings.mealDuration,
     openingDays: JSON.parse(settings.openingDays) as number[],
     openingSlots: JSON.parse(settings.openingSlots) as string[],
@@ -27,11 +26,9 @@ export async function PUT(req: NextRequest) {
   if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
 
   const body = await req.json();
-  const { maxCovers, mealDuration, openingDays, openingSlots, depositPerGuestCents, daysBeforeReminder } = body;
+  const { mealDuration, openingDays, openingSlots, depositPerGuestCents, daysBeforeReminder } = body;
 
   if (
-    typeof maxCovers !== 'number' ||
-    maxCovers < 1 ||
     typeof mealDuration !== 'number' ||
     mealDuration < 30 ||
     mealDuration % 30 !== 0 ||
@@ -98,7 +95,6 @@ export async function PUT(req: NextRequest) {
   const settings = await prisma.restaurantSettings.upsert({
     where: { id: 1 },
     update: {
-      maxCovers,
       mealDuration,
       openingDays: JSON.stringify(openingDays),
       openingSlots: JSON.stringify(openingSlots),
@@ -107,7 +103,6 @@ export async function PUT(req: NextRequest) {
     },
     create: {
       id: 1,
-      maxCovers,
       mealDuration,
       openingDays: JSON.stringify(openingDays),
       openingSlots: JSON.stringify(openingSlots),
@@ -117,7 +112,6 @@ export async function PUT(req: NextRequest) {
   });
 
   return NextResponse.json({
-    maxCovers: settings.maxCovers,
     mealDuration: settings.mealDuration,
     openingDays: JSON.parse(settings.openingDays) as number[],
     openingSlots: JSON.parse(settings.openingSlots) as string[],

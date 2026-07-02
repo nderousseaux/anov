@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAdminFromCookies } from '@/lib/auth';
+import { getTables, getTotalTableCapacity, computeServiceTurns } from '@/lib/tables';
 
 function addMinutes(time: string, mins: number): string {
   const [h, m] = time.split(':').map(Number);
@@ -23,10 +24,13 @@ export async function GET(req: NextRequest) {
     create: { id: 1 },
   });
 
-  const globalMaxCovers = settings.maxCovers;
   const globalMealDuration = settings.mealDuration; // en minutes, multiple de 30
   const globalOpeningDays: number[] = JSON.parse(settings.openingDays);
   const globalSlots: string[] = JSON.parse(settings.openingSlots);
+
+  // Couverts disponibles = calculés à partir des tables, de la durée d'un repas et des horaires
+  const tables = await getTables();
+  const totalTableCapacity = getTotalTableCapacity(tables);
 
   const fromDate = new Date(fromStr + 'T00:00:00.000Z');
   const toDate = new Date(fromDate.getTime() + days * 86_400_000);
@@ -77,18 +81,15 @@ export async function GET(req: NextRequest) {
     const isGloballyOpen = globalOpeningDays.includes(dow);
 
     let effectiveOpen: boolean;
-    let effectiveMaxCovers: number;
     let effectiveSlots: string[];
 
     if (override) {
       effectiveOpen = !override.closed;
-      effectiveMaxCovers = override.maxCovers ?? globalMaxCovers;
       effectiveSlots = override.openingSlots
         ? (JSON.parse(override.openingSlots) as string[])
         : globalSlots;
     } else {
       effectiveOpen = isGloballyOpen;
-      effectiveMaxCovers = globalMaxCovers;
       effectiveSlots = globalSlots;
     }
 
@@ -105,9 +106,11 @@ export async function GET(req: NextRequest) {
     const dinnerClose =
       dinnerSlots.length > 0 ? addMinutes(dinnerSlots[dinnerSlots.length - 1], globalMealDuration) : null;
 
-    // Capacité journalière = maxCovers × nombre de services (midi et/ou soir)
-    const numberOfServices = (lunchSlots.length > 0 ? 1 : 0) + (dinnerSlots.length > 0 ? 1 : 0);
-    const totalCapacity = numberOfServices * effectiveMaxCovers;
+    // Capacité journalière = couverts totaux des tables × nombre de tours possibles par service
+    // (basé sur l'amplitude des créneaux du service et la durée d'un repas)
+    const lunchTurns = computeServiceTurns(lunchSlots, globalMealDuration);
+    const dinnerTurns = computeServiceTurns(dinnerSlots, globalMealDuration);
+    const totalCapacity = totalTableCapacity * (lunchTurns + dinnerTurns);
     const dayStats = resByDate[dateStr] ?? { guests: 0, count: 0 };
 
     result.push({
@@ -118,14 +121,12 @@ export async function GET(req: NextRequest) {
       override: override
         ? {
           closed: override.closed,
-          maxCovers: override.maxCovers,
           openingSlots: override.openingSlots
             ? (JSON.parse(override.openingSlots) as string[])
             : null,
         }
         : null,
       effectiveOpen,
-      effectiveMaxCovers,
       effectiveSlots,
       mealDuration: globalMealDuration,
       lunchOpen,

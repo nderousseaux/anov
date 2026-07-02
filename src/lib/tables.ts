@@ -37,6 +37,27 @@ function slotToMinutes(time: string): number {
 }
 
 /**
+ * Estimates how many sequential non-overlapping seatings a single table can serve across a
+ * list of opening slots for one service (e.g. lunch or dinner), given the meal duration
+ * blocking window. Two reservations on the same table can only both be honored if they are
+ * spaced at least mealDuration apart (see computeBusyTableIds's blocking window: a reservation
+ * blocks [R - mealDuration, R + mealDuration)). Returns 0 when there are no slots for the service.
+ */
+export function computeServiceTurns(slots: string[], mealDuration: number): number {
+  if (slots.length === 0) return 0;
+  const minutes = slots.map(slotToMinutes);
+  const span = Math.max(...minutes) - Math.min(...minutes);
+  return Math.floor(span / mealDuration) + 1;
+}
+
+/**
+ * Sums the capacity of every physical table (total number of seats in the restaurant).
+ */
+export function getTotalTableCapacity(tables: TableInfo[]): number {
+  return tables.reduce((sum, t) => sum + t.capacity, 0);
+}
+
+/**
  * Returns the 6 physical tables of the restaurant, ordered by capacity.
  */
 export async function getTables(db: DbClient = prisma): Promise<TableInfo[]> {

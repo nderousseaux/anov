@@ -10,7 +10,7 @@ const DEFAULT_OPENING_DAYS = [2, 3, 4, 5, 6]; // Mar–Sam
 
 const DEFAULT_MEAL_DURATION = 90; // minutes
 
-type EffectiveConfig = { effectiveSlots: string[]; effectiveMaxCovers: number; mealDuration: number };
+type EffectiveConfig = { effectiveSlots: string[]; mealDuration: number };
 
 async function getEffectiveConfig(dateStr: string): Promise<EffectiveConfig | null> {
   const dateObj = new Date(dateStr + 'T00:00:00.000Z');
@@ -21,7 +21,6 @@ async function getEffectiveConfig(dateStr: string): Promise<EffectiveConfig | nu
     prisma.dayOverride.findUnique({ where: { date: dateObj } }),
   ]);
 
-  const globalMaxCovers: number = dbSettings?.maxCovers ?? 20;
   const mealDuration: number = dbSettings?.mealDuration ?? DEFAULT_MEAL_DURATION;
   const globalOpeningDays: number[] = dbSettings
     ? (JSON.parse(dbSettings.openingDays) as number[])
@@ -36,13 +35,12 @@ async function getEffectiveConfig(dateStr: string): Promise<EffectiveConfig | nu
       effectiveSlots: override.openingSlots
         ? (JSON.parse(override.openingSlots) as string[])
         : globalSlots,
-      effectiveMaxCovers: override.maxCovers ?? globalMaxCovers,
       mealDuration,
     };
   }
 
   if (!globalOpeningDays.includes(dow)) return null;
-  return { effectiveSlots: globalSlots, effectiveMaxCovers: globalMaxCovers, mealDuration };
+  return { effectiveSlots: globalSlots, mealDuration };
 }
 
 /**

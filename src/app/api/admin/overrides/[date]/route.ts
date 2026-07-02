@@ -16,7 +16,6 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
   return NextResponse.json({
     closed: override.closed,
-    maxCovers: override.maxCovers,
     openingSlots: override.openingSlots ? (JSON.parse(override.openingSlots) as string[]) : null,
   });
 }
@@ -33,20 +32,17 @@ export async function PUT(req: NextRequest, { params }: Params) {
     where: { date: dateObj },
     update: {
       closed: body.closed ?? false,
-      maxCovers: body.maxCovers ?? null,
       openingSlots: body.openingSlots ? JSON.stringify(body.openingSlots) : null,
     },
     create: {
       date: dateObj,
       closed: body.closed ?? false,
-      maxCovers: body.maxCovers ?? null,
       openingSlots: body.openingSlots ? JSON.stringify(body.openingSlots) : null,
     },
   });
 
   return NextResponse.json({
     closed: override.closed,
-    maxCovers: override.maxCovers,
     openingSlots: override.openingSlots ? (JSON.parse(override.openingSlots) as string[]) : null,
   });
 }

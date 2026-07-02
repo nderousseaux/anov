@@ -8,26 +8,26 @@ datasource db {
 }
 
 model Reservation {
-  id                  String            @id @default(cuid())
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
-  name                String
-  email               String
-  phone               String?
-  date                DateTime
-  guests              Int
-  specialRequest      String?
-  wantsSmsReminder    Boolean           @default(false)
-  status              ReservationStatus @default(PENDING_PAYMENT)
-  stripeSessionId     String?           @unique
-  expiresAt           DateTime?
-  reminderEmailSent   Boolean           @default(false)
-  reminderSmsSent     Boolean           @default(false)
-  cancelToken         String            @unique @default(cuid())
+  id                String            @id @default(cuid())
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  name              String
+  email             String
+  phone             String?
+  date              DateTime
+  guests            Int
+  specialRequest    String?
+  wantsSmsReminder  Boolean           @default(false)
+  status            ReservationStatus @default(PENDING_PAYMENT)
+  stripeSessionId   String?           @unique
+  expiresAt         DateTime?
+  reminderEmailSent Boolean           @default(false)
+  reminderSmsSent   Boolean           @default(false)
+  cancelToken       String            @unique @default(cuid())
   transactionExpireAt DateTime?
-  depositPaidCents    Int?
-  tableId             Int?
-  table               Table?            @relation(fields: [tableId], references: [id])
+  depositPaidCents  Int?
+  tableId           Int?
+  table             Table?            @relation(fields: [tableId], references: [id])
 }
 
 model Table {
@@ -53,7 +53,6 @@ model RestaurantSettings {
   openingDays          String @default("[2,3,4,5,6]")
   openingSlots         String @default("[\"12:00\",\"12:30\",\"13:00\",\"13:30\",\"19:00\",\"19:30\",\"20:00\",\"20:30\",\"21:00\",\"21:30\"]")
   depositPerGuestCents Int    @default(2000)
-  daysBeforeReminder   Int    @default(1) // Nombre de jours avant la réservation pour envoyer un rappel
 }
 
 model DayOverride {

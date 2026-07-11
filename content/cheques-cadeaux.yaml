@@ -1,0 +1,38 @@
+image: https://images.unsplash.com/photo-1761095596755-99ba58997720?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwZGlzaCUyMHBsYXRpbmclMjBmaW5lJTIwZGluaW5mfGVufDF8fHx8MTc3MTUwOTU3N3ww&ixlib=rb-4.1.0&q=80&w=1080
+title_fr: Chèques Cadeaux
+title_en: Gift Cards
+title_de: Geschenkgutscheine
+subtitle_fr: Offrez une expérience gastronomique unique à vos proches
+subtitle_en: Give your loved ones an unforgettable gastronomic experience
+subtitle_de: Schenken Sie Ihren Liebsten ein unvergessliches gastronomisches Erlebnis
+labelAmount_fr: Montant
+labelAmount_en: Amount
+labelAmount_de: Betrag
+placeholderAmount_fr: Montant
+placeholderAmount_en: Amount
+placeholderAmount_de: Betrag
+amounts: 50€, 100€, 150€, 200€, 250€, 500€
+labelRecipient_fr: Email du destinataire
+labelRecipient_en: Recipient's email
+labelRecipient_de: E-Mail des Empfängers
+placeholderRecipient_fr: destinataire@example.com
+placeholderRecipient_en: recipient@example.com
+placeholderRecipient_de: empfaenger@example.com
+labelMessage_fr: Message personnel
+labelMessage_en: Personal message
+labelMessage_de: Persönliche Nachricht
+placeholderMessage_fr: Ajoutez un message personnalisé...
+placeholderMessage_en: Add a personalized message...
+placeholderMessage_de: Fügen Sie eine persönliche Nachricht hinzu...
+submitButton_fr: Acheter maintenant
+submitButton_en: Buy now
+submitButton_de: Jetzt kaufen
+paymentInfo_fr: Paiement sécurisé • Livraison par email
+paymentInfo_en: Secure payment • Email delivery
+paymentInfo_de: Sichere Zahlung • Lieferung per E-Mail
+footerSecure_fr: Tous les achats sont sécurisés
+footerSecure_en: All purchases are secure
+footerSecure_de: Alle Käufe sind sicher
+footerValid_fr: Les bons et chèques cadeaux sont valables 12 mois
+footerValid_en: Gift cards are valid for 12 months
+footerValid_de: Geschenkgutscheine sind 12 Monate gültig

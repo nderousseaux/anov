@@ -1,44 +1,53 @@
 image: https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?w=1200&q=80
-title_fr: Chèques Cadeaux
-title_en: Gift Cards
-title_de: Geschenkgutscheine
-subtitle_fr: Offrez une expérience gastronomique inoubliable
-subtitle_en: Give an unforgettable gastronomic experience
-subtitle_de: Verschenken Sie ein unvergessliches gastronomisches Erlebnis
-giftCardsTitle_fr: Chèques Cadeaux
-giftCardsTitle_en: Gift Cards
-giftCardsTitle_de: Geschenkgutscheine
-giftCardsSubtitle_fr: ""
-giftCardsSubtitle_en: ""
-giftCardsSubtitle_de: ""
-labelAmount_fr: Montant
-labelAmount_en: Amount
-labelAmount_de: Betrag
-placeholderAmount_fr: Montant
-placeholderAmount_en: Amount
-placeholderAmount_de: Betrag
-amounts: 50€, 100€, 150€, 200€, 250€, 500€
-labelRecipient_fr: Email du destinataire
-labelRecipient_en: Recipient's email
-labelRecipient_de: E-Mail des Empfängers
-placeholderRecipient_fr: destinataire@example.com
-placeholderRecipient_en: recipient@example.com
-placeholderRecipient_de: empfaenger@example.com
-labelMessage_fr: Message personnel
-labelMessage_en: Personal message
-labelMessage_de: Persönliche Nachricht
-placeholderMessage_fr: Ajoutez un message personnalisé...
-placeholderMessage_en: Add a personalized message...
-placeholderMessage_de: Fügen Sie eine persönliche Nachricht hinzu...
-submitButton_fr: Acheter maintenant
-submitButton_en: Buy now
-submitButton_de: Jetzt kaufen
-paymentInfo_fr: Paiement sécurisé • Livraison par email
-paymentInfo_en: Secure payment • Email delivery
-paymentInfo_de: Sichere Zahlung • Lieferung per E-Mail
-footerSecure_fr: Tous les achats sont sécurisés
-footerSecure_en: All purchases are secure
-footerSecure_de: Alle Käufe sind sicher
-footerValid_fr: Les bons et chèques cadeaux sont valables 12 mois
-footerValid_en: Gift cards are valid for 12 months
-footerValid_de: Geschenkgutscheine sind 12 Monate gültig
+title_fr: La Boutique
+title_en: The Boutique
+title_de: Die Boutique
+subtitle_fr: Découvrez nos produits gastronomiques sélectionnés
+subtitle_en: Discover our selected gastronomic products
+subtitle_de: Entdecken Sie unsere ausgewählten gastronomischen Produkte
+productsIntroTitle_fr: Nos Produits
+productsIntroTitle_en: Our Products
+productsIntroTitle_de: Unsere Produkte
+productsIntroSubtitle_fr: Une sélection soigneuse de produits gastronomiques
+productsIntroSubtitle_en: A careful selection of gastronomic products
+productsIntroSubtitle_de: Eine sorgfältige Auswahl an gastronomischen Produkten
+products:
+  - title_fr: Boîte de 6 Macarons
+    title_en: Box of 6 Macarons
+    title_de: Box mit 6 Macarons
+    description_fr: Une délicieuse sélection de macarons artisanaux aux saveurs variées
+    description_en: A delicious selection of artisanal macarons with various flavors
+    description_de: Eine köstliche Auswahl an handwerklichen Macarons mit verschiedenen Geschmäcken
+    price: 25
+    maxOrder: 10
+    isDeliverable: false
+    image: /assets/boutique/macarons.png
+    alt_fr: Macarons colorés
+    alt_en: Colorful macarons
+    alt_de: Bunte Macarons
+  - title_fr: Coffret Café Gourmand
+    title_en: Gourmand Coffee Box
+    title_de: Gourmand Kaffee Box
+    description_fr: Un coffret complet pour les amateurs de café et de douceurs
+    description_en: A complete box for coffee and dessert lovers
+    description_de: Eine komplette Box für Kaffee- und Süßigkeitentest
+    price: 45
+    maxOrder: 5
+    isDeliverable: true
+    image: /assets/boutique/cafe.png
+    alt_fr: Coffret café avec pâtisseries
+    alt_en: Coffee box with pastries
+    alt_de: Kaffee-Box mit Pasteten
+  - title_fr: Sélection de Thés Rares
+    title_en: Selection of Rare Teas
+    title_de: Auswahl seltener Tees
+    description_fr: Une collection soigneusement choisie de thés rares et infusions
+    description_en: A carefully selected collection of rare teas and infusions
+    description_de: Eine sorgfältig ausgewählte Sammlung seltener Tees und Kräutertees
+    price: 35
+    maxOrder: 8
+    isDeliverable: true
+    image: /assets/boutique/thes.png
+    alt_fr: Boîte de thés exotiques
+    alt_en: Box of exotic teas
+    alt_de: Box mit exotischen Tees

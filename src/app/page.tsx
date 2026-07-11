@@ -3,7 +3,7 @@ import { Hero } from '@/components/Hero';
 import { History } from '@/components/features/History';
 import { Gallery } from '@/components/features/Gallery';
 import { Contact } from '@/components/features/Contact';
-import config from '../../keystatic.config';
+import config from '@/keystatic.config';
 
 export default async function Page() {
   const reader = createReader(process.cwd(), config);

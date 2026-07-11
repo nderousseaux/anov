@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { useLanguage } from '@/context/LanguageContext';
 import { pickField } from '@/lib/langs';
 
-interface BoutiqueContent {
+interface ChequesCadeauxContent {
   image?: string;
   title_fr?: string;
   title_en?: string;
@@ -51,7 +51,7 @@ interface BoutiqueContent {
   footerValid_de?: string;
 }
 
-export function ChequesCadeauxContent({ content }: { content?: Record<string, unknown> | null }) {
+export function ChequesCadeauxContent({ content }: { content?: ChequesCadeauxContent | null }) {
   const { locale } = useLanguage();
   const [giftCard, setGiftCard] = useState({
     amount: '',
@@ -164,8 +164,13 @@ export function ChequesCadeauxContent({ content }: { content?: Record<string, un
             className="text-5xl sm:text-6xl md:text-7xl mb-6 text-primary"
             style={{ fontFamily: 'var(--font-display)' }}
           >
-            {pickField(c, 'title', locale)}
+            {pickField(c, 'title', locale) || 'Chèques Cadeaux'}
           </h1>
+          {pickField(c, 'subtitle', locale) && (
+            <p className="text-lg sm:text-2xl text-muted-foreground max-w-3xl mx-auto">
+              {pickField(c, 'subtitle', locale)}
+            </p>
+          )}
         </div>
       </div>
 
@@ -177,7 +182,6 @@ export function ChequesCadeauxContent({ content }: { content?: Record<string, un
               className="text-xl sm:text-2xl"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              {pickField(c, 'subtitle', locale)}
             </h2>
           </div>
 

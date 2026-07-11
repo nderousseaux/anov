@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import '@/styles/index.css';
 import ClientLayout from './ClientLayout';
 import { createReader } from '@keystatic/core/reader';
-import config from '../../keystatic.config';
+import config from '@/keystatic.config';
 
 export const metadata: Metadata = {
   title: "l'Anøv",

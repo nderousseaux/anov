@@ -23,6 +23,7 @@ function ClientLayoutInner({ children, footerContent }: { children: ReactNode; f
   // Pages où le splash screen ne doit pas s'afficher
   const noSplashPages = [
     '/cheques-cadeaux/succes',
+    '/cheques-cadeaux',
     '/reservation/succes',
     '/reservation/paiement',
     '/reservation/cancel',

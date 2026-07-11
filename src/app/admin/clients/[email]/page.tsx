@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Loader2, ArrowLeft, Save, CalendarDays, Gift, Mail, Check } from 'lucide-react';
+import { Loader2, ArrowLeft, Save, CalendarDays, Gift, Mail, Check, Package } from 'lucide-react';
 
 interface ReservationRow {
   id: string;
@@ -41,17 +41,29 @@ interface ContactMessageRow {
   createdAt: string;
 }
 
+interface ProductOrderRow {
+  id: string;
+  code: string;
+  productTitle: string;
+  quantity: number;
+  totalPrice: number;
+  status: string;
+  createdAt: string;
+}
+
 interface CustomerDetailResponse {
   reservations: ReservationRow[];
   giftCards: GiftCardRow[];
   contactMessages: ContactMessageRow[];
+  productOrders: ProductOrderRow[];
   note: { content: string } | null;
 }
 
 type TimelineItem =
   | { type: 'reservation'; date: string; data: ReservationRow }
   | { type: 'giftCard'; date: string; data: GiftCardRow }
-  | { type: 'contact'; date: string; data: ContactMessageRow };
+  | { type: 'contact'; date: string; data: ContactMessageRow }
+  | { type: 'productOrder'; date: string; data: ProductOrderRow };
 
 const STATUS_LABELS: Record<string, string> = {
   PENDING_PAYMENT: 'En attente',
@@ -62,6 +74,9 @@ const STATUS_LABELS: Record<string, string> = {
   ACTIVE: 'Actif',
   USED: 'Utilisé',
   EXPIRED: 'Expiré',
+  PROCESSING: 'En préparation',
+  SHIPPED: 'Envoyée',
+  READY: 'Prête',
 };
 
 function formatDateTime(iso: string): string {
@@ -115,6 +130,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ email: 
       ...detail.reservations.map((r) => ({ type: 'reservation' as const, date: r.date, data: r })),
       ...detail.giftCards.map((g) => ({ type: 'giftCard' as const, date: g.createdAt, data: g })),
       ...detail.contactMessages.map((c) => ({ type: 'contact' as const, date: c.createdAt, data: c })),
+      ...detail.productOrders.map((o) => ({ type: 'productOrder' as const, date: o.createdAt, data: o })),
     ];
     return items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [detail]);
@@ -197,9 +213,12 @@ export default function ClientDetailPage({ params }: { params: Promise<{ email: 
                 <TabsTrigger value="contact">
                   Contacts ({detail?.contactMessages.length ?? 0})
                 </TabsTrigger>
+                <TabsTrigger value="productOrder">
+                  Commandes ({detail?.productOrders.length ?? 0})
+                </TabsTrigger>
               </TabsList>
 
-              {(['all', 'reservation', 'giftCard', 'contact'] as const).map((tab) => (
+              {(['all', 'reservation', 'giftCard', 'contact', 'productOrder'] as const).map((tab) => (
                 <TabsContent key={tab} value={tab} className="space-y-3 mt-4">
                   {filterItems(tab).length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground text-sm">
@@ -248,6 +267,22 @@ function TimelineCard({ item }: { item: TimelineItem }) {
           </div>
           <p className="text-xs text-muted-foreground">{formatDateTime(g.createdAt)} — {formatCurrency(g.amount)}</p>
           {g.personalMessage && <p className="text-sm text-muted-foreground mt-2">{g.personalMessage}</p>}
+        </div>
+      </div>
+    );
+  }
+
+  if (item.type === 'productOrder') {
+    const o = item.data;
+    return (
+      <div className="bg-card border border-border rounded-lg p-4 flex gap-3">
+        <Package className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <span className="text-sm font-medium text-foreground">Commande — {o.productTitle}</span>
+            <Badge variant="secondary">{STATUS_LABELS[o.status] ?? o.status}</Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">{formatDateTime(o.createdAt)} — Qté: {o.quantity} ({formatCurrency(o.totalPrice)})</p>
         </div>
       </div>
     );

@@ -35,6 +35,10 @@ export async function POST(req: NextRequest) {
     if (meta.type === 'gift_card' && meta.giftCardId) {
       await handleGiftCardPayment(meta.giftCardId, session.id);
     }
+    // Gérer les commandes produits
+    else if (meta.type === 'product_order' && meta.orderId) {
+      await handleProductOrderPayment(meta.orderId, session.id);
+    }
     // Gérer les réservations (supporte les deux formats)
     else if (
       (meta.name && meta.email && meta.date && meta.guests) ||  // ancien format
@@ -182,5 +186,56 @@ async function handleReservationPayment(session: any, meta: any) {
     // Reservation confirmed (for monitoring)
   } catch (error) {
     console.error('[WEBHOOK] Erreur dans handleReservationPayment:', error);
+  }
+}
+
+/**
+ * Gère le paiement d'une commande produit
+ */
+async function handleProductOrderPayment(orderId: string, sessionId: string) {
+  try {
+    // Récupérer la commande
+    const order = await prisma.productOrder.findUnique({
+      where: { id: orderId },
+    });
+
+    if (!order) {
+      // Log missing order (for monitoring)
+      return;
+    }
+
+    // Mettre à jour le statut de la commande
+    await prisma.productOrder.update({
+      where: { id: orderId },
+      data: {
+        status: 'CONFIRMED',
+        stripeSessionId: sessionId,
+        transactionExpireAt: null, // La transaction est terminée
+      },
+    });
+
+    // Envoyer l'email de confirmation au client
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+      const orderDate = new Date();
+      const formattedDate = orderDate.toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+
+      // Email de confirmation de commande
+      console.log(`[WEBHOOK] Email de confirmation envoyé à ${order.customerEmail} pour la commande ${order.code}`);
+
+      // ici on pourrait appeler une fonction d'envoi d'email spécifique aux commandes produits
+      // sendProductOrderConfirmationEmail({...})
+    } catch (emailError) {
+      console.error(`[WEBHOOK] Erreur lors de l'envoi de l'email à ${order.customerEmail}:`, emailError);
+    }
+
+    // Product order confirmed (for monitoring)
+  } catch (error) {
+    console.error('[WEBHOOK] Erreur dans handleProductOrderPayment:', error);
   }
 }

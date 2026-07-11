@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, Facebook, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { NavbarDropdown } from './NavbarDropdown';
 
 // TikTok SVG icon component (not available in lucide-react)
 function TiktokIcon({ className, size, ...props }: { className?: string; size?: number } & React.SVGProps<SVGSVGElement>) {
@@ -115,14 +116,22 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
     | { type: 'section'; label: string; section: string }
     | { type: 'link'; label: string; href: string }
     | { type: 'cta'; label: string; href: string }
-    | { type: 'separator' };
+    | { type: 'separator' }
+    | { type: 'dropdown'; label: string; items: { label: string; href: string }[] };
 
   const navItems: NavItem[] = [
     { type: 'section', label: t.nav.ourStory, section: 'history' },
     { type: 'section', label: t.nav.gallery, section: 'gallery' },
     { type: 'separator' },
     { type: 'link', label: t.nav.theMenu, href: '/menu' },
-    { type: 'link', label: t.nav.boutique, href: '/cheques-cadeaux' },
+    {
+      type: 'dropdown',
+      label: t.nav.boutique,
+      items: [
+        { label: t.nav.products, href: '/boutique' },
+        { label: t.nav.giftCards, href: '/cheques-cadeaux' },
+      ],
+    },
     { type: 'cta', label: t.nav.reserve, href: '/reservation' },
   ];
 
@@ -179,6 +188,9 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
                   <Button className={reservationButtonClass}>{item.label}</Button>
                 </Link>
               );
+              if (item.type === 'dropdown') return (
+                <NavbarDropdown key={i} label={item.label} items={item.items} />
+              );
             })}
             <LanguageSelector />
           </div>
@@ -217,6 +229,23 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
                       {item.label}
                     </Button>
                   </Link>
+                );
+                if (item.type === 'dropdown') return (
+                  <div key={i} className="py-2">
+                    <span className="text-foreground font-medium mb-2 block">{item.label}</span>
+                    <div className="flex flex-col space-y-2 pl-4">
+                      {item.items.map((subItem, j) => (
+                        <Link
+                          key={j}
+                          href={subItem.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={`transition-colors duration-300 text-left ${isActive(subItem.href) ? 'text-primary' : 'text-foreground hover:text-primary'}`}
+                        >
+                          {subItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 );
               })}
 

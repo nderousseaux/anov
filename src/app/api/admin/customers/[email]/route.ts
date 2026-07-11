@@ -12,7 +12,7 @@ export async function GET(
   const { email: rawEmail } = await params;
   const email = decodeURIComponent(rawEmail);
 
-  const [reservations, giftCards, contactMessages, note] = await Promise.all([
+  const [reservations, giftCards, contactMessages, productOrders, note] = await Promise.all([
     prisma.reservation.findMany({
       where: { email: { equals: email, mode: 'insensitive' } },
       orderBy: { date: 'desc' },
@@ -25,10 +25,14 @@ export async function GET(
       where: { email: { equals: email, mode: 'insensitive' } },
       orderBy: { createdAt: 'desc' },
     }),
+    prisma.productOrder.findMany({
+      where: { customerEmail: { equals: email, mode: 'insensitive' } },
+      orderBy: { createdAt: 'desc' },
+    }),
     prisma.customerNote.findUnique({
       where: { email: email.toLowerCase() },
     }),
   ]);
 
-  return NextResponse.json({ reservations, giftCards, contactMessages, note });
+  return NextResponse.json({ reservations, giftCards, contactMessages, productOrders, note });
 }

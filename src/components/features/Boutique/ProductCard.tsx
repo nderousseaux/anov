@@ -1,0 +1,114 @@
+'use client';
+
+import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ShoppingBag, AlertCircle } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+
+interface Product {
+  title_fr: string;
+  title_en: string;
+  title_de: string;
+  description_fr?: string;
+  description_en?: string;
+  description_de?: string;
+  price: number;
+  maxOrder: number;
+  isDeliverable: boolean;
+  image: string;
+  alt_fr?: string;
+  alt_en?: string;
+  alt_de?: string;
+}
+
+export function ProductCard({ product }: { product: Product }) {
+  const { locale } = useLanguage();
+  const [isAdding, setIsAdding] = useState(false);
+  const title = product[`title_${locale}` as keyof Product] || product.title_fr;
+  const alt = product.alt_fr || product.alt_en || 'Produit';
+  const price = product.price;
+
+  const handleAddToCart = async () => {
+    setIsAdding(true);
+    try {
+      const response = await fetch('/api/boutique/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productName: title,
+          quantity: 1,
+          totalPrice: price,
+          deliveryMethod: 'PICKUP',
+          customerName: '',
+          customerEmail: '',
+          customerPhone: '',
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur lors de la création de la commande');
+      }
+
+      // Redirect to Stripe
+      window.location.href = data.url;
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert(error instanceof Error ? error.message : 'Une erreur est survenue');
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
+  return (
+    <Card className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+      <div className="aspect-video overflow-hidden bg-muted relative group">
+        <img
+          src={product.image || '/assets/placeholder-product.jpg'}
+          alt={alt}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </div>
+      <CardContent className="p-6">
+        <div className="mb-2 flex items-center justify-between">
+          <span className={`text-xs flex items-center gap-1 ${product.isDeliverable ? 'text-green-500' : 'text-amber-500'}`}>
+            {product.isDeliverable ? (
+              <span>Livrable</span>
+            ) : (
+              <>
+                <AlertCircle size={12} />
+                Pickup sur place
+              </>
+            )}
+          </span>
+        </div>
+        <h3 className="text-lg font-semibold text-foreground mb-2" style={{ fontFamily: 'var(--font-display)' }}>
+          {title}
+        </h3>
+        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+          {product[`description_${locale}` as keyof Product] || product.description_fr || ''}
+        </p>
+        <p className="text-2xl font-bold text-primary mb-4">
+          {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(product.price)}
+        </p>
+        <Button
+          onClick={handleAddToCart}
+          disabled={isAdding}
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+        >
+          {isAdding ? (
+            <span className="animate-pulse">Ajout en cours...</span>
+          ) : (
+            <>
+              <ShoppingBag className="w-4 h-4 mr-2" />
+              Commander
+            </>
+          )}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}

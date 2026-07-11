@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { createReader } from '@keystatic/core/reader';
-import config from '../../../keystatic.config';
+import config from '@/keystatic.config';
 import { ReservationForm } from '@/components/features/ReservationForm';
 
 export default async function ReservationPage() {

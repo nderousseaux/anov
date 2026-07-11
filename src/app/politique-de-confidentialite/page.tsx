@@ -1,5 +1,5 @@
 import { createReader } from '@keystatic/core/reader';
-import config from '../../../keystatic.config';
+import config from '@/keystatic.config';
 import { LegalDocumentRenderer } from '@/components/shared/LegalDocumentRenderer';
 import { LegalLanguageNotice } from '@/components/shared/LegalLanguageNotice';
 

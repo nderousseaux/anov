@@ -1,10 +1,10 @@
 import { createReader } from '@keystatic/core/reader';
-import config from '../../../keystatic.config';
+import config from '@/keystatic.config';
 import { ChequesCadeauxContent } from '@/components/shared/ChequesCadeauxContent';
 
 export default async function Page() {
   const reader = createReader(process.cwd(), config);
-  const boutiqueContent = await reader.singletons.boutique.read();
+  const chequesCadeauxContent = await reader.singletons.chequesCadeaux.read();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return <ChequesCadeauxContent content={boutiqueContent as any} />;
+  return <ChequesCadeauxContent content={chequesCadeauxContent as any} />;
 }

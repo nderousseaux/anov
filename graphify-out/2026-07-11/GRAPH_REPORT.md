@@ -1,18 +1,13 @@
-# Graph Report - anov  (2026-07-11)
+# Graph Report - .  (2026-07-02)
 
 ## Corpus Check
-- 196 files · ~298,296 words
+- 215 files · ~297,901 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3213 nodes · 5380 edges · 140 communities (132 shown, 8 thin omitted)
+- 3207 nodes · 5374 edges · 141 communities (136 shown, 5 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 95 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
-
-## Graph Freshness
-- Built from commit: `69cfaa89`
-- Run `git rev-parse HEAD` and compare to check if the graph is stale.
-- Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - [[_COMMUNITY_Prisma Client Types|Prisma Client Types]]
@@ -90,6 +85,7 @@
 - [[_COMMUNITY_UI Navigation Menu|UI Navigation Menu]]
 - [[_COMMUNITY_Prisma Client Models|Prisma Client Models]]
 - [[_COMMUNITY_Prisma Package Info|Prisma Package Info]]
+- [[_COMMUNITY_Prisma Runtime Edge|Prisma Runtime Edge]]
 - [[_COMMUNITY_API Types|API Types]]
 - [[_COMMUNITY_Gift Card Admin Cases|Gift Card Admin Cases]]
 - [[_COMMUNITY_Gift Card Admin APIs|Gift Card Admin APIs]]
@@ -142,17 +138,17 @@
   prisma/seed.ts → src/app/api/admin/auth/route.ts
 - `GET()` --calls--> `getAdminFromCookies()`  [INFERRED]
   src/app/api/admin/reservations/route.ts → src/lib/auth.ts
+- `GET()` --calls--> `getAdminFromCookies()`  [EXTRACTED]
+  src/app/api/admin/gift-cards/route.ts → src/lib/auth.ts
+- `PATCH()` --calls--> `getAdminFromCookies()`  [EXTRACTED]
+  src/app/api/admin/gift-cards/route.ts → src/lib/auth.ts
 - `PATCH()` --calls--> `getAdminFromCookies()`  [INFERRED]
   src/app/api/admin/reservations/route.ts → src/lib/auth.ts
-- `DishCard()` --calls--> `useLanguage()`  [EXTRACTED]
-  src/components/shared/MenuContent.tsx → src/context/LanguageContext.tsx
-- `AccordionItem()` --calls--> `cn()`  [EXTRACTED]
-  src/components/ui/accordion.tsx → src/components/ui/utils.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (140 total, 8 thin omitted)
+## Communities (141 total, 5 thin omitted)
 
 ### Community 0 - "Prisma Client Types"
 Cohesion: 0.00
@@ -164,19 +160,19 @@ Nodes (313): AccelerateExtensionFetch, AccelerateExtensionFetchDecorator, Action
 
 ### Community 2 - "Runtime Client Methods"
 Cohesion: 0.02
-Nodes (72): $(), Ad(), ai(), Am(), Bp(), Cd(), clone(), _cloneInto() (+64 more)
+Nodes (67): $(), ai(), Bp(), bs(), clone(), _cloneInto(), cm(), constructor() (+59 more)
 
 ### Community 3 - "Runtime Wasm Compiler Edge"
 Cohesion: 0.02
-Nodes (58): _(), aa(), ap(), Bm(), bu(), clone(), _cloneInto(), constructor() (+50 more)
+Nodes (49): _(), aa(), addItem(), ap(), Bm(), bs(), bu(), clone() (+41 more)
 
 ### Community 4 - "UI Components (shadcn)"
-Cohesion: 0.04
-Nodes (81): Avatar(), AvatarFallback(), AvatarImage(), BreadcrumbEllipsis(), BreadcrumbItem(), BreadcrumbLink(), BreadcrumbList(), BreadcrumbPage() (+73 more)
+Cohesion: 0.05
+Nodes (70): Avatar(), AvatarFallback(), AvatarImage(), BreadcrumbEllipsis(), BreadcrumbItem(), BreadcrumbLink(), BreadcrumbList(), BreadcrumbPage() (+62 more)
 
 ### Community 5 - "Runtime Primitives"
 Cohesion: 0.06
-Nodes (66): ce(), #a(), apiKey(), Ba(), build(), cl(), commitTransaction(), connect() (+58 more)
+Nodes (66): ce(), #a(), apiKey(), Ba(), $c(), cl(), commitTransaction(), connect() (+58 more)
 
 ### Community 6 - "Runtime Query Compiler Edge"
 Cohesion: 0.09
@@ -187,20 +183,20 @@ Cohesion: 0.03
 Nodes (59): dependencies, class-variance-authority, clsx, cmdk, d3, date-fns, dotenv, embla-carousel-react (+51 more)
 
 ### Community 8 - "Admin Components"
-Cohesion: 0.08
-Nodes (16): ALL_SLOTS, ApiResponse, DayInfo, DAYS_FULL, DAYS_SHORT, MONTHS_ABBR, MONTHS_FULL, ReservationRow (+8 more)
+Cohesion: 0.05
+Nodes (36): AdminNav(), navLinks, CustomerListResponse, CustomerSummary, ContactMessageRow, CustomerDetailResponse, formatCurrency(), formatDateTime() (+28 more)
 
 ### Community 9 - "Reservation API"
 Cohesion: 0.06
-Nodes (62): _a(), au(), cm(), connect(), _d(), dm(), Dp(), ea() (+54 more)
+Nodes (55): _a(), Ae(), cm(), connect(), dm(), Dp(), ea(), enumValues() (+47 more)
 
 ### Community 10 - "Gift Card Admin API"
-Cohesion: 0.06
-Nodes (54): oe(), addItem(), alloc(), allocUnsafe(), allocUnsafeSlow(), am(), ao(), Bt() (+46 more)
+Cohesion: 0.07
+Nodes (53): allocUnsafeSlow(), am(), Bt(), byteLength(), concat(), construct(), de(), dt() (+45 more)
 
 ### Community 11 - "Auth API"
 Cohesion: 0.13
-Nodes (44): ac(), addErrorMessage(), addField(), addSuggestion(), asObject(), _c(), cc(), dc() (+36 more)
+Nodes (45): ac(), addErrorMessage(), addField(), addSuggestion(), asObject(), _c(), cc(), dc() (+37 more)
 
 ### Community 12 - "Gift Card Page"
 Cohesion: 0.08
@@ -215,32 +211,32 @@ Cohesion: 0.05
 Nodes (38): 1.1 Stack, 1.2 Architecture du projet, 1.3 Flux de données, 1. Architecture technique, 2.1 Configuration du stockage, 2.2 Singletons définis, 2.3 Configuration de production, 2. Configuration Keystatic (+30 more)
 
 ### Community 15 - "Feature Components"
-Cohesion: 0.09
-Nodes (25): CustomerListResponse, CustomerSummary, ContactContent, ReservationFormProps, SlotInfo, TranslationData, BoutiqueContent, Reservation (+17 more)
+Cohesion: 0.11
+Nodes (21): ContactContent, ReservationFormProps, SlotInfo, TranslationData, BoutiqueContent, Reservation, Button(), Input() (+13 more)
 
 ### Community 16 - "UI Accordion Components"
-Cohesion: 0.05
-Nodes (20): AccordionContent(), AccordionItem(), AccordionTrigger(), Checkbox(), DrawerContent(), DrawerDescription(), DrawerFooter(), DrawerHeader() (+12 more)
+Cohesion: 0.06
+Nodes (22): AccordionContent(), AccordionItem(), AccordionTrigger(), Alert(), AlertDescription(), AlertTitle(), alertVariants, Checkbox() (+14 more)
 
 ### Community 17 - "Prisma Client Runtime (edge)"
-Cohesion: 0.12
-Nodes (18): $c(), Di(), el(), Fo(), getLocation(), getPlaceholderValues(), ii(), ka() (+10 more)
+Cohesion: 0.08
+Nodes (37): oe(), alloc(), allocUnsafe(), ao(), au(), _d(), destroy(), digest() (+29 more)
 
 ### Community 18 - "Prisma Runtime (WASM)"
-Cohesion: 0.14
-Nodes (14): bc(), cancelAllTransactions(), disconnect(), fu(), getPrintWidth(), mapQueryEngineResult(), unpack(), Uu() (+6 more)
+Cohesion: 0.07
+Nodes (34): N(), rs(), bc(), cancelAllTransactions(), disconnect(), execute(), get(), getAllBatchQueryCallbacks() (+26 more)
 
 ### Community 19 - "Prisma Client Runtime"
-Cohesion: 0.11
-Nodes (28): an(), Bd(), bs(), Ei(), Ep(), Gs(), Gu(), H() (+20 more)
+Cohesion: 0.07
+Nodes (34): an(), ap(), cp(), Dd(), ed(), Ei(), Ep(), Gs() (+26 more)
 
 ### Community 20 - "Gift Card Cases"
 Cohesion: 0.07
 Nodes (30): Cas 10: BON EXPIRED avec isPaid: true, Cas 11: Pagination avec transaction expirée, Cas 12: Filtre par statut avec IN_PROGRESS_PAYMENT expiré, Cas 13: Webhook avec giftCardId non trouvé, Cas 13b: PATCH API avec ID non trouvé, Cas 13c: PATCH API avec ID manquant, Cas 14: Webhook sans metadata pour gift card, Cas 14a: Webhook Stripe avec autre événement (+22 more)
 
 ### Community 21 - "Prisma Runtime Methods"
-Cohesion: 0.09
-Nodes (28): bl(), br(), Bu(), en(), fm(), fromContent(), highlight(), hl() (+20 more)
+Cohesion: 0.08
+Nodes (29): Ad(), Bu(), Cd(), Di(), Ea(), el(), en(), Fo() (+21 more)
 
 ### Community 22 - "Gift Card Scenarios"
 Cohesion: 0.07
@@ -251,68 +247,68 @@ Cohesion: 0.07
 Nodes (26): Checklist de validation, Console.log à nettoyer, Estimation de l'effort, Fichiers avec `any` (à corriger), Fichiers de gros volume (>200 lignes), Fichiers identifiés, Global Constraints, Ordre de priorité recommandé (+18 more)
 
 ### Community 24 - "Prisma Client Extensions"
-Cohesion: 0.15
-Nodes (17): addItem(), ae(), append(), At(), bc(), de(), Fe(), getGlobalOmit() (+9 more)
+Cohesion: 0.10
+Nodes (27): addItem(), ae(), append(), At(), bc(), bl(), de(), Fe() (+19 more)
 
 ### Community 25 - "Prisma Tracing"
-Cohesion: 0.07
-Nodes (28): bo(), e(), ee(), Gd(), generate(), Go(), hr(), Ie() (+20 more)
+Cohesion: 0.08
+Nodes (27): bo(), build(), dispatchEngineSpans(), e(), Gd(), generate(), getActiveContext(), getTraceParent() (+19 more)
 
 ### Community 26 - "Availability & Tables"
 Cohesion: 0.15
 Nodes (22): GET(), addMinutes(), GET(), DEFAULT_OPENING_DAYS, DEFAULT_SLOTS, EffectiveConfig, getEffectiveConfig(), getSlotsWithAvailability() (+14 more)
 
 ### Community 27 - "WASM Compiler Edge Runtime"
-Cohesion: 0.13
-Nodes (28): addMarginSymbol(), afterNextNewline(), compare(), copy(), equals(), G(), getCurrentLineLength(), indent() (+20 more)
+Cohesion: 0.14
+Nodes (26): addMarginSymbol(), afterNextNewline(), compare(), copy(), G(), getCurrentLineLength(), indent(), readIntBE() (+18 more)
 
 ### Community 28 - "UI Alert Dialog"
 Cohesion: 0.10
 Nodes (18): AlertDialogAction(), AlertDialogCancel(), AlertDialogContent(), AlertDialogDescription(), AlertDialogFooter(), AlertDialogHeader(), AlertDialogOverlay(), AlertDialogTitle() (+10 more)
 
 ### Community 29 - "Customers API"
-Cohesion: 0.13
-Nodes (19): CustomerSummary, GET(), DELETE(), GET(), Params, PUT(), GET(), generateAdminGiftCardCode() (+11 more)
+Cohesion: 0.16
+Nodes (15): CustomerSummary, GET(), DELETE(), GET(), Params, PUT(), GET(), getAdminFromCookies() (+7 more)
 
 ### Community 30 - "Language & Localization"
-Cohesion: 0.14
-Nodes (12): SUPPORTED_LOCALES, DropdownMenu(), DropdownMenuCheckboxItem(), DropdownMenuContent(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuRadioItem(), DropdownMenuSeparator() (+4 more)
+Cohesion: 0.11
+Nodes (16): detectBrowserLocale(), getLocaleFromString(), LOCALE_LABELS, LOCALE_NAMES, SUPPORTED_LOCALES, DropdownMenu(), DropdownMenuCheckboxItem(), DropdownMenuContent() (+8 more)
 
 ### Community 31 - "WASM Compiler Edge Tracing"
-Cohesion: 0.06
-Nodes (42): Ae(), build(), commitTransaction(), cr(), dispatchEngineSpans(), em(), execute(), #f() (+34 more)
+Cohesion: 0.12
+Nodes (23): build(), commitTransaction(), dispatchEngineSpans(), #f(), fl(), getActiveContext(), getGlobalOmit(), getTraceParent() (+15 more)
 
 ### Community 32 - "Dev Dependencies"
 Cohesion: 0.09
 Nodes (22): devDependencies, eslint, eslint-config-next, js-yaml, jsdom, pg, @playwright/test, prisma (+14 more)
 
 ### Community 33 - "WASM Compiler Edge"
-Cohesion: 0.18
-Nodes (13): as(), Bn(), cp(), cs(), ec(), indentedCurrentLine(), newLine(), Qc() (+5 more)
+Cohesion: 0.10
+Nodes (22): as(), Bn(), cp(), cs(), ec(), fp(), indentedCurrentLine(), Jp() (+14 more)
 
 ### Community 34 - "UI Command & Dialog"
 Cohesion: 0.12
 Nodes (14): Command(), CommandGroup(), CommandInput(), CommandItem(), CommandList(), CommandSeparator(), CommandShortcut(), Dialog() (+6 more)
 
 ### Community 35 - "Layout & Language"
-Cohesion: 0.05
-Nodes (47): ClientLayout(), metadata, Hero(), HeroProps, LanguageContext, LanguageContextValue, LanguageProvider(), Translations (+39 more)
+Cohesion: 0.16
+Nodes (10): ClientLayout(), metadata, useLanguage(), Footer(), FooterContent, LanguageSelector(), Navbar(), SplashScreen() (+2 more)
 
 ### Community 36 - "Keystatic Config"
-Cohesion: 0.16
-Nodes (6): { GET, POST }, { GET, POST }, components, config, LegalDocumentRenderer(), LegalLanguageNotice()
+Cohesion: 0.15
+Nodes (7): { GET, POST }, KeystaticPage, { GET, POST }, components, config, LegalDocumentRenderer(), LegalLanguageNotice()
 
 ### Community 37 - "Reminder Feature Documentation"
-Cohesion: 0.09
-Nodes (21): Base de données, Choix du canal (SMS ou email), Comment configurer, Configuration admin, Configuration SMS (Twilio), Configuration Vercel Cron, Endpoint, Exceptions (+13 more)
+Cohesion: 0.10
+Nodes (19): Base de données, Comment configurer, Configuration admin, Configuration Vercel Cron, Endpoint, Exceptions, Exécution, Fonctionnalité de Rappel de Réservation (+11 more)
 
 ### Community 38 - "WASM Runtime Methods"
-Cohesion: 0.10
-Nodes (26): N(), aa(), addMarginSymbol(), afterNextNewline(), cancelAllTransactions(), disconnect(), eo(), getCurrentLineLength() (+18 more)
+Cohesion: 0.14
+Nodes (20): addMarginSymbol(), afterNextNewline(), br(), getCurrentLineLength(), indent(), J(), renderAllMessages(), ri() (+12 more)
 
 ### Community 39 - "Prisma Client Extensions"
-Cohesion: 0.09
-Nodes (26): append(), bp(), bs(), ei(), fp(), Fs(), getAllClientExtensions(), getAllComputedFields() (+18 more)
+Cohesion: 0.12
+Nodes (20): append(), bp(), ei(), getAllClientExtensions(), getAllComputedFields(), getAllModelExtensions(), getComputedFields(), getOrCreate() (+12 more)
 
 ### Community 40 - "TypeScript Config"
 Cohesion: 0.10
@@ -323,32 +319,36 @@ Cohesion: 0.11
 Nodes (18): Caractères utilisés, ⚠️ Différence importante : Expiration transaction vs Expiration naturelle, Documentation Système de Bons Cadeaux - ANØV, Définition des statuts, Fichier de configuration Stripe, Format des codes, Gestion des codes, Gestion des paiements Stripe (+10 more)
 
 ### Community 42 - "Prisma Runtime (WASM)"
-Cohesion: 0.17
-Nodes (13): constructor(), ds(), forSql(), Ge(), Hd(), il(), ji(), nl() (+5 more)
+Cohesion: 0.11
+Nodes (19): aa(), cancelAllTransactions(), disconnect(), eo(), es(), getAllComputedFields(), getAllModelExtensions(), getAllQueryCallbacks() (+11 more)
 
 ### Community 43 - "Email System"
-Cohesion: 0.21
-Nodes (15): POST(), createTransporter(), generateICS(), getTransporter(), RESTAURANT_ADDRESS_RAW, RESTAURANT_PHONE, sendConfirmationEmail(), sendContactConfirmation() (+7 more)
+Cohesion: 0.22
+Nodes (13): POST(), createTransporter(), generateICS(), getTransporter(), RESTAURANT_ADDRESS_RAW, RESTAURANT_PHONE, sendConfirmationEmail(), sendContactConfirmation() (+5 more)
 
 ### Community 44 - "Functional Documentation"
 Cohesion: 0.11
 Nodes (17): 1. Vue d'ensemble, 2. Connexion à l'administration, 3. Modifier le contenu du site, 6. Accéder à la boîte mail (IONOS), 7. Chèques Cadeaux, 8. Contact technique, Ajouter des éléments, Comment modifier un élément (+9 more)
 
 ### Community 45 - "WASM Compiler Runtime"
-Cohesion: 0.16
-Nodes (14): Bd(), cu(), Eu(), Hd(), jd(), ki(), kt(), lu() (+6 more)
+Cohesion: 0.13
+Nodes (18): Bd(), cr(), cu(), em(), Eu(), Hd(), jd(), ki() (+10 more)
 
 ### Community 46 - "UI Menubar"
-Cohesion: 0.22
-Nodes (9): ContactMessageRow, CustomerDetailResponse, formatCurrency(), formatDateTime(), GiftCardRow, ReservationRow, STATUS_LABELS, TimelineCard() (+1 more)
+Cohesion: 0.12
+Nodes (11): Menubar(), MenubarCheckboxItem(), MenubarContent(), MenubarItem(), MenubarLabel(), MenubarRadioItem(), MenubarSeparator(), MenubarShortcut() (+3 more)
 
 ### Community 47 - "UI Context Menu"
 Cohesion: 0.12
 Nodes (9): ContextMenuCheckboxItem(), ContextMenuContent(), ContextMenuItem(), ContextMenuLabel(), ContextMenuRadioItem(), ContextMenuSeparator(), ContextMenuShortcut(), ContextMenuSubContent() (+1 more)
 
+### Community 48 - "Reservation & Gift Cards"
+Cohesion: 0.14
+Nodes (6): ReservationForm(), pickField(), BoutiqueContent, ChequesCadeauxContent(), GiftCardSuccessContent(), GiftCardSuccessContentProps
+
 ### Community 49 - "Home Page Components"
-Cohesion: 0.43
-Nodes (5): ToggleGroup(), ToggleGroupContext, ToggleGroupItem(), Toggle(), toggleVariants
+Cohesion: 0.19
+Nodes (9): Hero(), HeroProps, Contact(), Gallery(), History(), MobileCarousel(), PropType, P() (+1 more)
 
 ### Community 50 - "Workflow Documentation"
 Cohesion: 0.14
@@ -359,28 +359,32 @@ Cohesion: 0.19
 Nodes (13): Carousel(), CarouselApi, CarouselContent(), CarouselContext, CarouselContextProps, CarouselItem(), CarouselNext(), CarouselOptions (+5 more)
 
 ### Community 52 - "Language Context"
-Cohesion: 0.60
-Nodes (4): sendReminderEmail(), sendSmsReminder(), toE164(), GET()
+Cohesion: 0.23
+Nodes (8): LanguageContext, LanguageContextValue, LanguageProvider(), Translations, Locale, de, en, fr
 
 ### Community 53 - "Content Types"
-Cohesion: 0.50
-Nodes (4): Alert(), AlertDescription(), AlertTitle(), alertVariants
+Cohesion: 0.22
+Nodes (10): HoveredPoint, OriginsMap(), OriginsMapProps, PointData, BoutiqueContent, ContactContent, FooterContent, GalleryContent (+2 more)
 
 ### Community 54 - "Package Scripts"
 Cohesion: 0.15
 Nodes (13): scripts, build, cron:reminders, db:init, db:migrate, db:reset, db:start, dev (+5 more)
 
 ### Community 55 - "Prisma Client Runtime"
-Cohesion: 0.10
-Nodes (21): ap(), cp(), es(), Fd(), getAllClientExtensions(), getAllComputedFields(), getAllModelExtensions(), getAllQueryCallbacks() (+13 more)
+Cohesion: 0.17
+Nodes (13): ee(), Fd(), getAllClientExtensions(), ip(), Jm(), op(), rp(), sp() (+5 more)
+
+### Community 56 - "Gift Cards API"
+Cohesion: 0.24
+Nodes (9): generateAdminGiftCardCode(), GET(), PATCH(), POST(), sendGiftCardEmail(), config, handleGiftCardPayment(), handleReservationPayment() (+1 more)
 
 ### Community 57 - "Prisma Runtime"
-Cohesion: 0.28
-Nodes (9): Id(), kd(), kr(), Nd(), Od(), Sa(), Ta(), Xe() (+1 more)
+Cohesion: 0.21
+Nodes (12): Bd(), Id(), kd(), kr(), Lt(), Nd(), Od(), Sa() (+4 more)
 
 ### Community 58 - "WASM Runtime"
-Cohesion: 0.10
-Nodes (36): Cl(), concat(), da(), de(), ep(), findField(), Gc(), getArgumentName() (+28 more)
+Cohesion: 0.18
+Nodes (12): Cl(), da(), Gp(), includes(), indexOf(), isEncoding(), isRawAction(), lastIndexOf() (+4 more)
 
 ### Community 59 - "UI Form"
 Cohesion: 0.23
@@ -391,8 +395,8 @@ Cohesion: 0.27
 Nodes (6): generateGiftCardCode(), POST(), sendCancellationEmail(), stripe, GET(), PATCH()
 
 ### Community 61 - "Menu Page"
-Cohesion: 0.17
-Nodes (10): Category, Dish, DishCard(), MenuContent(), MenuData, Tab, Tabs(), TabsContent() (+2 more)
+Cohesion: 0.20
+Nodes (6): Category, Dish, DishCard(), MenuContent(), MenuData, Tab
 
 ### Community 62 - "Prisma Package"
 Cohesion: 0.18
@@ -409,6 +413,10 @@ Nodes (11): require, require, require, browser, default, edge-light, node, types
 ### Community 65 - "UI Chart"
 Cohesion: 0.22
 Nodes (8): ChartConfig, ChartContainer(), ChartContext, ChartContextProps, ChartLegendContent(), ChartTooltipContent(), THEMES, useChart()
+
+### Community 66 - "UI Drawer"
+Cohesion: 0.18
+Nodes (6): DrawerContent(), DrawerDescription(), DrawerFooter(), DrawerHeader(), DrawerOverlay(), DrawerTitle()
 
 ### Community 67 - "Reservations API"
 Cohesion: 0.22
@@ -476,6 +484,10 @@ Nodes (9): Prisma__AdminClient, Prisma__ContactMessageClient, Prisma__CustomerNo
 ### Community 74 - "Prisma Package Info"
 Cohesion: 0.22
 Nodes (8): browser, dependencies, @prisma/client-runtime-utils, main, name, sideEffects, types, version
+
+### Community 75 - "Prisma Runtime Edge"
+Cohesion: 0.22
+Nodes (9): Am(), Fl(), Gu(), handleAndLogRequestError(), handleRequestError(), sanitizeMessage(), vm(), Xt() (+1 more)
 
 ### Community 76 - "API Types"
 Cohesion: 0.22
@@ -619,24 +631,24 @@ Cohesion: 0.67
 Nodes (3): Fonctionnalités désactivées, Fonctionnalités non implémentées, Limitations actuelles
 
 ## Knowledge Gaps
-- **1469 isolated node(s):** `nextConfig`, `name`, `private`, `version`, `type` (+1464 more)
+- **1466 isolated node(s):** `nextConfig`, `name`, `private`, `version`, `type` (+1461 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `$()` connect `Runtime Client Methods` to `Prisma Client Types`, `Prisma PrismaClient`, `Runtime Primitives`, `WASM Runtime Methods`, `Runtime Query Compiler Edge`, `Prisma Runtime (WASM)`, `Prisma Client Runtime (edge)`, `Prisma Client Runtime`, `Prisma Runtime Methods`, `Prisma Client Runtime`, `Prisma Client Extensions`, `Prisma Tracing`, `Prisma Runtime`?**
-  _High betweenness centrality (0.332) - this node is a cross-community bridge._
-- **Why does `$()` connect `Client Layout` to `Gift Card Admin API`, `Layout & Language`, `Runtime Primitives`, `WASM Runtime Methods`?**
-  _High betweenness centrality (0.230) - this node is a cross-community bridge._
-- **Why does `P()` connect `Layout & Language` to `Client Layout`?**
-  _High betweenness centrality (0.216) - this node is a cross-community bridge._
+- **Why does `$()` connect `Runtime Client Methods` to `Prisma Client Types`, `Prisma PrismaClient`, `Runtime Primitives`, `Runtime Query Compiler Edge`, `WASM Runtime Methods`, `Prisma Runtime (WASM)`, `Prisma Runtime Edge`, `Prisma Runtime (WASM)`, `Prisma Client Runtime`, `Prisma Runtime Methods`, `Prisma Client Runtime`, `Prisma Client Extensions`, `Prisma Runtime`, `Prisma Tracing`?**
+  _High betweenness centrality (0.322) - this node is a cross-community bridge._
+- **Why does `$()` connect `Client Layout` to `Prisma Client Runtime (edge)`, `Prisma Runtime (WASM)`, `Runtime Primitives`, `Home Page Components`?**
+  _High betweenness centrality (0.220) - this node is a cross-community bridge._
+- **Why does `P()` connect `Home Page Components` to `Client Layout`, `Content Types`?**
+  _High betweenness centrality (0.205) - this node is a cross-community bridge._
 - **What connects `nextConfig`, `name`, `private` to the rest of the system?**
-  _1469 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1466 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Prisma Client Types` be split into smaller, more focused modules?**
   _Cohesion score 0.0030165912518853697 - nodes in this community are weakly interconnected._
 - **Should `Prisma Runtime Client` be split into smaller, more focused modules?**
   _Cohesion score 0.006369426751592357 - nodes in this community are weakly interconnected._
 - **Should `Runtime Client Methods` be split into smaller, more focused modules?**
-  _Cohesion score 0.019009159854230278 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.019676293240241192 - nodes in this community are weakly interconnected._

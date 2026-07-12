@@ -198,7 +198,7 @@ test.describe('Interface Admin - Navigation', { mode: 'serial' }, () => {
     expect(linkCount).toBeGreaterThan(0);
 
     // Vérifier qu'il y a 3 liens (Réservations, Bons Cadeaux, CMS)
-    expect(linkCount).toBe(4);
+    expect(linkCount).toBe(5);
   });
 
   test('Le lien "Réservations" est actif par défaut', async ({ page }) => {
@@ -300,7 +300,7 @@ test.describe('Interface Admin - Navigation', { mode: 'serial' }, () => {
     // Vérifier que les icônes sont présentes (les icônes sont dans les liens)
     // Les liens ont des icônes SVG
     // Utiliser un selector plus spécifique
-    await expect(page.locator('nav svg.lucide')).toHaveCount(4);
+    await expect(page.locator('nav svg.lucide')).toHaveCount(5);
   });
 });
 

@@ -182,6 +182,11 @@ export function OrderForm({ product, onClose, onSuccess }: OrderFormProps) {
                       <Store className="w-5 h-5 text-primary" />
                       <span className="font-medium text-foreground">Retrait au restaurant</span>
                     </div>
+                    {deliveryMethod === 'PICKUP' && (
+                      <p className="mt-3 text-xs text-muted-foreground pl-8">
+                        {process.env.RESTAURANT_ADDRESS || '12 Rue de la République, 25000 Besançon'}
+                      </p>
+                    )}
                   </div>
 
                   <div
@@ -209,7 +214,7 @@ export function OrderForm({ product, onClose, onSuccess }: OrderFormProps) {
               <div className="p-4 bg-secondary/50 rounded-lg text-center">
                 <Store className="w-8 h-8 text-primary mx-auto mb-2" />
                 <p className="text-sm text-muted-foreground">
-                  Ce produit est disponible en pickup uniquement
+                  Ce produit est à chercher au restaurant uniquement
                 </p>
               </div>
             )}

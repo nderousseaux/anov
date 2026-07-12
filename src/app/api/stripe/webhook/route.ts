@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
-import { sendConfirmationEmail, sendGiftCardEmail } from '@/lib/email';
+import { sendConfirmationEmail, sendGiftCardEmail, sendProductOrderConfirmationEmail } from '@/lib/email';
 
 // Désactiver le body parser de Next.js pour lire le corps brut (requis par Stripe)
 export const config = { api: { bodyParser: false } };
@@ -216,20 +216,16 @@ async function handleProductOrderPayment(orderId: string, sessionId: string) {
 
     // Envoyer l'email de confirmation au client
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
-      const orderDate = new Date();
-      const formattedDate = orderDate.toLocaleDateString('fr-FR', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
+      await sendProductOrderConfirmationEmail({
+        to: order.customerEmail,
+        name: order.customerName,
+        orderCode: order.code,
+        productName: order.productName,
+        quantity: order.quantity,
+        amount: order.totalPrice,
+        deliveryMethod: order.deliveryMethod,
       });
-
-      // Email de confirmation de commande
       console.log(`[WEBHOOK] Email de confirmation envoyé à ${order.customerEmail} pour la commande ${order.code}`);
-
-      // ici on pourrait appeler une fonction d'envoi d'email spécifique aux commandes produits
-      // sendProductOrderConfirmationEmail({...})
     } catch (emailError) {
       console.error(`[WEBHOOK] Erreur lors de l'envoi de l'email à ${order.customerEmail}:`, emailError);
     }

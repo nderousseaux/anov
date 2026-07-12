@@ -22,6 +22,7 @@ interface Order {
   deliveryMethod: 'PICKUP' | 'DELIVERY';
   status: string;
   createdAt: string;
+  expiresAt?: string | null;
 }
 
 interface OrderListResponse {
@@ -32,25 +33,21 @@ interface OrderListResponse {
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  PENDING_PAYMENT: 'En attente',
-  CONFIRMED: 'Confirmée',
-  PROCESSING: 'En préparation',
+  PENDING_PAYMENT: 'En paiement...',
+  CONFIRMED: 'En attente...',
   SHIPPED: 'Envoyée',
   READY: 'Prête',
   COMPLETED: 'Terminée',
-  CANCELLED: 'Annulée',
-  EXPIRED: 'Expirée',
+  CANCELLED: 'Remboursée',
 };
 
 const STATUS_COLORS: Record<string, string> = {
   PENDING_PAYMENT: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
-  CONFIRMED: 'bg-green-500/10 text-green-500 border-green-500/20',
-  PROCESSING: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+  CONFIRMED: 'bg-orange-500/10 text-orange-500 border-orange-500/20',
   SHIPPED: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
-  READY: 'bg-orange-500/10 text-orange-500 border-orange-500/20',
+  READY: 'bg-green-500/10 text-green-500 border-green-500/20',
   COMPLETED: 'bg-green-500/10 text-green-500 border-green-500/20',
   CANCELLED: 'bg-red-500/10 text-red-500 border-red-500/20',
-  EXPIRED: 'bg-gray-500/10 text-gray-500 border-gray-500/20',
 };
 
 function formatDateTime(iso: string): string {
@@ -153,14 +150,12 @@ function OrdersContent() {
               className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="">Tous les statuts</option>
-              <option value="PENDING_PAYMENT">En attente</option>
-              <option value="CONFIRMED">Confirmée</option>
-              <option value="PROCESSING">En préparation</option>
-              <option value="SHIPPED">Envoyée</option>
+              <option value="PENDING_PAYMENT">En paiement...</option>
+              <option value="CONFIRMED">En attente...</option>
               <option value="READY">Prête</option>
+              <option value="SHIPPED">Envoyée</option>
               <option value="COMPLETED">Terminée</option>
-              <option value="CANCELLED">Annulée</option>
-              <option value="EXPIRED">Expirée</option>
+              <option value="CANCELLED">Remboursée</option>
             </select>
           </div>
         </div>
@@ -190,6 +185,7 @@ function OrdersContent() {
                     <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Qté</th>
                     <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Total</th>
                     <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Client</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Livraison</th>
                     <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Date</th>
                     <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Statut</th>
                     <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Actions</th>
@@ -205,6 +201,13 @@ function OrdersContent() {
                       <td className="py-3 px-4">
                         <div className="text-sm text-foreground font-medium">{order.customerName}</div>
                         <div className="text-xs text-muted-foreground">{order.customerEmail}</div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className={`text-xs px-2 py-1 rounded border ${order.deliveryMethod === 'DELIVERY'
+                          ? 'bg-blue-500/10 text-blue-500 border-blue-500/20'
+                          : 'bg-green-500/10 text-green-500 border-green-500/20'}`}>
+                          {order.deliveryMethod === 'DELIVERY' ? 'Domicile' : 'Pickup'}
+                        </span>
                       </td>
                       <td className="py-3 px-4 text-sm text-muted-foreground">{formatDateTime(order.createdAt)}</td>
                       <td className="py-3 px-4">

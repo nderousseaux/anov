@@ -5,14 +5,14 @@ import { CheckCircle, Circle, Clock, AlertCircle, Package } from 'lucide-react';
 
 const STATUS_CONFIG = {
   PENDING_PAYMENT: {
-    label: 'Paiement en cours',
+    label: 'Paiement en cours...',
     variant: 'default',
     icon: Clock,
   },
   CONFIRMED: {
-    label: 'Confirmée',
+    label: 'En attente...',
     variant: 'default',
-    icon: CheckCircle,
+    icon: Clock,
   },
   PROCESSING: {
     label: 'En préparation',
@@ -35,7 +35,7 @@ const STATUS_CONFIG = {
     icon: CheckCircle,
   },
   CANCELLED: {
-    label: 'Annulée',
+    label: 'Remboursée',
     variant: 'outline',
     icon: AlertCircle,
   },

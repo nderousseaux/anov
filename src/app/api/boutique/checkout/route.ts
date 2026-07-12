@@ -75,11 +75,10 @@ export async function POST(req: NextRequest) {
     // Générer un code unique pour la commande
     const code = generateOrderCode();
 
-    // Calculer la date d'expiration (10 minutes pour le paiement)
-    const transactionExpireAt = new Date();
-    transactionExpireAt.setMinutes(transactionExpireAt.getMinutes() + 10);
-
     // Créer la commande dans la base de données
+    const now = new Date();
+    const transactionExpireAt = new Date(now.getTime() + 15 * 60000); // +15 minutes
+
     const orderData: {
       code: string;
       productName: string;
@@ -90,7 +89,6 @@ export async function POST(req: NextRequest) {
       customerEmail: string;
       customerPhone: string;
       customerAddress?: { create: any };
-      transactionExpireAt: Date;
       status: 'PENDING_PAYMENT';
     } = {
       code,
@@ -101,8 +99,8 @@ export async function POST(req: NextRequest) {
       customerName: body.customerName || '',
       customerEmail: body.customerEmail || '',
       customerPhone: body.customerPhone || '',
-      transactionExpireAt,
       status: 'PENDING_PAYMENT',
+      transactionExpireAt,
     };
 
     if (address && (deliveryMethod === 'DELIVERY' || deliveryMethod === 'PICKUP')) {
@@ -154,7 +152,7 @@ export async function POST(req: NextRequest) {
     // Mettre à jour la commande avec l'ID de session Stripe
     await prisma.productOrder.update({
       where: { id: order.id },
-      data: { stripeSessionId: session.id, expiresAt: session.expires_at ? new Date(session.expires_at * 1000) : null },
+      data: { stripeSessionId: session.id },
     });
 
     return NextResponse.json({ sessionId: session.id, url: session.url, customerEmail, customerName, customerPhone });

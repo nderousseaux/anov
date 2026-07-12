@@ -10546,7 +10546,6 @@ export namespace Prisma {
     customerPhone: string | null
     stripeSessionId: string | null
     status: $Enums.OrderStatus | null
-    expiresAt: Date | null
     transactionExpireAt: Date | null
   }
 
@@ -10564,7 +10563,6 @@ export namespace Prisma {
     customerPhone: string | null
     stripeSessionId: string | null
     status: $Enums.OrderStatus | null
-    expiresAt: Date | null
     transactionExpireAt: Date | null
   }
 
@@ -10582,7 +10580,6 @@ export namespace Prisma {
     customerPhone: number
     stripeSessionId: number
     status: number
-    expiresAt: number
     transactionExpireAt: number
     _all: number
   }
@@ -10612,7 +10609,6 @@ export namespace Prisma {
     customerPhone?: true
     stripeSessionId?: true
     status?: true
-    expiresAt?: true
     transactionExpireAt?: true
   }
 
@@ -10630,7 +10626,6 @@ export namespace Prisma {
     customerPhone?: true
     stripeSessionId?: true
     status?: true
-    expiresAt?: true
     transactionExpireAt?: true
   }
 
@@ -10648,7 +10643,6 @@ export namespace Prisma {
     customerPhone?: true
     stripeSessionId?: true
     status?: true
-    expiresAt?: true
     transactionExpireAt?: true
     _all?: true
   }
@@ -10753,7 +10747,6 @@ export namespace Prisma {
     customerPhone: string
     stripeSessionId: string | null
     status: $Enums.OrderStatus
-    expiresAt: Date | null
     transactionExpireAt: Date | null
     _count: ProductOrderCountAggregateOutputType | null
     _avg: ProductOrderAvgAggregateOutputType | null
@@ -10790,7 +10783,6 @@ export namespace Prisma {
     customerPhone?: boolean
     stripeSessionId?: boolean
     status?: boolean
-    expiresAt?: boolean
     transactionExpireAt?: boolean
     customerAddress?: boolean | ProductOrder$customerAddressArgs<ExtArgs>
   }, ExtArgs["result"]["productOrder"]>
@@ -10809,7 +10801,6 @@ export namespace Prisma {
     customerPhone?: boolean
     stripeSessionId?: boolean
     status?: boolean
-    expiresAt?: boolean
     transactionExpireAt?: boolean
   }, ExtArgs["result"]["productOrder"]>
 
@@ -10827,7 +10818,6 @@ export namespace Prisma {
     customerPhone?: boolean
     stripeSessionId?: boolean
     status?: boolean
-    expiresAt?: boolean
     transactionExpireAt?: boolean
   }, ExtArgs["result"]["productOrder"]>
 
@@ -10845,11 +10835,10 @@ export namespace Prisma {
     customerPhone?: boolean
     stripeSessionId?: boolean
     status?: boolean
-    expiresAt?: boolean
     transactionExpireAt?: boolean
   }
 
-  export type ProductOrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "productName" | "quantity" | "totalPrice" | "deliveryMethod" | "customerName" | "customerEmail" | "customerPhone" | "stripeSessionId" | "status" | "expiresAt" | "transactionExpireAt", ExtArgs["result"]["productOrder"]>
+  export type ProductOrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "productName" | "quantity" | "totalPrice" | "deliveryMethod" | "customerName" | "customerEmail" | "customerPhone" | "stripeSessionId" | "status" | "transactionExpireAt", ExtArgs["result"]["productOrder"]>
   export type ProductOrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     customerAddress?: boolean | ProductOrder$customerAddressArgs<ExtArgs>
   }
@@ -10875,7 +10864,6 @@ export namespace Prisma {
       customerPhone: string
       stripeSessionId: string | null
       status: $Enums.OrderStatus
-      expiresAt: Date | null
       transactionExpireAt: Date | null
     }, ExtArgs["result"]["productOrder"]>
     composites: {}
@@ -11314,7 +11302,6 @@ export namespace Prisma {
     readonly customerPhone: FieldRef<"ProductOrder", 'String'>
     readonly stripeSessionId: FieldRef<"ProductOrder", 'String'>
     readonly status: FieldRef<"ProductOrder", 'OrderStatus'>
-    readonly expiresAt: FieldRef<"ProductOrder", 'DateTime'>
     readonly transactionExpireAt: FieldRef<"ProductOrder", 'DateTime'>
   }
     
@@ -13000,7 +12987,6 @@ export namespace Prisma {
     customerPhone: 'customerPhone',
     stripeSessionId: 'stripeSessionId',
     status: 'status',
-    expiresAt: 'expiresAt',
     transactionExpireAt: 'transactionExpireAt'
   };
 
@@ -13741,7 +13727,6 @@ export namespace Prisma {
     customerPhone?: StringFilter<"ProductOrder"> | string
     stripeSessionId?: StringNullableFilter<"ProductOrder"> | string | null
     status?: EnumOrderStatusFilter<"ProductOrder"> | $Enums.OrderStatus
-    expiresAt?: DateTimeNullableFilter<"ProductOrder"> | Date | string | null
     transactionExpireAt?: DateTimeNullableFilter<"ProductOrder"> | Date | string | null
     customerAddress?: XOR<ProductAddressNullableScalarRelationFilter, ProductAddressWhereInput> | null
   }
@@ -13760,7 +13745,6 @@ export namespace Prisma {
     customerPhone?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
     status?: SortOrder
-    expiresAt?: SortOrderInput | SortOrder
     transactionExpireAt?: SortOrderInput | SortOrder
     customerAddress?: ProductAddressOrderByWithRelationInput
   }
@@ -13782,7 +13766,6 @@ export namespace Prisma {
     customerEmail?: StringFilter<"ProductOrder"> | string
     customerPhone?: StringFilter<"ProductOrder"> | string
     status?: EnumOrderStatusFilter<"ProductOrder"> | $Enums.OrderStatus
-    expiresAt?: DateTimeNullableFilter<"ProductOrder"> | Date | string | null
     transactionExpireAt?: DateTimeNullableFilter<"ProductOrder"> | Date | string | null
     customerAddress?: XOR<ProductAddressNullableScalarRelationFilter, ProductAddressWhereInput> | null
   }, "id" | "code" | "stripeSessionId">
@@ -13801,7 +13784,6 @@ export namespace Prisma {
     customerPhone?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
     status?: SortOrder
-    expiresAt?: SortOrderInput | SortOrder
     transactionExpireAt?: SortOrderInput | SortOrder
     _count?: ProductOrderCountOrderByAggregateInput
     _avg?: ProductOrderAvgOrderByAggregateInput
@@ -13827,7 +13809,6 @@ export namespace Prisma {
     customerPhone?: StringWithAggregatesFilter<"ProductOrder"> | string
     stripeSessionId?: StringNullableWithAggregatesFilter<"ProductOrder"> | string | null
     status?: EnumOrderStatusWithAggregatesFilter<"ProductOrder"> | $Enums.OrderStatus
-    expiresAt?: DateTimeNullableWithAggregatesFilter<"ProductOrder"> | Date | string | null
     transactionExpireAt?: DateTimeNullableWithAggregatesFilter<"ProductOrder"> | Date | string | null
   }
 
@@ -14520,7 +14501,6 @@ export namespace Prisma {
     customerPhone: string
     stripeSessionId?: string | null
     status?: $Enums.OrderStatus
-    expiresAt?: Date | string | null
     transactionExpireAt?: Date | string | null
     customerAddress?: ProductAddressCreateNestedOneWithoutOrderInput
   }
@@ -14539,7 +14519,6 @@ export namespace Prisma {
     customerPhone: string
     stripeSessionId?: string | null
     status?: $Enums.OrderStatus
-    expiresAt?: Date | string | null
     transactionExpireAt?: Date | string | null
     customerAddress?: ProductAddressUncheckedCreateNestedOneWithoutOrderInput
   }
@@ -14558,7 +14537,6 @@ export namespace Prisma {
     customerPhone?: StringFieldUpdateOperationsInput | string
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     customerAddress?: ProductAddressUpdateOneWithoutOrderNestedInput
   }
@@ -14577,7 +14555,6 @@ export namespace Prisma {
     customerPhone?: StringFieldUpdateOperationsInput | string
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     customerAddress?: ProductAddressUncheckedUpdateOneWithoutOrderNestedInput
   }
@@ -14596,7 +14573,6 @@ export namespace Prisma {
     customerPhone: string
     stripeSessionId?: string | null
     status?: $Enums.OrderStatus
-    expiresAt?: Date | string | null
     transactionExpireAt?: Date | string | null
   }
 
@@ -14614,7 +14590,6 @@ export namespace Prisma {
     customerPhone?: StringFieldUpdateOperationsInput | string
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -14632,7 +14607,6 @@ export namespace Prisma {
     customerPhone?: StringFieldUpdateOperationsInput | string
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -15351,7 +15325,6 @@ export namespace Prisma {
     customerPhone?: SortOrder
     stripeSessionId?: SortOrder
     status?: SortOrder
-    expiresAt?: SortOrder
     transactionExpireAt?: SortOrder
   }
 
@@ -15374,7 +15347,6 @@ export namespace Prisma {
     customerPhone?: SortOrder
     stripeSessionId?: SortOrder
     status?: SortOrder
-    expiresAt?: SortOrder
     transactionExpireAt?: SortOrder
   }
 
@@ -15392,7 +15364,6 @@ export namespace Prisma {
     customerPhone?: SortOrder
     stripeSessionId?: SortOrder
     status?: SortOrder
-    expiresAt?: SortOrder
     transactionExpireAt?: SortOrder
   }
 
@@ -16124,7 +16095,6 @@ export namespace Prisma {
     customerPhone: string
     stripeSessionId?: string | null
     status?: $Enums.OrderStatus
-    expiresAt?: Date | string | null
     transactionExpireAt?: Date | string | null
   }
 
@@ -16142,7 +16112,6 @@ export namespace Prisma {
     customerPhone: string
     stripeSessionId?: string | null
     status?: $Enums.OrderStatus
-    expiresAt?: Date | string | null
     transactionExpireAt?: Date | string | null
   }
 
@@ -16176,7 +16145,6 @@ export namespace Prisma {
     customerPhone?: StringFieldUpdateOperationsInput | string
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -16194,7 +16162,6 @@ export namespace Prisma {
     customerPhone?: StringFieldUpdateOperationsInput | string
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 

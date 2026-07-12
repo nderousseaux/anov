@@ -38,23 +38,43 @@ export async function GET(req: NextRequest) {
     }),
   ]);
 
-  const formattedOrders = orders.map((order: any) => ({
-    id: order.id,
-    code: order.code,
-    productTitle: order.productName,
-    quantity: order.quantity,
-    totalPrice: order.totalPrice,
-    customerName: order.customerName,
-    customerEmail: order.customerEmail,
-    customerPhone: order.customerPhone,
-    deliveryMethod: order.deliveryMethod,
-    status: order.status,
-    createdAt: order.createdAt,
-  }));
+  // Filter out PENDING_PAYMENT orders where transaction has expired
+  // Orders with transactionExpireAt in the past should be hidden from admin list
+  const now = new Date();
+  const filteredOrders = orders
+    .filter((order) => {
+      // Keep only valid status types (hide PROCESSING, EXPIRED, etc.)
+      const validStatuses = ['PENDING_PAYMENT', 'CONFIRMED', 'READY', 'SHIPPED', 'COMPLETED', 'CANCELLED'];
+      if (!validStatuses.includes(order.status)) return false;
+
+      // Keep non-PENDING_PAYMENT orders
+      if (order.status !== 'PENDING_PAYMENT') return true;
+      // Keep PENDING_PAYMENT orders that have not expired
+      if (!order.transactionExpireAt) return true;
+      return new Date(order.transactionExpireAt) > now;
+    })
+    .map((order: any) => ({
+      id: order.id,
+      code: order.code,
+      productTitle: order.productName,
+      quantity: order.quantity,
+      totalPrice: order.totalPrice,
+      customerName: order.customerName,
+      customerEmail: order.customerEmail,
+      customerPhone: order.customerPhone,
+      deliveryMethod: order.deliveryMethod,
+      status: order.status,
+      createdAt: order.createdAt,
+    }));
+
+  // Adjust total to reflect filtered count (only for PENDING_PAYMENT status filter)
+  const filteredTotal = status === 'PENDING_PAYMENT'
+    ? filteredOrders.length
+    : total;
 
   return NextResponse.json({
-    data: formattedOrders,
-    total,
+    data: filteredOrders,
+    total: filteredTotal,
     page,
     pageSize: perPage,
   });

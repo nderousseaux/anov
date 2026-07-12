@@ -221,7 +221,6 @@ exports.Prisma.ProductOrderScalarFieldEnum = {
   customerPhone: 'customerPhone',
   stripeSessionId: 'stripeSessionId',
   status: 'status',
-  expiresAt: 'expiresAt',
   transactionExpireAt: 'transactionExpireAt'
 };
 

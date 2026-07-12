@@ -145,8 +145,7 @@ model ProductOrder {
   customerAddress     ProductAddress?
   stripeSessionId     String?         @unique
   status              OrderStatus     @default(PENDING_PAYMENT)
-  expiresAt           DateTime?
-  transactionExpireAt DateTime?
+  transactionExpireAt DateTime? // Date d'expiration du paiement Stripe (masquage admin après 15 min si non complété)
 }
 
 model ProductAddress {

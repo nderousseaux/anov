@@ -460,6 +460,70 @@ export async function sendContactConfirmation({
   });
 }
 
+// Fonctions pour les commandes produits
+
+export async function sendProductOrderReadyEmail({
+  to,
+  name,
+  orderCode,
+  productName,
+  quantity,
+  amount,
+  deliveryMethod,
+}: {
+  to: string;
+  name: string;
+  orderCode: string;
+  productName: string;
+  quantity: number;
+  amount: number;
+  deliveryMethod: 'PICKUP' | 'DELIVERY';
+}) {
+  const t = getTransporter();
+  if (!t) {
+    // Email service disabled - SMTP not configured
+    return null;
+  }
+
+  // Message selon le mode de livraison
+  const isDelivery = deliveryMethod === 'DELIVERY';
+  const title = isDelivery ? 'Votre commande est envoyée' : 'Votre commande est prête';
+  const details = isDelivery
+    ? 'Votre commande a été envoyée et est en cours de livraison.'
+    : 'Votre commande est prête à être retirée au restaurant.';
+  const restaurantAddress = isDelivery ? 'à l\'adresse indiquée' : `au restaurant:<br><strong>${RESTAURANT_ADDRESS}</strong>`;
+
+  return t.sendMail({
+    from: FROM,
+    to,
+    subject: `${title} — l'Anøv`,
+    html: `
+      <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
+        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
+        <h2 style="font-size:20px;font-weight:normal;">${title}</h2>
+        <p>Bonjour ${name},</p>
+        <p>${details}</p>
+        <table style="border-collapse:collapse;width:100%;margin:16px 0;">
+          <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Référence</td><td style="padding:8px;border-bottom:1px solid #eee;">${orderCode}</td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Article</td><td style="padding:8px;border-bottom:1px solid #eee;">${productName}</td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Quantité</td><td style="padding:8px;border-bottom:1px solid #eee;">${quantity}</td></tr>
+          <tr><td style="padding:8px;font-weight:bold;">Montant</td><td style="padding:8px;">${amount}€</td></tr>
+        </table>
+        <div style="background:#f8f4e8;padding:16px;border-radius:8px;margin:16px 0;">
+          <p style="margin:0;font-size:15px;">
+            ${isDelivery
+        ? 'Vous pouvez suivre l\'état de votre livraison avec le numéro de suivi qui vous a été communiqué.'
+        : 'Vous pouvez venir retirer votre commande ' + restaurantAddress + '. Nous attendons votre venue !'}
+          </p>
+        </div>
+        <p style="margin-top:16px;">Pour toute information concernant votre commande, appelez-nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>.</p>
+        <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
+        <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
+      </div>
+    `,
+  });
+}
+
 // Fonctions pour les chèques cadeaux
 
 export async function sendGiftCardEmail({

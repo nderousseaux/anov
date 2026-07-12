@@ -2,15 +2,55 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
 
+/**
+ * Convertit une URL relative en URL absolue
+ * Nettoie les URLs pour Stripe (pas de query params)
+ * @param imageUrl - L'URL de l'image (relative ou absolue)
+ * @returns L'URL absolue de l'image
+ */
+function getAbsoluteImageUrl(imageUrl?: string): string {
+  if (!imageUrl) return '/assets/boutique/macarons.png';
+
+  // Si l'URL commence par http:// ou https://
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    try {
+      // Essayer de parsing l'URL
+      const urlObj = new URL(imageUrl);
+      // Retourner l'URL sans query params (Stripe préfère les URLs simples)
+      return urlObj.origin + urlObj.pathname;
+    } catch {
+      // Si l'URL n'est pas valide, utiliser l'image par défaut
+      return '/assets/boutique/macarons.png';
+    }
+  }
+
+  // Si c'est une URL relative, on la convertit en URL absolue
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://anov.fr';
+  // Retirer le slash final de la base URL si présent
+  const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+  // Ajouter le slash initial à l'image URL si absent
+  const cleanImageUrl = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`;
+
+  return `${cleanBaseUrl}${cleanImageUrl}`;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { productName, quantity, deliveryMethod, address } = body;
+    const { productName, productId, quantity, deliveryMethod, address, customerName, customerEmail, customerPhone, totalPrice: bodyTotalPrice, productImage } = body;
+    const totalPrice = bodyTotalPrice || (body.price as number || 0) * quantity;
 
     // Validation
-    if (!productName || !quantity || !deliveryMethod) {
+    if (!productName && !productId) {
       return NextResponse.json(
-        { error: 'Nom du produit, quantité et méthode de livraison requis' },
+        { error: 'Nom du produit ou ID de produit requis' },
+        { status: 400 }
+      );
+    }
+
+    if (!quantity || !deliveryMethod) {
+      return NextResponse.json(
+        { error: 'Quantité et méthode de livraison requises' },
         { status: 400 }
       );
     }
@@ -24,8 +64,8 @@ export async function POST(req: NextRequest) {
 
     // Calculer le prix total (à partir du frontend ou d'une source de prix)
     // Pour ce MVP, on suppose que le prix est passé dans le body
-    const { totalPrice } = body;
-    if (!totalPrice) {
+    const totalPriceValue = body.totalPrice || (body.price as number || 0) * quantity;
+    if (!totalPriceValue) {
       return NextResponse.json(
         { error: 'Le prix total est requis' },
         { status: 400 }
@@ -54,9 +94,9 @@ export async function POST(req: NextRequest) {
       status: 'PENDING_PAYMENT';
     } = {
       code,
-      productName,
+      productName: productName || `Produit #${productId}`,
       quantity,
-      totalPrice,
+      totalPrice: totalPriceValue,
       deliveryMethod,
       customerName: body.customerName || '',
       customerEmail: body.customerEmail || '',
@@ -93,6 +133,7 @@ export async function POST(req: NextRequest) {
             product_data: {
               name: productName,
               description: `Quantité: ${quantity}`,
+              images: [getAbsoluteImageUrl(productImage)],
             },
             unit_amount: Math.round(totalPrice * 100), // Montant en centimes
           },
@@ -100,6 +141,7 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: 'payment',
+      customer_email: customerEmail,
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/boutique/succes?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/boutique`,
       metadata: {
@@ -115,7 +157,7 @@ export async function POST(req: NextRequest) {
       data: { stripeSessionId: session.id, expiresAt: session.expires_at ? new Date(session.expires_at * 1000) : null },
     });
 
-    return NextResponse.json({ sessionId: session.id, url: session.url });
+    return NextResponse.json({ sessionId: session.id, url: session.url, customerEmail, customerName, customerPhone });
   } catch (error) {
     console.error('[boutique/checkout] Erreur:', error);
     return NextResponse.json(

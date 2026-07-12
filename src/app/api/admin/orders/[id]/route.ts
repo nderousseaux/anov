@@ -4,16 +4,17 @@ import { getAdminFromCookies } from '@/lib/auth';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const admin = await getAdminFromCookies();
   if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
 
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const order = await prisma.productOrder.findUnique({
       where: { id },
+      include: { customerAddress: true },
     });
 
     if (!order) {
@@ -30,7 +31,7 @@ export async function GET(
       customerName: order.customerName,
       customerEmail: order.customerEmail,
       customerPhone: order.customerPhone,
-      customerAddress: order.customerAddress,
+      customerAddress: order.customerAddress || null,
       status: order.status,
       createdAt: order.createdAt,
       updatedAt: order.updatedAt,
@@ -47,12 +48,12 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const admin = await getAdminFromCookies();
   if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
 
-  const { id } = params;
+  const { id } = await params;
   const body = await req.json();
   const { status } = body;
 
@@ -70,6 +71,7 @@ export async function PATCH(
   try {
     const order = await prisma.productOrder.findUnique({
       where: { id },
+      include: { customerAddress: true },
     });
 
     if (!order) {
@@ -98,6 +100,7 @@ export async function PATCH(
     const updatedOrder = await prisma.productOrder.update({
       where: { id },
       data: { status },
+      include: { customerAddress: true },
     });
 
     const formattedOrder = {

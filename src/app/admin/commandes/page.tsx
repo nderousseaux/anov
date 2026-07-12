@@ -7,6 +7,7 @@ import { AdminNav } from '@/components/admin/AdminNav';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Loader2, RefreshCw, ChevronLeft, ChevronRight, Search, Package, Mail, CalendarDays } from 'lucide-react';
 
 interface Order {

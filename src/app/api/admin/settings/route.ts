@@ -17,7 +17,7 @@ export async function GET() {
     openingDays: JSON.parse(settings.openingDays) as number[],
     openingSlots: JSON.parse(settings.openingSlots) as string[],
     depositPerGuestCents: settings.depositPerGuestCents,
-    daysBeforeReminder: settings.daysBeforeReminder,
+    daysBeforeReminder: (settings.daysBeforeReminder ?? 3) as number,
   });
 }
 
@@ -116,6 +116,6 @@ export async function PUT(req: NextRequest) {
     openingDays: JSON.parse(settings.openingDays) as number[],
     openingSlots: JSON.parse(settings.openingSlots) as string[],
     depositPerGuestCents: settings.depositPerGuestCents,
-    daysBeforeReminder: settings.daysBeforeReminder,
+    daysBeforeReminder: (settings.daysBeforeReminder ?? 3) as number,
   });
 }

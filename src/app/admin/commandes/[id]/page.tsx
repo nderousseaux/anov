@@ -1,8 +1,8 @@
 'use client';
 
-import { Suspense, useState, useEffect, useCallback } from 'react';
+import { Suspense, useState, useEffect, useCallback, use } from 'react';
 import Link from 'next/link';
-import { useRouter, use } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { AdminNav } from '@/components/admin/AdminNav';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,14 +11,7 @@ import { Loader2, ArrowLeft, Package, Mail, Phone, Truck, Store, CalendarDays, C
 interface OrderDetail {
   id: string;
   code: string;
-  product: {
-    id: string;
-    code: string;
-    title_fr: string;
-    title_en: string;
-    title_de: string;
-    price: number;
-  };
+  productName: string;
   quantity: number;
   totalPrice: number;
   deliveryMethod: 'PICKUP' | 'DELIVERY';
@@ -80,7 +73,13 @@ function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
 }
 
-function OrderDetailContent({ params }: { params: Promise<{ id: string }> }) {
+async function fetchOrderData(id: string): Promise<OrderDetail> {
+  const res = await fetch(`/api/admin/orders/${id}`);
+  if (!res.ok) throw new Error('Erreur lors du chargement de la commande');
+  return res.json();
+}
+
+async function OrderDetailContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
 
@@ -94,9 +93,7 @@ function OrderDetailContent({ params }: { params: Promise<{ id: string }> }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/orders/${id}`);
-      if (!res.ok) throw new Error('Erreur lors du chargement de la commande');
-      const data: OrderDetail = await res.json();
+      const data = await fetchOrderData(id);
       setOrder(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue');

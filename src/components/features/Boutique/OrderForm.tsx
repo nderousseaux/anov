@@ -18,6 +18,8 @@ interface Product {
   title_de: string;
   price: number;
   maxOrder: number;
+  isDeliverable: boolean;
+  image?: string;
 }
 
 interface OrderFormProps {
@@ -29,6 +31,7 @@ interface OrderFormProps {
 export function OrderForm({ product, onClose, onSuccess }: OrderFormProps) {
   const { locale } = useLanguage();
   const title = product[`title_${locale}` as keyof Product] || product.title_fr;
+  const isDeliverable = product.isDeliverable;
 
   const [step, setStep] = useState<'form' | 'summary' | 'processing' | 'success'>('form');
   const [deliveryMethod, setDeliveryMethod] = useState<'PICKUP' | 'DELIVERY'>('PICKUP');
@@ -85,8 +88,10 @@ export function OrderForm({ product, onClose, onSuccess }: OrderFormProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          productId: product.id,
+          productName: product[`title_${locale}` as keyof Product] || product.title_fr,
+          productImage: product.image,
           quantity,
+          totalPrice: product.price * quantity,
           deliveryMethod,
           address: deliveryMethod === 'DELIVERY' ? formData : undefined,
           customerName: formData.customerName,
@@ -101,8 +106,13 @@ export function OrderForm({ product, onClose, onSuccess }: OrderFormProps) {
         throw new Error(data.error || 'Erreur lors de la création de la commande');
       }
 
-      setStep('success');
-      onSuccess(data.sessionId);
+      // Redirect to Stripe URL returned by API
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      throw new Error('URL de paiement non reçue');
     } catch (error) {
       console.error('Erreur:', error);
       alert(error instanceof Error ? error.message : 'Une erreur est survenue');
@@ -151,49 +161,59 @@ export function OrderForm({ product, onClose, onSuccess }: OrderFormProps) {
               </div>
             </div>
 
-            {/* Delivery Method */}
-            <div className="space-y-3">
-              <Label className="text-foreground">Mode de livraison</Label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div
-                  className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
-                    deliveryMethod === 'PICKUP'
-                      ? 'border-primary bg-primary/10'
-                      : 'border-border hover:border-primary/50'
-                  }`}
-                  onClick={() => setDeliveryMethod('PICKUP')}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${deliveryMethod === 'PICKUP' ? 'border-primary' : 'border-border'}`}>
-                      {deliveryMethod === 'PICKUP' && <div className="w-2.5 h-2.5 bg-primary rounded-full" />}
+            {isDeliverable && (
+              <>
+                {/* Delivery Method */}
+                <div className="space-y-3">
+                <Label className="text-foreground">Mode de livraison</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div
+                    className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
+                      deliveryMethod === 'PICKUP'
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border hover:border-primary/50'
+                    }`}
+                    onClick={() => setDeliveryMethod('PICKUP')}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${deliveryMethod === 'PICKUP' ? 'border-primary' : 'border-border'}`}>
+                        {deliveryMethod === 'PICKUP' && <div className="w-2.5 h-2.5 bg-primary rounded-full" />}
+                      </div>
+                      <Store className="w-5 h-5 text-primary" />
+                      <span className="font-medium text-foreground">Retrait au restaurant</span>
                     </div>
-                    <Store className="w-5 h-5 text-primary" />
-                    <span className="font-medium text-foreground">Retrait au restaurant</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2 ml-8">Pickup au restaurant - Gratuit</p>
-                </div>
 
-                <div
-                  className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
-                    deliveryMethod === 'DELIVERY'
-                      ? 'border-primary bg-primary/10'
-                      : 'border-border hover:border-primary/50'
-                  }`}
-                  onClick={() => setDeliveryMethod('DELIVERY')}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${deliveryMethod === 'DELIVERY' ? 'border-primary' : 'border-border'}`}>
-                      {deliveryMethod === 'DELIVERY' && <div className="w-2.5 h-2.5 bg-primary rounded-full" />}
+                  <div
+                    className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
+                      deliveryMethod === 'DELIVERY'
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border hover:border-primary/50'
+                    }`}
+                    onClick={() => setDeliveryMethod('DELIVERY')}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${deliveryMethod === 'DELIVERY' ? 'border-primary' : 'border-border'}`}>
+                        {deliveryMethod === 'DELIVERY' && <div className="w-2.5 h-2.5 bg-primary rounded-full" />}
+                      </div>
+                      <Truck className="w-5 h-5 text-primary" />
+                      <span className="font-medium text-foreground">Livraison à domicile</span>
                     </div>
-                    <Truck className="w-5 h-5 text-primary" />
-                    <span className="font-medium text-foreground">Livraison à domicile</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2 ml-8">Livraison par transporteur - Calculée à la confirmation</p>
                 </div>
               </div>
-            </div>
+              </>
+            )}
 
-            {/* Customer Information */}
+            {!isDeliverable && (
+              <div className="p-4 bg-secondary/50 rounded-lg text-center">
+                <Store className="w-8 h-8 text-primary mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">
+                  Ce produit est disponible en pickup uniquement
+                </p>
+              </div>
+            )}
+
             <div className="space-y-4">
               <h3 className="font-semibold text-foreground flex items-center gap-2">
                 <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">

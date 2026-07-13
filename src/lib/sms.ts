@@ -22,6 +22,8 @@ function toE164(phone: string): string {
   return `+${digits}`;
 }
 
+export { toE164 };
+
 export async function sendSmsReminder({
   to,
   name,

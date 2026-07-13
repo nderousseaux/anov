@@ -19,7 +19,7 @@ function createTransporter() {
 }
 
 // Générer un fichier .ics pour le calendrier
-function generateICS({
+export function generateICS({
   date,
   time,
   name,

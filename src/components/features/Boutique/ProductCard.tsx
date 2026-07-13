@@ -6,22 +6,9 @@ import { Button } from '@/components/ui/button';
 import { ShoppingBag, AlertCircle } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { OrderForm } from './OrderForm';
+import { BoutiqueSectionClientProduct } from './BoutiqueSectionClient';
 
-interface Product {
-  title_fr: string;
-  title_en: string;
-  title_de: string;
-  description_fr?: string;
-  description_en?: string;
-  description_de?: string;
-  price: number;
-  maxOrder: number;
-  isDeliverable: boolean;
-  image: string;
-  alt_fr?: string;
-  alt_en?: string;
-  alt_de?: string;
-}
+type Product = BoutiqueSectionClientProduct;
 
 export function ProductCard({ product }: { product: Product }) {
   const { locale, t } = useLanguage();
@@ -66,7 +53,7 @@ export function ProductCard({ product }: { product: Product }) {
             {product[`description_${locale}` as keyof Product] || product.description_fr || ''}
           </p>
           <p className="text-2xl font-bold text-primary mb-4 flex-shrink-0">
-            {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(product.price)}
+            {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(product.price ?? 0)}
           </p>
           <div className="mt-auto">
             <Button
@@ -94,10 +81,10 @@ export function ProductCard({ product }: { product: Product }) {
             title_fr: product.title_fr,
             title_en: product.title_en,
             title_de: product.title_de,
-            price: product.price,
-            maxOrder: product.maxOrder,
+            price: product.price ?? 0,
+            maxOrder: product.maxOrder ?? 0,
             isDeliverable: product.isDeliverable,
-            image: product.image,
+            image: product.image ?? '/assets/placeholder-product.jpg',
           }}
           onClose={() => setIsOrderOpen(false)}
           onSuccess={(orderId) => {

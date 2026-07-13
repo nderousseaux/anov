@@ -14,7 +14,7 @@ interface Product {
   description_fr?: string;
   description_en?: string;
   description_de?: string;
-  price: number;
+  price: number | null;
   maxOrder: number;
   isDeliverable: boolean;
   image: string;
@@ -24,7 +24,7 @@ interface Product {
 }
 
 interface BoutiqueContent {
-  image?: string;
+  image?: string | null;
   title_fr?: string;
   title_en?: string;
   title_de?: string;
@@ -37,7 +37,42 @@ interface BoutiqueContent {
   productsIntroSubtitle_fr?: string;
   productsIntroSubtitle_en?: string;
   productsIntroSubtitle_de?: string;
-  products?: Product[];
+  products?: readonly Product[];
+  [key: string]: string | number | readonly Product[] | undefined | null;
+}
+
+export interface BoutiqueSectionClientProduct {
+  title_fr: string;
+  title_en: string;
+  title_de: string;
+  description_fr?: string;
+  description_en?: string;
+  description_de?: string;
+  price: number | null;
+  maxOrder: number | null;
+  isDeliverable: boolean;
+  image: string | null;
+  alt_fr?: string;
+  alt_en?: string;
+  alt_de?: string;
+}
+
+export interface BoutiqueSectionClientBoutiqueContent {
+  image?: string | null;
+  title_fr?: string;
+  title_en?: string;
+  title_de?: string;
+  subtitle_fr?: string;
+  subtitle_en?: string;
+  subtitle_de?: string;
+  productsIntroTitle_fr?: string;
+  productsIntroTitle_en?: string;
+  productsIntroTitle_de?: string;
+  productsIntroSubtitle_fr?: string;
+  productsIntroSubtitle_en?: string;
+  productsIntroSubtitle_de?: string;
+  products?: readonly BoutiqueSectionClientProduct[];
+  [key: string]: unknown;
 }
 
 export function BoutiqueSectionClient({
@@ -47,8 +82,8 @@ export function BoutiqueSectionClient({
   isSuccess = false,
   sessionId,
 }: {
-  content: BoutiqueContent;
-  products: Product[];
+  content: BoutiqueSectionClientBoutiqueContent;
+  products: BoutiqueSectionClientProduct[];
   chequesCadeauxContent?: Record<string, unknown> | null;
   isSuccess?: boolean;
   sessionId?: string;

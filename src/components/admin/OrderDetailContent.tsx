@@ -26,10 +26,10 @@ export interface Order {
   customerPhone: string;
   customerAddress?: CustomerAddress;
   status: string;
-  createdAt: string;
-  updatedAt: string;
-  stripeSessionId?: string;
-  }
+  createdAt: string | Date;
+  updatedAt: string | Date;
+  stripeSessionId?: string | null;
+}
 
 interface OrderDetailContentProps {
   order: Order;
@@ -223,7 +223,7 @@ export function OrderDetailContent({ order }: OrderDetailContentProps) {
                 key={action.value}
                 onClick={() => handleStatusUpdate(action.value)}
                 disabled={updating}
-                variant={action.variant || 'default'}
+                variant={action.variant as 'default' | 'link' | 'outline' | 'destructive' | 'secondary' | 'ghost' | null | undefined || 'default'}
                 className={action.variant === 'outline'
                   ? 'text-red-500 border-red-500/30 hover:bg-red-500/10'
                   : 'bg-primary hover:bg-primary/90 text-primary-foreground'}

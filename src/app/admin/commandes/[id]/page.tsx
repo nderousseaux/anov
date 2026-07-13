@@ -40,7 +40,7 @@ async function fetchOrderData(id: string) {
       zipCode: order.customerAddress.zipCode,
       country: order.customerAddress.country,
       phone: order.customerAddress.phone,
-    } : null,
+    } : undefined,
     status: order.status,
     createdAt: order.createdAt,
     updatedAt: order.updatedAt,

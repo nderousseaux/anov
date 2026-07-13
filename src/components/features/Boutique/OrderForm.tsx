@@ -16,8 +16,8 @@ interface Product {
   title_fr: string;
   title_en: string;
   title_de: string;
-  price: number;
-  maxOrder: number;
+  price: number | null;
+  maxOrder: number | null;
   isDeliverable: boolean;
   image?: string;
 }
@@ -60,7 +60,8 @@ export function OrderForm({ product, onClose, onSuccess }: OrderFormProps) {
   }, [onClose]);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Math.max(1, Math.min(product.maxOrder, parseInt(e.target.value) || 1));
+    const maxOrder = product.maxOrder ?? 10;
+    const value = Math.max(1, Math.min(maxOrder, parseInt(e.target.value) || 1));
     setQuantity(value);
   };
 
@@ -91,7 +92,7 @@ export function OrderForm({ product, onClose, onSuccess }: OrderFormProps) {
           productName: product[`title_${locale}` as keyof Product] || product.title_fr,
           productImage: product.image,
           quantity,
-          totalPrice: product.price * quantity,
+          totalPrice: (product.price ?? 0) * quantity,
           deliveryMethod,
           address: deliveryMethod === 'DELIVERY' ? formData : undefined,
           customerName: formData.customerName,
@@ -120,7 +121,7 @@ export function OrderForm({ product, onClose, onSuccess }: OrderFormProps) {
     }
   };
 
-  const totalAmount = product.price * quantity;
+  const totalAmount = (product.price ?? 0) * quantity;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
@@ -156,7 +157,7 @@ export function OrderForm({ product, onClose, onSuccess }: OrderFormProps) {
               <div className="flex-1">
                 <p className="font-medium text-foreground">{title}</p>
                 <p className="text-sm text-muted-foreground">
-                  {quantity} x {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(product.price)} = {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(totalAmount)}
+                  {quantity} x {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(product.price ?? 0)} = {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(totalAmount)}
                 </p>
               </div>
             </div>
@@ -328,13 +329,13 @@ export function OrderForm({ product, onClose, onSuccess }: OrderFormProps) {
                 id="quantity"
                 type="number"
                 min={1}
-                max={product.maxOrder}
+                max={product.maxOrder ?? 10}
                 value={quantity}
                 onChange={handleQuantityChange}
                 className="bg-background"
               />
               <p className="text-xs text-muted-foreground">
-                Maximum : {product.maxOrder} unités
+                Maximum : {product.maxOrder ?? 10} unités
               </p>
             </div>
 

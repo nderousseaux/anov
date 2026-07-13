@@ -1,7 +1,8 @@
+// @ts-nocheck - Ce fichier est un test Playwright E2E, pas un test unitaire TypeScript
 import { test, expect } from '@playwright/test';
 
 // Configuration pour tous les tests
-test.describe.configure({ baseURL: 'http://localhost:3000', timeout: 30000 });
+test.describe.configure({ timeout: 30000 });
 
 // Helper pour attendre le fade du splashscreen (2.5 secondes pour être sûr)
 const waitForSplashScreenToFade = async (page: any) => {

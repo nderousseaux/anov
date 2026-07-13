@@ -4,22 +4,9 @@ import { useEffect, useState } from 'react';
 import { ProductCard } from './ProductCard';
 import { Loader2, Filter } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { BoutiqueSectionClientProduct } from './BoutiqueSectionClient';
 
-interface Product {
-  title_fr: string;
-  title_en: string;
-  title_de: string;
-  description_fr?: string;
-  description_en?: string;
-  description_de?: string;
-  price: number;
-  maxOrder: number;
-  isDeliverable: boolean;
-  image: string;
-  alt_fr?: string;
-  alt_en?: string;
-  alt_de?: string;
-}
+type Product = BoutiqueSectionClientProduct;
 
 interface ProductGridProps {
   products: Product[];

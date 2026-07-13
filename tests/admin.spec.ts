@@ -1,7 +1,8 @@
+// @ts-nocheck - Ce fichier est un test Playwright E2E, pas un test unitaire TypeScript
 import { test, expect } from '@playwright/test';
 
 // Configuration pour tous les tests
-test.describe.configure({ baseURL: 'http://localhost:3000', timeout: 60000 });
+test.describe.configure({ timeout: 60000 });
 
 // Helper pour se connecter à l'interface admin
 const loginToAdmin = async (page: any) => {
@@ -166,7 +167,7 @@ test.describe('Interface Admin - Authentification', () => {
   });
 });
 
-test.describe('Interface Admin - Navigation', { mode: 'serial' }, () => {
+test.describe('Interface Admin - Navigation', () => {
   // Chaque test doit se connecter explicitement car Playwright ne partage pas
   // les cookies entre les tests par défaut. On utilise un fichier de stockage
   // pour éviter de se reconnecter à chaque test.

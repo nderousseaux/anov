@@ -18,7 +18,7 @@ export default async function BoutiqueSuccessPage({
   return (
     <div className="min-h-screen bg-background pt-20">
       <BoutiqueSectionClient
-        content={content || {}}
+        content={content || { image: undefined, products: [] }}
         products={[]}
         chequesCadeauxContent={null}
         isSuccess={true}

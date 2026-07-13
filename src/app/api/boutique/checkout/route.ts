@@ -90,6 +90,7 @@ export async function POST(req: NextRequest) {
       customerPhone: string;
       customerAddress?: { create: any };
       status: 'PENDING_PAYMENT';
+      transactionExpireAt?: Date;
     } = {
       code,
       productName: productName || `Produit #${productId}`,

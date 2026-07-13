@@ -53,6 +53,7 @@ model RestaurantSettings {
   openingDays          String @default("[2,3,4,5,6]")
   openingSlots         String @default("[\"12:00\",\"12:30\",\"13:00\",\"13:30\",\"19:00\",\"19:30\",\"20:00\",\"20:30\",\"21:00\",\"21:30\"]")
   depositPerGuestCents Int    @default(2000)
+  daysBeforeReminder   Int    @default(3)
 }
 
 model DayOverride {

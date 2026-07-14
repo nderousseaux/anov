@@ -76,11 +76,7 @@ export function NavbarDropdown({
                   // Allow navigation to proceed
                 }
               }}
-              className={`px-4 py-2.5 text-sm transition-colors duration-150 ${
-                true
-                  ? "bg-primary/10 text-primary"
-                  : "text-foreground hover:bg-primary/5"
-              }`}
+              className={`px-4 py-2.5 text-sm transition-colors duration-150 text-foreground hover:bg-primary/5 hover:text-foreground`}
             >
               {item.label}
             </Link>

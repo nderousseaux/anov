@@ -1,7 +1,7 @@
 'use client';
 
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Circle, Clock, AlertCircle, Package } from 'lucide-react';
+import { CheckCircle, Clock, AlertCircle, Package } from 'lucide-react';
 
 const STATUS_CONFIG = {
   PENDING_PAYMENT: {

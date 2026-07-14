@@ -4,58 +4,9 @@ import { pickField } from '@/lib/langs';
 import { ProductGrid } from '@/components/features/Boutique/ProductGrid';
 import { GiftCardButton } from '@/components/features/Boutique/GiftCardButton';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, ArrowRight, Home } from 'lucide-react';
+import { ShoppingBag, Home } from 'lucide-react';
+
 import { useLanguage } from '@/context/LanguageContext';
-
-interface Product {
-  title_fr: string;
-  title_en: string;
-  title_de: string;
-  description_fr?: string;
-  description_en?: string;
-  description_de?: string;
-  price: number | null;
-  maxOrder: number;
-  isDeliverable: boolean;
-  image: string;
-  alt_fr?: string;
-  alt_en?: string;
-  alt_de?: string;
-}
-
-interface BoutiqueContent {
-  image?: string | null;
-  title_fr?: string;
-  title_en?: string;
-  title_de?: string;
-  subtitle_fr?: string;
-  subtitle_en?: string;
-  subtitle_de?: string;
-  productsIntroTitle_fr?: string;
-  productsIntroTitle_en?: string;
-  productsIntroTitle_de?: string;
-  productsIntroSubtitle_fr?: string;
-  productsIntroSubtitle_en?: string;
-  productsIntroSubtitle_de?: string;
-  products?: readonly Product[];
-  [key: string]: string | number | readonly Product[] | undefined | null;
-}
-
-export interface BoutiqueSectionClientProduct {
-  title_fr: string;
-  title_en: string;
-  title_de: string;
-  description_fr?: string;
-  description_en?: string;
-  description_de?: string;
-  price: number | null;
-  maxOrder: number | null;
-  isDeliverable: boolean;
-  image: string | null;
-  alt_fr?: string;
-  alt_en?: string;
-  alt_de?: string;
-}
 
 export interface BoutiqueSectionClientBoutiqueContent {
   image?: string | null;
@@ -64,7 +15,7 @@ export interface BoutiqueSectionClientBoutiqueContent {
   title_de?: string;
   subtitle_fr?: string;
   subtitle_en?: string;
-  subtitle_de?: string;
+  subtitle_de?: string
   productsIntroTitle_fr?: string;
   productsIntroTitle_en?: string;
   productsIntroTitle_de?: string;
@@ -75,12 +26,28 @@ export interface BoutiqueSectionClientBoutiqueContent {
   [key: string]: unknown;
 }
 
+export interface BoutiqueSectionClientProduct {
+  id?: string;
+  title_fr: string;
+  title_en?: string;
+  title_de?: string;
+  description_fr?: string;
+  description_en?: string;
+  description_de?: string;
+  price?: number | null;
+  maxOrder?: number | null;
+  isDeliverable: boolean;
+  image?: string | null;
+  alt_fr?: string;
+  alt_en?: string;
+  [key: string]: unknown;
+}
+
 export function BoutiqueSectionClient({
   content,
   products,
   chequesCadeauxContent,
   isSuccess = false,
-  sessionId,
 }: {
   content: BoutiqueSectionClientBoutiqueContent;
   products: BoutiqueSectionClientProduct[];
@@ -120,7 +87,7 @@ export function BoutiqueSectionClient({
             <Button asChild>
               <a href="/" className="flex items-center gap-2">
                 <Home className="w-4 h-4" />
-                Retour à l'accueil
+                Retour à l&apos;accueil
               </a>
             </Button>
           </div>

@@ -22,7 +22,6 @@ type Reservation = {
 
 function ReservationSuccessForm() {
   const searchParams = useSearchParams();
-  const id = searchParams.get('id');
   const sessionId = searchParams.get('session_id');
   const [reservation, setReservation] = useState<Reservation | null>(null);
   const [loading, setLoading] = useState(true);
@@ -49,7 +48,7 @@ function ReservationSuccessForm() {
           }
           setLoading(false);
         })
-        .catch(err => {
+        .catch(() => {
           setError('Erreur lors de la vérification de la réservation');
           setLoading(false);
         });
@@ -104,12 +103,12 @@ function ReservationSuccessForm() {
               Transaction expirée
             </h1>
             <p className="text-muted-foreground">
-              Votre paiement n'a pas été complété dans les 10 minutes. La réservation a été annulée.
+              Votre paiement n&apos;a pas été complété dans les 10 minutes. La réservation a été annulée.
             </p>
           </div>
           <div className="bg-card border border-primary/20 rounded-lg p-8 space-y-5">
             <p className="text-foreground">
-              Votre acompte n'a pas été débité. Le créneau est de nouveau disponible.
+              Votre acompte n&apos;a pas été débité. Le créneau est de nouveau disponible.
             </p>
           </div>
           <div className="text-center mt-8">

@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertCircle, Check, Trash2, X, RotateCcw } from 'lucide-react';
+import { Check, Trash2, RotateCcw } from 'lucide-react';
 
 function checkIsExpired(expiresAt: string | null): boolean {
   if (!expiresAt) return false;
@@ -33,8 +33,7 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, formatDateT
   // La suppression de bons cadeaux est désactivée
   const canValidate = giftCard.status === 'ACTIVE' || giftCard.status === 'USED';
   const canDelete = false;
-  const canMarkUsed = giftCard.status === 'ACTIVE' || giftCard.status === 'EXPIRED';
-  const isPending = giftCard.status === 'IN_PROGRESS_PAYMENT';
+  const canMarkUsed = true; // Always allow marking as used
   const isMarkedAsUsed = giftCard.status === 'USED';
   const isExpired = checkIsExpired(giftCard.expiresAt); // Carte ACTIVE expirée à 1 an
 
@@ -108,12 +107,12 @@ export function GiftCardCard({ giftCard, formatCurrency, formatDate, formatDateT
         {giftCard.personalMessage && (
           <div>
             <p className="text-sm text-muted-foreground">Message</p>
-            <p className="text-sm text-foreground/80 line-clamp-2 italic">"{giftCard.personalMessage}"</p>
+            <p className="text-sm text-foreground/80 line-clamp-2 italic">&quot;{giftCard.personalMessage}&quot;</p>
           </div>
         )}
 
         <div>
-          <p className="text-sm text-muted-foreground">Date d'achat</p>
+          <p className="text-sm text-muted-foreground">Date d&apos;achat</p>
           <p className="text-sm text-foreground">{formatDateTime(giftCard.createdAt)}</p>
         </div>
       </div>

@@ -5,9 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { ShoppingBag, Truck, Store, Loader2, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -25,10 +22,9 @@ interface Product {
 interface OrderFormProps {
   product: Product;
   onClose: () => void;
-  onSuccess: (orderCode: string) => void;
 }
 
-export function OrderForm({ product, onClose, onSuccess }: OrderFormProps) {
+export function OrderForm({ product, onClose }: OrderFormProps) {
   const { locale } = useLanguage();
   const title = product[`title_${locale}` as keyof Product] || product.title_fr;
   const isDeliverable = product.isDeliverable;
@@ -115,8 +111,8 @@ export function OrderForm({ product, onClose, onSuccess }: OrderFormProps) {
 
       throw new Error('URL de paiement non reçue');
     } catch (error) {
-      console.error('Erreur:', error);
-      alert(error instanceof Error ? error.message : 'Une erreur est survenue');
+      const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue';
+      alert(errorMessage);
       setStep('form');
     }
   };

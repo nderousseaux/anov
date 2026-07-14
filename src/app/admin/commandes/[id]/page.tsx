@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import Link from 'next/link';
 import { AdminNav } from '@/components/admin/AdminNav';
 import { OrderDetailContent } from '@/components/admin/OrderDetailContent';
@@ -10,7 +9,6 @@ async function fetchOrderData(id: string) {
   // Verify admin authentication
   const admin = await getAdminFromCookies();
   if (!admin) {
-    console.log('[OrderDetailPage] Not authenticated');
     notFound();
   }
 
@@ -46,17 +44,6 @@ async function fetchOrderData(id: string) {
     updatedAt: order.updatedAt,
     stripeSessionId: order.stripeSessionId,
   };
-}
-
-function OrderDetailSkeleton() {
-  return (
-    <div className="min-h-screen bg-background">
-      <AdminNav />
-      <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
-        <div className="w-6 h-6 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    </div>
-  );
 }
 
 export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {

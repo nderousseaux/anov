@@ -40,7 +40,6 @@ export async function sendSmsReminder({
   daysBefore?: number;
 }) {
   if (!client) {
-    console.warn('Twilio non configuré, SMS ignoré');
     return null;
   }
 

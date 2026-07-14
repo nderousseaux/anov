@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
-  Loader2, RefreshCw, ChevronLeft, ChevronRight,
-  Settings, Save, X, CheckSquare, CalendarDays,
+  Loader2, ChevronLeft, ChevronRight,
+  Settings, Save, X, CheckSquare,
   RotateCw, RotateCcw, AlertTriangle, House,
 } from 'lucide-react';
 
@@ -75,15 +75,6 @@ const MONTHS_ABBR = ['janv', 'févr', 'mars', 'avr', 'mai', 'juin', 'juil', 'ao�
 const MONTHS_FULL = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function getPreviousMonday(): string {
-  const now = new Date();
-  const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
-  const dow = d.getUTCDay();
-  d.setUTCDate(d.getUTCDate() - (dow === 0 ? 6 : dow - 1));
-  return d.toISOString().split('T')[0];
-}
-
-
 function formatCardDate(dateStr: string): string {
   const d = new Date(dateStr + 'T00:00:00.000Z');
   return `${d.getUTCDate()} ${MONTHS_ABBR[d.getUTCMonth()]}`;
@@ -482,7 +473,7 @@ export default function AdminReservationsPage() {
             {/* Meal duration */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Durée d&apos;un repas</label>
-              <p className="text-xs text-muted-foreground">Détermine la durée d'occupation d'un créneau par réservation.</p>
+              <p className="text-xs text-muted-foreground">Détermine la durée d&apos;occupation d&apos;un créneau par réservation.</p>
               <div className="flex gap-1.5 flex-wrap">
                 {[30, 60, 90, 120, 150, 180].map((mins) => (
                   <button key={mins} type="button"
@@ -800,7 +791,7 @@ export default function AdminReservationsPage() {
                     {past && (
                       <div className="flex items-start gap-2 text-xs text-muted-foreground/80 bg-muted/30 border border-primary/10 rounded-lg px-3 py-2.5">
                         <AlertTriangle size={13} className="mt-0.5 flex-shrink-0" />
-                        Ce jour est déjà passé. L'override ne peut plus être modifié, mais vous pouvez annuler les réservations.
+                        Ce jour est déjà passé. L&apos;override ne peut plus être modifié, mais vous pouvez annuler les réservations.
                       </div>
                     )}
 

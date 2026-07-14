@@ -4,19 +4,19 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, AlertCircle } from 'lucide-react';
+
 import { useLanguage } from '@/context/LanguageContext';
 import { OrderForm } from './OrderForm';
-import { BoutiqueSectionClientProduct } from './BoutiqueSectionClient';
+import type { BoutiqueSectionClientProduct } from './BoutiqueSectionClient';
 
 type Product = BoutiqueSectionClientProduct;
 
 export function ProductCard({ product }: { product: Product }) {
   const { locale, t } = useLanguage();
   const [isOrderOpen, setIsOrderOpen] = useState(false);
-  const [isAdding, setIsAdding] = useState(false);
-  const title = product[`title_${locale}` as keyof Product] || product.title_fr;
+  const [isAdding] = useState(false);
+  const title = (product[`title_${locale}` as keyof Product] as string) || product.title_fr || '';
   const alt = product.alt_fr || product.alt_en || 'Produit';
-  const price = product.price;
 
   const handleAddToCart = () => {
     setIsOrderOpen(true);
@@ -50,7 +50,7 @@ export function ProductCard({ product }: { product: Product }) {
             {title}
           </h3>
           <p className="text-sm text-muted-foreground mb-4 flex-shrink-0 min-h-[3.5rem]">
-            {product[`description_${locale}` as keyof Product] || product.description_fr || ''}
+            {(product[`description_${locale}` as keyof Product] as string) || product.description_fr || ''}
           </p>
           <p className="text-2xl font-bold text-primary mb-4 flex-shrink-0">
             {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(product.price ?? 0)}
@@ -79,18 +79,14 @@ export function ProductCard({ product }: { product: Product }) {
           product={{
             id: `product-${product.title_fr}`,
             title_fr: product.title_fr,
-            title_en: product.title_en,
-            title_de: product.title_de,
+            title_en: product.title_en ?? '',
+            title_de: product.title_de ?? '',
             price: product.price ?? 0,
             maxOrder: product.maxOrder ?? 0,
             isDeliverable: product.isDeliverable,
             image: product.image ?? '/assets/placeholder-product.jpg',
           }}
           onClose={() => setIsOrderOpen(false)}
-          onSuccess={(orderId) => {
-            setIsAdding(true);
-            window.location.reload();
-          }}
         />
       )}
     </>

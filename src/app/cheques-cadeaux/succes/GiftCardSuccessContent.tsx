@@ -7,8 +7,43 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/context/LanguageContext';
 import { pickField } from '@/lib/langs';
 
+interface GiftCardSuccessContent {
+  title?: string;
+  title_fr?: string;
+  title_en?: string;
+  title_de?: string;
+  confirmationText?: string;
+  confirmationText_fr?: string;
+  confirmationText_en?: string;
+  confirmationText_de?: string;
+  emailSentTitle?: string;
+  emailSentTitle_fr?: string;
+  emailSentTitle_en?: string;
+  emailSentTitle_de?: string;
+  emailSentDescription?: string;
+  emailSentDescription_fr?: string;
+  emailSentDescription_en?: string;
+  emailSentDescription_de?: string;
+  helpTitle?: string;
+  helpTitle_fr?: string;
+  helpTitle_en?: string;
+  helpTitle_de?: string;
+  helpText: string;
+  helpText_fr?: string;
+  helpText_en?: string;
+  helpText_de?: string;
+  buttonHome: string;
+  buttonHome_fr?: string;
+  buttonHome_en?: string;
+  buttonHome_de?: string;
+  buttonAnother: string;
+  buttonAnother_fr?: string;
+  buttonAnother_en?: string;
+  buttonAnother_de?: string;
+}
+
 interface GiftCardSuccessContentProps {
-  content: any;
+  content: GiftCardSuccessContent | null;
 }
 
 export default function GiftCardSuccessContent({ content }: GiftCardSuccessContentProps) {

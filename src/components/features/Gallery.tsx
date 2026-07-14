@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { MobileCarousel } from './MobileCarousel';
 import { useLanguage } from '@/context/LanguageContext';

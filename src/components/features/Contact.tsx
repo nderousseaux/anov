@@ -9,25 +9,6 @@ import { toast } from 'sonner';
 import { useLanguage } from '@/context/LanguageContext';
 import { pickField } from '@/lib/langs';
 
-interface ContactContent {
-  image?: string | null;
-  title_fr?: string | null;
-  title_en?: string | null;
-  title_de?: string | null;
-  subtitle_fr?: string | null;
-  subtitle_en?: string | null;
-  subtitle_de?: string | null;
-  address?: string | null;
-  phone?: string | null;
-  email?: string | null;
-  hoursLine1_fr?: string | null;
-  hoursLine1_en?: string | null;
-  hoursLine1_de?: string | null;
-  hoursLine2_fr?: string | null;
-  hoursLine2_en?: string | null;
-  hoursLine2_de?: string | null;
-  mapsUrl?: string | null;
-}
 
 export function Contact({ content }: { content?: Record<string, unknown> | null }) {
   const { locale, t } = useLanguage();
@@ -66,10 +47,9 @@ export function Contact({ content }: { content?: Record<string, unknown> | null 
           description: data.error || t.contact.errorDesc,
         });
       }
-    } catch (error) {
-      console.error('Erreur lors de l\'envoi:', error);
+    } catch (e) {
       toast.error(t.contact.errorTitle, {
-        description: t.contact.connectionError,
+        description: (e as Error).message || t.contact.connectionError,
       });
     } finally {
       setIsSubmitting(false);

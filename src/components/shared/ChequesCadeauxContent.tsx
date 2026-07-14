@@ -6,12 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Gift, CreditCard, ShoppingBag } from 'lucide-react';
+
 import { toast } from 'sonner';
 import { useLanguage } from '@/context/LanguageContext';
 import { pickField } from '@/lib/langs';
 
 interface ChequesCadeauxContent {
-  image?: string;
+  image?: string | null;
   title_fr?: string;
   title_en?: string;
   title_de?: string;
@@ -140,9 +141,9 @@ export function ChequesCadeauxContent({ content }: { content?: ChequesCadeauxCon
         throw new Error('URL de paiement manquante');
       }
     } catch (error) {
-      console.error('Erreur lors de l\'achat:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue';
       toast.error('Erreur lors de l\'achat', {
-        description: error instanceof Error ? error.message : 'Une erreur est survenue',
+        description: errorMessage,
       });
       setIsLoading(false);
     }

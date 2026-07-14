@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // @ts-nocheck - Ce fichier est un test Playwright E2E, pas un test unitaire TypeScript
 import { test, expect, type Page } from '@playwright/test';
 import http from 'http';
@@ -120,12 +123,8 @@ test.afterEach(async () => {
     const response = await fetch('http://localhost:3000/api/admin/reservations/cleanup', {
       method: 'DELETE',
     });
-    if (!response.ok) {
-      console.log('Failed to cleanup reservations:', response.statusText);
-    }
-  } catch (e) {
-    // Ignorer les erreurs de cleanup (peut être non disponible)
-  }
+    if (!response.ok) {}
+  } catch (e) {}
 });
 
 /**
@@ -691,14 +690,12 @@ test.describe('Processus de réservation complet', () => {
     // Sélectionner le premier créneau disponible (pas disabled)
     const availableSlots = page.locator('button:has-text("12:00"):not([disabled]), button:has-text("19:00"):not([disabled])');
     const count = await availableSlots.count();
-    console.log(`Available slots: ${count}`);
     if (count > 0) {
       await availableSlots.first().click();
     } else {
       // Si pas de créneau disponible, essayer tous les créneaux
       const allSlots = page.locator('button:has-text("12:00"), button:has-text("19:00")');
       const allCount = await allSlots.count();
-      console.log(`All slots: ${allCount}`);
       for (let i = 0; i < allCount; i++) {
         const btn = allSlots.nth(i);
         if (!await btn.isDisabled()) {

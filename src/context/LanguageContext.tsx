@@ -6,15 +6,13 @@ import {
   DEFAULT_LOCALE,
   detectBrowserLocale,
   getLocaleFromString,
+  type Translations,
 } from '@/lib/langs';
 import fr from '@/lib/translations/fr';
 import en from '@/lib/translations/en';
 import de from '@/lib/translations/de';
 
-// Type definition for translations - using any to allow flexible structure
-type Translations = any;
-
-const translations: Record<Locale, Translations> = { fr, en, de };
+const translations: Record<Locale, Translations> = { fr, en, de } as const;
 
 interface LanguageContextValue {
   locale: Locale;

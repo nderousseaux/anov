@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { test, expect } from '@playwright/test';
 import http from 'http';
 import { URL } from 'url';
@@ -610,12 +613,10 @@ test.describe('Formulaire de Contact - Intégration complète', () => {
 
 // Nettoyer les emails à la fin de tous les tests
 test.afterAll(async () => {
-  console.log('*** AFTER ALL - Nettoyage des emails ***');
   // Attendre que tous les emails asynchrones soient envoyés
   await new Promise((resolve) => setTimeout(resolve, 3000));
   await clearMailcatcherEmailsAndValidate();
 
   // Vérification finale
   const finalEmails = await getMailcatcherEmails();
-  console.log(`*** AFTER ALL - Emails restants: ${finalEmails.length} ***`);
 });

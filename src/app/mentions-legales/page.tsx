@@ -19,8 +19,7 @@ export default async function MentionsLegalesPage() {
           {content?.title ?? 'Mentions légales'}
         </h1>
         <div className="pb-16">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {document && <LegalDocumentRenderer document={document as any} />}
+          {document && <LegalDocumentRenderer document={document} />}
         </div>
       </div>
     </div>

@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // @ts-nocheck - Ce fichier est un test Playwright E2E, pas un test unitaire TypeScript
 import { test, expect } from '@playwright/test';
 import fs from 'fs';

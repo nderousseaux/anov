@@ -5,6 +5,7 @@ import { pickField } from '@/lib/langs';
 import { OriginsMap } from './OriginsMap';
 import type { HistoryContent } from '@/types/content';
 
+
 export function History({ content, originesContent }: { content?: HistoryContent | null; originesContent?: HistoryContent | null }) {
   const { locale } = useLanguage();
   const c = content ?? {};
@@ -119,7 +120,6 @@ export function History({ content, originesContent }: { content?: HistoryContent
       </div>
 
       {/* Carte des Origines */}
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <OriginsMap content={originesContent} />
 
       {/* Full Width Image - Ingredients */}
@@ -142,7 +142,7 @@ export function History({ content, originesContent }: { content?: HistoryContent
               className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              {p('productsTitle') || "L'Excellence des Produits"}
+              {p('productsTitle') || `L'Excellence des Produits`}
             </h3>
             <p
               className="text-base sm:text-xl text-foreground mb-5 leading-relaxed"
@@ -175,7 +175,7 @@ export function History({ content, originesContent }: { content?: HistoryContent
                 className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                {p('teamTitle') || "Une Équipe d'Exception"}
+                {p('teamTitle') || `Une Équipe d'Exception`}
               </h3>
               <p
                 className="text-base sm:text-xl text-foreground mb-6 leading-relaxed"
@@ -202,7 +202,7 @@ export function History({ content, originesContent }: { content?: HistoryContent
                 className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                {p('wineTitle') || "Une Cave d'Exception"}
+                {p('wineTitle') || `Une Cave d'Exception`}
               </h3>
               <p
                 className="text-base sm:text-xl text-foreground mb-6 leading-relaxed"
@@ -251,7 +251,7 @@ export function History({ content, originesContent }: { content?: HistoryContent
               className="text-4xl sm:text-5xl md:text-6xl mb-6 text-primary"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              {p('gestureTitle') || 'La Maîtrise du Geste'}
+              {p('gestureTitle') || `La Maîtrise du Geste`}
             </h3>
             <p
               className="text-base sm:text-xl text-foreground leading-relaxed"

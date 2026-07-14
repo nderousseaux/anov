@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   getLocaleFromString,
   detectBrowserLocale,
@@ -8,6 +8,15 @@ import {
   SUPPORTED_LOCALES,
   DEFAULT_LOCALE,
 } from '../langs';
+
+// Extend global with proper type for navigator
+interface Navigator {
+  language: string;
+}
+
+interface GlobalWithNavigator {
+  navigator?: Navigator;
+}
 
 describe('langs', () => {
   describe('getLocaleFromString', () => {
@@ -48,20 +57,21 @@ describe('langs', () => {
   });
 
   describe('detectBrowserLocale', () => {
-    const originalNavigator = global.navigator;
-
-    beforeEach(() => {
-      // Setup navigator mock
-      delete (global as any).navigator;
-    });
-
     it('returns fr as default when navigator is not available', () => {
-      const result = detectBrowserLocale();
-      expect(result).toBe('fr');
+      // Temporarily remove navigator to test fallback
+      const originalNavigator = (global as unknown as GlobalWithNavigator).navigator;
+      (global as unknown as GlobalWithNavigator).navigator = undefined;
+      try {
+        const result = detectBrowserLocale();
+        expect(result).toBe('fr');
+      } finally {
+        // Restore original navigator
+        (global as unknown as GlobalWithNavigator).navigator = originalNavigator;
+      }
     });
 
     it('returns en for English browser language', () => {
-      (global as any).navigator = {
+      (global as unknown as GlobalWithNavigator).navigator = {
         language: 'en-US',
       };
       const result = detectBrowserLocale();
@@ -69,7 +79,7 @@ describe('langs', () => {
     });
 
     it('returns en for British English', () => {
-      (global as any).navigator = {
+      (global as unknown as GlobalWithNavigator).navigator = {
         language: 'en-GB',
       };
       const result = detectBrowserLocale();
@@ -77,7 +87,7 @@ describe('langs', () => {
     });
 
     it('returns de for German browser language', () => {
-      (global as any).navigator = {
+      (global as unknown as GlobalWithNavigator).navigator = {
         language: 'de-DE',
       };
       const result = detectBrowserLocale();
@@ -85,7 +95,7 @@ describe('langs', () => {
     });
 
     it('returns fr for French browser language', () => {
-      (global as any).navigator = {
+      (global as unknown as GlobalWithNavigator).navigator = {
         language: 'fr-FR',
       };
       const result = detectBrowserLocale();
@@ -93,7 +103,7 @@ describe('langs', () => {
     });
 
     it('returns fr for unknown language', () => {
-      (global as any).navigator = {
+      (global as unknown as GlobalWithNavigator).navigator = {
         language: 'es-ES',
       };
       const result = detectBrowserLocale();
@@ -101,7 +111,7 @@ describe('langs', () => {
     });
 
     it('handles lowercase language codes', () => {
-      (global as any).navigator = {
+      (global as unknown as GlobalWithNavigator).navigator = {
         language: 'en',
       };
       const result = detectBrowserLocale();

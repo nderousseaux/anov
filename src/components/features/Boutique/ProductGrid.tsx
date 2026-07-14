@@ -17,7 +17,7 @@ export function ProductGrid({ products }: ProductGridProps) {
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState('all');
-  const { locale, t } = useLanguage();
+  const { t } = useLanguage();
 
   // Simulate loading
   useEffect(() => {
@@ -35,8 +35,8 @@ export function ProductGrid({ products }: ProductGridProps) {
       result = result.filter(
         (p) =>
           p.title_fr.toLowerCase().includes(term) ||
-          p.title_en.toLowerCase().includes(term) ||
-          p.title_de.toLowerCase().includes(term)
+          (p.title_en ?? '').toLowerCase().includes(term) ||
+          (p.title_de ?? '').toLowerCase().includes(term)
       );
     }
 

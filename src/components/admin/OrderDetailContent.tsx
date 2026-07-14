@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Package, Truck, Store } from 'lucide-react';
@@ -105,14 +105,11 @@ export function OrderDetailContent({ order }: OrderDetailContentProps) {
       }
 
       // Refresh order data
-      const updatedRes = await fetch(`/api/admin/orders/${order.id}`);
-      if (updatedRes.ok) {
-        const updatedOrder = await updatedRes.json();
-        // We can't update state directly since this is a client component
-        // In a real app, we'd use a context or zustand store
-        // For now, we'll just reload the page
-        router.refresh();
-      }
+      await fetch(`/api/admin/orders/${order.id}`);
+      // We can't update state directly since this is a client component
+      // In a real app, we'd use a context or zustand store
+      // For now, we'll just reload the page
+      router.refresh();
 
       setSuccessMessage(`Statut mis à jour: ${STATUS_LABELS[newStatus]}`);
       setTimeout(() => setSuccessMessage(null), 3000);
@@ -122,11 +119,6 @@ export function OrderDetailContent({ order }: OrderDetailContentProps) {
     } finally {
       setUpdating(false);
     }
-  };
-
-  const handleCancelOrder = async () => {
-    if (!confirm('Voulez-vous vraiment annuler cette commande et rembourser le client ?')) return;
-    await handleStatusUpdate('CANCELLED');
   };
 
   const actions = getAvailableActions(order.status, order.deliveryMethod);

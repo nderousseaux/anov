@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer, { Transporter } from 'nodemailer';
 
 // Configuration du serveur SMTP
 // SMTP is configured via environment variables - logs handled externally if needed
@@ -89,7 +89,7 @@ END:DAYLIGHT
 END:VTIMEZONE
 `.trim();
 
-  // Description complète avecBesoin d'annuler et numéro de téléphone + adresse complète
+  // Description complète avec Besoin d'annuler et numéro de téléphone + adresse complète
   const description = `Réservation de ${name} pour ${guests} personne${guests > 1 ? 's' : ''}.\n\nLieu: ${RESTAURANT_ADDRESS}\n\nBesoin d'annuler ?\nAppelez-nous au ${RESTAURANT_PHONE}`;
 
   // Échapper les caractères spéciaux pour iCalendar (backslash, newline, etc.)
@@ -125,7 +125,7 @@ END:VCALENDAR`;
 }
 
 // Transporteur nodemailer (crée dynamiquement pour charger les variables d'environnement)
-let transporter: any = null;
+let transporter: Transporter | null = null;
 
 function getTransporter() {
   if (!transporter) {
@@ -155,7 +155,6 @@ export async function sendConfirmationEmail({
   date,
   time,
   guests,
-  cancelUrl,
   icsDate,
   durationMinutes = 90,
 }: {
@@ -170,7 +169,6 @@ export async function sendConfirmationEmail({
 }) {
   const t = getTransporter();
   if (!t) {
-    console.log('[EMAIL] Transporteur SMTP non configuré, email non envoyé à', to);
     return null;
   }
 
@@ -182,9 +180,6 @@ export async function sendConfirmationEmail({
     guests,
     durationMinutes
   });
-
-  console.log(`[EMAIL] Envoi de l'email de confirmation à ${to}`);
-  console.log(`[EMAIL] Contenu ICS:\n${icsContent}`);
 
   return t.sendMail({
     from: FROM,
@@ -201,7 +196,7 @@ export async function sendConfirmationEmail({
           <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Heure</td><td style="padding:8px;border-bottom:1px solid #eee;">${time}</td></tr>
           <tr><td style="padding:8px;font-weight:bold;">Couverts</td><td style="padding:8px;">${guests} personne${guests > 1 ? 's' : ''}</td></tr>
         </table>
-        <p style="margin-top:16px;">Besoin d'annuler ?<br/>
+        <p style="margin-top:16px;">Besoin d&apos;annuler ?<br/>
           Appeler nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>
         </p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
@@ -224,7 +219,6 @@ export async function sendReminderEmail({
   date,
   time,
   guests,
-  cancelUrl,
   icsDate,
   durationMinutes = 90,
   daysBefore = 1,
@@ -275,7 +269,7 @@ export async function sendReminderEmail({
           <tr><td style="padding:8px;font-weight:bold;">Couverts</td><td style="padding:8px;">${guests} personne${guests > 1 ? 's' : ''}</td></tr>
         </table>
         <p style="margin-top:16px;">${messageIntro}.</p>
-        <p style="margin-top:16px;">Besoin d'annuler ou modifier ?<br/>
+        <p style="margin-top:16px;">Besoin d&apos;annuler ou modifier ?<br/>
           Appeler nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>
         </p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
@@ -356,7 +350,7 @@ export async function sendProductOrderConfirmationEmail({
   const deliveryMethodLabel = isPickup ? 'À retirer au restaurant' : 'Livraison à domicile';
   const deliveryDetails = isPickup
     ? `Vous pouvez venir retirer votre commande au restaurant:<br><strong>${RESTAURANT_ADDRESS}</strong>`
-    : 'Votre commande vous sera livrée à l\'adresse indiquée.';
+    : 'Votre commande vous sera livrée à l&apos;adresse indiquée.';
 
   return t.sendMail({
     from: FROM,
@@ -512,7 +506,7 @@ export async function sendProductOrderReadyEmail({
         <div style="background:#f8f4e8;padding:16px;border-radius:8px;margin:16px 0;">
           <p style="margin:0;font-size:15px;">
             ${isDelivery
-        ? 'Vous pouvez suivre l\'état de votre livraison avec le numéro de suivi qui vous a été communiqué.'
+        ? 'Vous pouvez suivre l&apos;état de votre livraison avec le numéro de suivi qui vous a été communiqué.'
         : 'Vous pouvez venir retirer votre commande ' + restaurantAddress + '. Nous attendons votre venue !'}
           </p>
         </div>

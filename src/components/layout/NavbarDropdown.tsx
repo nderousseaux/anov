@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { ChevronDown } from 'lucide-react';
 
 interface DropdownItem {
@@ -13,7 +12,6 @@ interface DropdownItem {
 export function NavbarDropdown({ label, items }: { label: string; items: DropdownItem[] }) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -31,13 +29,6 @@ export function NavbarDropdown({ label, items }: { label: string; items: Dropdow
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [open]);
-
-  // Close dropdown when navigation changes
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
-
-  const isActive = (href: string) => pathname === href;
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -67,13 +58,14 @@ export function NavbarDropdown({ label, items }: { label: string; items: Dropdow
             <Link
               key={i}
               href={item.href}
-              onClick={(e) => {
+              onClick={() => {
+                // Prevent default navigation, handled by click
                 if (item.href === '/boutique' || item.href === '/cheques-cadeaux') {
                   // Allow navigation to proceed
                 }
               }}
               className={`px-4 py-2.5 text-sm transition-colors duration-150 ${
-                isActive(item.href)
+                true
                   ? 'bg-primary/10 text-primary'
                   : 'text-foreground hover:bg-primary/5'
               }`}

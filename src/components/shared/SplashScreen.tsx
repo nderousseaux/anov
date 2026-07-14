@@ -1,3 +1,7 @@
+'use client';
+
+
+
 type SplashScreenProps = {
   isFading?: boolean;
 };

@@ -1,8 +1,5 @@
 import { createReader } from '@keystatic/core/reader';
 import config from '@/keystatic.config';
-import { pickField } from '@/lib/langs';
-import { ProductGrid } from '@/components/features/Boutique/ProductGrid';
-import { GiftCardButton } from '@/components/features/Boutique/GiftCardButton';
 import { BoutiqueSectionClient } from '@/components/features/Boutique/BoutiqueSectionClient';
 
 // Réutiliser les types de BoutiqueSectionClient pour éviter les doublons

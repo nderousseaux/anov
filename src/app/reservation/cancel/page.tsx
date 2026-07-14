@@ -41,7 +41,7 @@ function ReservationCancelRedirect() {
       {status === 'loading' && (
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Traitement de l'annulation...</p>
+          <p className="text-muted-foreground">Traitement de l&apos;annulation...</p>
         </div>
       )}
       {status === 'deleted' && (

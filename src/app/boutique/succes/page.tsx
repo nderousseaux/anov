@@ -1,6 +1,5 @@
 import { createReader } from '@keystatic/core/reader';
 import config from '@/keystatic.config';
-import { pickField } from '@/lib/langs';
 import { BoutiqueSectionClient } from '@/components/features/Boutique/BoutiqueSectionClient';
 
 export const dynamic = 'force-dynamic';
@@ -18,7 +17,7 @@ export default async function BoutiqueSuccessPage({
   return (
     <div className="min-h-screen bg-background pt-20">
       <BoutiqueSectionClient
-        content={content || { image: undefined, products: [] }}
+        content={content ?? { image: undefined, products: [] }}
         products={[]}
         chequesCadeauxContent={null}
         isSuccess={true}

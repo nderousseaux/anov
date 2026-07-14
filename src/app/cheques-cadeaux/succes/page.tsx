@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 
 export default async function GiftCardSuccessPage() {
   const reader = createReader(process.cwd(), config);
-  const content = await reader.singletons.giftCardSuccess.read();
+  const content = (await reader.singletons.giftCardSuccess.read()) as Parameters<typeof GiftCardSuccessContent>[0]['content'];
 
   return (
     <Suspense>

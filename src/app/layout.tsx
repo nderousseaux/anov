@@ -24,8 +24,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="fr">
       <body>
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        <ClientLayout footerContent={footerContent as any}>{children}</ClientLayout>
+        <ClientLayout footerContent={footerContent}>{children}</ClientLayout>
       </body>
     </html>
   );

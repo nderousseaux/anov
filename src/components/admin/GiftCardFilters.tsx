@@ -1,9 +1,6 @@
 'use client';
 
-import { RefreshCw, X } from 'lucide-react';
-
-// Gift card status values (matching Prisma schema)
-type GiftCardStatus = 'IN_PROGRESS_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED';
+import { RefreshCw } from 'lucide-react';
 
 interface GiftCardFiltersProps {
   filters: {

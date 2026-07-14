@@ -20,7 +20,13 @@ export async function verifyAdminToken(
 ): Promise<{ sub: string; role: string } | null> {
   try {
     const { payload } = await jwtVerify(token, SECRET);
-    return payload as { sub: string; role: string };
+    // Type check from JWTPayload
+    const sub = payload.sub as string;
+    const role = payload.role as string;
+    if (typeof sub !== 'string' || typeof role !== 'string') {
+      return null;
+    }
+    return { sub, role };
   } catch {
     return null;
   }

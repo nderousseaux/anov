@@ -1,14 +1,13 @@
 'use client';
 
-import { Suspense, useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { Suspense, useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { AdminNav } from '@/components/admin/AdminNav';
 import { GiftCardStats } from '@/components/admin/GiftCardStats';
 import type { GiftCardStats as GiftCardStatsType } from '@/components/admin/types';
 import { GiftCardCard } from '@/components/admin/GiftCardCard';
 import { GiftCardFilters } from '@/components/admin/GiftCardFilters';
-import { Loader2, RefreshCw, AlertCircle, Check, Trash2, Plus, Mail, X } from 'lucide-react';
+import { RefreshCw, Plus, Mail, X } from 'lucide-react';
 
 interface GiftCard {
   id: string;
@@ -66,34 +65,6 @@ function GiftCardListFallback() {
   );
 }
 
-function loadScript(src: string) {
-  return new Promise<void>((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = src;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error(`Failed to load ${src}`));
-    document.body.appendChild(script);
-  });
-}
-
-async function loadStripe() {
-  if (typeof window === 'undefined') return null;
-
-  // Vérifier si Stripe est déjà chargé
-  if ((window as any).Stripe) {
-    return (window as any).Stripe;
-  }
-
-  try {
-    await loadScript('https://js.stripe.com/v3/');
-    return (window as any).Stripe;
-  } catch (error) {
-    console.error('Error loading Stripe:', error);
-    return null;
-  }
-}
-
 function GiftCardPageContent() {
   const [giftCards, setGiftCards] = useState<GiftCard[]>([]);
   const [stats, setStats] = useState<GiftCardStatsType>({
@@ -115,7 +86,6 @@ function GiftCardPageContent() {
 
   // Filters state - must be inside a component wrapped by Suspense
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const [filters, setFilters] = useState({
     status: searchParams.get('status') || '',
@@ -124,7 +94,7 @@ function GiftCardPageContent() {
     page: parseInt(searchParams.get('page') || '1', 10),
   });
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -154,12 +124,15 @@ function GiftCardPageContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters.status, filters.code, filters.email, filters.page]);
 
   // Fetch data when filters change or component mounts
   useEffect(() => {
-    fetchData();
-  }, [filters.status, filters.code, filters.email, filters.page]);
+    const fetchDataWithFilters = async () => {
+      await fetchData();
+    };
+    fetchDataWithFilters();
+  }, [fetchData]);
 
   // Reload stats when refreshing
   const handleRefresh = () => {

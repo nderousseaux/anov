@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, Facebook, Instagram } from 'lucide-react';
-
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { NavbarDropdown } from './NavbarDropdown';
 
@@ -158,13 +158,14 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
           {/* Logo */}
           <Link
             href="/"
-            className={`cursor-pointer flex items-center transition-opacity duration-300 pt-2 ${isTransparent ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+            className={`cursor-pointer flex items-center transition-opacity duration-300 pt-2 ${isTransparent ? ‘opacity-0 pointer-events-none’ : ‘opacity-100’}`}
             aria-hidden={isTransparent}
           >
-            <img
+            <Image
               src={logoUrl}
               alt="Logo l’anøv"
-              className="h-12 sm:h-14 w-auto sm:-translate-y-2 -translate-y-1"
+              fill
+              className="object-contain pt-2"
             />
           </Link>
 
@@ -198,7 +199,7 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden text-primary z-50"
+            className="lg:hidden text-primary"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Menu"
           >

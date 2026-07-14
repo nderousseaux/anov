@@ -1,49 +1,18 @@
 'use client';
 
 import { useState, useEffect, useCallback, type FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar as CalendarIcon, Clock, Users, Phone, User, MessageSquare, Loader2 } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
+import type { Locale } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from 'sonner';
 import { useLanguage } from '@/context/LanguageContext';
 import { pickField } from '@/lib/langs';
-import * as translations from '@/lib/translations';
-import type { Locale } from '@/lib/langs';
 
-interface TranslationData {
-  reservation: {
-    name: string;
-    email: string;
-    phone: string;
-    date: string;
-    time: string;
-    guests: string;
-    specialRequest: string;
-    submit: string;
-    lunch: string;
-    dinner: string;
-    selectDate: string;
-    selectTime: string;
-    loading: string;
-    noSlots: string;
-    available: string;
-    placeholderPhone: string;
-    placeholderEmail: string;
-    placeholderName: string;
-    specialRequestPlaceholder: string;
-    submitSubmitting: string;
-    pleaseSelectDate: string;
-    errorSelectDate: string;
-    errorSelectTime: string;
-    errorReservation: string;
-    errorNetwork: string;
-  };
-}
 
 type SlotInfo = { time: string; available: boolean };
 const MAX_GUESTS = 4;
@@ -52,87 +21,11 @@ interface ReservationFormProps {
   content?: Record<string, unknown> | null;
 }
 
-// Composant client qui affiche le texte traduit
-function TranslatedText({ text }: { text: string | undefined }) {
-  if (typeof text !== 'string') {
-    return <span className="inline-block min-w-[4ch]"></span>;
-  }
-  return <>{text}</>;
-}
-
 export function ReservationForm({ content }: ReservationFormProps) {
-  const router = useRouter();
   const { locale, t } = useLanguage();
   const c = (content ?? {}) as Record<string, unknown>;
 
-  // Translation constants for form labels and placeholders
-  // Using useMemo or useEffect to update when t changes
-  const [formLabels, setFormLabels] = useState({
-    fullName: t.reservation.name,
-    email: t.reservation.email,
-    phone: t.reservation.phone,
-    guests: t.reservation.guests,
-    date: t.reservation.date,
-    time: t.reservation.time,
-    specialRequest: t.reservation.specialRequest,
-    submit: t.reservation.submit,
-    lunch: t.reservation.lunch,
-    dinner: t.reservation.dinner,
-  });
-
-  const [placeholders, setPlaceholders] = useState({
-    phone: t.reservation.placeholderPhone,
-    email: t.reservation.placeholderEmail,
-    name: t.reservation.placeholderName,
-    specialRequest: t.reservation.specialRequestPlaceholder,
-    selectDate: t.reservation.selectDate,
-    loading: t.reservation.loading,
-    noSlots: t.reservation.noSlots,
-    available: t.reservation.available,
-    submitSubmitting: t.reservation.submitSubmitting,
-  });
-
-  const [errorMessages, setErrorMessages] = useState({
-    selectDate: t.reservation.errorSelectDate,
-    selectTime: t.reservation.errorSelectTime,
-    reservationError: t.reservation.errorReservation,
-    networkError: t.reservation.errorNetwork,
-  });
-
-  useEffect(() => {
-    setFormLabels({
-      fullName: t.reservation.name,
-      email: t.reservation.email,
-      phone: t.reservation.phone,
-      guests: t.reservation.guests,
-      date: t.reservation.date,
-      time: t.reservation.time,
-      specialRequest: t.reservation.specialRequest,
-      submit: t.reservation.submit,
-      lunch: t.reservation.lunch,
-      dinner: t.reservation.dinner,
-    });
-    setPlaceholders({
-      phone: t.reservation.placeholderPhone,
-      email: t.reservation.placeholderEmail,
-      name: t.reservation.placeholderName,
-      specialRequest: t.reservation.specialRequestPlaceholder,
-      selectDate: t.reservation.selectDate,
-      loading: t.reservation.loading,
-      noSlots: t.reservation.noSlots,
-      available: t.reservation.available,
-      submitSubmitting: t.reservation.submitSubmitting,
-    });
-    setErrorMessages({
-      selectDate: t.reservation.errorSelectDate,
-      selectTime: t.reservation.errorSelectTime,
-      reservationError: t.reservation.errorReservation,
-      networkError: t.reservation.errorNetwork,
-    });
-  }, [t]);
-
-  // textConstants is now replaced with direct t.reservation.pleaseSelectDate usage
-
+  // Translation constants are accessed directly via t.reservation.*
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -379,7 +272,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
                   <Calendar
                     mode="single"
                     selected={formData.date ? new Date(formData.date + 'T00:00:00') : undefined}
-                    onSelect={(date: any) => {
+                    onSelect={(date: Date | null | undefined) => {
                       if (!date) return;
                       const y = date.getFullYear();
                       const mo = String(date.getMonth() + 1).padStart(2, '0');
@@ -390,8 +283,8 @@ export function ReservationForm({ content }: ReservationFormProps) {
                     month={calendarMonth}
                     onMonthChange={setCalendarMonth}
                     weekStartsOn={1}
-                    locale={locale}
-                    disabled={(date: any) => {
+                    locale={locale as string & Locale}
+                    disabled={(date: Date) => {
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
                       if (date < today) return true;

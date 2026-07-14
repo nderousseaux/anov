@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { Toaster } from '@/components/ui/sonner';
 import { Navbar } from '@/components/layout/Navbar';
-import { Footer, type FooterContent } from '@/components/layout/Footer';
+import { Footer } from '@/components/layout/Footer';
 import { SplashScreen } from '@/components/shared/SplashScreen';
 import { LanguageProvider } from '@/context/LanguageContext';
 

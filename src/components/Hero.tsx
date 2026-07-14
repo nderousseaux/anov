@@ -1,12 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { pickField } from '@/lib/langs';
-import type { HeroContent } from '@/types/content';
+
 
 interface HeroProps {
   content?: Record<string, unknown> | null;

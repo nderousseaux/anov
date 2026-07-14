@@ -1,6 +1,6 @@
 import * as Markdoc from '@markdoc/markdoc';
 import React, { type ElementType } from 'react';
-import type { RenderableTreeNode, Config } from '@markdoc/markdoc';
+import type { Config } from '@markdoc/markdoc';
 
 // Composants React personnalisés pour le rendu
 const components = {
@@ -91,12 +91,12 @@ const config: Config = {
   },
 };
 
-export function LegalDocumentRenderer({ document }: { document: { node?: unknown } }) {
+export function LegalDocumentRenderer({ document }: { document?: { node?: unknown } }) {
   if (!document?.node) return null;
 
   // Transform Markdoc AST avec la configuration personnalisée
-  // Note: Markdoc types are complex and may change - using unknown and type assertion
-  const content = Markdoc.transform(document.node as any, config) as RenderableTreeNode;
+  // Note: Markdoc types are complex - using type assertion
+  const content = Markdoc.transform(document.node as import('@markdoc/markdoc').Node, config);
   const rendered = Markdoc.renderers.react(content, React, { components });
 
   return <div className="space-y-1">{rendered}</div>;

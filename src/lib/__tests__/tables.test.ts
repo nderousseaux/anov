@@ -25,7 +25,6 @@ describe('tables', () => {
       // 12:00, 12:30, 13:00, 13:30
       // span = 90 minutes (13:30 - 12:00)
       // turns = floor(90/90) + 1 = 2
-      const slots = ['12:00', '12:30', '13:00', '13:30'];
       // This test is a placeholder - actual logic tested via computeServiceTurns
       expect(2).toBe(2);
     });

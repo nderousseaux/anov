@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 
+
 type PropType = {
   images: Array<{ url: string; caption: string }>;
 };

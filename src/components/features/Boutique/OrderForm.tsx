@@ -171,7 +171,7 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
 
         {/* Form Steps */}
         {step === "form" && (
-          <form ref={formRef} onSubmit={handleSubmit} className="p-6 space-y-6">
+          <form ref={formRef} onSubmit={handleSubmit} className="p-6 space-y-6" autoComplete="shipping">
             <div className="text-center mb-6">
               <h2
                 className="text-2xl font-bold text-foreground mb-2"
@@ -305,6 +305,8 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
                   </Label>
                   <Input
                     id="name"
+                    name="name"
+                    autoComplete="name"
                     value={formData.customerName}
                     onChange={(e) =>
                       setFormData({ ...formData, customerName: e.target.value })
@@ -320,7 +322,9 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
                   </Label>
                   <Input
                     id="email"
+                    name="email"
                     type="email"
+                    autoComplete="email"
                     value={formData.customerEmail}
                     onChange={(e) =>
                       setFormData({
@@ -339,7 +343,9 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
                   </Label>
                   <Input
                     id="phone"
+                    name="phone"
                     type="tel"
+                    autoComplete="tel"
                     value={formData.customerPhone}
                     onChange={(e) =>
                       setFormData({
@@ -366,14 +372,16 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
                   <Label htmlFor="address">
                     Adresse <span className="text-red-500">*</span>
                   </Label>
-                  <Textarea
+                  <Input
                     id="address"
+                    name="address"
+                    autoComplete="address-line1"
                     value={formData.address}
                     onChange={(e) =>
                       setFormData({ ...formData, address: e.target.value })
                     }
                     placeholder="123 Rue de la Bouteille"
-                    className="min-h-[80px] bg-background"
+                    className="bg-background"
                   />
                 </div>
 
@@ -384,6 +392,8 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
                     </Label>
                     <Input
                       id="city"
+                      name="city"
+                      autoComplete="address-level2"
                       value={formData.city}
                       onChange={(e) =>
                         setFormData({ ...formData, city: e.target.value })
@@ -399,6 +409,8 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
                     </Label>
                     <Input
                       id="zipCode"
+                      name="zipCode"
+                      autoComplete="postal-code"
                       value={formData.zipCode}
                       onChange={(e) =>
                         setFormData({ ...formData, zipCode: e.target.value })
@@ -412,6 +424,8 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
                     <Label htmlFor="country">Pays</Label>
                     <Input
                       id="country"
+                      name="country"
+                      autoComplete="country"
                       value={formData.country}
                       onChange={(e) =>
                         setFormData({ ...formData, country: e.target.value })

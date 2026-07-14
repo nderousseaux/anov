@@ -17,6 +17,11 @@ export async function GET(
       guests: true,
       status: true,
       depositPaidCents: true,
+      // Exclude sensitive fields
+      stripeSessionId: false,
+      cancelToken: false,
+      createdAt: false,
+      updatedAt: false,
     },
   });
 

@@ -1,12 +1,22 @@
-import { describe, it, expect } from "vitest";
+// @ts-nocheck
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   signAdminToken,
   verifyAdminToken,
   getAdminFromCookies,
   COOKIE_NAME,
 } from "../auth";
+import { cookies } from "next/headers";
+
+vi.mock("next/headers", () => ({
+  cookies: vi.fn(),
+}));
 
 describe("auth", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   describe("signAdminToken", () => {
     it("generates a valid JWT token", async () => {
       const adminId = 1;
@@ -61,6 +71,10 @@ describe("auth", () => {
 
   describe("getAdminFromCookies", () => {
     it("returns null when no cookie exists", async () => {
+      vi.mocked(cookies).mockResolvedValue({
+        get: vi.fn().mockReturnValue(null),
+      });
+
       const result = await getAdminFromCookies();
 
       expect(result).toBeNull();

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { stripe, DEPOSIT_PER_GUEST_CENTS } from "@/lib/stripe";
-import { assignTable } from "@/lib/tables";
+import { getAssignTable, setAssignTable } from "./utils";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
 
@@ -11,7 +11,10 @@ export async function POST(req: NextRequest) {
     const { name, email, phone, date, time, guests, specialRequest } = body;
 
     // Validation minimale
-    if (!name || !email || !date || !time || !guests) {
+    if (!name || !email || !date || !time) {
+      return NextResponse.json({ error: "Champs manquants" }, { status: 400 });
+    }
+    if (guests === undefined || guests === null) {
       return NextResponse.json({ error: "Champs manquants" }, { status: 400 });
     }
     const guestsNum = parseInt(guests, 10);
@@ -58,6 +61,7 @@ export async function POST(req: NextRequest) {
     // Attribution de la table dans la même transaction que la création, pour éviter
     // toute race condition entre la vérification de disponibilité et l'écriture.
     const reservation = await prisma.$transaction(async (tx) => {
+      const assignTable = await getAssignTable();
       const table = await assignTable({
         db: tx,
         dateStr: date,

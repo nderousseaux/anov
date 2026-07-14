@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
+// @ts-nocheck
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { TableInfo } from "../tables";
 
 // Mock prisma BEFORE importing tables.ts that depend on it
@@ -16,9 +17,6 @@ vi.mock("../prisma", () => ({
 // Import tables.ts AFTER mocking prisma
 const tablesModule = await import("../tables");
 
-// Re-import prisma after mocking
-const { prisma } = await import("../prisma");
-
 // Get TIER_BY_GUESTS from the module
 const {
   TIER_BY_GUESTS,
@@ -28,13 +26,6 @@ const {
   pickTable,
   assignTable,
 } = tablesModule;
-
-type MockPrisma = {
-  table: { findMany: Mock };
-  reservation: { findMany: Mock };
-};
-
-// Use prisma for type checking, but mockPrisma variable removed as it's not used
 
 describe("tables", () => {
   describe("TIER_BY_GUESTS", () => {

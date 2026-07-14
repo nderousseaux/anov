@@ -22,7 +22,6 @@ export async function GET(req: NextRequest) {
       guests: true,
       status: true,
       depositPaidCents: true,
-      transactionExpireAt: true,
     },
   });
 

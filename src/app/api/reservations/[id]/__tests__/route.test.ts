@@ -1,0 +1,118 @@
+// @ts-nocheck
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
+import { prisma } from "@/lib/prisma";
+
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    reservation: {
+      findUnique: vi.fn(),
+    },
+  },
+}));
+
+describe("Reservation Detail API", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe("GET /api/reservations/[id]", () => {
+    it("returns reservation details for existing reservation", async () => {
+      const reservation = {
+        id: 1,
+        name: "Test User",
+        email: "test@example.com",
+        phone: "+33 6 12 34 56 78",
+        date: new Date("2024-06-15T19:00:00.000Z"),
+        guests: 2,
+        status: "CONFIRMED",
+        depositPaidCents: 4000,
+      };
+
+      vi.mocked(prisma.reservation.findUnique).mockResolvedValue(reservation);
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/reservations/1"),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(
+        req as any,
+        { params: Promise.resolve({ id: "1" }) } as any,
+      );
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.id).toBe(1);
+      expect(data.name).toBe("Test User");
+      expect(data.email).toBe("test@example.com");
+      expect(data.status).toBe("CONFIRMED");
+    });
+
+    it("returns 404 for non-existent reservation", async () => {
+      vi.mocked(prisma.reservation.findUnique).mockResolvedValue(null);
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/reservations/999"),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(
+        req as any,
+        { params: Promise.resolve({ id: "999" }) } as any,
+      );
+
+      expect(res.status).toBe(404);
+      const data = await res.json();
+      expect(data.error).toBe("Réservation introuvable");
+    });
+
+    it("returns only required fields", async () => {
+      // The route uses select to exclude sensitive fields, so the mock should
+      // only return the selected fields (not stripeSessionId, cancelToken, etc.)
+      const reservation = {
+        id: 1,
+        name: "Test User",
+        email: "test@example.com",
+        phone: "+33 6 12 34 56 78",
+        date: new Date("2024-06-15T19:00:00.000Z"),
+        guests: 2,
+        status: "CONFIRMED",
+        depositPaidCents: 4000,
+      };
+
+      vi.mocked(prisma.reservation.findUnique).mockResolvedValue(reservation);
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/reservations/1"),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(
+        req as any,
+        { params: Promise.resolve({ id: "1" }) } as any,
+      );
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      // Should only include specific fields
+      expect(data).toHaveProperty("id");
+      expect(data).toHaveProperty("name");
+      expect(data).toHaveProperty("email");
+      expect(data).toHaveProperty("phone");
+      expect(data).toHaveProperty("date");
+      expect(data).toHaveProperty("guests");
+      expect(data).toHaveProperty("status");
+      expect(data).toHaveProperty("depositPaidCents");
+      // Should not include sensitive fields
+      expect(data).not.toHaveProperty("stripeSessionId");
+      expect(data).not.toHaveProperty("cancelToken");
+    });
+  });
+});

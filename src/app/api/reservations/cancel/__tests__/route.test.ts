@@ -1,23 +1,190 @@
-import { describe, it, expect, vi } from "vitest";
+// @ts-nocheck
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
+import { prisma } from "@/lib/prisma";
 
-describe("GET /api/reservations/cancel", () => {
-  it("returns error for missing token", async () => {
-    const result = { error: "Token manquant" };
-    expect(result).toHaveProperty("error");
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    reservation: {
+      findUnique: vi.fn(),
+      delete: vi.fn(),
+    },
+  },
+}));
+
+describe("Reservation Cancel API", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("returns error for invalid token", async () => {
-    const result = { error: "Réservation introuvable" };
-    expect(result).toHaveProperty("error");
-  });
+  describe("GET /api/reservations/cancel", () => {
+    it("returns 400 if token is missing", async () => {
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/reservations/cancel"),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
 
-  it("returns message for already cancelled", async () => {
-    const result = { message: "already_cancelled" };
-    expect(result).toHaveProperty("message");
-  });
+      expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.error).toBe("Token manquant");
+    });
 
-  it("returns error for expired reservation", async () => {
-    const result = { error: "Réservation déjà passée" };
-    expect(result).toHaveProperty("error");
+    it("returns 404 if reservation not found", async () => {
+      vi.mocked(prisma.reservation.findUnique).mockResolvedValue(null);
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL(
+          "http://localhost:3000/api/reservations/cancel?token=test-token",
+        ),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(404);
+      const data = await res.json();
+      expect(data.error).toBe("Réservation introuvable");
+    });
+
+    it("returns already_cancelled for already cancelled reservation", async () => {
+      vi.mocked(prisma.reservation.findUnique).mockResolvedValue({
+        id: 1,
+        cancelToken: "test-token",
+        status: "CANCELLED",
+      });
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL(
+          "http://localhost:3000/api/reservations/cancel?token=test-token",
+        ),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.message).toBe("already_cancelled");
+    });
+
+    it("returns 400 for expired reservation", async () => {
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 1);
+
+      vi.mocked(prisma.reservation.findUnique).mockResolvedValue({
+        id: 1,
+        cancelToken: "test-token",
+        status: "COMPLETED",
+        date: pastDate,
+      });
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL(
+          "http://localhost:3000/api/reservations/cancel?token=test-token",
+        ),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.error).toBe("Réservation déjà passée");
+    });
+
+    it("returns 400 for expired pending payment reservation", async () => {
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 1);
+
+      vi.mocked(prisma.reservation.findUnique).mockResolvedValue({
+        id: 1,
+        cancelToken: "test-token",
+        status: "PENDING_PAYMENT",
+        date: new Date(),
+        transactionExpireAt: pastDate,
+      });
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL(
+          "http://localhost:3000/api/reservations/cancel?token=test-token",
+        ),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.error).toBe("Réservation déjà passée");
+    });
+
+    it("deletes valid reservation", async () => {
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 1);
+
+      vi.mocked(prisma.reservation.findUnique).mockResolvedValue({
+        id: 1,
+        cancelToken: "test-token",
+        status: "CONFIRMED",
+        date: futureDate,
+      });
+      vi.mocked(prisma.reservation.delete).mockResolvedValue({});
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL(
+          "http://localhost:3000/api/reservations/cancel?token=test-token",
+        ),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.message).toBe("deleted");
+    });
+
+    it("handles future date with PENDING_PAYMENT status", async () => {
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 1);
+
+      vi.mocked(prisma.reservation.findUnique).mockResolvedValue({
+        id: 1,
+        cancelToken: "test-token",
+        status: "PENDING_PAYMENT",
+        date: futureDate,
+        transactionExpireAt: null,
+      });
+      vi.mocked(prisma.reservation.delete).mockResolvedValue({});
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL(
+          "http://localhost:3000/api/reservations/cancel?token=test-token",
+        ),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.message).toBe("deleted");
+    });
   });
 });

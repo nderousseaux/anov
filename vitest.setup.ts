@@ -2,8 +2,9 @@
 import { beforeAll, vi } from "vitest";
 
 // Mock process.env for tests that need it
+// Using NodeJS.ProcessEnv to match Node.js type definitions
 if (!process.env) {
-  process.env = {} as any;
+  process.env = {} as NodeJS.ProcessEnv;
 }
 process.env.STRIPE_SECRET_KEY = "sk_test_123";
 process.env.NEXTAUTH_SECRET = "test-secret-key-for-testing";
@@ -25,13 +26,13 @@ vi.mock("next/headers", () => ({
 // Mock jose before it's imported
 vi.mock("jose", () => ({
   SignJWT: class {
-    private payload: any = {};
-    private secret: any;
-    private header: any = { alg: "HS256" };
-    private issuedAt: boolean = false;
+    private payload: Record<string, unknown> = {};
+    private secret = "";
+    private header: Record<string, unknown> = { alg: "HS256" };
+    private issuedAt = false;
     private expirationTime: number | null = null;
 
-    setProtectedHeader(header: any) {
+    setProtectedHeader(header: Record<string, unknown>) {
       this.header = header;
       return this;
     }
@@ -52,7 +53,7 @@ vi.mock("jose", () => ({
       return this;
     }
 
-    sign(secret: any) {
+    sign(secret: string) {
       this.secret = secret;
       // Return a mock JWT token
       const encodedHeader = Buffer.from(JSON.stringify(this.header)).toString(
@@ -65,24 +66,28 @@ vi.mock("jose", () => ({
       return `${encodedHeader}.${encodedPayload}.${signature}`;
     }
 
-    setPayload(payload: any) {
+    setPayload(payload: Record<string, unknown>) {
       this.payload = payload;
       return this;
     }
   },
-  jwtVerify: vi.fn().mockImplementation(async (token: string, secret: any) => {
-    // Decode the mock token
-    const parts = token.split(".");
-    if (parts.length !== 3) {
-      throw new Error("Invalid token");
-    }
-    try {
-      const payload = JSON.parse(Buffer.from(parts[1], "base64url").toString());
-      return { payload };
-    } catch {
-      throw new Error("Invalid token");
-    }
-  }),
+  jwtVerify: vi
+    .fn()
+    .mockImplementation(async (token: string, _secret: string) => {
+      // Decode the mock token
+      const parts = token.split(".");
+      if (parts.length !== 3) {
+        throw new Error("Invalid token");
+      }
+      try {
+        const payload = JSON.parse(
+          Buffer.from(parts[1], "base64url").toString(),
+        );
+        return { payload };
+      } catch {
+        throw new Error("Invalid token");
+      }
+    }),
 }));
 
 beforeAll(() => {

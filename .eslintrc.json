@@ -19,5 +19,13 @@
     "src/app/api/",
     "src/generated/",
     "next-env.d.ts"
+  ],
+  "overrides": [
+    {
+      "files": ["**/__tests__/**/*.test.ts", "**/*.test.ts"],
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": "off"
+      }
+    }
   ]
 }

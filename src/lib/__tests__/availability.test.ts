@@ -1,13 +1,17 @@
 import { describe, it, expect } from "vitest";
 
-describe("availability", () => {
-  // Testing availability requires complex mocking of prisma and global.Date
-  // These are high-priority functions but need to be tested with integration tests
-  // or with proper mocking setup
+// availability.ts imports from prisma which needs mocking
+// Since availability functions have complex database dependencies,
+// we test the basic exports here
 
-  it("has placeholder tests for availability functions", () => {
-    // getSlotsWithAvailability, getUnavailableDatesForMonth, getEffectiveConfig
-    // are tested through integration tests and E2E tests
-    expect(true).toBe(true);
+describe("availability", () => {
+  it("exports getSlotsWithAvailability function", async () => {
+    const { getSlotsWithAvailability } = await import("../availability");
+    expect(typeof getSlotsWithAvailability).toBe("function");
+  });
+
+  it("exports getUnavailableDatesForMonth function", async () => {
+    const { getUnavailableDatesForMonth } = await import("../availability");
+    expect(typeof getUnavailableDatesForMonth).toBe("function");
   });
 });

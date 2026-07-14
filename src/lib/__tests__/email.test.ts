@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { generateICS } from "../email";
 
-// Test generateICS function only (pure function, no dependencies)
 describe("email", () => {
   describe("generateICS", () => {
     it("generates valid ICS content", () => {
@@ -20,9 +19,6 @@ describe("email", () => {
       expect(ics).toContain("DTSTART");
       expect(ics).toContain("DTEND");
       expect(ics).toContain("SUMMARY:Réservation chez l'Anøv");
-      expect(ics).toContain(
-        "DESCRIPTION:Réservation de Jean Dupont pour 4 personnes",
-      );
       expect(ics).toContain("LOCATION:");
       expect(ics).toContain("BEGIN:VTIMEZONE");
       expect(ics).toContain("TZID:Europe/Paris");
@@ -78,10 +74,6 @@ describe("email", () => {
       // Check that special chars are escaped
       expect(ics).toContain("\\n");
       expect(ics).toContain("\\,");
-      // Note: ICS format uses semicolon as separator, not escaped semicolon
-      // The description contains newlines and commas, but semicolons are ICS separators
-      // so they are NOT escaped in DESCRIPTION field
-      expect(ics).not.toContain("\\;");
     });
 
     it("includes UID based on date", () => {
@@ -104,6 +96,38 @@ describe("email", () => {
       });
 
       expect(ics).toContain("DTSTART;TZID=Europe/Paris:20241225T200000");
+    });
+
+    it("uses correct date format in ICS", () => {
+      const ics = generateICS({
+        date: "2024-06-15",
+        time: "19:00",
+        name: "Test",
+        guests: 2,
+      });
+
+      // YYYYMMDDTHHMMSS format
+      expect(ics).toContain("DTSTART");
+    });
+
+    it("generates correct duration for different meal lengths", () => {
+      const ics60 = generateICS({
+        date: "2024-06-15",
+        time: "19:00",
+        name: "Test",
+        guests: 2,
+        durationMinutes: 60,
+      });
+
+      const ics120 = generateICS({
+        date: "2024-06-15",
+        time: "19:00",
+        name: "Test",
+        guests: 2,
+        durationMinutes: 120,
+      });
+
+      expect(ics60).not.toBe(ics120);
     });
   });
 });

@@ -1,7 +1,100 @@
 // Vitest setup file
-import {} from "vitest";
+import { beforeAll, vi } from "vitest";
 
-// Add any custom matchers or setup here
+// Mock process.env for tests that need it
+if (!process.env) {
+  process.env = {} as any;
+}
+process.env.STRIPE_SECRET_KEY = "sk_test_123";
+process.env.NEXTAUTH_SECRET = "test-secret-key-for-testing";
+process.env.SMTP_HOST = "smtp.test.com";
+process.env.SMTP_USER = "testuser";
+process.env.SMTP_PASSWORD = "testpassword";
+process.env.DATABASE_URL =
+  "postgresql://test:test@localhost:5432/test?schema=public";
+
+// Mock next/headers before it's imported
+const mockCookies = vi
+  .fn()
+  .mockReturnValue({ get: vi.fn().mockReturnValue(undefined) });
+vi.mock("next/headers", () => ({
+  cookies: () => mockCookies(),
+  headers: vi.fn(),
+}));
+
+// Mock jose before it's imported
+vi.mock("jose", () => ({
+  SignJWT: class {
+    private payload: any = {};
+    private secret: any;
+    private header: any = { alg: "HS256" };
+    private issuedAt: boolean = false;
+    private expirationTime: number | null = null;
+
+    setProtectedHeader(header: any) {
+      this.header = header;
+      return this;
+    }
+
+    setIssuedAt() {
+      this.issuedAt = true;
+      return this;
+    }
+
+    setExpirationTime(exp: string) {
+      if (typeof exp === "string") {
+        // Parse 8h as 8 hours in seconds
+        const match = exp.match(/(\d+)h/);
+        if (match) {
+          this.expirationTime = parseInt(match[0]) * 60 * 60;
+        }
+      }
+      return this;
+    }
+
+    sign(secret: any) {
+      this.secret = secret;
+      // Return a mock JWT token
+      const encodedHeader = Buffer.from(JSON.stringify(this.header)).toString(
+        "base64url",
+      );
+      const encodedPayload = Buffer.from(JSON.stringify(this.payload)).toString(
+        "base64url",
+      );
+      const signature = "mocksignature";
+      return `${encodedHeader}.${encodedPayload}.${signature}`;
+    }
+
+    setPayload(payload: any) {
+      this.payload = payload;
+      return this;
+    }
+  },
+  jwtVerify: vi.fn().mockImplementation(async (token: string, secret: any) => {
+    // Decode the mock token
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      throw new Error("Invalid token");
+    }
+    try {
+      const payload = JSON.parse(Buffer.from(parts[1], "base64url").toString());
+      return { payload };
+    } catch {
+      throw new Error("Invalid token");
+    }
+  }),
+}));
+
+beforeAll(() => {
+  // Set up environment variables for tests
+  process.env.STRIPE_SECRET_KEY = "sk_test_123";
+  process.env.NEXTAUTH_SECRET = "test-secret-key-for-testing";
+  process.env.SMTP_HOST = "smtp.test.com";
+  process.env.SMTP_USER = "testuser";
+  process.env.SMTP_PASSWORD = "testpassword";
+  process.env.STRIPE_WEBHOOK_SECRET = "whsec_test";
+  process.env.NEXT_PUBLIC_BASE_URL = "http://localhost:3000";
+});
 
 // Global types for vitest
 declare global {

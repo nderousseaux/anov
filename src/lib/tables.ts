@@ -24,7 +24,7 @@ export interface ReservationTableInfo {
  * 3 guests -> table of 3, fallback table of 4
  * 4 guests -> table of 4 only
  */
-const TIER_BY_GUESTS: Record<number, number[]> = {
+export const TIER_BY_GUESTS: Record<number, number[]> = {
   1: [2],
   2: [2, 3],
   3: [3, 4],

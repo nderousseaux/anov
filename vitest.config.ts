@@ -10,7 +10,14 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
-      include: ["src/lib/utils/**"],
+      include: ["src/lib/**", "src/app/api/**"],
+      exclude: [
+        "**/generated/**",
+        "**/*.d.ts",
+        "**/__tests__/**",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+      ],
     },
   },
   resolve: {

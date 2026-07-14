@@ -1,0 +1,579 @@
+{
+  "nodes": [
+    {
+      "id": "root_readme",
+      "label": "ANØV Project README",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "root_reminder_feature",
+      "label": "Reminder Feature Documentation",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/REMINDER_FEATURE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "root_claude",
+      "label": "CLAUDE.md Project Guidance",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/claude.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "content_boutique",
+      "label": "Boutique Content YAML",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/boutique.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "content_cheques_cadeaux",
+      "label": "Gift Cards Content YAML",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/cheques-cadeaux.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "content_footer",
+      "label": "Footer Content YAML",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/footer.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docker_compose_services",
+      "label": "Docker Services Configuration",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docker-compose.yml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_documentation_fonctionnelle",
+      "label": "Functional Documentation",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/DOCUMENTATION-FONCTIONNELLE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_documentation_tech",
+      "label": "Technical Documentation",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/DOCUMENTATION-TECHNIQUE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_modernization",
+      "label": "Modernization Plan",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/MODERNIZATION-PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_bons_cadeaux",
+      "label": "Gift Card System Documentation",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/bons cadeaux.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_boutique",
+      "label": "Boutique Feature Specification",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/boutique.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_draft",
+      "label": "Project Draft Overview",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/draft.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_reservation_cas",
+      "label": "Reservation Use Cases Documentation",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/reservation-cas-de-figure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_tests_manquants",
+      "label": "Missing Tests Analysis",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/tests manquants.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "draft_readme",
+      "label": "Draft README",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/draft/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "draft_workflow",
+      "label": "Git Workflow Documentation",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/draft/workflow.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "index_html",
+      "label": "Root HTML Entry Point",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "playwright_report",
+      "label": "Playwright Test Report",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/playwright-report/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "image_macarons",
+      "label": "Macarons Product Image",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/boutique/macarons.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "image_cafe",
+      "label": "Coffee Product Image",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/boutique/cafe.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "image_thes",
+      "label": "Tea Product Image",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/boutique/thes.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "image_hero",
+      "label": "Hero Section Image",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/hero.jpg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "image_img_logo",
+      "label": "Logo Image (JPG)",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/img-logo.jpg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "image_img_logo_svg",
+      "label": "Logo SVG Image",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/img-logo.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "image_logo",
+      "label": "Logo Image (JPG)",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/logo.jpg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "image_logo_svg",
+      "label": "Logo SVG",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/logo.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "image_text_logo",
+      "label": "Text Logo SVG",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/text-logo.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "image_favicon",
+      "label": "Favicon SVG",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/favicon.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "root_readme",
+      "target": "root_claude",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/nderousseaux/Dev/anov/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "root_claude",
+      "target": "docs_documentation_tech",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/claude.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_documentation_tech",
+      "target": "docs_documentation_fonctionnelle",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/DOCUMENTATION-TECHNIQUE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "content_boutique",
+      "relation": "part_of",
+      "target": "root_claude",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/boutique.yaml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "content_cheques_cadeaux",
+      "relation": "part_of",
+      "target": "root_claude",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/cheques-cadeaux.yaml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "content_footer",
+      "relation": "part_of",
+      "target": "root_claude",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/footer.yaml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docker_compose_services",
+      "relation": "part_of",
+      "target": "root_readme",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/nderousseaux/Dev/anov/docker-compose.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_modernization",
+      "relation": "rationale_for",
+      "target": "root_claude",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/MODERNIZATION-PLAN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_bons_cadeaux",
+      "relation": "references",
+      "target": "content_cheques_cadeaux",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/bons cadeaux.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_boutique",
+      "relation": "rationale_for",
+      "target": "content_boutique",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/boutique.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_reservation_cas",
+      "relation": "rationale_for",
+      "target": "docs_documentation_fonctionnelle",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/reservation-cas-de-figure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_tests_manquants",
+      "relation": "rationale_for",
+      "target": "docs_documentation_fonctionnelle",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/tests manquants.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "draft_workflow",
+      "relation": "references",
+      "target": "docker_compose_services",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/nderousseaux/Dev/anov/draft/workflow.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "index_html",
+      "relation": "part_of",
+      "target": "root_readme",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/nderousseaux/Dev/anov/index.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "draft_readme",
+      "relation": "references",
+      "target": "root_readme",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/nderousseaux/Dev/anov/draft/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "root_claude",
+      "relation": "semantically_similar_to",
+      "target": "draft_readme",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/claude.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_boutique",
+      "relation": "references",
+      "target": "docs_bons_cadeaux",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/boutique.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "root_reminder_feature",
+      "relation": "rationale_for",
+      "target": "docs_documentation_tech",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/REMINDER_FEATURE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docker_compose_services",
+      "relation": "part_of",
+      "target": "draft_workflow",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/nderousseaux/Dev/anov/docker-compose.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "root_claude",
+      "relation": "semantically_similar_to",
+      "target": "docs_modernization",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "/Users/nderousseaux/Dev/anov/claude.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_documentation_fonctionnelle",
+      "relation": "semantically_similar_to",
+      "target": "docs_documentation_tech",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/DOCUMENTATION-FONCTIONNELLE.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "anov_documentation_core",
+      "label": "Core Documentation Entities",
+      "nodes": [
+        "root_readme",
+        "root_claude",
+        "docs_documentation_fonctionnelle",
+        "docs_documentation_tech"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/README.md"
+    },
+    {
+      "id": "anov_cms_content",
+      "label": "Keystatic CMS Content Files",
+      "nodes": [
+        "content_boutique",
+        "content_cheques_cadeaux",
+        "content_footer"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/boutique.yaml"
+    },
+    {
+      "id": "anov_deployment_infrastructure",
+      "label": "Deployment and Infrastructure Configuration",
+      "nodes": [
+        "docker_compose_services",
+        "draft_workflow",
+        "root_readme"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/docker-compose.yml"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

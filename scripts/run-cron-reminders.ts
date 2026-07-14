@@ -4,11 +4,11 @@
  * Appelle l'API /api/cron/reminders
  */
 
-import { config } from 'dotenv';
-config({ path: '.env.local' });
+import { config } from "dotenv";
+config({ path: ".env.local" });
 
 async function main() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
   const cronSecret = process.env.CRON_SECRET;
 
   if (!cronSecret) {
@@ -16,7 +16,7 @@ async function main() {
   }
 
   const res = await fetch(`${baseUrl}/api/cron/reminders`, {
-    headers: { 'x-cron-secret': cronSecret },
+    headers: { "x-cron-secret": cronSecret },
   });
 
   if (!res.ok) {

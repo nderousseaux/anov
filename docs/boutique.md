@@ -3,6 +3,7 @@
 ## Contexte
 
 Le site ANØV est un restaurant de prestige avec :
+
 - **Stack** : Next.js 15 + TypeScript + Prisma + PostgreSQL + Keystatic
 - **Paiements** : Stripe (déjà utilisé pour réservations et chèques cadeaux)
 - **i18n** : 3 langues (FR, EN, DE)
@@ -14,6 +15,7 @@ Le site ANØV est un restaurant de prestige avec :
 ## Objectif
 
 Ajouter une nouvelle page `/boutique` pour vendre des **produits physiques**, avec :
+
 - Un menu déroulant dans la navigation (au lieu d'un simple lien)
 - Deux options : **Produits** (nouveau) et **Chèques Cadeaux** (existant, inchangé)
 
@@ -26,11 +28,13 @@ Ajouter une nouvelle page `/boutique` pour vendre des **produits physiques**, av
 Remplacer l'item "boutique" actuel (lien direct vers `/cheques-cadeaux`) par un **menu déroulant** avec deux options :
 
 **Avant :**
+
 ```typescript
 { type: 'link', label: t.nav.boutique, href: '/cheques-cadeaux' },
 ```
 
 **Après :**
+
 ```typescript
 {
   type: 'dropdown',
@@ -43,6 +47,7 @@ Remplacer l'item "boutique" actuel (lien direct vers `/cheques-cadeaux`) par un 
 ```
 
 ### Structure du dropdown (Desktop)
+
 ```
 ┌─────────────────────┐
 │  Boutique ▼        │  ← Click pour ouvrir
@@ -53,6 +58,7 @@ Remplacer l'item "boutique" actuel (lien direct vers `/cheques-cadeaux`) par un 
 ```
 
 ### Structure du dropdown (Mobile)
+
 ```
 ┌─────────────────────┐
 │  Boutique ▼         │
@@ -126,11 +132,12 @@ Admin Menu:
 
 Liste de toutes les commandes produits avec :
 
-| Code | Produit | Qté | Total | Client | Date | Statut | Actions |
-|------|---------|-----|-------|--------|------|--------|---------|
-| ANOV-PO-XXXX | Nom produit | 2 | 150€ | client@... | 12/07 | En cours | View/Edit |
+| Code         | Produit     | Qté | Total | Client     | Date  | Statut   | Actions   |
+| ------------ | ----------- | --- | ----- | ---------- | ----- | -------- | --------- |
+| ANOV-PO-XXXX | Nom produit | 2   | 150€  | client@... | 12/07 | En cours | View/Edit |
 
 **Actions possibles :**
+
 - `PENDING_PAYMENT` → Aucune (en attente Stripe)
 - `CONFIRMED` → "Marquer comme en préparation"
 - `PROCESSING` → "Marquer comme prêt/ envoyé"
@@ -140,6 +147,7 @@ Liste de toutes les commandes produits avec :
 ### Fiche Client - Historique des commandes
 
 Quand l'admin clique sur un client (email) dans la liste ou dans `/admin/clients` :
+
 - Page `/admin/clients/:email` (ou modal dans la liste)
 - Affiche :
   - **Informations du client** (nom, email, téléphone)
@@ -166,6 +174,7 @@ Admin → Clients → Clic sur email
 ```
 
 #### Stats par client
+
 - Nombre total de commandes
 - Montant total dépensé
 - Dernière commande
@@ -361,17 +370,17 @@ enum GiftCardStatus {
 Dans `src/app/api/stripe/webhook/route.ts` :
 
 ```typescript
-if (event.type === 'checkout.session.completed') {
+if (event.type === "checkout.session.completed") {
   const session = event.data.object;
   const meta = session.metadata ?? {};
 
   // Gestion chèques cadeaux (EXISTANT - inchangé)
-  if (meta.type === 'gift_card' && meta.giftCardId) {
+  if (meta.type === "gift_card" && meta.giftCardId) {
     await handleGiftCardPayment(meta.giftCardId, session.id);
   }
-  
+
   // NOUVEAU : Gestion commandes produits
-  else if (meta.type === 'product_order' && meta.orderId) {
+  else if (meta.type === "product_order" && meta.orderId) {
     await handleProductOrderPayment(meta.orderId, session.id);
   }
 }
@@ -400,7 +409,7 @@ boutique: singleton({
     heroSubtitle_fr: fields.text({ label: 'Sous-titre hero 🇫🇷' }),
     heroSubtitle_en: fields.text({ label: 'Sous-titre hero 🇬🇧' }),
     heroSubtitle_de: fields.text({ label: 'Sous-titre hero 🇩🇪' }),
-    
+
     // Section produits (texte introductif)
     productsIntroTitle_fr: fields.text({ label: 'Titre intro produits 🇫🇷' }),
     productsIntroTitle_en: fields.text({ label: 'Titre intro produits 🇬🇧' }),
@@ -408,7 +417,7 @@ boutique: singleton({
     productsIntroText_fr: fields.text({ label: 'Texte intro produits 🇫🇷', multiline: true }),
     productsIntroText_en: fields.text({ label: 'Texte intro produits 🇬🇧', multiline: true }),
     productsIntroText_de: fields.text({ label: 'Texte intro produits 🇩🇪', multiline: true }),
-    
+
     // Section chèques cadeaux
     giftCardsIntroTitle_fr: fields.text({ label: 'Titre intro chèques 🇫🇷' }),
     giftCardsIntroTitle_en: fields.text({ label: 'Titre intro chèques 🇬🇧' }),
@@ -486,7 +495,13 @@ type NavItem =
 
 ```typescript
 // src/components/layout/NavbarDropdown.tsx
-export function NavbarDropdown({ label, items }: { label: string; items: { label: string; href: string }[] }) {
+export function NavbarDropdown({
+  label,
+  items,
+}: {
+  label: string;
+  items: { label: string; href: string }[];
+}) {
   const [open, setOpen] = useState(false);
   // ... implementation
 }
@@ -523,26 +538,24 @@ export function NavbarDropdown({ label, items }: { label: string; items: { label
 ## 11. Priorisation
 
 **Phase 1 (MVP - sans Keystatic) :**
+
 1. DB schema + migration (Product, ProductOrder, ProductAddress)
 2. API `/api/boutique/products` + `/api/boutique/checkout`
 3. Navbar → dropdown avec deux items
 4. Page `/boutique` avec 2-3 produits en dur
 5. Page admin `/admin/commandes` (base)
 
-**Phase 2 (Avec Keystatic) :**
-6. Keystatic config + contenu
-7. Design/UX amélioré
-8. Tests
+**Phase 2 (Avec Keystatic) :** 6. Keystatic config + contenu 7. Design/UX amélioré 8. Tests
 
 ---
 
 ## Résumé des points clés
 
-| Élément | Status |
-|---------|--------|
-| `/cheques-cadeaux` | **INchangé** - page existante |
-| `/boutique` | **NOUVEAU** - page pour produits |
-| Menu "Boutique" | **MODIFIÉ** - devient dropdown |
-| Admin "Chèques Cadeaux" | **INchangé** |
-| Admin "Commandes" | **NOUVEAU** - 5ème item |
-| Stripe checkout | **EXTENDU** - supporte produits |
+| Élément                 | Status                           |
+| ----------------------- | -------------------------------- |
+| `/cheques-cadeaux`      | **INchangé** - page existante    |
+| `/boutique`             | **NOUVEAU** - page pour produits |
+| Menu "Boutique"         | **MODIFIÉ** - devient dropdown   |
+| Admin "Chèques Cadeaux" | **INchangé**                     |
+| Admin "Commandes"       | **NOUVEAU** - 5ème item          |
+| Stripe checkout         | **EXTENDU** - supporte produits  |

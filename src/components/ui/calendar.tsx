@@ -37,7 +37,6 @@ function Calendar({
   locale?: string;
   showOutsideDays?: boolean;
 } & React.ComponentProps<typeof DayPicker>) {
-
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}

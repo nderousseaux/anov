@@ -1,1 +1,223 @@
-{"nodes": [{"id": "users_nderousseaux_dev_anov_draft_workflow_md", "label": "workflow.md", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L1"}, {"id": "draft_workflow_workflow_git_vercel_neon", "label": "Workflow Git / Vercel / Neon", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L1"}, {"id": "draft_workflow_environnements", "label": "Environnements", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L3"}, {"id": "draft_workflow_r\u00e8gles_fondamentales", "label": "R\u00e8gles fondamentales", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L15"}, {"id": "draft_workflow_flux_d_une_feature", "label": "Flux d'une feature", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L27"}, {"id": "draft_workflow_structure_des_fichiers", "label": "Structure des fichiers", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L40"}, {"id": "draft_workflow_env_local", "label": "`.env.local`", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L56"}, {"id": "draft_workflow_scripts_vercel_build_js", "label": "`scripts/vercel-build.js`", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L65"}, {"id": "draft_workflow_vercel_json", "label": "`vercel.json`", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L96"}, {"id": "draft_workflow_package_json_scripts", "label": "`package.json` \u2014 scripts", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L106"}, {"id": "draft_workflow_variables_d_environnement_vercel", "label": "Variables d'environnement Vercel", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L134"}, {"id": "draft_workflow_seed_idempotent_exemple", "label": "Seed idempotent \u2014 exemple", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L146"}, {"id": "draft_workflow_setup_initial_une_seule_fois", "label": "Setup initial (une seule fois)", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L177"}, {"id": "draft_workflow_commandes_du_quotidien", "label": "Commandes du quotidien", "file_type": "document", "source_file": "draft/workflow.md", "source_location": "L200"}], "edges": [{"source": "users_nderousseaux_dev_anov_draft_workflow_md", "target": "draft_workflow_workflow_git_vercel_neon", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/workflow.md", "source_location": "L1", "weight": 1.0}, {"source": "draft_workflow_workflow_git_vercel_neon", "target": "draft_workflow_environnements", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/workflow.md", "source_location": "L3", "weight": 1.0}, {"source": "draft_workflow_workflow_git_vercel_neon", "target": "draft_workflow_r\u00e8gles_fondamentales", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/workflow.md", "source_location": "L15", "weight": 1.0}, {"source": "draft_workflow_workflow_git_vercel_neon", "target": "draft_workflow_flux_d_une_feature", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/workflow.md", "source_location": "L27", "weight": 1.0}, {"source": "draft_workflow_workflow_git_vercel_neon", "target": "draft_workflow_structure_des_fichiers", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/workflow.md", "source_location": "L40", "weight": 1.0}, {"source": "draft_workflow_workflow_git_vercel_neon", "target": "draft_workflow_env_local", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/workflow.md", "source_location": "L56", "weight": 1.0}, {"source": "draft_workflow_workflow_git_vercel_neon", "target": "draft_workflow_scripts_vercel_build_js", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/workflow.md", "source_location": "L65", "weight": 1.0}, {"source": "draft_workflow_workflow_git_vercel_neon", "target": "draft_workflow_vercel_json", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/workflow.md", "source_location": "L96", "weight": 1.0}, {"source": "draft_workflow_workflow_git_vercel_neon", "target": "draft_workflow_package_json_scripts", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/workflow.md", "source_location": "L106", "weight": 1.0}, {"source": "draft_workflow_workflow_git_vercel_neon", "target": "draft_workflow_variables_d_environnement_vercel", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/workflow.md", "source_location": "L134", "weight": 1.0}, {"source": "draft_workflow_workflow_git_vercel_neon", "target": "draft_workflow_seed_idempotent_exemple", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/workflow.md", "source_location": "L146", "weight": 1.0}, {"source": "draft_workflow_workflow_git_vercel_neon", "target": "draft_workflow_setup_initial_une_seule_fois", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/workflow.md", "source_location": "L177", "weight": 1.0}, {"source": "draft_workflow_workflow_git_vercel_neon", "target": "draft_workflow_commandes_du_quotidien", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/workflow.md", "source_location": "L200", "weight": 1.0}], "input_tokens": 0, "output_tokens": 0}
+{
+  "nodes": [
+    {
+      "id": "users_nderousseaux_dev_anov_draft_workflow_md",
+      "label": "workflow.md",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "draft_workflow_workflow_git_vercel_neon",
+      "label": "Workflow Git / Vercel / Neon",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "draft_workflow_environnements",
+      "label": "Environnements",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "draft_workflow_r\u00e8gles_fondamentales",
+      "label": "R\u00e8gles fondamentales",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "draft_workflow_flux_d_une_feature",
+      "label": "Flux d'une feature",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "draft_workflow_structure_des_fichiers",
+      "label": "Structure des fichiers",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L40"
+    },
+    {
+      "id": "draft_workflow_env_local",
+      "label": "`.env.local`",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "draft_workflow_scripts_vercel_build_js",
+      "label": "`scripts/vercel-build.js`",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L65"
+    },
+    {
+      "id": "draft_workflow_vercel_json",
+      "label": "`vercel.json`",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L96"
+    },
+    {
+      "id": "draft_workflow_package_json_scripts",
+      "label": "`package.json` \u2014 scripts",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L106"
+    },
+    {
+      "id": "draft_workflow_variables_d_environnement_vercel",
+      "label": "Variables d'environnement Vercel",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L134"
+    },
+    {
+      "id": "draft_workflow_seed_idempotent_exemple",
+      "label": "Seed idempotent \u2014 exemple",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L146"
+    },
+    {
+      "id": "draft_workflow_setup_initial_une_seule_fois",
+      "label": "Setup initial (une seule fois)",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L177"
+    },
+    {
+      "id": "draft_workflow_commandes_du_quotidien",
+      "label": "Commandes du quotidien",
+      "file_type": "document",
+      "source_file": "draft/workflow.md",
+      "source_location": "L200"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_nderousseaux_dev_anov_draft_workflow_md",
+      "target": "draft_workflow_workflow_git_vercel_neon",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/workflow.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_workflow_workflow_git_vercel_neon",
+      "target": "draft_workflow_environnements",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/workflow.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_workflow_workflow_git_vercel_neon",
+      "target": "draft_workflow_r\u00e8gles_fondamentales",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/workflow.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_workflow_workflow_git_vercel_neon",
+      "target": "draft_workflow_flux_d_une_feature",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/workflow.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_workflow_workflow_git_vercel_neon",
+      "target": "draft_workflow_structure_des_fichiers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/workflow.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_workflow_workflow_git_vercel_neon",
+      "target": "draft_workflow_env_local",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/workflow.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_workflow_workflow_git_vercel_neon",
+      "target": "draft_workflow_scripts_vercel_build_js",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/workflow.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_workflow_workflow_git_vercel_neon",
+      "target": "draft_workflow_vercel_json",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/workflow.md",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_workflow_workflow_git_vercel_neon",
+      "target": "draft_workflow_package_json_scripts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/workflow.md",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_workflow_workflow_git_vercel_neon",
+      "target": "draft_workflow_variables_d_environnement_vercel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/workflow.md",
+      "source_location": "L134",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_workflow_workflow_git_vercel_neon",
+      "target": "draft_workflow_seed_idempotent_exemple",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/workflow.md",
+      "source_location": "L146",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_workflow_workflow_git_vercel_neon",
+      "target": "draft_workflow_setup_initial_une_seule_fois",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/workflow.md",
+      "source_location": "L177",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_workflow_workflow_git_vercel_neon",
+      "target": "draft_workflow_commandes_du_quotidien",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/workflow.md",
+      "source_location": "L200",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

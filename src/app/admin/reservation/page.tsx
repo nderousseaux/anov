@@ -1,24 +1,39 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { AdminNav } from '@/components/admin/AdminNav';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { AdminNav } from "@/components/admin/AdminNav";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  Loader2, ChevronLeft, ChevronRight,
-  Settings, Save, X, CheckSquare,
-  RotateCw, RotateCcw, AlertTriangle, House,
-} from 'lucide-react';
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+  Settings,
+  Save,
+  X,
+  CheckSquare,
+  RotateCw,
+  RotateCcw,
+  AlertTriangle,
+  House,
+} from "lucide-react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-type ReservationStatus = 'PENDING_PAYMENT' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+type ReservationStatus =
+  "PENDING_PAYMENT" | "CONFIRMED" | "CANCELLED" | "COMPLETED";
 
 interface ReservationRow {
-  id: string; name: string; email: string; phone: string;
-  date: string; guests: number; status: ReservationStatus;
-  specialRequest: string | null; wantsSmsReminder: boolean;
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  date: string;
+  guests: number;
+  status: ReservationStatus;
+  specialRequest: string | null;
+  wantsSmsReminder: boolean;
   depositPaidCents: number | null;
   transactionExpireAt: string | null;
   createdAt: string;
@@ -26,71 +41,151 @@ interface ReservationRow {
 }
 
 interface TableInfo {
-  id: number; name: string; capacity: number; posX: number; posY: number;
+  id: number;
+  name: string;
+  capacity: number;
+  posX: number;
+  posY: number;
 }
 
 interface ApiResponse {
-  data: ReservationRow[]; total: number; page: number; pageSize: number;
+  data: ReservationRow[];
+  total: number;
+  page: number;
+  pageSize: number;
 }
 
 interface RestaurantSettings {
-  mealDuration: number; openingDays: number[]; openingSlots: string[]; depositPerGuestCents: number; daysBeforeReminder: number;
+  mealDuration: number;
+  openingDays: number[];
+  openingSlots: string[];
+  depositPerGuestCents: number;
+  daysBeforeReminder: number;
 }
 
 interface DayInfo {
-  date: string; dayOfWeek: number;
-  isGloballyOpen: boolean; hasOverride: boolean;
+  date: string;
+  dayOfWeek: number;
+  isGloballyOpen: boolean;
+  hasOverride: boolean;
   override: { closed: boolean; openingSlots: string[] | null } | null;
-  effectiveOpen: boolean; effectiveSlots: string[];
+  effectiveOpen: boolean;
+  effectiveSlots: string[];
   mealDuration: number;
-  lunchOpen: string | null; lunchClose: string | null;
-  dinnerOpen: string | null; dinnerClose: string | null;
-  totalCapacity: number; reservedGuests: number; reservationCount: number;
+  lunchOpen: string | null;
+  lunchClose: string | null;
+  dinnerOpen: string | null;
+  dinnerClose: string | null;
+  totalCapacity: number;
+  reservedGuests: number;
+  reservationCount: number;
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const STATUS_LABELS: Record<ReservationStatus, string> = {
-  PENDING_PAYMENT: 'En attente',
-  CONFIRMED: 'Confirmé',
-  CANCELLED: 'Annulé',
-  COMPLETED: 'Terminé',
+  PENDING_PAYMENT: "En attente",
+  CONFIRMED: "Confirmé",
+  CANCELLED: "Annulé",
+  COMPLETED: "Terminé",
 };
 
 const STATUS_COLORS: Record<ReservationStatus, string> = {
-  PENDING_PAYMENT: 'bg-yellow-600/20 text-yellow-400 border-yellow-600/30',
-  CONFIRMED: 'bg-green-600/20 text-green-400 border-green-600/30',
-  CANCELLED: 'bg-red-600/20 text-red-400 border-red-600/30',
-  COMPLETED: 'bg-blue-600/20 text-blue-400 border-blue-600/30',
+  PENDING_PAYMENT: "bg-yellow-600/20 text-yellow-400 border-yellow-600/30",
+  CONFIRMED: "bg-green-600/20 text-green-400 border-green-600/30",
+  CANCELLED: "bg-red-600/20 text-red-400 border-red-600/30",
+  COMPLETED: "bg-blue-600/20 text-blue-400 border-blue-600/30",
 };
 
 const ALL_SLOTS: Record<string, string[]> = {
-  Déjeuner: ['11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30'],
-  Dîner: ['18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30'],
+  Déjeuner: [
+    "11:00",
+    "11:30",
+    "12:00",
+    "12:30",
+    "13:00",
+    "13:30",
+    "14:00",
+    "14:30",
+  ],
+  Dîner: [
+    "18:00",
+    "18:30",
+    "19:00",
+    "19:30",
+    "20:00",
+    "20:30",
+    "21:00",
+    "21:30",
+    "22:00",
+    "22:30",
+  ],
 };
 
 const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];
-const DAYS_SHORT: Record<number, string> = { 0: 'Dim', 1: 'Lun', 2: 'Mar', 3: 'Mer', 4: 'Jeu', 5: 'Ven', 6: 'Sam' };
-const DAYS_FULL: Record<number, string> = { 0: 'Dimanche', 1: 'Lundi', 2: 'Mardi', 3: 'Mercredi', 4: 'Jeudi', 5: 'Vendredi', 6: 'Samedi' };
-const MONTHS_ABBR = ['janv', 'févr', 'mars', 'avr', 'mai', 'juin', 'juil', 'août', 'sept', 'oct', 'nov', 'déc'];
-const MONTHS_FULL = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+const DAYS_SHORT: Record<number, string> = {
+  0: "Dim",
+  1: "Lun",
+  2: "Mar",
+  3: "Mer",
+  4: "Jeu",
+  5: "Ven",
+  6: "Sam",
+};
+const DAYS_FULL: Record<number, string> = {
+  0: "Dimanche",
+  1: "Lundi",
+  2: "Mardi",
+  3: "Mercredi",
+  4: "Jeudi",
+  5: "Vendredi",
+  6: "Samedi",
+};
+const MONTHS_ABBR = [
+  "janv",
+  "févr",
+  "mars",
+  "avr",
+  "mai",
+  "juin",
+  "juil",
+  "août",
+  "sept",
+  "oct",
+  "nov",
+  "déc",
+];
+const MONTHS_FULL = [
+  "janvier",
+  "février",
+  "mars",
+  "avril",
+  "mai",
+  "juin",
+  "juillet",
+  "août",
+  "septembre",
+  "octobre",
+  "novembre",
+  "décembre",
+];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function formatCardDate(dateStr: string): string {
-  const d = new Date(dateStr + 'T00:00:00.000Z');
+  const d = new Date(dateStr + "T00:00:00.000Z");
   return `${d.getUTCDate()} ${MONTHS_ABBR[d.getUTCMonth()]}`;
 }
 
 function formatFullDate(dateStr: string): string {
-  const d = new Date(dateStr + 'T00:00:00.000Z');
+  const d = new Date(dateStr + "T00:00:00.000Z");
   return `${DAYS_FULL[d.getUTCDay()]} ${d.getUTCDate()} ${MONTHS_FULL[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
 function isToday(dateStr: string): boolean {
-  return dateStr === new Date().toISOString().split('T')[0];
+  return dateStr === new Date().toISOString().split("T")[0];
 }
 
 function isPast(dateStr: string): boolean {
-  const d = new Date(dateStr + 'T00:00:00.000Z');
+  const d = new Date(dateStr + "T00:00:00.000Z");
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   return d < today;
@@ -98,22 +193,28 @@ function isPast(dateStr: string): boolean {
 
 function formatTime(iso: string) {
   const d = new Date(iso);
-  return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
+  return `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
 }
 
 // ── Table floor plan (vue Schéma) ──────────────────────────────────────────────
 const TABLE_SIZE_CLASSES: Record<number, string> = {
-  2: 'w-20 h-20',
-  3: 'w-24 h-24',
-  4: 'w-28 h-28',
+  2: "w-20 h-20",
+  3: "w-24 h-24",
+  4: "w-28 h-28",
 };
 
 // Table de réserve : élément purement visuel affiché uniquement dans le schéma
 // (aucune donnée en base, aucun impact sur l'algorithme d'attribution de table).
-const RESERVE_TABLE = { name: 'Réserve', posX: 50, posY: 85 };
+const RESERVE_TABLE = { name: "Réserve", posX: 50, posY: 85 };
 
-function TableFloorPlan({ label, tables, reservations }: {
-  label: string; tables: TableInfo[]; reservations: ReservationRow[];
+function TableFloorPlan({
+  label,
+  tables,
+  reservations,
+}: {
+  label: string;
+  tables: TableInfo[];
+  reservations: ReservationRow[];
 }) {
   const reservationsByTable = useMemo(() => {
     const map = new Map<number, ReservationRow[]>();
@@ -122,49 +223,81 @@ function TableFloorPlan({ label, tables, reservations }: {
       if (!map.has(r.tableId)) map.set(r.tableId, []);
       map.get(r.tableId)!.push(r);
     }
-    for (const list of map.values()) list.sort((a, b) => a.date.localeCompare(b.date));
+    for (const list of map.values())
+      list.sort((a, b) => a.date.localeCompare(b.date));
     return map;
   }, [reservations]);
 
   return (
     <div className="space-y-2">
-      <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</h4>
+      <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        {label}
+      </h4>
       <div className="relative w-full aspect-[4/3] bg-background/20 border border-primary/10 rounded-xl">
         {tables.map((table) => {
           const tableReservations = reservationsByTable.get(table.id) ?? [];
           const occupied = tableReservations.length > 0;
           return (
-            <div key={table.id}
+            <div
+              key={table.id}
               style={{ left: `${table.posX}%`, top: `${table.posY}%` }}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 ${TABLE_SIZE_CLASSES[table.capacity] ?? 'w-20 h-20'} rounded-lg border p-1.5 flex flex-col gap-0.5 overflow-hidden ${occupied ? 'bg-primary/10 border-primary/40' : 'bg-background/40 border-primary/15'
-                }`}>
+              className={`absolute -translate-x-1/2 -translate-y-1/2 ${TABLE_SIZE_CLASSES[table.capacity] ?? "w-20 h-20"} rounded-lg border p-1.5 flex flex-col gap-0.5 overflow-hidden ${
+                occupied
+                  ? "bg-primary/10 border-primary/40"
+                  : "bg-background/40 border-primary/15"
+              }`}
+            >
               <div className="flex items-center justify-between shrink-0">
-                <span className="text-xs font-semibold text-primary">{table.name}</span>
-                <span className="text-[10px] text-muted-foreground">{table.capacity}p</span>
+                <span className="text-xs font-semibold text-primary">
+                  {table.name}
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  {table.capacity}p
+                </span>
               </div>
               {occupied ? (
                 <div className="space-y-0.5 overflow-y-auto text-[10px] leading-tight">
                   {tableReservations.map((r) => (
-                    <div key={r.id} className="truncate" title={`${r.name} · ${r.guests} cvrt${r.guests > 1 ? 's' : ''}`}>
-                      <span className="font-medium text-primary/90">{formatTime(r.date)}</span> {r.name}
-                      <span className={`ml-1 px-1 rounded border text-[9px] ${STATUS_COLORS[r.status]}`}>{STATUS_LABELS[r.status]}</span>
+                    <div
+                      key={r.id}
+                      className="truncate"
+                      title={`${r.name} · ${r.guests} cvrt${r.guests > 1 ? "s" : ""}`}
+                    >
+                      <span className="font-medium text-primary/90">
+                        {formatTime(r.date)}
+                      </span>{" "}
+                      {r.name}
+                      <span
+                        className={`ml-1 px-1 rounded border text-[9px] ${STATUS_COLORS[r.status]}`}
+                      >
+                        {STATUS_LABELS[r.status]}
+                      </span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <span className="text-[10px] text-muted-foreground/40 italic">Libre</span>
+                <span className="text-[10px] text-muted-foreground/40 italic">
+                  Libre
+                </span>
               )}
             </div>
           );
         })}
         {/* Table de réserve — visuelle uniquement, non géolocalisée en base et non prise en compte par l'algorithme */}
         <div
-          style={{ left: `${RESERVE_TABLE.posX}%`, top: `${RESERVE_TABLE.posY}%` }}
+          style={{
+            left: `${RESERVE_TABLE.posX}%`,
+            top: `${RESERVE_TABLE.posY}%`,
+          }}
           className="absolute -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-lg border border-dashed border-muted-foreground/40 bg-muted/10 flex flex-col items-center justify-center gap-0.5"
           title="Table de réserve (appoint) — non gérée par l'algorithme de réservation"
         >
-          <span className="text-xs font-semibold text-muted-foreground">{RESERVE_TABLE.name}</span>
-          <span className="text-[9px] text-muted-foreground/60 italic">appoint</span>
+          <span className="text-xs font-semibold text-muted-foreground">
+            {RESERVE_TABLE.name}
+          </span>
+          <span className="text-[9px] text-muted-foreground/60 italic">
+            appoint
+          </span>
         </div>
       </div>
     </div>
@@ -178,7 +311,7 @@ export default function AdminReservationsPage() {
   // Settings
   const [showSettings, setShowSettings] = useState(false);
   const [settings, setSettings] = useState<RestaurantSettings | null>(null);
-  const [editDepositPerGuest, setEditDepositPerGuest] = useState('20'); // en euros pour l'UI, stocké en string pour permettre la saisie libre
+  const [editDepositPerGuest, setEditDepositPerGuest] = useState("20"); // en euros pour l'UI, stocké en string pour permettre la saisie libre
   const [editMealDuration, setEditMealDuration] = useState(90);
   const [editSlots, setEditSlots] = useState<string[]>([]);
   const [editDays, setEditDays] = useState<number[]>([]);
@@ -187,7 +320,10 @@ export default function AdminReservationsPage() {
   const [settingsSaved, setSettingsSaved] = useState(false);
 
   // Calendar
-  const [currentMonth, setCurrentMonth] = useState<{ year: number; month: number }>(() => {
+  const [currentMonth, setCurrentMonth] = useState<{
+    year: number;
+    month: number;
+  }>(() => {
     const n = new Date();
     return { year: n.getFullYear(), month: n.getMonth() };
   });
@@ -195,14 +331,18 @@ export default function AdminReservationsPage() {
     const first = new Date(Date.UTC(currentMonth.year, currentMonth.month, 1));
     const dow = first.getUTCDay();
     first.setUTCDate(first.getUTCDate() - (dow === 0 ? 6 : dow - 1));
-    return first.toISOString().split('T')[0];
+    return first.toISOString().split("T")[0];
   }, [currentMonth]);
   const calendarDaysCount = useMemo(() => {
-    const last = new Date(Date.UTC(currentMonth.year, currentMonth.month + 1, 0));
+    const last = new Date(
+      Date.UTC(currentMonth.year, currentMonth.month + 1, 0),
+    );
     const dow = last.getUTCDay();
     last.setUTCDate(last.getUTCDate() + (dow === 0 ? 0 : 7 - dow));
-    const start = new Date(calendarStart + 'T00:00:00.000Z');
-    return Math.round((last.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    const start = new Date(calendarStart + "T00:00:00.000Z");
+    return (
+      Math.round((last.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
+    );
   }, [currentMonth, calendarStart]);
   const [calendarDays, setCalendarDays] = useState<DayInfo[]>([]);
   const [calendarLoading, setCalendarLoading] = useState(true);
@@ -211,7 +351,9 @@ export default function AdminReservationsPage() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [dayReservations, setDayReservations] = useState<ReservationRow[]>([]);
   const [dayLoading, setDayLoading] = useState(false);
-  const [overrideMode, setOverrideMode] = useState<'global' | 'closed' | 'custom'>('global');
+  const [overrideMode, setOverrideMode] = useState<
+    "global" | "closed" | "custom"
+  >("global");
   const [overrideSlots, setOverrideSlots] = useState<string[]>([]);
   const [savingOverride, setSavingOverride] = useState(false);
   const [overrideSaved, setOverrideSaved] = useState(false);
@@ -219,11 +361,13 @@ export default function AdminReservationsPage() {
   const [tables, setTables] = useState<TableInfo[]>([]);
   // ── Fetchers ─────────────────────────────────────────────────────────────────
   const fetchSettings = useCallback(async () => {
-    const res = await fetch('/api/admin/settings');
+    const res = await fetch("/api/admin/settings");
     if (res.ok) {
       const s: RestaurantSettings = await res.json();
       setSettings(s);
-      setEditDepositPerGuest(String(Math.round((s.depositPerGuestCents ?? 2000) / 100)));
+      setEditDepositPerGuest(
+        String(Math.round((s.depositPerGuestCents ?? 2000) / 100)),
+      );
       setEditMealDuration(s.mealDuration);
       setEditSlots(s.openingSlots);
       setEditDays(s.openingDays);
@@ -233,28 +377,39 @@ export default function AdminReservationsPage() {
 
   const fetchCalendar = useCallback(async () => {
     setCalendarLoading(true);
-    const res = await fetch(`/api/admin/calendar?from=${calendarStart}&days=${calendarDaysCount}`);
-    if (res.status === 401) { router.push('/admin/login'); return; }
+    const res = await fetch(
+      `/api/admin/calendar?from=${calendarStart}&days=${calendarDaysCount}`,
+    );
+    if (res.status === 401) {
+      router.push("/admin/login");
+      return;
+    }
     if (res.ok) setCalendarDays(await res.json());
     setCalendarLoading(false);
   }, [calendarStart, calendarDaysCount, router]);
 
   const fetchTables = useCallback(async () => {
-    const res = await fetch('/api/admin/tables');
+    const res = await fetch("/api/admin/tables");
     if (res.ok) setTables(await res.json());
   }, []);
 
   const fetchDayReservations = useCallback(async (date: string) => {
     setDayLoading(true);
     const res = await fetch(`/api/admin/reservations?date=${date}&page=1`);
-    if (res.ok) setDayReservations((await res.json() as ApiResponse).data);
+    if (res.ok) setDayReservations(((await res.json()) as ApiResponse).data);
     setDayLoading(false);
   }, []);
 
   // ── Effects ──────────────────────────────────────────────────────────────────
-  useEffect(() => { fetchSettings(); }, [fetchSettings]);
-  useEffect(() => { fetchCalendar(); }, [fetchCalendar]);
-  useEffect(() => { fetchTables(); }, [fetchTables]);
+  useEffect(() => {
+    fetchSettings();
+  }, [fetchSettings]);
+  useEffect(() => {
+    fetchCalendar();
+  }, [fetchCalendar]);
+  useEffect(() => {
+    fetchTables();
+  }, [fetchTables]);
 
   // Fetch day reservations when selected date changes
   useEffect(() => {
@@ -269,11 +424,11 @@ export default function AdminReservationsPage() {
     if (!day) return;
     // For past days, show current override in read-only mode
     if (!day.hasOverride) {
-      setOverrideMode('global');
+      setOverrideMode("global");
     } else if (day.override?.closed) {
-      setOverrideMode('closed');
+      setOverrideMode("closed");
     } else {
-      setOverrideMode('custom');
+      setOverrideMode("custom");
       setOverrideSlots(day.override?.openingSlots ?? day.effectiveSlots);
     }
   }, [selectedDate, calendarDays]);
@@ -281,14 +436,23 @@ export default function AdminReservationsPage() {
   // ── Actions ───────────────────────────────────────────────────────────────────
   const saveSettings = async () => {
     setSavingSettings(true);
-    const res = await fetch('/api/admin/settings', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mealDuration: editMealDuration, openingDays: editDays, openingSlots: editSlots, depositPerGuestCents: Math.max(0, parseInt(editDepositPerGuest, 10) || 0) * 100, daysBeforeReminder: editDaysBeforeReminder }),
+    const res = await fetch("/api/admin/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mealDuration: editMealDuration,
+        openingDays: editDays,
+        openingSlots: editSlots,
+        depositPerGuestCents:
+          Math.max(0, parseInt(editDepositPerGuest, 10) || 0) * 100,
+        daysBeforeReminder: editDaysBeforeReminder,
+      }),
     });
     if (res.status === 409) {
       const data = await res.json();
-      alert(`Impossible d'enregistrer ces paramètres : des réservations actives seraient impactées.\n\n${data.message}\n\nAnnulez-les d'abord.`);
+      alert(
+        `Impossible d'enregistrer ces paramètres : des réservations actives seraient impactées.\n\n${data.message}\n\nAnnulez-les d'abord.`,
+      );
       setSavingSettings(false);
       return;
     }
@@ -306,7 +470,7 @@ export default function AdminReservationsPage() {
 
     // Prevent modification of past days
     if (isPast(selectedDate)) {
-      alert('Impossible de modifier le calendrier d\'un jour déjà passé.');
+      alert("Impossible de modifier le calendrier d'un jour déjà passé.");
       return;
     }
 
@@ -314,41 +478,43 @@ export default function AdminReservationsPage() {
     // Les PENDING_PAYMENT expirés (transactionExpireAt dépassé) sont exclus
     const now = new Date();
     const activeReservations = dayReservations.filter(
-      (r) => r.status === 'CONFIRMED' ||
-        (r.status === 'PENDING_PAYMENT' && (!r.transactionExpireAt || new Date(r.transactionExpireAt) > now))
+      (r) =>
+        r.status === "CONFIRMED" ||
+        (r.status === "PENDING_PAYMENT" &&
+          (!r.transactionExpireAt || new Date(r.transactionExpireAt) > now)),
     );
 
-    if (overrideMode === 'closed' && activeReservations.length > 0) {
+    if (overrideMode === "closed" && activeReservations.length > 0) {
       alert(
-        `Impossible de fermer ce jour : ${activeReservations.length} réservation(s) active(s) en cours.\nAnnulez-les d'abord.`
+        `Impossible de fermer ce jour : ${activeReservations.length} réservation(s) active(s) en cours.\nAnnulez-les d'abord.`,
       );
       return;
     }
 
-    if (overrideMode === 'custom' && activeReservations.length > 0) {
+    if (overrideMode === "custom" && activeReservations.length > 0) {
       const impacted = activeReservations.filter((r) => {
         const d = new Date(r.date);
-        const slotTime = `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
+        const slotTime = `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
         return !overrideSlots.includes(slotTime);
       });
       if (impacted.length > 0) {
         alert(
-          `Impossible de retirer ces créneaux : ${impacted.length} réservation(s) active(s) seraient impactées.\nAnnulez-les d'abord.`
+          `Impossible de retirer ces créneaux : ${impacted.length} réservation(s) active(s) seraient impactées.\nAnnulez-les d'abord.`,
         );
         return;
       }
     }
 
     setSavingOverride(true);
-    if (overrideMode === 'global') {
-      await fetch(`/api/admin/overrides/${selectedDate}`, { method: 'DELETE' });
+    if (overrideMode === "global") {
+      await fetch(`/api/admin/overrides/${selectedDate}`, { method: "DELETE" });
     } else {
       await fetch(`/api/admin/overrides/${selectedDate}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          closed: overrideMode === 'closed',
-          openingSlots: overrideMode === 'custom' ? overrideSlots : null,
+          closed: overrideMode === "closed",
+          openingSlots: overrideMode === "custom" ? overrideSlots : null,
         }),
       });
     }
@@ -358,46 +524,72 @@ export default function AdminReservationsPage() {
     fetchCalendar();
   };
 
-  const updateStatus = async (id: string, status: ReservationStatus, refreshDay?: string) => {
+  const updateStatus = async (
+    id: string,
+    status: ReservationStatus,
+    refreshDay?: string,
+  ) => {
     // Ne pas autoriser la modification des réservations EXPIRED (PENDING_PAYMENT avec transactionExpireAt dépassé)
-    const reservation = dayReservations.find(r => r.id === id);
-    const isExpired = reservation?.status === 'PENDING_PAYMENT' && reservation?.transactionExpireAt && new Date(reservation.transactionExpireAt) < new Date();
-    if (isExpired && status !== 'CANCELLED') {
-      alert('Impossible de modifier une réservation expirée. Elle doit être annulée.');
+    const reservation = dayReservations.find((r) => r.id === id);
+    const isExpired =
+      reservation?.status === "PENDING_PAYMENT" &&
+      reservation?.transactionExpireAt &&
+      new Date(reservation.transactionExpireAt) < new Date();
+    if (isExpired && status !== "CANCELLED") {
+      alert(
+        "Impossible de modifier une réservation expirée. Elle doit être annulée.",
+      );
       return;
     }
-    await fetch('/api/admin/reservations', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch("/api/admin/reservations", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, status }),
     });
-    if (refreshDay) { fetchDayReservations(refreshDay); fetchCalendar(); }
+    if (refreshDay) {
+      fetchDayReservations(refreshDay);
+      fetchCalendar();
+    }
   };
 
   const toggleSlot = (slot: string) =>
-    setEditSlots((p) => p.includes(slot) ? p.filter((s) => s !== slot) : [...p, slot].sort());
+    setEditSlots((p) =>
+      p.includes(slot) ? p.filter((s) => s !== slot) : [...p, slot].sort(),
+    );
 
   const toggleService = (svc: string[]) => {
     const all = svc.every((s) => editSlots.includes(s));
-    setEditSlots((p) => all ? p.filter((s) => !svc.includes(s)) : [...new Set([...p, ...svc])].sort());
+    setEditSlots((p) =>
+      all
+        ? p.filter((s) => !svc.includes(s))
+        : [...new Set([...p, ...svc])].sort(),
+    );
   };
 
   const toggleOverrideSlot = (slot: string) =>
-    setOverrideSlots((p) => p.includes(slot) ? p.filter((s) => s !== slot) : [...p, slot].sort());
+    setOverrideSlots((p) =>
+      p.includes(slot) ? p.filter((s) => s !== slot) : [...p, slot].sort(),
+    );
 
   const toggleOverrideService = (svc: string[]) => {
     const all = svc.every((s) => overrideSlots.includes(s));
-    setOverrideSlots((p) => all ? p.filter((s) => !svc.includes(s)) : [...new Set([...p, ...svc])].sort());
+    setOverrideSlots((p) =>
+      all
+        ? p.filter((s) => !svc.includes(s))
+        : [...new Set([...p, ...svc])].sort(),
+    );
   };
 
   // ── Derived ───────────────────────────────────────────────────────────────────
   const weeks = useMemo<DayInfo[][]>(() => {
     const rows: DayInfo[][] = [];
-    for (let i = 0; i < calendarDays.length; i += 7) rows.push(calendarDays.slice(i, i + 7));
+    for (let i = 0; i < calendarDays.length; i += 7)
+      rows.push(calendarDays.slice(i, i + 7));
     return rows;
   }, [calendarDays]);
 
-  const selectedDayInfo = calendarDays.find((d) => d.date === selectedDate) ?? null;
+  const selectedDayInfo =
+    calendarDays.find((d) => d.date === selectedDate) ?? null;
 
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
@@ -408,14 +600,26 @@ export default function AdminReservationsPage() {
         {/* ── Header ── */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">Réservations</h1>
-            <p className="text-muted-foreground mt-1">Gestion des réservations et disponibilités</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+              Réservations
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Gestion des réservations et disponibilités
+            </p>
           </div>
           <div className="mt-4 md:mt-0 flex flex-wrap gap-3 items-center">
-            <Button variant={showSettings ? 'default' : 'outline'} size="sm"
+            <Button
+              variant={showSettings ? "default" : "outline"}
+              size="sm"
               onClick={() => setShowSettings((v) => !v)}
-              className={showSettings ? 'bg-primary/20 text-primary border-primary/40' : 'border-primary/30 text-foreground'}>
-              <Settings size={14} className="mr-1" />Paramètres
+              className={
+                showSettings
+                  ? "bg-primary/20 text-primary border-primary/40"
+                  : "border-primary/30 text-foreground"
+              }
+            >
+              <Settings size={14} className="mr-1" />
+              Paramètres
             </Button>
           </div>
         </div>
@@ -424,26 +628,65 @@ export default function AdminReservationsPage() {
         {showSettings && (
           <div className="bg-card border border-primary/20 rounded-xl p-6 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-primary" style={{ fontFamily: 'var(--font-display)' }}>
+              <h2
+                className="text-base font-semibold text-primary"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
                 Paramètres globaux
               </h2>
-              <Button variant="ghost" size="sm"
-                onClick={() => { if (settings) { setEditDepositPerGuest(String(Math.round((settings.depositPerGuestCents ?? 2000) / 100))); setEditMealDuration(settings.mealDuration); setEditSlots(settings.openingSlots); setEditDays(settings.openingDays); setEditDaysBeforeReminder(settings.daysBeforeReminder ?? 1); } setShowSettings(false); }}
-                className="text-muted-foreground hover:text-foreground"><X size={14} /></Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (settings) {
+                    setEditDepositPerGuest(
+                      String(
+                        Math.round(
+                          (settings.depositPerGuestCents ?? 2000) / 100,
+                        ),
+                      ),
+                    );
+                    setEditMealDuration(settings.mealDuration);
+                    setEditSlots(settings.openingSlots);
+                    setEditDays(settings.openingDays);
+                    setEditDaysBeforeReminder(settings.daysBeforeReminder ?? 1);
+                  }
+                  setShowSettings(false);
+                }}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X size={14} />
+              </Button>
             </div>
 
             {/* Opening days */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Jours d&apos;ouverture</label>
-              <p className="text-xs text-muted-foreground">Jours habituellement ouverts (surchargeable jour par jour).</p>
+              <label className="text-sm font-medium">
+                Jours d&apos;ouverture
+              </label>
+              <p className="text-xs text-muted-foreground">
+                Jours habituellement ouverts (surchargeable jour par jour).
+              </p>
               <div className="flex gap-1.5 flex-wrap">
                 {WEEK_ORDER.map((dow) => {
                   const active = editDays.includes(dow);
                   return (
-                    <button key={dow} type="button"
-                      onClick={() => setEditDays((p) => p.includes(dow) ? p.filter((d) => d !== dow) : [...p, dow])}
-                      className={`px-3 py-1.5 rounded border text-xs font-medium transition-colors ${active ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                        }`}>
+                    <button
+                      key={dow}
+                      type="button"
+                      onClick={() =>
+                        setEditDays((p) =>
+                          p.includes(dow)
+                            ? p.filter((d) => d !== dow)
+                            : [...p, dow],
+                        )
+                      }
+                      className={`px-3 py-1.5 rounded border text-xs font-medium transition-colors ${
+                        active
+                          ? "bg-primary/20 border-primary/50 text-primary"
+                          : "bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                      }`}
+                    >
                       {DAYS_SHORT[dow]}
                     </button>
                   );
@@ -454,35 +697,60 @@ export default function AdminReservationsPage() {
             {/* Deposit per guest */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Acompte par couvert</label>
-              <p className="text-xs text-muted-foreground">Montant en euros débité au moment de la réservation, déduit de l’addition le soir de la venue.</p>
+              <p className="text-xs text-muted-foreground">
+                Montant en euros débité au moment de la réservation, déduit de
+                l’addition le soir de la venue.
+              </p>
               <div className="flex items-center gap-2">
                 <Input
-                  type="number" min={0} max={500}
+                  type="number"
+                  min={0}
+                  max={500}
                   value={editDepositPerGuest}
                   onChange={(e) => {
-                    const raw = e.target.value.replace(/[^0-9]/g, '');
+                    const raw = e.target.value.replace(/[^0-9]/g, "");
                     setEditDepositPerGuest(raw);
                   }}
-                  className={`w-32 bg-background/30 border-primary/30 text-foreground${editDepositPerGuest !== '' && (isNaN(Number(editDepositPerGuest)) || Number(editDepositPerGuest) < 0 || Number(editDepositPerGuest) > 500)
-                    ? ' border-destructive'
-                    : ''
-                    }`} />
-                <span className="text-sm text-muted-foreground">€ / couvert</span>
+                  className={`w-32 bg-background/30 border-primary/30 text-foreground${
+                    editDepositPerGuest !== "" &&
+                    (isNaN(Number(editDepositPerGuest)) ||
+                      Number(editDepositPerGuest) < 0 ||
+                      Number(editDepositPerGuest) > 500)
+                      ? " border-destructive"
+                      : ""
+                  }`}
+                />
+                <span className="text-sm text-muted-foreground">
+                  € / couvert
+                </span>
               </div>
             </div>
             {/* Meal duration */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Durée d&apos;un repas</label>
-              <p className="text-xs text-muted-foreground">Détermine la durée d&apos;occupation d&apos;un créneau par réservation.</p>
+              <label className="text-sm font-medium">
+                Durée d&apos;un repas
+              </label>
+              <p className="text-xs text-muted-foreground">
+                Détermine la durée d&apos;occupation d&apos;un créneau par
+                réservation.
+              </p>
               <div className="flex gap-1.5 flex-wrap">
                 {[30, 60, 90, 120, 150, 180].map((mins) => (
-                  <button key={mins} type="button"
+                  <button
+                    key={mins}
+                    type="button"
                     onClick={() => setEditMealDuration(mins)}
-                    className={`px-3 py-1.5 rounded border text-xs font-medium transition-colors ${editMealDuration === mins
-                      ? 'bg-primary/20 border-primary/50 text-primary'
-                      : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                      }`}>
-                    {mins < 60 ? `${mins}min` : mins % 60 === 0 ? `${mins / 60}h` : `${Math.floor(mins / 60)}h${String(mins % 60).padStart(2, '0')}`}
+                    className={`px-3 py-1.5 rounded border text-xs font-medium transition-colors ${
+                      editMealDuration === mins
+                        ? "bg-primary/20 border-primary/50 text-primary"
+                        : "bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    }`}
+                  >
+                    {mins < 60
+                      ? `${mins}min`
+                      : mins % 60 === 0
+                        ? `${mins / 60}h`
+                        : `${Math.floor(mins / 60)}h${String(mins % 60).padStart(2, "0")}`}
                   </button>
                 ))}
               </div>
@@ -490,44 +758,84 @@ export default function AdminReservationsPage() {
             {/* Days before reminder */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Jours avant rappel</label>
-              <p className="text-xs text-muted-foreground">Nombre de jours avant la réservation pour envoyer un email/SMS de rappel.</p>
+              <p className="text-xs text-muted-foreground">
+                Nombre de jours avant la réservation pour envoyer un email/SMS
+                de rappel.
+              </p>
               <div className="flex gap-1.5 flex-wrap">
                 {[0, 1, 2, 3, 7].map((days) => (
-                  <button key={days} type="button"
+                  <button
+                    key={days}
+                    type="button"
                     onClick={() => setEditDaysBeforeReminder(days)}
-                    className={`px-3 py-1.5 rounded border text-xs font-medium transition-colors ${editDaysBeforeReminder === days
-                      ? 'bg-primary/20 border-primary/50 text-primary'
-                      : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                      }`}>
-                    {days === 0 ? 'Aujourd\'hui' : days === 1 ? 'Demain' : `${days} jours`}
+                    className={`px-3 py-1.5 rounded border text-xs font-medium transition-colors ${
+                      editDaysBeforeReminder === days
+                        ? "bg-primary/20 border-primary/50 text-primary"
+                        : "bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    }`}
+                  >
+                    {days === 0
+                      ? "Aujourd'hui"
+                      : days === 1
+                        ? "Demain"
+                        : `${days} jours`}
                   </button>
                 ))}
               </div>
             </div>
             {/* Opening slots */}
             <div className="space-y-3">
-              <label className="text-sm font-medium">Horaires d&apos;ouverture</label>
-              <p className="text-xs text-muted-foreground">Créneaux proposés lors d&apos;une journée normale.</p>
+              <label className="text-sm font-medium">
+                Horaires d&apos;ouverture
+              </label>
+              <p className="text-xs text-muted-foreground">
+                Créneaux proposés lors d&apos;une journée normale.
+              </p>
               <div className="grid sm:grid-cols-2 gap-6">
                 {Object.entries(ALL_SLOTS).map(([service, slots]) => {
                   const allSel = slots.every((s) => editSlots.includes(s));
                   const someSel = slots.some((s) => editSlots.includes(s));
                   return (
                     <div key={service} className="space-y-2">
-                      <button type="button" onClick={() => toggleService(slots)}
-                        className="flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wide hover:opacity-80 transition-opacity">
-                        <span className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${allSel ? 'bg-primary border-primary' : someSel ? 'bg-primary/40 border-primary/40' : 'border-primary/40'
-                          }`}>
-                          {(allSel || someSel) && <CheckSquare size={10} className="text-background" />}
-                        </span>{service}
+                      <button
+                        type="button"
+                        onClick={() => toggleService(slots)}
+                        className="flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wide hover:opacity-80 transition-opacity"
+                      >
+                        <span
+                          className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${
+                            allSel
+                              ? "bg-primary border-primary"
+                              : someSel
+                                ? "bg-primary/40 border-primary/40"
+                                : "border-primary/40"
+                          }`}
+                        >
+                          {(allSel || someSel) && (
+                            <CheckSquare
+                              size={10}
+                              className="text-background"
+                            />
+                          )}
+                        </span>
+                        {service}
                       </button>
                       <div className="grid grid-cols-4 gap-1.5">
                         {slots.map((slot) => {
                           const active = editSlots.includes(slot);
                           return (
-                            <button key={slot} type="button" onClick={() => toggleSlot(slot)}
-                              className={`text-xs px-2 py-1.5 rounded border transition-colors ${active ? 'bg-primary/20 border-primary/50 text-primary font-medium' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                                }`}>{slot}</button>
+                            <button
+                              key={slot}
+                              type="button"
+                              onClick={() => toggleSlot(slot)}
+                              className={`text-xs px-2 py-1.5 rounded border transition-colors ${
+                                active
+                                  ? "bg-primary/20 border-primary/50 text-primary font-medium"
+                                  : "bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                              }`}
+                            >
+                              {slot}
+                            </button>
                           );
                         })}
                       </div>
@@ -536,20 +844,41 @@ export default function AdminReservationsPage() {
                 })}
               </div>
               <p className="text-xs text-muted-foreground">
-                {editSlots.length} créneau{editSlots.length !== 1 ? 'x' : ''} &middot; {editDays.length} jour{editDays.length !== 1 ? 's' : ''}/semaine
+                {editSlots.length} créneau{editSlots.length !== 1 ? "x" : ""}{" "}
+                &middot; {editDays.length} jour
+                {editDays.length !== 1 ? "s" : ""}/semaine
               </p>
             </div>
 
             <div className="flex items-center gap-3 pt-2 border-t border-primary/10">
-              <Button onClick={saveSettings} disabled={savingSettings || editDepositPerGuest === '' || isNaN(Number(editDepositPerGuest)) || Number(editDepositPerGuest) < 0 || Number(editDepositPerGuest) > 500}
-                className="bg-primary/20 text-primary border border-primary/40 hover:bg-primary/30" size="sm">
-                {savingSettings ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Save size={14} className="mr-1.5" />}
-                {settingsSaved ? 'Enregistré ✓' : 'Enregistrer'}
+              <Button
+                onClick={saveSettings}
+                disabled={
+                  savingSettings ||
+                  editDepositPerGuest === "" ||
+                  isNaN(Number(editDepositPerGuest)) ||
+                  Number(editDepositPerGuest) < 0 ||
+                  Number(editDepositPerGuest) > 500
+                }
+                className="bg-primary/20 text-primary border border-primary/40 hover:bg-primary/30"
+                size="sm"
+              >
+                {savingSettings ? (
+                  <Loader2 size={14} className="mr-1.5 animate-spin" />
+                ) : (
+                  <Save size={14} className="mr-1.5" />
+                )}
+                {settingsSaved ? "Enregistré ✓" : "Enregistrer"}
               </Button>
               {settings && (
                 <span className="text-xs text-muted-foreground">
                   Actuellement : {settings.openingDays.length}j/sem &middot;
-                  {settings.mealDuration < 60 ? `${settings.mealDuration}min` : settings.mealDuration % 60 === 0 ? `${settings.mealDuration / 60}h` : `${Math.floor(settings.mealDuration / 60)}h${String(settings.mealDuration % 60).padStart(2, '0')}`}/repas &middot;
+                  {settings.mealDuration < 60
+                    ? `${settings.mealDuration}min`
+                    : settings.mealDuration % 60 === 0
+                      ? `${settings.mealDuration / 60}h`
+                      : `${Math.floor(settings.mealDuration / 60)}h${String(settings.mealDuration % 60).padStart(2, "0")}`}
+                  /repas &middot;
                   {settings.openingSlots.length} créneaux
                 </span>
               )}
@@ -559,26 +888,67 @@ export default function AdminReservationsPage() {
 
         {/* ══ Calendar View ══════════════════════════════════════════════════════ */}
         <div className="space-y-4 mt-6">
-
           {/* Navigation */}
           <div className="flex items-center gap-2 flex-wrap">
-            <Button variant="outline" size="sm"
-              onClick={() => setCurrentMonth((m) => m.month === 0 ? { year: m.year - 1, month: 11 } : { year: m.year, month: m.month - 1 })}
-              className="border-primary/30 text-foreground"><ChevronLeft size={15} /></Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setCurrentMonth((m) =>
+                  m.month === 0
+                    ? { year: m.year - 1, month: 11 }
+                    : { year: m.year, month: m.month - 1 },
+                )
+              }
+              className="border-primary/30 text-foreground"
+            >
+              <ChevronLeft size={15} />
+            </Button>
             <span className="text-sm font-medium text-foreground min-w-[160px] text-center capitalize">
               {MONTHS_FULL[currentMonth.month]} {currentMonth.year}
             </span>
-            <Button variant="outline" size="sm"
-              onClick={() => setCurrentMonth((m) => m.month === 11 ? { year: m.year + 1, month: 0 } : { year: m.year, month: m.month + 1 })}
-              className="border-primary/30 text-foreground"><ChevronRight size={15} /></Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setCurrentMonth((m) =>
+                  m.month === 11
+                    ? { year: m.year + 1, month: 0 }
+                    : { year: m.year, month: m.month + 1 },
+                )
+              }
+              className="border-primary/30 text-foreground"
+            >
+              <ChevronRight size={15} />
+            </Button>
             <div className="flex gap-1 ml-auto">
-              <Button variant="ghost" size="sm" onClick={() => { const n = new Date(); setCurrentMonth({ year: n.getFullYear(), month: n.getMonth() }); setSelectedDate(null); }}
-                className="text-muted-foreground hover:text-foreground text-xs">
-                <House size={11} className="mr-1" />Aujourd&apos;hui
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  const n = new Date();
+                  setCurrentMonth({
+                    year: n.getFullYear(),
+                    month: n.getMonth(),
+                  });
+                  setSelectedDate(null);
+                }}
+                className="text-muted-foreground hover:text-foreground text-xs"
+              >
+                <House size={11} className="mr-1" />
+                Aujourd&apos;hui
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => { fetchCalendar(); if (selectedDate) fetchDayReservations(selectedDate); }}
-                className="text-muted-foreground hover:text-foreground text-xs">
-                <RotateCw size={11} className="mr-1" />Actualiser
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  fetchCalendar();
+                  if (selectedDate) fetchDayReservations(selectedDate);
+                }}
+                className="text-muted-foreground hover:text-foreground text-xs"
+              >
+                <RotateCw size={11} className="mr-1" />
+                Actualiser
               </Button>
             </div>
           </div>
@@ -586,7 +956,10 @@ export default function AdminReservationsPage() {
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-1">
             {WEEK_ORDER.map((dow) => (
-              <div key={dow} className="text-center text-xs font-medium text-muted-foreground py-1">
+              <div
+                key={dow}
+                className="text-center text-xs font-medium text-muted-foreground py-1"
+              >
                 {DAYS_SHORT[dow]}
               </div>
             ))}
@@ -594,7 +967,9 @@ export default function AdminReservationsPage() {
 
           {/* Grid */}
           {calendarLoading ? (
-            <div className="flex justify-center py-16"><Loader2 size={28} className="animate-spin text-primary" /></div>
+            <div className="flex justify-center py-16">
+              <Loader2 size={28} className="animate-spin text-primary" />
+            </div>
           ) : (
             <div className="space-y-1 max-w-7xl mx-auto">
               {weeks.map((week, wi) => (
@@ -602,32 +977,47 @@ export default function AdminReservationsPage() {
                   {week.map((day) => {
                     const today = isToday(day.date);
                     const selected = day.date === selectedDate;
-                    const fillPct = day.totalCapacity > 0
-                      ? Math.min(100, Math.round((day.reservedGuests / day.totalCapacity) * 100))
-                      : 0;
+                    const fillPct =
+                      day.totalCapacity > 0
+                        ? Math.min(
+                            100,
+                            Math.round(
+                              (day.reservedGuests / day.totalCapacity) * 100,
+                            ),
+                          )
+                        : 0;
                     const almostFull = fillPct >= 75;
                     const full = fillPct >= 100;
 
                     const past = isPast(day.date);
                     return (
-                      <button key={day.date} type="button"
-                        onClick={() => setSelectedDate(selected ? null : day.date)}
-                        className={`relative p-2 rounded-lg border text-left transition-all min-h-[96px] flex flex-col ${selected
-                          ? 'border-primary bg-primary/10 ring-1 ring-primary/30'
-                          : past
-                            ? 'border-primary/10 bg-muted/30 opacity-60'
-                            : today
-                              ? 'border-primary/40 bg-primary/5'
-                              : 'border-primary/10 bg-card hover:border-primary/30 hover:bg-card/80'
-                          }`}>
-
+                      <button
+                        key={day.date}
+                        type="button"
+                        onClick={() =>
+                          setSelectedDate(selected ? null : day.date)
+                        }
+                        className={`relative p-2 rounded-lg border text-left transition-all min-h-[96px] flex flex-col ${
+                          selected
+                            ? "border-primary bg-primary/10 ring-1 ring-primary/30"
+                            : past
+                              ? "border-primary/10 bg-muted/30 opacity-60"
+                              : today
+                                ? "border-primary/40 bg-primary/5"
+                                : "border-primary/10 bg-card hover:border-primary/30 hover:bg-card/80"
+                        }`}
+                      >
                         {/* Date */}
                         <div className="flex items-center justify-between mb-1">
-                          <span className={`text-xs font-semibold ${today ? 'text-primary' : 'text-foreground/80'}`}>
+                          <span
+                            className={`text-xs font-semibold ${today ? "text-primary" : "text-foreground/80"}`}
+                          >
                             {formatCardDate(day.date)}
                           </span>
                           {day.hasOverride && (
-                            <span className="text-[9px] px-1 py-0.5 rounded bg-amber-600/20 text-amber-400 border border-amber-600/30 leading-none">&#10033;</span>
+                            <span className="text-[9px] px-1 py-0.5 rounded bg-amber-600/20 text-amber-400 border border-amber-600/30 leading-none">
+                              &#10033;
+                            </span>
                           )}
                         </div>
 
@@ -641,16 +1031,21 @@ export default function AdminReservationsPage() {
                             )}
                             {day.dinnerOpen && (
                               <div className="text-[10px] text-muted-foreground leading-tight">
-                                &#127769; {day.dinnerOpen}&ndash;{day.dinnerClose}
+                                &#127769; {day.dinnerOpen}&ndash;
+                                {day.dinnerClose}
                               </div>
                             )}
                             {day.totalCapacity > 0 && (
                               <div className="mt-auto pt-1.5 space-y-0.5">
                                 <div className="w-full h-1 rounded-full bg-primary/10 overflow-hidden">
-                                  <div className={`h-full rounded-full ${full ? 'bg-red-500' : almostFull ? 'bg-amber-500' : 'bg-green-500'}`}
-                                    style={{ width: `${fillPct}%` }} />
+                                  <div
+                                    className={`h-full rounded-full ${full ? "bg-red-500" : almostFull ? "bg-amber-500" : "bg-green-500"}`}
+                                    style={{ width: `${fillPct}%` }}
+                                  />
                                 </div>
-                                <div className={`text-[10px] ${full ? 'text-red-400' : almostFull ? 'text-amber-400' : 'text-muted-foreground'}`}>
+                                <div
+                                  className={`text-[10px] ${full ? "text-red-400" : almostFull ? "text-amber-400" : "text-muted-foreground"}`}
+                                >
                                   {day.reservedGuests}/{day.totalCapacity} cvrt
                                 </div>
                               </div>
@@ -658,7 +1053,9 @@ export default function AdminReservationsPage() {
                           </div>
                         ) : (
                           <div className="flex-1 flex items-center justify-center">
-                            <span className="text-[10px] text-muted-foreground/40 uppercase tracking-wider">Fermé</span>
+                            <span className="text-[10px] text-muted-foreground/40 uppercase tracking-wider">
+                              Fermé
+                            </span>
                           </div>
                         )}
                       </button>
@@ -670,347 +1067,600 @@ export default function AdminReservationsPage() {
           )}
 
           {/* ── Day detail panel ── */}
-          {selectedDate && selectedDayInfo && (() => {
-            const past = isPast(selectedDate);
-            return (
-              <div className="bg-card border border-primary/20 rounded-xl overflow-hidden mt-4">
-
-                {/* Header */}
-                <div className="px-5 py-4 border-b border-primary/10 flex items-center justify-between bg-card/50">
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <h2 className="text-lg font-semibold capitalize" style={{ fontFamily: 'var(--font-display)' }}>
-                      {formatFullDate(selectedDate)}
-                    </h2>
-                    <span className={`text-xs px-2 py-0.5 rounded border ${selectedDayInfo.effectiveOpen
-                      ? 'bg-green-600/20 text-green-400 border-green-600/30'
-                      : 'bg-red-600/20 text-red-400 border-red-600/30'
-                      }`}>
-                      {selectedDayInfo.effectiveOpen ? 'OUVERT' : 'FERMÉ'}
-                    </span>
-                    {selectedDayInfo.hasOverride && (
-                      <span className="text-xs px-2 py-0.5 rounded border bg-amber-600/20 text-amber-400 border-amber-600/30">
-                        Override actif
+          {selectedDate &&
+            selectedDayInfo &&
+            (() => {
+              const past = isPast(selectedDate);
+              return (
+                <div className="bg-card border border-primary/20 rounded-xl overflow-hidden mt-4">
+                  {/* Header */}
+                  <div className="px-5 py-4 border-b border-primary/10 flex items-center justify-between bg-card/50">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <h2
+                        className="text-lg font-semibold capitalize"
+                        style={{ fontFamily: "var(--font-display)" }}
+                      >
+                        {formatFullDate(selectedDate)}
+                      </h2>
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded border ${
+                          selectedDayInfo.effectiveOpen
+                            ? "bg-green-600/20 text-green-400 border-green-600/30"
+                            : "bg-red-600/20 text-red-400 border-red-600/30"
+                        }`}
+                      >
+                        {selectedDayInfo.effectiveOpen ? "OUVERT" : "FERMÉ"}
                       </span>
-                    )}
-                    {selectedDayInfo.effectiveOpen && (
-                      <span className="text-xs text-muted-foreground">
-                        {selectedDayInfo.reservedGuests} / {selectedDayInfo.totalCapacity} couverts réservés
-                      </span>
-                    )}
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={() => setSelectedDate(null)}
-                    className="text-muted-foreground hover:text-foreground flex-shrink-0"><X size={14} /></Button>
-                </div>
-
-                <div className="grid lg:grid-cols-[360px_1fr] divide-y lg:divide-y-0 lg:divide-x divide-primary/10">
-
-                  {/* ── Override panel ── */}
-                  <div className="p-5 space-y-4">
-                    <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">Override du jour</h3>
-
-                    <div className="flex flex-col gap-1.5">
-                      {([
-                        { mode: 'global' as const, label: 'Suivre les paramètres globaux', emoji: '🌐' },
-                        { mode: 'closed' as const, label: 'Fermer ce jour', emoji: '🔒' },
-                        { mode: 'custom' as const, label: 'Horaires personnalisés', emoji: '✏️' },
-                      ]).map(({ mode, label, emoji }) => (
-                        <button key={mode} type="button"
-                          disabled={past}
-                          onClick={() => {
-                            if (mode === 'custom' && overrideMode !== 'custom') {
-                              setOverrideSlots(selectedDayInfo.effectiveSlots);
-                            }
-                            setOverrideMode(mode);
-                          }}
-                          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm transition-colors text-left ${past
-                            ? 'opacity-50 cursor-not-allowed'
-                            : overrideMode === mode
-                              ? 'bg-primary/15 border-primary/40 text-primary'
-                              : 'border-primary/10 text-muted-foreground hover:border-primary/30 hover:text-foreground'
-                            }`}>
-                          <span className="w-5 text-center text-base">{emoji}</span>{label}
-                          {overrideMode === mode && <span className="ml-auto text-primary text-xs">✓</span>}
-                        </button>
-                      ))}
+                      {selectedDayInfo.hasOverride && (
+                        <span className="text-xs px-2 py-0.5 rounded border bg-amber-600/20 text-amber-400 border-amber-600/30">
+                          Override actif
+                        </span>
+                      )}
+                      {selectedDayInfo.effectiveOpen && (
+                        <span className="text-xs text-muted-foreground">
+                          {selectedDayInfo.reservedGuests} /{" "}
+                          {selectedDayInfo.totalCapacity} couverts réservés
+                        </span>
+                      )}
                     </div>
-
-                    {(overrideMode === 'custom' || overrideMode === 'closed') && (
-                      <div className="space-y-4 pt-1">
-                        <div className="space-y-2">
-                          <label className="text-xs font-medium">Créneaux</label>
-                          <div className="space-y-3">
-                            {Object.entries(ALL_SLOTS).map(([service, slots]) => {
-                              const allSel = slots.every((s) => overrideSlots.includes(s));
-                              const someSel = slots.some((s) => overrideSlots.includes(s));
-                              return (
-                                <div key={service} className="space-y-1.5">
-                                  <button type="button" onClick={() => toggleOverrideService(slots)}
-                                    disabled={past}
-                                    className={`flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wide ${past ? 'opacity-50' : 'hover:opacity-80'}`}>
-                                    <span className={`w-3 h-3 rounded border flex items-center justify-center ${allSel ? 'bg-primary border-primary' : someSel ? 'bg-primary/40 border-primary/40' : 'border-primary/40'
-                                      }`}>
-                                      {(allSel || someSel) && <CheckSquare size={8} className="text-background" />}
-                                    </span>{service}
-                                  </button>
-                                  <div className="grid grid-cols-4 gap-1">
-                                    {slots.map((slot) => {
-                                      const active = overrideSlots.includes(slot);
-                                      return (
-                                        <button key={slot} type="button" onClick={() => toggleOverrideSlot(slot)}
-                                          disabled={past}
-                                          className={`text-xs px-1.5 py-1 rounded border transition-colors ${past
-                                            ? 'opacity-50 cursor-not-allowed'
-                                            : active ? 'bg-primary/20 border-primary/50 text-primary font-medium' : 'bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40'
-                                            }`}>{slot}</button>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                          <p className="text-xs text-muted-foreground">{overrideSlots.length} créneau{overrideSlots.length !== 1 ? 'x' : ''}</p>
-                        </div>
-                      </div>
-                    )}
-
-                    {overrideMode === 'closed' && (
-                      <div className="flex items-start gap-2 text-xs text-red-400/80 bg-red-600/10 border border-red-600/20 rounded-lg px-3 py-2.5">
-                        <AlertTriangle size={13} className="mt-0.5 flex-shrink-0" />
-                        Ce jour sera fermé quelle que soit la configuration globale.
-                      </div>
-                    )}
-
-                    {overrideMode === 'global' && selectedDayInfo.hasOverride && (
-                      <div className="flex items-start gap-2 text-xs text-muted-foreground bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5">
-                        <RotateCcw size={13} className="mt-0.5 flex-shrink-0" />
-                        Enregistrer supprimera l&apos;override et restaurera les paramètres globaux.
-                      </div>
-                    )}
-
-                    {past && (
-                      <div className="flex items-start gap-2 text-xs text-muted-foreground/80 bg-muted/30 border border-primary/10 rounded-lg px-3 py-2.5">
-                        <AlertTriangle size={13} className="mt-0.5 flex-shrink-0" />
-                        Ce jour est déjà passé. L&apos;override ne peut plus être modifié, mais vous pouvez annuler les réservations.
-                      </div>
-                    )}
-
-                    <Button onClick={saveOverride} disabled={savingOverride || past}
-                      className={`w-full bg-primary/20 text-primary border border-primary/40 hover:bg-primary/30 ${past ? 'opacity-50 cursor-not-allowed' : ''}`} size="sm">
-                      {savingOverride ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Save size={14} className="mr-1.5" />}
-                      {overrideSaved ? 'Enregistré ✓' : 'Enregistrer'}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedDate(null)}
+                      className="text-muted-foreground hover:text-foreground flex-shrink-0"
+                    >
+                      <X size={14} />
                     </Button>
                   </div>
 
-                  {/* ── Reservations ── */}
-                  <div className="p-5 space-y-4">
-                    <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">
-                      Réservations ({selectedDayInfo.reservationCount})
-                    </h3>
+                  <div className="grid lg:grid-cols-[360px_1fr] divide-y lg:divide-y-0 lg:divide-x divide-primary/10">
+                    {/* ── Override panel ── */}
+                    <div className="p-5 space-y-4">
+                      <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">
+                        Override du jour
+                      </h3>
 
-                    <Tabs defaultValue="liste">
-                      <TabsList>
-                        <TabsTrigger value="liste">Liste</TabsTrigger>
-                        <TabsTrigger value="schema">Schéma</TabsTrigger>
-                      </TabsList>
+                      <div className="flex flex-col gap-1.5">
+                        {[
+                          {
+                            mode: "global" as const,
+                            label: "Suivre les paramètres globaux",
+                            emoji: "🌐",
+                          },
+                          {
+                            mode: "closed" as const,
+                            label: "Fermer ce jour",
+                            emoji: "🔒",
+                          },
+                          {
+                            mode: "custom" as const,
+                            label: "Horaires personnalisés",
+                            emoji: "✏️",
+                          },
+                        ].map(({ mode, label, emoji }) => (
+                          <button
+                            key={mode}
+                            type="button"
+                            disabled={past}
+                            onClick={() => {
+                              if (
+                                mode === "custom" &&
+                                overrideMode !== "custom"
+                              ) {
+                                setOverrideSlots(
+                                  selectedDayInfo.effectiveSlots,
+                                );
+                              }
+                              setOverrideMode(mode);
+                            }}
+                            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm transition-colors text-left ${
+                              past
+                                ? "opacity-50 cursor-not-allowed"
+                                : overrideMode === mode
+                                  ? "bg-primary/15 border-primary/40 text-primary"
+                                  : "border-primary/10 text-muted-foreground hover:border-primary/30 hover:text-foreground"
+                            }`}
+                          >
+                            <span className="w-5 text-center text-base">
+                              {emoji}
+                            </span>
+                            {label}
+                            {overrideMode === mode && (
+                              <span className="ml-auto text-primary text-xs">
+                                ✓
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
 
-                      <TabsContent value="liste" className="space-y-4 mt-4">
-
-                        {/* Midi section */}
-                        <div>
-                          <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">Déjeuner</h4>
-                          {dayLoading ? (
-                            <div className="flex justify-center py-4"><Loader2 size={18} className="animate-spin text-primary" /></div>
-                          ) : (
-                            <div className="space-y-2">
-                              {dayReservations.filter(r => {
-                                const d = new Date(r.date);
-                                const hour = d.getUTCHours();
-                                return hour >= 12 && hour < 15;
-                              }).length === 0 ? (
-                                <p className="text-xs text-muted-foreground/50 py-3 text-center italic">Aucune réservation à midi</p>
-                              ) : (
-                                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-                                  {dayReservations.filter(r => {
-                                    const d = new Date(r.date);
-                                    const hour = d.getUTCHours();
-                                    return hour >= 12 && hour < 15;
-                                  }).map((r) => (
-                                    <div key={r.id} className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3">
-                                      <div className="flex flex-col items-center gap-1">
-                                        <div className="text-sm font-semibold text-primary tabular-nums min-w-[38px]" title="Créneau réservé">
-                                          {formatTime(r.date)}
-                                        </div>
-                                        <div className="text-[10px] text-muted-foreground/70" title="Heure de réservation">
-                                          {formatTime(r.createdAt)}
-                                        </div>
-                                      </div>
-                                      <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-1.5 flex-wrap">
-                                          <span className="font-medium text-sm">{r.name}</span>
-                                          <span className="text-xs text-muted-foreground">{r.guests} cvrt{r.guests > 1 ? 's' : ''}</span>
-                                          {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && new Date(r.transactionExpireAt) < new Date() ? (
-                                            <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}>
-                                              Expirée
-                                            </span>
-                                          ) : (
-                                            <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}>
-                                              {STATUS_LABELS[r.status]}
-                                            </span>
+                      {(overrideMode === "custom" ||
+                        overrideMode === "closed") && (
+                        <div className="space-y-4 pt-1">
+                          <div className="space-y-2">
+                            <label className="text-xs font-medium">
+                              Créneaux
+                            </label>
+                            <div className="space-y-3">
+                              {Object.entries(ALL_SLOTS).map(
+                                ([service, slots]) => {
+                                  const allSel = slots.every((s) =>
+                                    overrideSlots.includes(s),
+                                  );
+                                  const someSel = slots.some((s) =>
+                                    overrideSlots.includes(s),
+                                  );
+                                  return (
+                                    <div key={service} className="space-y-1.5">
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          toggleOverrideService(slots)
+                                        }
+                                        disabled={past}
+                                        className={`flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wide ${past ? "opacity-50" : "hover:opacity-80"}`}
+                                      >
+                                        <span
+                                          className={`w-3 h-3 rounded border flex items-center justify-center ${
+                                            allSel
+                                              ? "bg-primary border-primary"
+                                              : someSel
+                                                ? "bg-primary/40 border-primary/40"
+                                                : "border-primary/40"
+                                          }`}
+                                        >
+                                          {(allSel || someSel) && (
+                                            <CheckSquare
+                                              size={8}
+                                              className="text-background"
+                                            />
                                           )}
-                                        </div>
-                                        <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
-                                        {r.depositPaidCents && (
-                                          <div className="text-xs text-green-400 font-medium mt-0.5">
-                                            &#10004; Acompte: {(r.depositPaidCents / 100).toFixed(2)}€
-                                          </div>
-                                        )}
-                                        {r.specialRequest && (
-                                          <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
-                                        )}
-                                      </div>
-                                      <div className="flex gap-1 flex-shrink-0">
-                                        {r.status === 'CONFIRMED' && (
-                                          <Button size="sm" variant="outline"
-                                            onClick={() => {
-                                              if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
-                                              updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined);
-                                            }}
-                                            className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs">Annuler</Button>
-                                        )}
-                                        {r.status === 'PENDING_PAYMENT' && !r.transactionExpireAt && (
-                                          <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
-                                            En attente
-                                          </span>
-                                        )}
-                                        {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && (
-                                          <span className={`text-[10px] px-2 py-1 rounded border leading-none ${new Date(r.transactionExpireAt) < new Date()
-                                            ? 'bg-red-900/20 text-red-600 border-red-900/30'
-                                            : 'bg-amber-900/20 text-amber-600 border-amber-900/30'
-                                            }`}>
-                                            {new Date(r.transactionExpireAt) < new Date() ? 'Expirée' : 'Expiration: ' + new Date(r.transactionExpireAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                                          </span>
-                                        )}
+                                        </span>
+                                        {service}
+                                      </button>
+                                      <div className="grid grid-cols-4 gap-1">
+                                        {slots.map((slot) => {
+                                          const active =
+                                            overrideSlots.includes(slot);
+                                          return (
+                                            <button
+                                              key={slot}
+                                              type="button"
+                                              onClick={() =>
+                                                toggleOverrideSlot(slot)
+                                              }
+                                              disabled={past}
+                                              className={`text-xs px-1.5 py-1 rounded border transition-colors ${
+                                                past
+                                                  ? "opacity-50 cursor-not-allowed"
+                                                  : active
+                                                    ? "bg-primary/20 border-primary/50 text-primary font-medium"
+                                                    : "bg-background/30 border-primary/20 text-muted-foreground hover:border-primary/40"
+                                              }`}
+                                            >
+                                              {slot}
+                                            </button>
+                                          );
+                                        })}
                                       </div>
                                     </div>
-                                  ))}
-                                </div>
+                                  );
+                                },
                               )}
                             </div>
-                          )}
+                            <p className="text-xs text-muted-foreground">
+                              {overrideSlots.length} créneau
+                              {overrideSlots.length !== 1 ? "x" : ""}
+                            </p>
+                          </div>
                         </div>
+                      )}
 
-                        {/* Soir section */}
-                        <div>
-                          <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">Dîner</h4>
-                          {dayLoading ? (
-                            <div className="flex justify-center py-4"><Loader2 size={18} className="animate-spin text-primary" /></div>
-                          ) : (
-                            <div className="space-y-2">
-                              {dayReservations.filter(r => {
-                                const d = new Date(r.date);
-                                const hour = d.getUTCHours();
-                                return hour >= 19 && hour <= 23;
-                              }).length === 0 ? (
-                                <p className="text-xs text-muted-foreground/50 py-3 text-center italic">Aucune réservation au dîner</p>
-                              ) : (
-                                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-                                  {dayReservations.filter(r => {
-                                    const d = new Date(r.date);
-                                    const hour = d.getUTCHours();
-                                    return hour >= 19 && hour <= 23;
-                                  }).map((r) => (
-                                    <div key={r.id} className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3">
-                                      <div className="flex flex-col items-center gap-1">
-                                        <div className="text-sm font-semibold text-primary tabular-nums min-w-[38px]" title="Créneau réservé">
-                                          {formatTime(r.date)}
-                                        </div>
-                                        <div className="text-[10px] text-muted-foreground/70" title="Heure de réservation">
-                                          {formatTime(r.createdAt)}
-                                        </div>
-                                      </div>
-                                      <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-1.5 flex-wrap">
-                                          <span className="font-medium text-sm">{r.name}</span>
-                                          <span className="text-xs text-muted-foreground">{r.guests} cvrt{r.guests > 1 ? 's' : ''}</span>
-                                          {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && new Date(r.transactionExpireAt) < new Date() ? (
-                                            <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}>
-                                              Expirée
-                                            </span>
-                                          ) : (
-                                            <span className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}>
-                                              {STATUS_LABELS[r.status]}
-                                            </span>
-                                          )}
-                                        </div>
-                                        <div className="text-xs text-muted-foreground truncate">{r.phone} &middot; {r.email}</div>
-                                        {r.depositPaidCents && (
-                                          <div className="text-xs text-green-400 font-medium mt-0.5">
-                                            &#10004; Acompte: {(r.depositPaidCents / 100).toFixed(2)}€
+                      {overrideMode === "closed" && (
+                        <div className="flex items-start gap-2 text-xs text-red-400/80 bg-red-600/10 border border-red-600/20 rounded-lg px-3 py-2.5">
+                          <AlertTriangle
+                            size={13}
+                            className="mt-0.5 flex-shrink-0"
+                          />
+                          Ce jour sera fermé quelle que soit la configuration
+                          globale.
+                        </div>
+                      )}
+
+                      {overrideMode === "global" &&
+                        selectedDayInfo.hasOverride && (
+                          <div className="flex items-start gap-2 text-xs text-muted-foreground bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5">
+                            <RotateCcw
+                              size={13}
+                              className="mt-0.5 flex-shrink-0"
+                            />
+                            Enregistrer supprimera l&apos;override et restaurera
+                            les paramètres globaux.
+                          </div>
+                        )}
+
+                      {past && (
+                        <div className="flex items-start gap-2 text-xs text-muted-foreground/80 bg-muted/30 border border-primary/10 rounded-lg px-3 py-2.5">
+                          <AlertTriangle
+                            size={13}
+                            className="mt-0.5 flex-shrink-0"
+                          />
+                          Ce jour est déjà passé. L&apos;override ne peut plus
+                          être modifié, mais vous pouvez annuler les
+                          réservations.
+                        </div>
+                      )}
+
+                      <Button
+                        onClick={saveOverride}
+                        disabled={savingOverride || past}
+                        className={`w-full bg-primary/20 text-primary border border-primary/40 hover:bg-primary/30 ${past ? "opacity-50 cursor-not-allowed" : ""}`}
+                        size="sm"
+                      >
+                        {savingOverride ? (
+                          <Loader2 size={14} className="mr-1.5 animate-spin" />
+                        ) : (
+                          <Save size={14} className="mr-1.5" />
+                        )}
+                        {overrideSaved ? "Enregistré ✓" : "Enregistrer"}
+                      </Button>
+                    </div>
+
+                    {/* ── Reservations ── */}
+                    <div className="p-5 space-y-4">
+                      <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">
+                        Réservations ({selectedDayInfo.reservationCount})
+                      </h3>
+
+                      <Tabs defaultValue="liste">
+                        <TabsList>
+                          <TabsTrigger value="liste">Liste</TabsTrigger>
+                          <TabsTrigger value="schema">Schéma</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="liste" className="space-y-4 mt-4">
+                          {/* Midi section */}
+                          <div>
+                            <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">
+                              Déjeuner
+                            </h4>
+                            {dayLoading ? (
+                              <div className="flex justify-center py-4">
+                                <Loader2
+                                  size={18}
+                                  className="animate-spin text-primary"
+                                />
+                              </div>
+                            ) : (
+                              <div className="space-y-2">
+                                {dayReservations.filter((r) => {
+                                  const d = new Date(r.date);
+                                  const hour = d.getUTCHours();
+                                  return hour >= 12 && hour < 15;
+                                }).length === 0 ? (
+                                  <p className="text-xs text-muted-foreground/50 py-3 text-center italic">
+                                    Aucune réservation à midi
+                                  </p>
+                                ) : (
+                                  <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                                    {dayReservations
+                                      .filter((r) => {
+                                        const d = new Date(r.date);
+                                        const hour = d.getUTCHours();
+                                        return hour >= 12 && hour < 15;
+                                      })
+                                      .map((r) => (
+                                        <div
+                                          key={r.id}
+                                          className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3"
+                                        >
+                                          <div className="flex flex-col items-center gap-1">
+                                            <div
+                                              className="text-sm font-semibold text-primary tabular-nums min-w-[38px]"
+                                              title="Créneau réservé"
+                                            >
+                                              {formatTime(r.date)}
+                                            </div>
+                                            <div
+                                              className="text-[10px] text-muted-foreground/70"
+                                              title="Heure de réservation"
+                                            >
+                                              {formatTime(r.createdAt)}
+                                            </div>
                                           </div>
-                                        )}
-                                        {r.specialRequest && (
-                                          <div className="text-xs text-amber-400/70 truncate mt-0.5">&#8627; {r.specialRequest}</div>
-                                        )}
-                                      </div>
-                                      <div className="flex gap-1 flex-shrink-0">
-                                        {r.status === 'CONFIRMED' && (
-                                          <Button size="sm" variant="outline"
-                                            onClick={() => {
-                                              if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
-                                              updateStatus(r.id, 'CANCELLED', selectedDate ?? undefined);
-                                            }}
-                                            className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs">Annuler</Button>
-                                        )}
-                                        {r.status === 'PENDING_PAYMENT' && !r.transactionExpireAt && (
-                                          <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
-                                            En attente
-                                          </span>
-                                        )}
-                                        {r.status === 'PENDING_PAYMENT' && r.transactionExpireAt && (
-                                          <span className={`text-[10px] px-2 py-1 rounded border leading-none ${new Date(r.transactionExpireAt) < new Date()
-                                            ? 'bg-red-900/20 text-red-600 border-red-900/30'
-                                            : 'bg-amber-900/20 text-amber-600 border-amber-900/30'
-                                            }`}>
-                                            {new Date(r.transactionExpireAt) < new Date() ? 'Expirée' : 'Expiration: ' + new Date(r.transactionExpireAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                                          </span>
-                                        )}
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </TabsContent>
+                                          <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-1.5 flex-wrap">
+                                              <span className="font-medium text-sm">
+                                                {r.name}
+                                              </span>
+                                              <span className="text-xs text-muted-foreground">
+                                                {r.guests} cvrt
+                                                {r.guests > 1 ? "s" : ""}
+                                              </span>
+                                              {r.status === "PENDING_PAYMENT" &&
+                                              r.transactionExpireAt &&
+                                              new Date(r.transactionExpireAt) <
+                                                new Date() ? (
+                                                <span
+                                                  className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}
+                                                >
+                                                  Expirée
+                                                </span>
+                                              ) : (
+                                                <span
+                                                  className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}
+                                                >
+                                                  {STATUS_LABELS[r.status]}
+                                                </span>
+                                              )}
+                                            </div>
+                                            <div className="text-xs text-muted-foreground truncate">
+                                              {r.phone} &middot; {r.email}
+                                            </div>
+                                            {r.depositPaidCents && (
+                                              <div className="text-xs text-green-400 font-medium mt-0.5">
+                                                &#10004; Acompte:{" "}
+                                                {(
+                                                  r.depositPaidCents / 100
+                                                ).toFixed(2)}
+                                                €
+                                              </div>
+                                            )}
+                                            {r.specialRequest && (
+                                              <div className="text-xs text-amber-400/70 truncate mt-0.5">
+                                                &#8627; {r.specialRequest}
+                                              </div>
+                                            )}
+                                          </div>
+                                          <div className="flex gap-1 flex-shrink-0">
+                                            {r.status === "CONFIRMED" && (
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => {
+                                                  if (
+                                                    !window.confirm(
+                                                      "Êtes-vous sûr de vouloir annuler cette réservation ?",
+                                                    )
+                                                  )
+                                                    return;
+                                                  updateStatus(
+                                                    r.id,
+                                                    "CANCELLED",
+                                                    selectedDate ?? undefined,
+                                                  );
+                                                }}
+                                                className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs"
+                                              >
+                                                Annuler
+                                              </Button>
+                                            )}
+                                            {r.status === "PENDING_PAYMENT" &&
+                                              !r.transactionExpireAt && (
+                                                <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
+                                                  En attente
+                                                </span>
+                                              )}
+                                            {r.status === "PENDING_PAYMENT" &&
+                                              r.transactionExpireAt && (
+                                                <span
+                                                  className={`text-[10px] px-2 py-1 rounded border leading-none ${
+                                                    new Date(
+                                                      r.transactionExpireAt,
+                                                    ) < new Date()
+                                                      ? "bg-red-900/20 text-red-600 border-red-900/30"
+                                                      : "bg-amber-900/20 text-amber-600 border-amber-900/30"
+                                                  }`}
+                                                >
+                                                  {new Date(
+                                                    r.transactionExpireAt,
+                                                  ) < new Date()
+                                                    ? "Expirée"
+                                                    : "Expiration: " +
+                                                      new Date(
+                                                        r.transactionExpireAt,
+                                                      ).toLocaleTimeString(
+                                                        "fr-FR",
+                                                        {
+                                                          hour: "2-digit",
+                                                          minute: "2-digit",
+                                                        },
+                                                      )}
+                                                </span>
+                                              )}
+                                          </div>
+                                        </div>
+                                      ))}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
 
-                      <TabsContent value="schema" className="space-y-6 mt-4">
-                        <TableFloorPlan
-                          label="Déjeuner"
-                          tables={tables}
-                          reservations={dayReservations.filter((r) => {
-                            const hour = new Date(r.date).getUTCHours();
-                            return hour >= 12 && hour < 15;
-                          })}
-                        />
-                        <TableFloorPlan
-                          label="Dîner"
-                          tables={tables}
-                          reservations={dayReservations.filter((r) => {
-                            const hour = new Date(r.date).getUTCHours();
-                            return hour >= 19 && hour <= 23;
-                          })}
-                        />
-                      </TabsContent>
-                    </Tabs>
+                          {/* Soir section */}
+                          <div>
+                            <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">
+                              Dîner
+                            </h4>
+                            {dayLoading ? (
+                              <div className="flex justify-center py-4">
+                                <Loader2
+                                  size={18}
+                                  className="animate-spin text-primary"
+                                />
+                              </div>
+                            ) : (
+                              <div className="space-y-2">
+                                {dayReservations.filter((r) => {
+                                  const d = new Date(r.date);
+                                  const hour = d.getUTCHours();
+                                  return hour >= 19 && hour <= 23;
+                                }).length === 0 ? (
+                                  <p className="text-xs text-muted-foreground/50 py-3 text-center italic">
+                                    Aucune réservation au dîner
+                                  </p>
+                                ) : (
+                                  <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                                    {dayReservations
+                                      .filter((r) => {
+                                        const d = new Date(r.date);
+                                        const hour = d.getUTCHours();
+                                        return hour >= 19 && hour <= 23;
+                                      })
+                                      .map((r) => (
+                                        <div
+                                          key={r.id}
+                                          className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3"
+                                        >
+                                          <div className="flex flex-col items-center gap-1">
+                                            <div
+                                              className="text-sm font-semibold text-primary tabular-nums min-w-[38px]"
+                                              title="Créneau réservé"
+                                            >
+                                              {formatTime(r.date)}
+                                            </div>
+                                            <div
+                                              className="text-[10px] text-muted-foreground/70"
+                                              title="Heure de réservation"
+                                            >
+                                              {formatTime(r.createdAt)}
+                                            </div>
+                                          </div>
+                                          <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-1.5 flex-wrap">
+                                              <span className="font-medium text-sm">
+                                                {r.name}
+                                              </span>
+                                              <span className="text-xs text-muted-foreground">
+                                                {r.guests} cvrt
+                                                {r.guests > 1 ? "s" : ""}
+                                              </span>
+                                              {r.status === "PENDING_PAYMENT" &&
+                                              r.transactionExpireAt &&
+                                              new Date(r.transactionExpireAt) <
+                                                new Date() ? (
+                                                <span
+                                                  className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}
+                                                >
+                                                  Expirée
+                                                </span>
+                                              ) : (
+                                                <span
+                                                  className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}
+                                                >
+                                                  {STATUS_LABELS[r.status]}
+                                                </span>
+                                              )}
+                                            </div>
+                                            <div className="text-xs text-muted-foreground truncate">
+                                              {r.phone} &middot; {r.email}
+                                            </div>
+                                            {r.depositPaidCents && (
+                                              <div className="text-xs text-green-400 font-medium mt-0.5">
+                                                &#10004; Acompte:{" "}
+                                                {(
+                                                  r.depositPaidCents / 100
+                                                ).toFixed(2)}
+                                                €
+                                              </div>
+                                            )}
+                                            {r.specialRequest && (
+                                              <div className="text-xs text-amber-400/70 truncate mt-0.5">
+                                                &#8627; {r.specialRequest}
+                                              </div>
+                                            )}
+                                          </div>
+                                          <div className="flex gap-1 flex-shrink-0">
+                                            {r.status === "CONFIRMED" && (
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => {
+                                                  if (
+                                                    !window.confirm(
+                                                      "Êtes-vous sûr de vouloir annuler cette réservation ?",
+                                                    )
+                                                  )
+                                                    return;
+                                                  updateStatus(
+                                                    r.id,
+                                                    "CANCELLED",
+                                                    selectedDate ?? undefined,
+                                                  );
+                                                }}
+                                                className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs"
+                                              >
+                                                Annuler
+                                              </Button>
+                                            )}
+                                            {r.status === "PENDING_PAYMENT" &&
+                                              !r.transactionExpireAt && (
+                                                <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
+                                                  En attente
+                                                </span>
+                                              )}
+                                            {r.status === "PENDING_PAYMENT" &&
+                                              r.transactionExpireAt && (
+                                                <span
+                                                  className={`text-[10px] px-2 py-1 rounded border leading-none ${
+                                                    new Date(
+                                                      r.transactionExpireAt,
+                                                    ) < new Date()
+                                                      ? "bg-red-900/20 text-red-600 border-red-900/30"
+                                                      : "bg-amber-900/20 text-amber-600 border-amber-900/30"
+                                                  }`}
+                                                >
+                                                  {new Date(
+                                                    r.transactionExpireAt,
+                                                  ) < new Date()
+                                                    ? "Expirée"
+                                                    : "Expiration: " +
+                                                      new Date(
+                                                        r.transactionExpireAt,
+                                                      ).toLocaleTimeString(
+                                                        "fr-FR",
+                                                        {
+                                                          hour: "2-digit",
+                                                          minute: "2-digit",
+                                                        },
+                                                      )}
+                                                </span>
+                                              )}
+                                          </div>
+                                        </div>
+                                      ))}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </TabsContent>
+
+                        <TabsContent value="schema" className="space-y-6 mt-4">
+                          <TableFloorPlan
+                            label="Déjeuner"
+                            tables={tables}
+                            reservations={dayReservations.filter((r) => {
+                              const hour = new Date(r.date).getUTCHours();
+                              return hour >= 12 && hour < 15;
+                            })}
+                          />
+                          <TableFloorPlan
+                            label="Dîner"
+                            tables={tables}
+                            reservations={dayReservations.filter((r) => {
+                              const hour = new Date(r.date).getUTCHours();
+                              return hour >= 19 && hour <= 23;
+                            })}
+                          />
+                        </TabsContent>
+                      </Tabs>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })()}
+              );
+            })()}
         </div>
-
       </main>
     </div>
   );

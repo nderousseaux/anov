@@ -1,1 +1,117 @@
-{"nodes": [{"id": "claude", "label": "claude.md", "file_type": "document", "source_file": "claude.md", "source_location": "L1", "_origin": "ast"}, {"id": "claude_claude_md", "label": "CLAUDE.md", "file_type": "document", "source_file": "claude.md", "source_location": "L1", "_origin": "ast"}, {"id": "claude_quick_start", "label": "Quick Start", "file_type": "document", "source_file": "claude.md", "source_location": "L5", "_origin": "ast"}, {"id": "claude_architecture", "label": "Architecture", "file_type": "document", "source_file": "claude.md", "source_location": "L17", "_origin": "ast"}, {"id": "claude_key_concepts", "label": "Key Concepts", "file_type": "document", "source_file": "claude.md", "source_location": "L46", "_origin": "ast"}, {"id": "claude_common_tasks", "label": "Common Tasks", "file_type": "document", "source_file": "claude.md", "source_location": "L88", "_origin": "ast"}, {"id": "claude_deployment", "label": "Deployment", "file_type": "document", "source_file": "claude.md", "source_location": "L101", "_origin": "ast"}], "edges": [{"source": "claude", "target": "claude_claude_md", "relation": "contains", "confidence": "EXTRACTED", "source_file": "claude.md", "source_location": "L1", "weight": 1.0}, {"source": "claude_claude_md", "target": "claude_quick_start", "relation": "contains", "confidence": "EXTRACTED", "source_file": "claude.md", "source_location": "L5", "weight": 1.0}, {"source": "claude_claude_md", "target": "claude_architecture", "relation": "contains", "confidence": "EXTRACTED", "source_file": "claude.md", "source_location": "L17", "weight": 1.0}, {"source": "claude_claude_md", "target": "claude_key_concepts", "relation": "contains", "confidence": "EXTRACTED", "source_file": "claude.md", "source_location": "L46", "weight": 1.0}, {"source": "claude_claude_md", "target": "claude_common_tasks", "relation": "contains", "confidence": "EXTRACTED", "source_file": "claude.md", "source_location": "L88", "weight": 1.0}, {"source": "claude_claude_md", "target": "claude_deployment", "relation": "contains", "confidence": "EXTRACTED", "source_file": "claude.md", "source_location": "L101", "weight": 1.0}], "hyperedges": []}
+{
+  "nodes": [
+    {
+      "id": "claude",
+      "label": "claude.md",
+      "file_type": "document",
+      "source_file": "claude.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_claude_md",
+      "label": "CLAUDE.md",
+      "file_type": "document",
+      "source_file": "claude.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_quick_start",
+      "label": "Quick Start",
+      "file_type": "document",
+      "source_file": "claude.md",
+      "source_location": "L5",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_architecture",
+      "label": "Architecture",
+      "file_type": "document",
+      "source_file": "claude.md",
+      "source_location": "L17",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_key_concepts",
+      "label": "Key Concepts",
+      "file_type": "document",
+      "source_file": "claude.md",
+      "source_location": "L46",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_common_tasks",
+      "label": "Common Tasks",
+      "file_type": "document",
+      "source_file": "claude.md",
+      "source_location": "L88",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_deployment",
+      "label": "Deployment",
+      "file_type": "document",
+      "source_file": "claude.md",
+      "source_location": "L101",
+      "_origin": "ast"
+    }
+  ],
+  "edges": [
+    {
+      "source": "claude",
+      "target": "claude_claude_md",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "claude.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_claude_md",
+      "target": "claude_quick_start",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "claude.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_claude_md",
+      "target": "claude_architecture",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "claude.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_claude_md",
+      "target": "claude_key_concepts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "claude.md",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_claude_md",
+      "target": "claude_common_tasks",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "claude.md",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_claude_md",
+      "target": "claude_deployment",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "claude.md",
+      "source_location": "L101",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

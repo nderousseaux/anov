@@ -1,23 +1,26 @@
-'use client';
+"use client";
 
-
+import Image from "next/image";
 
 type SplashScreenProps = {
   isFading?: boolean;
 };
 
 export function SplashScreen({ isFading = false }: SplashScreenProps) {
-  const logoUrl = '/assets/logo.svg';
+  const logoUrl = "/assets/logo.svg";
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] bg-background flex items-center justify-center px-4 transition-opacity duration-700 ${isFading ? 'opacity-0' : 'opacity-100'
-        }`}
+      className={`fixed inset-0 z-[9999] bg-background flex items-center justify-center px-4 transition-opacity duration-700 ${
+        isFading ? "opacity-0" : "opacity-100"
+      }`}
     >
       <div className="text-center">
-        <img
+        <Image
           src={logoUrl}
           alt="L'Anøv Restaurant"
+          width={760}
+          height={300}
           className="w-[80vw] max-w-[760px] md:w-[24vw] h-auto object-contain mx-auto"
         />
       </div>

@@ -1,17 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { getAdminFromCookies } from '@/lib/auth';
-import { sendCancellationEmail } from '@/lib/email';
-import { stripe } from '@/lib/stripe';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getAdminFromCookies } from "@/lib/auth";
+import { sendCancellationEmail } from "@/lib/email";
+import { stripe } from "@/lib/stripe";
 
 export async function GET(req: NextRequest) {
   const admin = await getAdminFromCookies();
-  if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+  if (!admin)
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { searchParams } = req.nextUrl;
-  const dateStr = searchParams.get('date');
-  const status = searchParams.get('status');
-  const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10));
+  const dateStr = searchParams.get("date");
+  const status = searchParams.get("status");
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const perPage = 25;
 
   const now = new Date();
@@ -19,8 +20,10 @@ export async function GET(req: NextRequest) {
   if (status) where.status = status;
   if (dateStr) {
     const d = new Date(dateStr);
-    const start = new Date(d); start.setHours(0, 0, 0, 0);
-    const end = new Date(d); end.setHours(23, 59, 59, 999);
+    const start = new Date(d);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(d);
+    end.setHours(23, 59, 59, 999);
     where.date = { gte: start, lte: end };
   }
 
@@ -29,7 +32,7 @@ export async function GET(req: NextRequest) {
   where.AND = [
     {
       OR: [
-        { status: { not: 'PENDING_PAYMENT' } },
+        { status: { not: "PENDING_PAYMENT" } },
         { transactionExpireAt: { gt: now } },
         { transactionExpireAt: null },
       ],
@@ -42,11 +45,16 @@ export async function GET(req: NextRequest) {
     AND: [
       {
         OR: [
-          { status: 'CONFIRMED' },
+          { status: "CONFIRMED" },
           {
             AND: [
-              { status: 'PENDING_PAYMENT' },
-              { OR: [{ transactionExpireAt: { gt: now } }, { transactionExpireAt: null }] },
+              { status: "PENDING_PAYMENT" },
+              {
+                OR: [
+                  { transactionExpireAt: { gt: now } },
+                  { transactionExpireAt: null },
+                ],
+              },
             ],
           },
         ],
@@ -62,11 +70,16 @@ export async function GET(req: NextRequest) {
       AND: [
         {
           OR: [
-            { status: 'CONFIRMED' },
+            { status: "CONFIRMED" },
             {
               AND: [
-                { status: 'PENDING_PAYMENT' },
-                { OR: [{ transactionExpireAt: { gt: now } }, { transactionExpireAt: null }] },
+                { status: "PENDING_PAYMENT" },
+                {
+                  OR: [
+                    { transactionExpireAt: { gt: now } },
+                    { transactionExpireAt: null },
+                  ],
+                },
               ],
             },
           ],
@@ -77,7 +90,7 @@ export async function GET(req: NextRequest) {
 
   const reservations = await prisma.reservation.findMany({
     where,
-    orderBy: { date: 'asc' },
+    orderBy: { date: "asc" },
     skip: (page - 1) * perPage,
     take: perPage,
     select: {
@@ -98,17 +111,26 @@ export async function GET(req: NextRequest) {
     },
   });
 
-  return NextResponse.json({ data: reservations, total, page, pageSize: perPage });
+  return NextResponse.json({
+    data: reservations,
+    total,
+    page,
+    pageSize: perPage,
+  });
 }
 
 export async function PATCH(req: NextRequest) {
   const admin = await getAdminFromCookies();
-  if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+  if (!admin)
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { id, status } = await req.json();
-  const allowed = ['CONFIRMED', 'CANCELLED', 'COMPLETED'];
+  const allowed = ["CONFIRMED", "CANCELLED", "COMPLETED"];
   if (!id || !allowed.includes(status)) {
-    return NextResponse.json({ error: 'Paramètres invalides' }, { status: 400 });
+    return NextResponse.json(
+      { error: "Paramètres invalides" },
+      { status: 400 },
+    );
   }
 
   const updated = await prisma.reservation.update({
@@ -126,10 +148,14 @@ export async function PATCH(req: NextRequest) {
   });
 
   // Envoyer un email si la réservation est annulée
-  if (status === 'CANCELLED' && updated.email) {
+  if (status === "CANCELLED" && updated.email) {
     const d = new Date(updated.date);
-    const dateFr = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-    const time = `${d.getUTCHours().toString().padStart(2, '0')}:${d.getUTCMinutes().toString().padStart(2, '0')}`;
+    const dateFr = d.toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    });
+    const time = `${d.getUTCHours().toString().padStart(2, "0")}:${d.getUTCMinutes().toString().padStart(2, "0")}`;
 
     await sendCancellationEmail({
       to: updated.email,
@@ -139,10 +165,16 @@ export async function PATCH(req: NextRequest) {
     });
 
     // Effectuer un remboursement Stripe si une session de paiement existe
-    if (updated.stripeSessionId && updated.depositPaidCents && updated.depositPaidCents > 0) {
+    if (
+      updated.stripeSessionId &&
+      updated.depositPaidCents &&
+      updated.depositPaidCents > 0
+    ) {
       try {
         // Récupérer la session Stripe pour obtenir le payment_intent
-        const session = await stripe.checkout.sessions.retrieve(updated.stripeSessionId);
+        const session = await stripe.checkout.sessions.retrieve(
+          updated.stripeSessionId,
+        );
         const paymentIntentId = session.payment_intent as string;
 
         if (paymentIntentId) {
@@ -151,12 +183,19 @@ export async function PATCH(req: NextRequest) {
             amount: updated.depositPaidCents,
           });
 
-          console.log(`[REFUND] Remboursement de ${updated.depositPaidCents} cents créé: ${refund.id}`);
+          console.log(
+            `[REFUND] Remboursement de ${updated.depositPaidCents} cents créé: ${refund.id}`,
+          );
         } else {
-          console.warn(`[REFUND] Aucun payment_intent trouvé pour la session ${updated.stripeSessionId}`);
+          console.warn(
+            `[REFUND] Aucun payment_intent trouvé pour la session ${updated.stripeSessionId}`,
+          );
         }
       } catch (refundError) {
-        console.error('[REFUND] Erreur lors du remboursement Stripe:', refundError);
+        console.error(
+          "[REFUND] Erreur lors du remboursement Stripe:",
+          refundError,
+        );
         // On ne bloque pas l'annulation si le refund échoue
       }
     }

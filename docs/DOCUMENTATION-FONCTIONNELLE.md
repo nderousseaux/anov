@@ -20,7 +20,7 @@ Le site du restaurant est géré entièrement depuis le **CMS intégré** (Conte
 3. Saisissez votre identifiant et mot de passe
 4. Vous accédez au tableau de bord administrateur
 
-*[Capture d'écran : page de connexion admin]*
+_[Capture d'écran : page de connexion admin]_
 
 ---
 
@@ -28,21 +28,21 @@ Le site du restaurant est géré entièrement depuis le **CMS intégré** (Conte
 
 Le contenu du site se gère depuis le CMS. Voici la correspondance entre les sections du site et les sections du CMS :
 
-| Section du site | Section CMS | Contenu |
-|---|---|---|
-| **Page d'accueil** | | |
-| Section haute | Hero | Image de fond + sous-titre |
-| Notre histoire | Notre Histoire | 8 sections avec textes et images |
-| Galerie photos | Galerie | Photos + légendes |
-| Contact | Contact | Coordonnées, horaires, carte |
-| **Navigation** | | |
-| Menu en bas | Footer | Description + réseaux sociaux + avis |
-| **Autre page** | | |
-| Carte du restaurant | Menu | Onglets, catégories, plats |
-| **Pages légales** | | |
-| Mentions légales | Mentions légales | Contenu riche (titres, textes, liens) |
+| Section du site              | Section CMS                  | Contenu                               |
+| ---------------------------- | ---------------------------- | ------------------------------------- |
+| **Page d'accueil**           |                              |                                       |
+| Section haute                | Hero                         | Image de fond + sous-titre            |
+| Notre histoire               | Notre Histoire               | 8 sections avec textes et images      |
+| Galerie photos               | Galerie                      | Photos + légendes                     |
+| Contact                      | Contact                      | Coordonnées, horaires, carte          |
+| **Navigation**               |                              |                                       |
+| Menu en bas                  | Footer                       | Description + réseaux sociaux + avis  |
+| **Autre page**               |                              |                                       |
+| Carte du restaurant          | Menu                         | Onglets, catégories, plats            |
+| **Pages légales**            |                              |                                       |
+| Mentions légales             | Mentions légales             | Contenu riche (titres, textes, liens) |
 | Politique de confidentialité | Politique de confidentialité | Contenu riche (titres, textes, liens) |
-| CGV | CGV | Contenu riche (titres, textes, liens) |
+| CGV                          | CGV                          | Contenu riche (titres, textes, liens) |
 
 ![Capture d'écran : accès au CMS depuis /admin/cms](public/assets/docs/cms-interface.png)
 
@@ -131,7 +131,7 @@ L'administrateur peut créer un chèque cadeau gratuit depuis l'interface admin 
 
 Accessible via `/cheques-cadeaux`
 
-*[Capture d'écran : formulaire de création de chèque cadeau]*
+_[Capture d'écran : formulaire de création de chèque cadeau]_
 
 > **Note :** Les chèques cadeaux expirent automatiquement après 12 mois.
 
@@ -143,4 +143,4 @@ Lorsqu'un bon est créé manuellement avec une adresse email, un email est envoy
 
 Pour toute question ou modification qui dépasse le CMS (configuration, technique), contactez votre développeur.
 
-*[Nom du développeur / Email / Téléphone]*
+_[Nom du développeur / Email / Téléphone]_

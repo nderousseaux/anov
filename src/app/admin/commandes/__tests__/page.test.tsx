@@ -1,13 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vitest";
 
-describe('AdminCommandesPage', () => {
-  it('renders orders list', () => {
+describe("AdminCommandesPage", () => {
+  it("renders orders list", () => {
     expect(true).toBe(true);
   });
 });
 
-describe('AdminOrderPage', () => {
-  it('renders order detail', () => {
+describe("AdminOrderPage", () => {
+  it("renders order detail", () => {
     expect(true).toBe(true);
   });
 });

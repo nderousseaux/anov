@@ -1,6 +1,7 @@
 # ANØV — Restaurant
 
 Site de l'anov restaurant, avec des fonctionnalités backend de gestion du restaurant :
+
 - Site vitrine pour présenter le restaurant.
 - CMS intégré pour gérer le contenu (textes, images, horaires, etc.).
 
@@ -21,15 +22,14 @@ Push sur `pprod` → preview Vercel → merge `pprod` → `main` → build auto.
 
 Les images du CMS sont stockées dans le repository GitHub (`public/assets/`).
 
-
 ## Pages
 
-| Route | Description |
-|---|---|
-| `/` | Page d'accueil (Hero, Histoire, Galerie, Contact) |
-| `/menu` | Carte du restaurant |
-| `/admin` | Racine du dashboard admin |
-| `/admin/cms` (`/keystatic`) | Éditeur CMS intégré |
+| Route                       | Description                                       |
+| --------------------------- | ------------------------------------------------- |
+| `/`                         | Page d'accueil (Hero, Histoire, Galerie, Contact) |
+| `/menu`                     | Carte du restaurant                               |
+| `/admin`                    | Racine du dashboard admin                         |
+| `/admin/cms` (`/keystatic`) | Éditeur CMS intégré                               |
 
 ## Architecture
 

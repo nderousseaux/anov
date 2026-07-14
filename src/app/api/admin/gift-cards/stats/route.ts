@@ -1,11 +1,12 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { getAdminFromCookies } from '@/lib/auth';
-import { $Enums } from '@/generated/prisma';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getAdminFromCookies } from "@/lib/auth";
+import { $Enums } from "@/generated/prisma";
 
 export async function GET() {
   const admin = await getAdminFromCookies();
-  if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+  if (!admin)
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const now = new Date();
 
@@ -43,10 +44,7 @@ export async function GET() {
       OR: [
         { status: GiftCardStatus.EXPIRED },
         {
-          AND: [
-            { status: GiftCardStatus.ACTIVE },
-            { expiresAt: { lt: now } },
-          ],
+          AND: [{ status: GiftCardStatus.ACTIVE }, { expiresAt: { lt: now } }],
         },
       ],
     },

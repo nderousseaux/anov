@@ -68,6 +68,7 @@ Le rappel (mail ou SMS) contient les mêmes informations :
 - Instructions pour annuler/modifier (le mail inclut un lien, le SMS renvoie vers le téléphone du restaurant)
 
 **Message supplémentaire dans le rappel :**
+
 - Pour 1 jour avant : "Votre réservation est prévue demain."
 - Pour plusieurs jours avant : "Votre réservation est prévue dans X jours."
 
@@ -125,7 +126,6 @@ Le modèle `Reservation` dispose des champs suivants pour les rappels :
 - `reminderSmsSent` (Boolean) : indique si le rappel SMS a été envoyé
 
 > Note : le champ `wantsSmsReminder` existe toujours en base mais n'est plus utilisé pour déterminer le canal de rappel (remplacé par la simple présence d'un numéro de téléphone).
-
 
 ### Modèle RestaurantSettings
 

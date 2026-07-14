@@ -1,7 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
-import { prisma } from '@/lib/prisma';
-import { sendConfirmationEmail, sendGiftCardEmail, sendProductOrderConfirmationEmail } from '@/lib/email';
+import { NextRequest, NextResponse } from "next/server";
+import { stripe } from "@/lib/stripe";
+import { prisma } from "@/lib/prisma";
+import {
+  sendConfirmationEmail,
+  sendGiftCardEmail,
+  sendProductOrderConfirmationEmail,
+} from "@/lib/email";
 
 // Désactiver le body parser de Next.js pour lire le corps brut (requis par Stripe)
 export const config = { api: { bodyParser: false } };
@@ -10,12 +14,15 @@ export async function POST(req: NextRequest) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!webhookSecret) {
     // Log missing webhook secret (for monitoring in production)
-    return NextResponse.json({ error: 'Configuration serveur incorrecte' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Configuration serveur incorrecte" },
+      { status: 500 },
+    );
   }
 
-  const signature = req.headers.get('stripe-signature');
+  const signature = req.headers.get("stripe-signature");
   if (!signature) {
-    return NextResponse.json({ error: 'Signature manquante' }, { status: 400 });
+    return NextResponse.json({ error: "Signature manquante" }, { status: 400 });
   }
 
   let event;
@@ -24,30 +31,39 @@ export async function POST(req: NextRequest) {
     event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
   } catch (err) {
     // Log error (for monitoring in production)
-    return NextResponse.json({ error: 'Webhook signature invalide' }, { status: 400 });
+    return NextResponse.json(
+      { error: "Webhook signature invalide" },
+      { status: 400 },
+    );
   }
 
-  if (event.type === 'checkout.session.completed') {
+  if (event.type === "checkout.session.completed") {
     const session = event.data.object;
     const meta = session.metadata ?? {};
 
     // Gérer les chèques cadeaux
-    if (meta.type === 'gift_card' && meta.giftCardId) {
+    if (meta.type === "gift_card" && meta.giftCardId) {
       await handleGiftCardPayment(meta.giftCardId, session.id);
     }
     // Gérer les commandes produits
-    else if (meta.type === 'product_order' && meta.orderId) {
+    else if (meta.type === "product_order" && meta.orderId) {
       await handleProductOrderPayment(meta.orderId, session.id);
     }
     // Gérer les réservations (supporte les deux formats)
     else if (
-      (meta.name && meta.email && meta.date && meta.guests) ||  // ancien format
-      (meta.reservation_name && meta.reservation_email && meta.reservation_date && meta.reservation_guests)  // nouveau format
+      (meta.name && meta.email && meta.date && meta.guests) || // ancien format
+      (meta.reservation_name &&
+        meta.reservation_email &&
+        meta.reservation_date &&
+        meta.reservation_guests) // nouveau format
     ) {
       await handleReservationPayment(session, meta);
     } else {
       // Log metadata issue (for monitoring)
-      return NextResponse.json({ error: 'Metadata manquantes' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Metadata manquantes" },
+        { status: 400 },
+      );
     }
   }
 
@@ -73,7 +89,7 @@ async function handleGiftCardPayment(giftCardId: string, sessionId: string) {
     await prisma.giftCard.update({
       where: { id: giftCardId },
       data: {
-        status: 'ACTIVE',
+        status: "ACTIVE",
         stripeSessionId: sessionId,
         transactionExpireAt: null, // La transaction est terminée
       },
@@ -87,11 +103,13 @@ async function handleGiftCardPayment(giftCardId: string, sessionId: string) {
           code: giftCard.code,
           amount: giftCard.amount,
           personalMessage: giftCard.personalMessage || undefined,
-          expiresAt: giftCard.expiresAt ? giftCard.expiresAt.toLocaleDateString('fr-FR', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          }) : '',
+          expiresAt: giftCard.expiresAt
+            ? giftCard.expiresAt.toLocaleDateString("fr-FR", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })
+            : "",
         });
         // Email sent (for monitoring)
       } else {
@@ -119,7 +137,8 @@ async function handleReservationPayment(session: any, meta: any) {
     const phone = meta.reservation_phone || meta.phone || null;
     const date = meta.reservation_date || meta.date;
     const guests = meta.reservation_guests || meta.guests;
-    const specialRequest = meta.reservation_special_request || meta.specialRequest || null;
+    const specialRequest =
+      meta.reservation_special_request || meta.specialRequest || null;
 
     let reservation;
 
@@ -128,7 +147,7 @@ async function handleReservationPayment(session: any, meta: any) {
       reservation = await prisma.reservation.update({
         where: { id: reservationId },
         data: {
-          status: 'CONFIRMED',
+          status: "CONFIRMED",
           stripeSessionId: session.id,
           transactionExpireAt: null, // La transaction est terminée
         },
@@ -144,7 +163,7 @@ async function handleReservationPayment(session: any, meta: any) {
           guests: parseInt(guests, 10),
           specialRequest,
           wantsSmsReminder: false,
-          status: 'CONFIRMED',
+          status: "CONFIRMED",
           stripeSessionId: session.id,
         },
       });
@@ -157,35 +176,40 @@ async function handleReservationPayment(session: any, meta: any) {
     const mealDuration = restaurantSettings?.mealDuration || 90;
 
     // Envoyer l'email de confirmation
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
     const resDate = new Date(reservation.date);
-    const formattedDate = resDate.toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      timeZone: 'UTC',
+    const formattedDate = resDate.toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC",
     });
     try {
       await sendConfirmationEmail({
         to: reservation.email,
         name: reservation.name,
         date: formattedDate,
-        time: `${String(resDate.getUTCHours()).padStart(2, '0')}:${String(resDate.getUTCMinutes()).padStart(2, '0')}`,
+        time: `${String(resDate.getUTCHours()).padStart(2, "0")}:${String(resDate.getUTCMinutes()).padStart(2, "0")}`,
         guests: reservation.guests,
         cancelUrl: `${baseUrl}/reservation/cancel?token=${reservation.cancelToken}`,
         // Passer la date ISO pour le fichier .ics
         icsDate: reservation.date.toISOString(),
         durationMinutes: mealDuration,
       });
-      console.log(`[WEBHOOK] Email de confirmation envoyé à ${reservation.email}`);
+      console.log(
+        `[WEBHOOK] Email de confirmation envoyé à ${reservation.email}`,
+      );
     } catch (emailError) {
-      console.error(`[WEBHOOK] Erreur lors de l'envoi de l'email à ${reservation.email}:`, emailError);
+      console.error(
+        `[WEBHOOK] Erreur lors de l'envoi de l'email à ${reservation.email}:`,
+        emailError,
+      );
     }
 
     // Reservation confirmed (for monitoring)
   } catch (error) {
-    console.error('[WEBHOOK] Erreur dans handleReservationPayment:', error);
+    console.error("[WEBHOOK] Erreur dans handleReservationPayment:", error);
   }
 }
 
@@ -208,7 +232,7 @@ async function handleProductOrderPayment(orderId: string, sessionId: string) {
     await prisma.productOrder.update({
       where: { id: orderId },
       data: {
-        status: 'CONFIRMED',
+        status: "CONFIRMED",
         stripeSessionId: sessionId,
         transactionExpireAt: null, // La transaction est terminée
       },
@@ -225,13 +249,18 @@ async function handleProductOrderPayment(orderId: string, sessionId: string) {
         amount: order.totalPrice,
         deliveryMethod: order.deliveryMethod,
       });
-      console.log(`[WEBHOOK] Email de confirmation envoyé à ${order.customerEmail} pour la commande ${order.code}`);
+      console.log(
+        `[WEBHOOK] Email de confirmation envoyé à ${order.customerEmail} pour la commande ${order.code}`,
+      );
     } catch (emailError) {
-      console.error(`[WEBHOOK] Erreur lors de l'envoi de l'email à ${order.customerEmail}:`, emailError);
+      console.error(
+        `[WEBHOOK] Erreur lors de l'envoi de l'email à ${order.customerEmail}:`,
+        emailError,
+      );
     }
 
     // Product order confirmed (for monitoring)
   } catch (error) {
-    console.error('[WEBHOOK] Erreur dans handleProductOrderPayment:', error);
+    console.error("[WEBHOOK] Erreur dans handleProductOrderPayment:", error);
   }
 }

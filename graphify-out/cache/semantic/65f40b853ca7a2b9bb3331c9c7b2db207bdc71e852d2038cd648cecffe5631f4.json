@@ -1,1 +1,14 @@
-{"nodes": [{"id": "docs_draft", "label": "draft.md", "file_type": "document", "source_file": "docs/draft.md", "source_location": "L1", "_origin": "ast"}], "edges": [], "hyperedges": []}
+{
+  "nodes": [
+    {
+      "id": "docs_draft",
+      "label": "draft.md",
+      "file_type": "document",
+      "source_file": "docs/draft.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    }
+  ],
+  "edges": [],
+  "hyperedges": []
+}

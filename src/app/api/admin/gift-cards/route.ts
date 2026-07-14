@@ -1,24 +1,25 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { getAdminFromCookies } from '@/lib/auth';
-import { sendGiftCardEmail } from '@/lib/email';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getAdminFromCookies } from "@/lib/auth";
+import { sendGiftCardEmail } from "@/lib/email";
 
 export async function GET(req: NextRequest) {
   const admin = await getAdminFromCookies();
-  if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+  if (!admin)
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { searchParams } = req.nextUrl;
-  const status = searchParams.get('status');
-  const code = searchParams.get('code');
-  const email = searchParams.get('email');
-  const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10));
+  const status = searchParams.get("status");
+  const code = searchParams.get("code");
+  const email = searchParams.get("email");
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const perPage = 25;
 
   const now = new Date();
   const where: Record<string, unknown> = {};
   if (status) where.status = status;
-  if (code) where.code = { contains: code, mode: 'insensitive' };
-  if (email) where.recipientEmail = { contains: email, mode: 'insensitive' };
+  if (code) where.code = { contains: code, mode: "insensitive" };
+  if (email) where.recipientEmail = { contains: email, mode: "insensitive" };
 
   // Exclure les cartes avec transaction expirée (10 min) - mais garder IN_PROGRESS_PAYMENT en base
   // Les transactions expirées restent en IN_PROGRESS_PAYMENT mais ne sont pas affichées
@@ -28,7 +29,7 @@ export async function GET(req: NextRequest) {
   // On ne filtre pas sur expiresAt - on les affiche avec leur statut ACTIVE mais non utilisables
   andFilters.push({
     OR: [
-      { status: { not: 'IN_PROGRESS_PAYMENT' } },
+      { status: { not: "IN_PROGRESS_PAYMENT" } },
       { transactionExpireAt: { gt: now } },
       { transactionExpireAt: null },
     ],
@@ -39,7 +40,7 @@ export async function GET(req: NextRequest) {
     prisma.giftCard.count({ where }),
     prisma.giftCard.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       skip: (page - 1) * perPage,
       take: perPage,
     }),
@@ -55,28 +56,32 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const admin = await getAdminFromCookies();
-  if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+  if (!admin)
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const body = await req.json();
   const { amount, recipientEmail, personalMessage } = body;
 
   // Validation
   if (!amount) {
-    return NextResponse.json({ error: 'Le montant est requis' }, { status: 400 });
+    return NextResponse.json(
+      { error: "Le montant est requis" },
+      { status: 400 },
+    );
   }
 
   const amountValue = parseFloat(amount);
   if (isNaN(amountValue) || amountValue <= 0) {
-    return NextResponse.json({ error: 'Montant invalide' }, { status: 400 });
+    return NextResponse.json({ error: "Montant invalide" }, { status: 400 });
   }
 
   // recipientEmail est optionnel pour les créations admin
   // Si email est fourni, on le valide
   let emailValue: string | null = null;
-  if (recipientEmail && recipientEmail.trim() !== '') {
+  if (recipientEmail && recipientEmail.trim() !== "") {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(recipientEmail)) {
-      return NextResponse.json({ error: 'Email invalide' }, { status: 400 });
+      return NextResponse.json({ error: "Email invalide" }, { status: 400 });
     }
     emailValue = recipientEmail;
   }
@@ -98,7 +103,7 @@ export async function POST(req: NextRequest) {
       personalMessage: personalMessage || null,
       isPaid: false, // Création admin = toujours gratuit
       expiresAt,
-      status: 'ACTIVE',
+      status: "ACTIVE",
     },
     select: {
       id: true,
@@ -122,11 +127,13 @@ export async function POST(req: NextRequest) {
         code: giftCard.code,
         amount: giftCard.amount,
         personalMessage: giftCard.personalMessage || undefined,
-        expiresAt: giftCard.expiresAt ? giftCard.expiresAt.toLocaleDateString('fr-FR', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        }) : '',
+        expiresAt: giftCard.expiresAt
+          ? giftCard.expiresAt.toLocaleDateString("fr-FR", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })
+          : "",
       });
       // Email sent (for monitoring)
     } catch (error) {
@@ -142,9 +149,15 @@ export async function POST(req: NextRequest) {
  * Format : ANOV-M-XXXX-XXXX (manuel/admin)
  */
 function generateAdminGiftCardCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Sans O, 0, I, 1 pour éviter la confusion
-  const part1 = Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-  const part2 = Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Sans O, 0, I, 1 pour éviter la confusion
+  const part1 = Array.from(
+    { length: 4 },
+    () => chars[Math.floor(Math.random() * chars.length)],
+  ).join("");
+  const part2 = Array.from(
+    { length: 4 },
+    () => chars[Math.floor(Math.random() * chars.length)],
+  ).join("");
   return `ANOV-M-${part1}-${part2}`;
 }
 
@@ -153,50 +166,54 @@ function generateAdminGiftCardCode(): string {
  * Format : ANOV-G-XXXX-XXXX (gift/client Stripe)
  */
 function generateGiftCardCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Sans O, 0, I, 1 pour éviter la confusion
-  const part1 = Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Sans O, 0, I, 1 pour éviter la confusion
+  const part1 = Array.from(
+    { length: 4 },
+    () => chars[Math.floor(Math.random() * chars.length)],
+  ).join("");
   return `ANOV-G-${part1}`;
 }
 
 export async function PATCH(req: NextRequest) {
   const admin = await getAdminFromCookies();
-  if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+  if (!admin)
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const body = await req.json();
   const { id, action } = body;
 
   if (!id || !action) {
-    return NextResponse.json({ error: 'ID et action requis' }, { status: 400 });
+    return NextResponse.json({ error: "ID et action requis" }, { status: 400 });
   }
 
-  if (action === 'validate') {
+  if (action === "validate") {
     // Valider le bon cadeau (PENDING_PAYMENT → ACTIVE ou ACTIVE → USED)
     // Si le bon est déjà utilisé (USED), on le remet en active (non utilisé)
     const giftCard = await prisma.giftCard.update({
       where: { id },
       data: {
-        status: 'ACTIVE',
+        status: "ACTIVE",
         usedAt: null, // Si le bon était USED, on le met à null pour le marquer comme "non utilisé"
       },
       select: { id: true, code: true, status: true, usedAt: true },
     });
     return NextResponse.json({ success: true, giftCard });
-  } else if (action === 'markUsed') {
+  } else if (action === "markUsed") {
     // Marquer le bon comme utilisé (ACTIVE → USED)
     const giftCard = await prisma.giftCard.update({
       where: { id },
       data: {
-        status: 'USED',
+        status: "USED",
         usedAt: new Date(),
       },
       select: { id: true, code: true, status: true, usedAt: true },
     });
     return NextResponse.json({ success: true, giftCard });
-  } else if (action === 'delete') {
+  } else if (action === "delete") {
     // Supprimer le bon cadeau
     await prisma.giftCard.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } else {
-    return NextResponse.json({ error: 'Action invalide' }, { status: 400 });
+    return NextResponse.json({ error: "Action invalide" }, { status: 400 });
   }
 }

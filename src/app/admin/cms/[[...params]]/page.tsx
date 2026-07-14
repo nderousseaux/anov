@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 export default async function CmsPage({
   params,
@@ -7,7 +7,7 @@ export default async function CmsPage({
 }) {
   const { params: segments } = await params;
   if (!segments || segments.length === 0) {
-    redirect('/keystatic');
+    redirect("/keystatic");
   }
-  redirect(`/keystatic/${segments.join('/')}`);
+  redirect(`/keystatic/${segments.join("/")}`);
 }

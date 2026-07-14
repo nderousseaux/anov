@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, Facebook, Instagram } from 'lucide-react';
-import Image from 'next/image';
+
 import { Button } from '@/components/ui/button';
 import { NavbarDropdown } from './NavbarDropdown';
 
@@ -31,6 +31,7 @@ function TiktokIcon({ className, size, ...props }: { className?: string; size?: 
 import type { FooterContent } from './Footer';
 import { LanguageSelector } from './LanguageSelector';
 import { useLanguage } from '@/context/LanguageContext';
+import Image from 'next/image';
 
 export function Navbar({ footerContent }: { footerContent?: FooterContent | null }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -97,7 +98,7 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
 
     // If not on home page, navigate to home first
     if (pathname !== '/') {
-      router.push(`/#${sectionId}`);
+      router.push( '/#${sectionId} ');
       return;
     }
 
@@ -148,24 +149,25 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isTransparent
+      className={ 'fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isTransparent
         ? 'bg-transparent border-b border-transparent'
         : 'bg-background/95 backdrop-blur-sm border-b border-primary/20'
-        }`}
+        } '}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link
             href="/"
-            className={`cursor-pointer flex items-center transition-opacity duration-300 pt-2 ${isTransparent ? ‘opacity-0 pointer-events-none’ : ‘opacity-100’}`}
+            className={ 'cursor-pointer flex items-center transition-opacity duration-300 pt-2 ${isTransparent ? ‘opacity-0 pointer-events-none’ : ‘opacity-100’} '}
             aria-hidden={isTransparent}
           >
             <Image
               src={logoUrl}
               alt="Logo l’anøv"
-              fill
-              className="object-contain pt-2"
+              width={150}
+              height={56}
+              className="h-12 sm:h-14 w-auto sm:-translate-y-2 -translate-y-1"
             />
           </Link>
 
@@ -181,7 +183,7 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
                 </button>
               );
               if (item.type === 'link') return (
-                <Link key={i} href={item.href} className={`${menuItemClass} ${isActive(item.href) ? activeMenuItemClass : ''}`}>
+                <Link key={i} href={item.href} className={ '${menuItemClass} ${isActive(item.href) ? activeMenuItemClass : ''} '}>
                   {item.label}
                 </Link>
               );
@@ -199,7 +201,7 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden text-primary"
+            className="lg:hidden text-primary z-50"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Menu"
           >
@@ -221,7 +223,7 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
                   </button>
                 );
                 if (item.type === 'link') return (
-                  <Link key={i} href={item.href} onClick={() => setMobileMenuOpen(false)} className={`transition-colors duration-300 text-left py-2 ${isActive(item.href) ? 'text-primary' : 'text-foreground hover:text-primary'}`}>
+                  <Link key={i} href={item.href} onClick={() => setMobileMenuOpen(false)} className={ 'transition-colors duration-300 text-left py-2 ${isActive(item.href) ? 'text-primary' : 'text-foreground hover:text-primary'} '}>
                     {item.label}
                   </Link>
                 );
@@ -241,7 +243,7 @@ export function Navbar({ footerContent }: { footerContent?: FooterContent | null
                           key={j}
                           href={subItem.href}
                           onClick={() => setMobileMenuOpen(false)}
-                          className={`transition-colors duration-300 text-left ${isActive(subItem.href) ? 'text-primary' : 'text-foreground hover:text-primary'}`}
+                          className={ 'transition-colors duration-300 text-left ${isActive(subItem.href) ? 'text-primary' : 'text-foreground hover:text-primary'} '}
                         >
                           {subItem.label}
                         </Link>

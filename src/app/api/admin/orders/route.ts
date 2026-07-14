@@ -1,15 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { getAdminFromCookies } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getAdminFromCookies } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
   const admin = await getAdminFromCookies();
-  if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+  if (!admin)
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { searchParams } = req.nextUrl;
-  const status = searchParams.get('status');
-  const search = searchParams.get('search');
-  const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10));
+  const status = searchParams.get("status");
+  const search = searchParams.get("search");
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const perPage = 25;
 
   const where: any = {};
@@ -22,9 +23,9 @@ export async function GET(req: NextRequest) {
   // Search filter (code, email, name)
   if (search) {
     where.OR = [
-      { code: { contains: search, mode: 'insensitive' } },
-      { customerEmail: { contains: search, mode: 'insensitive' } },
-      { customerName: { contains: search, mode: 'insensitive' } },
+      { code: { contains: search, mode: "insensitive" } },
+      { customerEmail: { contains: search, mode: "insensitive" } },
+      { customerName: { contains: search, mode: "insensitive" } },
     ];
   }
 
@@ -32,7 +33,7 @@ export async function GET(req: NextRequest) {
     prisma.productOrder.count({ where }),
     prisma.productOrder.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       skip: (page - 1) * perPage,
       take: perPage,
     }),
@@ -44,11 +45,18 @@ export async function GET(req: NextRequest) {
   const filteredOrders = orders
     .filter((order) => {
       // Keep only valid status types (hide PROCESSING, EXPIRED, etc.)
-      const validStatuses = ['PENDING_PAYMENT', 'CONFIRMED', 'READY', 'SHIPPED', 'COMPLETED', 'CANCELLED'];
+      const validStatuses = [
+        "PENDING_PAYMENT",
+        "CONFIRMED",
+        "READY",
+        "SHIPPED",
+        "COMPLETED",
+        "CANCELLED",
+      ];
       if (!validStatuses.includes(order.status)) return false;
 
       // Keep non-PENDING_PAYMENT orders
-      if (order.status !== 'PENDING_PAYMENT') return true;
+      if (order.status !== "PENDING_PAYMENT") return true;
       // Keep PENDING_PAYMENT orders that have not expired
       if (!order.transactionExpireAt) return true;
       return new Date(order.transactionExpireAt) > now;
@@ -68,9 +76,8 @@ export async function GET(req: NextRequest) {
     }));
 
   // Adjust total to reflect filtered count (only for PENDING_PAYMENT status filter)
-  const filteredTotal = status === 'PENDING_PAYMENT'
-    ? filteredOrders.length
-    : total;
+  const filteredTotal =
+    status === "PENDING_PAYMENT" ? filteredOrders.length : total;
 
   return NextResponse.json({
     data: filteredOrders,

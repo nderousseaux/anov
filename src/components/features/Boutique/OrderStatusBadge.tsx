@@ -1,47 +1,47 @@
-'use client';
+"use client";
 
-import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Clock, AlertCircle, Package } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, Clock, AlertCircle, Package } from "lucide-react";
 
 const STATUS_CONFIG = {
   PENDING_PAYMENT: {
-    label: 'Paiement en cours...',
-    variant: 'default',
+    label: "Paiement en cours...",
+    variant: "default",
     icon: Clock,
   },
   CONFIRMED: {
-    label: 'En attente...',
-    variant: 'default',
+    label: "En attente...",
+    variant: "default",
     icon: Clock,
   },
   PROCESSING: {
-    label: 'En préparation',
-    variant: 'default',
+    label: "En préparation",
+    variant: "default",
     icon: Package,
   },
   SHIPPED: {
-    label: 'Envoyée',
-    variant: 'default',
+    label: "Envoyée",
+    variant: "default",
     icon: Package,
   },
   READY: {
-    label: 'Prête',
-    variant: 'default',
+    label: "Prête",
+    variant: "default",
     icon: Package,
   },
   COMPLETED: {
-    label: 'Terminée',
-    variant: 'default',
+    label: "Terminée",
+    variant: "default",
     icon: CheckCircle,
   },
   CANCELLED: {
-    label: 'Remboursée',
-    variant: 'outline',
+    label: "Remboursée",
+    variant: "outline",
     icon: AlertCircle,
   },
   EXPIRED: {
-    label: 'Expirée',
-    variant: 'outline',
+    label: "Expirée",
+    variant: "outline",
     icon: AlertCircle,
   },
 } as const;
@@ -51,7 +51,9 @@ interface OrderStatusBadgeProps {
 }
 
 export function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
-  const config = STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG.PENDING_PAYMENT;
+  const config =
+    STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] ||
+    STATUS_CONFIG.PENDING_PAYMENT;
   const Icon = config.icon;
 
   return (

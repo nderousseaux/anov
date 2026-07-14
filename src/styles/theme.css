@@ -2,15 +2,15 @@
 
 :root {
   --font-size: 16px;
-  --font-display: 'FS Siena Regular', serif;
-  --font-body: 'Lora', Georgia, serif;
+  --font-display: "FS Siena Regular", serif;
+  --font-body: "Lora", Georgia, serif;
 
   /* Restaurant Colors - Noir, Anthracite, Touches dorées */
-  --color-black: #1C1C1C;
+  --color-black: #1c1c1c;
   --color-deep-green: #111111;
   --color-forest-green: #1a1a1a;
   --color-sage-green: #262626;
-  --color-gold: #C5A236;
+  --color-gold: #c5a236;
   --color-light-gold: #f5e6c6;
   --color-cream: #fcf8f2;
 
@@ -60,19 +60,19 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: #C5A236;
+  --primary: #c5a236;
   --primary-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: #C5A236;
+  --accent: #c5a236;
   --accent-foreground: oklch(0.145 0 0);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
   --border: oklch(0.269 0 0);
   --input: oklch(0.269 0 0);
-  --ring: #C5A236;
+  --ring: #c5a236;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
   --chart-1: oklch(0.488 0.243 264.376);

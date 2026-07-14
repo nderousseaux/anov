@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { sendReminderEmail } from '@/lib/email';
-import { sendSmsReminder } from '@/lib/sms';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { sendReminderEmail } from "@/lib/email";
+import { sendSmsReminder } from "@/lib/sms";
 
 // Protégé par un secret pour appels Vercel Cron
 export async function GET(req: NextRequest) {
-  const cronSecret = req.headers.get('x-cron-secret');
+  const cronSecret = req.headers.get("x-cron-secret");
   if (process.env.CRON_SECRET && cronSecret !== process.env.CRON_SECRET) {
-    return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 
   // Récupérer la durée du repas et le nombre de jours avant la réservation
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
   // - Si l'utilisateur a réservé aujourd'hui (quelque soit l'heure), pas de rappel
   const reservations = await prisma.reservation.findMany({
     where: {
-      status: 'CONFIRMED',
+      status: "CONFIRMED",
       date: {
         gte: startOfDay,
         lte: endOfDay,
@@ -54,7 +54,8 @@ export async function GET(req: NextRequest) {
   for (const r of reservations) {
     // Vérifier si la réservation a été faite aujourd'hui (quelque soit l'heure)
     const reservationCreatedAt = new Date(r.createdAt);
-    const isSameDayReservation = reservationCreatedAt.getDate() === now.getDate() &&
+    const isSameDayReservation =
+      reservationCreatedAt.getDate() === now.getDate() &&
       reservationCreatedAt.getMonth() === now.getMonth() &&
       reservationCreatedAt.getFullYear() === now.getFullYear();
 
@@ -63,11 +64,18 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
-    const formattedDate = r.date.toLocaleDateString('fr-FR', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+    const formattedDate = r.date.toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
-    const time = r.date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+    const time = r.date.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const BASE_URL =
+      process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
     const cancelUrl = `${BASE_URL}/reservation/cancel?token=${r.cancelToken}`;
 
     // Si l'utilisateur a renseigné un numéro de téléphone, on envoie un SMS de rappel
@@ -87,7 +95,9 @@ export async function GET(req: NextRequest) {
           data: { reminderSmsSent: true },
         });
         smsSent++;
-        console.log(`[Cron] SMS de rappel envoyé à ${r.phone} pour ${formattedDate}`);
+        console.log(
+          `[Cron] SMS de rappel envoyé à ${r.phone} pour ${formattedDate}`,
+        );
       } catch (err) {
         console.error(`[Cron] SMS failed for ${r.id}`, err);
       }
@@ -111,7 +121,9 @@ export async function GET(req: NextRequest) {
         data: { reminderEmailSent: true },
       });
       emailsSent++;
-      console.log(`[Cron] Email de rappel envoyé à ${r.email} pour ${formattedDate}`);
+      console.log(
+        `[Cron] Email de rappel envoyé à ${r.email} pour ${formattedDate}`,
+      );
     } catch (err) {
       console.error(`[Cron] Email failed for ${r.id}`, err);
     }
@@ -120,6 +132,6 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     emailsSent,
     smsSent,
-    dateTarget: targetDate.toISOString().split('T')[0],
+    dateTarget: targetDate.toISOString().split("T")[0],
   });
 }

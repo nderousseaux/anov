@@ -1,5 +1,5 @@
-import { prisma } from './prisma';
-import type { Prisma } from '../generated/prisma';
+import { prisma } from "./prisma";
+import type { Prisma } from "../generated/prisma";
 
 type DbClient = typeof prisma | Prisma.TransactionClient;
 
@@ -32,7 +32,7 @@ const TIER_BY_GUESTS: Record<number, number[]> = {
 };
 
 function slotToMinutes(time: string): number {
-  const [h, m] = time.split(':').map(Number);
+  const [h, m] = time.split(":").map(Number);
   return h * 60 + m;
 }
 
@@ -43,7 +43,10 @@ function slotToMinutes(time: string): number {
  * spaced at least mealDuration apart (see computeBusyTableIds's blocking window: a reservation
  * blocks [R - mealDuration, R + mealDuration)). Returns 0 when there are no slots for the service.
  */
-export function computeServiceTurns(slots: string[], mealDuration: number): number {
+export function computeServiceTurns(
+  slots: string[],
+  mealDuration: number,
+): number {
   if (slots.length === 0) return 0;
   const minutes = slots.map(slotToMinutes);
   const span = Math.max(...minutes) - Math.min(...minutes);
@@ -61,26 +64,34 @@ export function getTotalTableCapacity(tables: TableInfo[]): number {
  * Returns the 6 physical tables of the restaurant, ordered by capacity.
  */
 export async function getTables(db: DbClient = prisma): Promise<TableInfo[]> {
-  return db.table.findMany({ orderBy: { capacity: 'asc' } });
+  return db.table.findMany({ orderBy: { capacity: "asc" } });
 }
 
 /**
  * Fetches all active reservations (CONFIRMED or non-expired PENDING_PAYMENT) for a given day.
  */
-export async function getDayReservationsForTables(db: DbClient, dateStr: string): Promise<ReservationTableInfo[]> {
-  const dayStart = new Date(dateStr + 'T00:00:00.000Z');
-  const dayEnd = new Date(dateStr + 'T23:59:59.999Z');
+export async function getDayReservationsForTables(
+  db: DbClient,
+  dateStr: string,
+): Promise<ReservationTableInfo[]> {
+  const dayStart = new Date(dateStr + "T00:00:00.000Z");
+  const dayEnd = new Date(dateStr + "T23:59:59.999Z");
   const now = new Date();
 
   return db.reservation.findMany({
     where: {
       date: { gte: dayStart, lte: dayEnd },
       OR: [
-        { status: 'CONFIRMED' },
+        { status: "CONFIRMED" },
         {
           AND: [
-            { status: 'PENDING_PAYMENT' },
-            { OR: [{ transactionExpireAt: { gt: now } }, { transactionExpireAt: null }] },
+            { status: "PENDING_PAYMENT" },
+            {
+              OR: [
+                { transactionExpireAt: { gt: now } },
+                { transactionExpireAt: null },
+              ],
+            },
           ],
         },
       ],
@@ -105,7 +116,10 @@ export function computeBusyTableIds(
   for (const r of reservations) {
     if (r.tableId == null) continue;
     const resMin = r.date.getUTCHours() * 60 + r.date.getUTCMinutes();
-    if (targetMin >= resMin - mealDuration && targetMin < resMin + mealDuration) {
+    if (
+      targetMin >= resMin - mealDuration &&
+      targetMin < resMin + mealDuration
+    ) {
       busy.add(r.tableId);
     }
   }
@@ -137,7 +151,9 @@ export function pickTable(
   const tiers = TIER_BY_GUESTS[guests];
   if (!tiers) return null;
   for (const capacity of tiers) {
-    const candidates = free.filter((t) => t.capacity === capacity).sort((a, b) => a.id - b.id);
+    const candidates = free
+      .filter((t) => t.capacity === capacity)
+      .sort((a, b) => a.id - b.id);
     if (candidates.length > 0) return candidates[0];
   }
   return null;
@@ -157,7 +173,9 @@ export interface AssignTableParams {
  * then applies pickTable. Meant to be called within a transaction at reservation
  * creation time (pass `db` = the transaction client) to avoid race conditions.
  */
-export async function assignTable(params: AssignTableParams): Promise<TableInfo | null> {
+export async function assignTable(
+  params: AssignTableParams,
+): Promise<TableInfo | null> {
   const { db = prisma, dateStr, time, guests, mealDuration, isToday } = params;
   const [tables, reservations] = await Promise.all([
     getTables(db),

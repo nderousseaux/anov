@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { ShoppingBag, Truck, Store, Loader2, ArrowRight } from 'lucide-react';
-import { useLanguage } from '@/context/LanguageContext';
+import { useState, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ShoppingBag, Truck, Store, Loader2, ArrowRight } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface Product {
   id: string;
@@ -29,17 +29,21 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
   const title = product[`title_${locale}` as keyof Product] || product.title_fr;
   const isDeliverable = product.isDeliverable;
 
-  const [step, setStep] = useState<'form' | 'summary' | 'processing' | 'success'>('form');
-  const [deliveryMethod, setDeliveryMethod] = useState<'PICKUP' | 'DELIVERY'>('PICKUP');
+  const [step, setStep] = useState<
+    "form" | "summary" | "processing" | "success"
+  >("form");
+  const [deliveryMethod, setDeliveryMethod] = useState<"PICKUP" | "DELIVERY">(
+    "PICKUP",
+  );
   const [quantity, setQuantity] = useState(1);
   const [formData, setFormData] = useState({
-    customerName: '',
-    customerEmail: '',
-    customerPhone: '',
-    address: '',
-    city: '',
-    zipCode: '',
-    country: 'France',
+    customerName: "",
+    customerEmail: "",
+    customerPhone: "",
+    address: "",
+    city: "",
+    zipCode: "",
+    country: "France",
   });
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -47,26 +51,38 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
   // Close modal on Escape key
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
       }
     };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const maxOrder = product.maxOrder ?? 10;
-    const value = Math.max(1, Math.min(maxOrder, parseInt(e.target.value) || 1));
+    const value = Math.max(
+      1,
+      Math.min(maxOrder, parseInt(e.target.value) || 1),
+    );
     setQuantity(value);
   };
 
   const validateForm = (): boolean => {
     if (!formData.customerName.trim()) return false;
-    if (!formData.customerEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customerEmail)) return false;
+    if (
+      !formData.customerEmail.trim() ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customerEmail)
+    )
+      return false;
     if (!formData.customerPhone.trim()) return false;
-    if (deliveryMethod === 'DELIVERY') {
-      if (!formData.address.trim() || !formData.city.trim() || !formData.zipCode.trim()) return false;
+    if (deliveryMethod === "DELIVERY") {
+      if (
+        !formData.address.trim() ||
+        !formData.city.trim() ||
+        !formData.zipCode.trim()
+      )
+        return false;
     }
     return true;
   };
@@ -74,23 +90,24 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) {
-      alert('Veuillez corriger les erreurs dans le formulaire');
+      alert("Veuillez corriger les erreurs dans le formulaire");
       return;
     }
 
-    setStep('processing');
+    setStep("processing");
 
     try {
-      const response = await fetch('/api/boutique/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/boutique/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          productName: product[`title_${locale}` as keyof Product] || product.title_fr,
+          productName:
+            product[`title_${locale}` as keyof Product] || product.title_fr,
           productImage: product.image,
           quantity,
           totalPrice: (product.price ?? 0) * quantity,
           deliveryMethod,
-          address: deliveryMethod === 'DELIVERY' ? formData : undefined,
+          address: deliveryMethod === "DELIVERY" ? formData : undefined,
           customerName: formData.customerName,
           customerEmail: formData.customerEmail,
           customerPhone: formData.customerPhone,
@@ -100,7 +117,9 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Erreur lors de la création de la commande');
+        throw new Error(
+          data.error || "Erreur lors de la création de la commande",
+        );
       }
 
       // Redirect to Stripe URL returned by API
@@ -109,39 +128,62 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
         return;
       }
 
-      throw new Error('URL de paiement non reçue');
+      throw new Error("URL de paiement non reçue");
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue';
+      const errorMessage =
+        error instanceof Error ? error.message : "Une erreur est survenue";
       alert(errorMessage);
-      setStep('form');
+      setStep("form");
     }
   };
 
   const totalAmount = (product.price ?? 0) * quantity;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-card border border-border rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="bg-card border border-border rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 hover:bg-muted rounded-full transition-colors z-10"
           aria-label="Fermer"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
 
         {/* Form Steps */}
-        {step === 'form' && (
+        {step === "form" && (
           <form ref={formRef} onSubmit={handleSubmit} className="p-6 space-y-6">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-foreground mb-2" style={{ fontFamily: 'var(--font-display)' }}>
+              <h2
+                className="text-2xl font-bold text-foreground mb-2"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
                 Commander {title}
               </h2>
               <p className="text-muted-foreground">
-                {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(totalAmount)}
+                {new Intl.NumberFormat("fr-FR", {
+                  style: "currency",
+                  currency: "EUR",
+                }).format(totalAmount)}
               </p>
             </div>
 
@@ -153,7 +195,16 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
               <div className="flex-1">
                 <p className="font-medium text-foreground">{title}</p>
                 <p className="text-sm text-muted-foreground">
-                  {quantity} x {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(product.price ?? 0)} = {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(totalAmount)}
+                  {quantity} x{" "}
+                  {new Intl.NumberFormat("fr-FR", {
+                    style: "currency",
+                    currency: "EUR",
+                  }).format(product.price ?? 0)}{" "}
+                  ={" "}
+                  {new Intl.NumberFormat("fr-FR", {
+                    style: "currency",
+                    currency: "EUR",
+                  }).format(totalAmount)}
                 </p>
               </div>
             </div>
@@ -162,48 +213,61 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
               <>
                 {/* Delivery Method */}
                 <div className="space-y-3">
-                <Label className="text-foreground">Mode de livraison</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div
-                    className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
-                      deliveryMethod === 'PICKUP'
-                        ? 'border-primary bg-primary/10'
-                        : 'border-border hover:border-primary/50'
-                    }`}
-                    onClick={() => setDeliveryMethod('PICKUP')}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${deliveryMethod === 'PICKUP' ? 'border-primary' : 'border-border'}`}>
-                        {deliveryMethod === 'PICKUP' && <div className="w-2.5 h-2.5 bg-primary rounded-full" />}
+                  <Label className="text-foreground">Mode de livraison</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div
+                      className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
+                        deliveryMethod === "PICKUP"
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                      onClick={() => setDeliveryMethod("PICKUP")}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-5 h-5 rounded-full border flex items-center justify-center ${deliveryMethod === "PICKUP" ? "border-primary" : "border-border"}`}
+                        >
+                          {deliveryMethod === "PICKUP" && (
+                            <div className="w-2.5 h-2.5 bg-primary rounded-full" />
+                          )}
+                        </div>
+                        <Store className="w-5 h-5 text-primary" />
+                        <span className="font-medium text-foreground">
+                          Retrait au restaurant
+                        </span>
                       </div>
-                      <Store className="w-5 h-5 text-primary" />
-                      <span className="font-medium text-foreground">Retrait au restaurant</span>
+                      {deliveryMethod === "PICKUP" && (
+                        <p className="mt-3 text-xs text-muted-foreground pl-8">
+                          {process.env.RESTAURANT_ADDRESS ||
+                            "12 Rue de la République, 25000 Besançon"}
+                        </p>
+                      )}
                     </div>
-                    {deliveryMethod === 'PICKUP' && (
-                      <p className="mt-3 text-xs text-muted-foreground pl-8">
-                        {process.env.RESTAURANT_ADDRESS || '12 Rue de la République, 25000 Besançon'}
-                      </p>
-                    )}
-                  </div>
 
-                  <div
-                    className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
-                      deliveryMethod === 'DELIVERY'
-                        ? 'border-primary bg-primary/10'
-                        : 'border-border hover:border-primary/50'
-                    }`}
-                    onClick={() => setDeliveryMethod('DELIVERY')}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${deliveryMethod === 'DELIVERY' ? 'border-primary' : 'border-border'}`}>
-                        {deliveryMethod === 'DELIVERY' && <div className="w-2.5 h-2.5 bg-primary rounded-full" />}
+                    <div
+                      className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
+                        deliveryMethod === "DELIVERY"
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                      onClick={() => setDeliveryMethod("DELIVERY")}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-5 h-5 rounded-full border flex items-center justify-center ${deliveryMethod === "DELIVERY" ? "border-primary" : "border-border"}`}
+                        >
+                          {deliveryMethod === "DELIVERY" && (
+                            <div className="w-2.5 h-2.5 bg-primary rounded-full" />
+                          )}
+                        </div>
+                        <Truck className="w-5 h-5 text-primary" />
+                        <span className="font-medium text-foreground">
+                          Livraison à domicile
+                        </span>
                       </div>
-                      <Truck className="w-5 h-5 text-primary" />
-                      <span className="font-medium text-foreground">Livraison à domicile</span>
                     </div>
                   </div>
                 </div>
-              </div>
               </>
             )}
 
@@ -218,43 +282,71 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
 
             <div className="space-y-4">
               <h3 className="font-semibold text-foreground flex items-center gap-2">
-                <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                <svg
+                  className="w-4 h-4 text-primary"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
                 </svg>
                 Informations du client
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nom complet <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="name">
+                    Nom complet <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     id="name"
                     value={formData.customerName}
-                    onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, customerName: e.target.value })
+                    }
                     placeholder="Jean Dupont"
                     className="bg-background"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="email">
+                    Email <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     id="email"
                     type="email"
                     value={formData.customerEmail}
-                    onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        customerEmail: e.target.value,
+                      })
+                    }
                     placeholder="jean@example.com"
                     className="bg-background"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Téléphone <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="phone">
+                    Téléphone <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     id="phone"
                     type="tel"
                     value={formData.customerPhone}
-                    onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        customerPhone: e.target.value,
+                      })
+                    }
                     placeholder="+33 6 12 34 56 78"
                     className="bg-background"
                   />
@@ -263,7 +355,7 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
             </div>
 
             {/* Delivery Address (only for delivery method) */}
-            {deliveryMethod === 'DELIVERY' && (
+            {deliveryMethod === "DELIVERY" && (
               <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
                 <h3 className="font-semibold text-foreground flex items-center gap-2">
                   <Truck className="w-4 h-4 text-primary" />
@@ -271,11 +363,15 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
                 </h3>
 
                 <div className="space-y-2">
-                  <Label htmlFor="address">Adresse <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="address">
+                    Adresse <span className="text-red-500">*</span>
+                  </Label>
                   <Textarea
                     id="address"
                     value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, address: e.target.value })
+                    }
                     placeholder="123 Rue de la Bouteille"
                     className="min-h-[80px] bg-background"
                   />
@@ -283,22 +379,30 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="city">Ville <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="city">
+                      Ville <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                       id="city"
                       value={formData.city}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, city: e.target.value })
+                      }
                       placeholder="Paris"
                       className="bg-background"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="zipCode">Code postal <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="zipCode">
+                      Code postal <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                       id="zipCode"
                       value={formData.zipCode}
-                      onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, zipCode: e.target.value })
+                      }
                       placeholder="75001"
                       className="bg-background"
                     />
@@ -309,7 +413,9 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
                     <Input
                       id="country"
                       value={formData.country}
-                      onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, country: e.target.value })
+                      }
                       placeholder="France"
                       className="bg-background"
                     />
@@ -320,7 +426,9 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
 
             {/* Quantity */}
             <div className="space-y-2">
-              <Label htmlFor="quantity">Quantité <span className="text-red-500">*</span></Label>
+              <Label htmlFor="quantity">
+                Quantité <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="quantity"
                 type="number"
@@ -337,18 +445,28 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="flex-1"
+              >
                 Annuler
               </Button>
-              <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground">
-                {quantity > 1 ? `Valider ${quantity} produits` : 'Valider la commande'}
+              <Button
+                type="submit"
+                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
+                {quantity > 1
+                  ? `Valider ${quantity} produits`
+                  : "Valider la commande"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </form>
         )}
 
-        {step === 'processing' && (
+        {step === "processing" && (
           <div className="p-12 text-center">
             <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-foreground mb-2">
@@ -360,23 +478,34 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
           </div>
         )}
 
-        {step === 'success' && (
+        {step === "success" && (
           <div className="p-12 text-center">
             <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-10 h-10 text-green-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </div>
             <h3 className="text-2xl font-bold text-foreground mb-2">
               Commande confirmée !
             </h3>
             <p className="text-muted-foreground mb-6">
-              Votre commande a été prise en compte. Vous allez être redirigé vers Stripe pour le paiement.
+              Votre commande a été prise en compte. Vous allez être redirigé
+              vers Stripe pour le paiement.
             </p>
             <Button
               onClick={() => {
                 // Redirect to Stripe
-                window.location.href = '#';
+                window.location.href = "#";
               }}
               className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >

@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { Suspense, useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { AdminNav } from '@/components/admin/AdminNav';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Loader2, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Suspense, useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AdminNav } from "@/components/admin/AdminNav";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Order {
   id: string;
@@ -19,7 +19,7 @@ interface Order {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
-  deliveryMethod: 'PICKUP' | 'DELIVERY';
+  deliveryMethod: "PICKUP" | "DELIVERY";
   status: string;
   createdAt: string;
   expiresAt?: string | null;
@@ -33,44 +33,51 @@ interface OrderListResponse {
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  PENDING_PAYMENT: 'En paiement...',
-  CONFIRMED: 'En attente...',
-  SHIPPED: 'Envoyée',
-  READY: 'Prête',
-  COMPLETED: 'Terminée',
-  CANCELLED: 'Remboursée',
+  PENDING_PAYMENT: "En paiement...",
+  CONFIRMED: "En attente...",
+  SHIPPED: "Envoyée",
+  READY: "Prête",
+  COMPLETED: "Terminée",
+  CANCELLED: "Remboursée",
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  PENDING_PAYMENT: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
-  CONFIRMED: 'bg-orange-500/10 text-orange-500 border-orange-500/20',
-  SHIPPED: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
-  READY: 'bg-green-500/10 text-green-500 border-green-500/20',
-  COMPLETED: 'bg-green-500/10 text-green-500 border-green-500/20',
-  CANCELLED: 'bg-red-500/10 text-red-500 border-red-500/20',
+  PENDING_PAYMENT: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
+  CONFIRMED: "bg-orange-500/10 text-orange-500 border-orange-500/20",
+  SHIPPED: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+  READY: "bg-green-500/10 text-green-500 border-green-500/20",
+  COMPLETED: "bg-green-500/10 text-green-500 border-green-500/20",
+  CANCELLED: "bg-red-500/10 text-red-500 border-red-500/20",
 };
 
 function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Date(iso).toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
+  return new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR",
+  }).format(amount);
 }
 
 function OrdersContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [search, setSearch] = useState(searchParams.get('search') || '');
-  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || '');
-  const [page, setPage] = useState(parseInt(searchParams.get('page') || '1', 10));
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [statusFilter, setStatusFilter] = useState(
+    searchParams.get("status") || "",
+  );
+  const [page, setPage] = useState(
+    parseInt(searchParams.get("page") || "1", 10),
+  );
   const [orders, setOrders] = useState<Order[]>([]);
   const [total, setTotal] = useState(0);
   const [pageSize, setPageSize] = useState(25);
@@ -83,18 +90,18 @@ function OrdersContent() {
     setError(null);
     try {
       const params = new URLSearchParams();
-      if (search) params.append('search', search);
-      if (statusFilter) params.append('status', statusFilter);
-      params.append('page', page.toString());
+      if (search) params.append("search", search);
+      if (statusFilter) params.append("status", statusFilter);
+      params.append("page", page.toString());
 
       const res = await fetch(`/api/admin/orders?${params.toString()}`);
-      if (!res.ok) throw new Error('Erreur lors du chargement des commandes');
+      if (!res.ok) throw new Error("Erreur lors du chargement des commandes");
       const data: OrderListResponse = await res.json();
       setOrders(data.data);
       setTotal(data.total);
       setPageSize(data.pageSize);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      setError(err instanceof Error ? err.message : "Une erreur est survenue");
     } finally {
       setLoading(false);
     }
@@ -106,10 +113,13 @@ function OrdersContent() {
 
   useEffect(() => {
     const params = new URLSearchParams();
-    if (search) params.set('search', search);
-    if (statusFilter) params.set('status', statusFilter);
-    if (page > 1) params.set('page', page.toString());
-    router.replace(`/admin/commandes${params.toString() ? `?${params.toString()}` : ''}`, { scroll: false });
+    if (search) params.set("search", search);
+    if (statusFilter) params.set("status", statusFilter);
+    if (page > 1) params.set("page", page.toString());
+    router.replace(
+      `/admin/commandes${params.toString() ? `?${params.toString()}` : ""}`,
+      { scroll: false },
+    );
   }, [search, statusFilter, page, router]);
 
   const handleRefresh = () => {
@@ -125,9 +135,18 @@ function OrdersContent() {
 
       <div className="max-w-7xl mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-foreground">Commandes Produits</h1>
-          <Button variant="outline" size="sm" onClick={handleRefresh} disabled={loading || refreshing}>
-            <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+          <h1 className="text-2xl font-semibold text-foreground">
+            Commandes Produits
+          </h1>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={loading || refreshing}
+          >
+            <RefreshCw
+              className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`}
+            />
             Actualiser
           </Button>
         </div>
@@ -135,18 +154,28 @@ function OrdersContent() {
         {/* Filters */}
         <div className="bg-card border border-border rounded-lg p-4 mb-6 flex flex-col sm:flex-row gap-4 items-end">
           <div className="flex-1">
-            <Label className="text-sm text-muted-foreground mb-1 block">Rechercher</Label>
+            <Label className="text-sm text-muted-foreground mb-1 block">
+              Rechercher
+            </Label>
             <Input
               placeholder="Code, email, nom..."
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
             />
           </div>
           <div className="flex-1 sm:w-48">
-            <Label className="text-sm text-muted-foreground mb-1 block">Statut</Label>
+            <Label className="text-sm text-muted-foreground mb-1 block">
+              Statut
+            </Label>
             <select
               value={statusFilter}
-              onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
               className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="">Tous les statuts</option>
@@ -180,38 +209,81 @@ function OrdersContent() {
               <table className="w-full">
                 <thead className="bg-muted/50">
                   <tr>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Code</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Produit</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Qté</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Total</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Client</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Livraison</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Date</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Statut</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Actions</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
+                      Code
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
+                      Produit
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
+                      Qté
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
+                      Total
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
+                      Client
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
+                      Livraison
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
+                      Date
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
+                      Statut
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {orders.map((order) => (
-                    <tr key={order.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="py-3 px-4 text-sm font-mono text-primary">{order.code}</td>
-                      <td className="py-3 px-4 text-sm text-foreground">{order.productTitle}</td>
-                      <td className="py-3 px-4 text-sm text-foreground">{order.quantity}</td>
-                      <td className="py-3 px-4 text-sm font-medium text-foreground">{formatCurrency(order.totalPrice)}</td>
-                      <td className="py-3 px-4">
-                        <div className="text-sm text-foreground font-medium">{order.customerName}</div>
-                        <div className="text-xs text-muted-foreground">{order.customerEmail}</div>
+                    <tr
+                      key={order.id}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
+                      <td className="py-3 px-4 text-sm font-mono text-primary">
+                        {order.code}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-foreground">
+                        {order.productTitle}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-foreground">
+                        {order.quantity}
+                      </td>
+                      <td className="py-3 px-4 text-sm font-medium text-foreground">
+                        {formatCurrency(order.totalPrice)}
                       </td>
                       <td className="py-3 px-4">
-                        <span className={`text-xs px-2 py-1 rounded border ${order.deliveryMethod === 'DELIVERY'
-                          ? 'bg-blue-500/10 text-blue-500 border-blue-500/20'
-                          : 'bg-green-500/10 text-green-500 border-green-500/20'}`}>
-                          {order.deliveryMethod === 'DELIVERY' ? 'Domicile' : 'Pickup'}
+                        <div className="text-sm text-foreground font-medium">
+                          {order.customerName}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {order.customerEmail}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`text-xs px-2 py-1 rounded border ${
+                            order.deliveryMethod === "DELIVERY"
+                              ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                              : "bg-green-500/10 text-green-500 border-green-500/20"
+                          }`}
+                        >
+                          {order.deliveryMethod === "DELIVERY"
+                            ? "Domicile"
+                            : "Pickup"}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-sm text-muted-foreground">{formatDateTime(order.createdAt)}</td>
+                      <td className="py-3 px-4 text-sm text-muted-foreground">
+                        {formatDateTime(order.createdAt)}
+                      </td>
                       <td className="py-3 px-4">
-                        <Badge className={`${STATUS_COLORS[order.status] || 'bg-muted'} border`}>
+                        <Badge
+                          className={`${STATUS_COLORS[order.status] || "bg-muted"} border`}
+                        >
                           {STATUS_LABELS[order.status] || order.status}
                         </Badge>
                       </td>
@@ -288,7 +360,13 @@ function OrdersContent() {
 
 export default function OrdersPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          Loading...
+        </div>
+      }
+    >
       <OrdersContent />
     </Suspense>
   );

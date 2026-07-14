@@ -9,19 +9,19 @@
 
 ### 1.1 Stack
 
-| Couche | Technologie | Version |
-|---|---|---|
-| Framework | Next.js | 15.x (App Router) |
-| Langage | TypeScript | 5.x |
-| UI | React | 18.3.1 |
-| Styling | Tailwind CSS | 4.1.12 |
-| Composants | Radix UI + shadcn/ui | — |
-| CMS | Keystatic | 0.5.x / 5.0.x |
-| Auth | jose (JWT) | 6.x |
-| ORM | Prisma | 7.8.x |
-| DB | PostgreSQL | 16 |
-| Hébergement | Vercel | — |
-| Package manager | pnpm | — |
+| Couche          | Technologie          | Version           |
+| --------------- | -------------------- | ----------------- |
+| Framework       | Next.js              | 15.x (App Router) |
+| Langage         | TypeScript           | 5.x               |
+| UI              | React                | 18.3.1            |
+| Styling         | Tailwind CSS         | 4.1.12            |
+| Composants      | Radix UI + shadcn/ui | —                 |
+| CMS             | Keystatic            | 0.5.x / 5.0.x     |
+| Auth            | jose (JWT)           | 6.x               |
+| ORM             | Prisma               | 7.8.x             |
+| DB              | PostgreSQL           | 16                |
+| Hébergement     | Vercel               | —                 |
+| Package manager | pnpm                 | —                 |
 
 ### 1.2 Architecture du projet
 
@@ -122,25 +122,25 @@ Le stockage est configuré en mode `github`. Les fichiers YAML sont lus/écrits 
 
 ### 2.2 Singletons définis
 
-| Singleton | Path | Type |
-|---|---|---|
-| `hero` | `content/hero` | Image + texte |
-| `histoire` | `content/histoire` | Multi-sections (texte + images) |
-| `galerie` | `content/galerie` | Array de photos |
-| `contact` | `content/contact` | Texte + image + liens |
-| `footer` | `content/footer` | Réseaux sociaux + avis |
-| `menu` | `content/menu` | Multi-onglets, catégories, plats |
+| Singleton  | Path               | Type                             |
+| ---------- | ------------------ | -------------------------------- |
+| `hero`     | `content/hero`     | Image + texte                    |
+| `histoire` | `content/histoire` | Multi-sections (texte + images)  |
+| `galerie`  | `content/galerie`  | Array de photos                  |
+| `contact`  | `content/contact`  | Texte + image + liens            |
+| `footer`   | `content/footer`   | Réseaux sociaux + avis           |
+| `menu`     | `content/menu`     | Multi-onglets, catégories, plats |
 
 ### 2.3 Configuration de production
 
 En production Vercel, le mode `github` nécessite :
 
-| Variable | Description |
-|---|---|
-| `KEYSTATIC_GITHUB_CLIENT_ID` | Client ID de l'GitHub App |
-| `KEYSTATIC_GITHUB_CLIENT_SECRET` | Client secret |
-| `KEYSTATIC_SECRET` | Secret pour signer les sessions |
-| `KEYSTATIC_GITHUB_REPOSITORY` | Format `owner/repo` |
+| Variable                         | Description                     |
+| -------------------------------- | ------------------------------- |
+| `KEYSTATIC_GITHUB_CLIENT_ID`     | Client ID de l'GitHub App       |
+| `KEYSTATIC_GITHUB_CLIENT_SECRET` | Client secret                   |
+| `KEYSTATIC_SECRET`               | Secret pour signer les sessions |
+| `KEYSTATIC_GITHUB_REPOSITORY`    | Format `owner/repo`             |
 
 > **Note :** En local, le mode `local` fonctionne parfaitement. En production, le mode `github` permet l'édition via GitHub App.
 
@@ -159,11 +159,11 @@ L'authentification utilise des tokens JWT avec la bibliothèque `jose` :
 
 ## 4. Services externes
 
-| Service | Usage | Accès |
-|---|---|---|
+| Service    | Usage                           | Accès                                                                |
+| ---------- | ------------------------------- | -------------------------------------------------------------------- |
 | **GitHub** | Stockage fichiers YAML + images | [github.com/nderousseaux/anov](https://github.com/nderousseaux/anov) |
-| **Vercel** | Hébergement + déploiement | [vercel.com](https://vercel.com) |
-| **Neon** | Base de données PostgreSQL | [neon.tech](https://neon.tech) |
+| **Vercel** | Hébergement + déploiement       | [vercel.com](https://vercel.com)                                     |
+| **Neon**   | Base de données PostgreSQL      | [neon.tech](https://neon.tech)                                       |
 
 ---
 
@@ -188,23 +188,24 @@ Le système d'envoi d'emails utilise **nodemailer** avec un serveur SMTP personn
 
 Les variables d'environnement suivantes doivent être configurées :
 
-| Variable | Description | Exemple |
-|---|---|---|
-| `SMTP_HOST` | Hôte du serveur SMTP | `smtp.example.com` |
-| `SMTP_PORT` | Port du serveur SMTP | `587` (STARTTLS) ou `465` (SSL) |
-| `SMTP_SECURE` | Utiliser SSL (port 465) | `false` pour port 587, `true` pour port 465 |
-| `SMTP_USER` | Nom d'utilisateur SMTP | `noreply@anov.fr` |
-| `SMTP_PASSWORD` | Mot de passe SMTP | `votre_mot_de_passe` |
-| `SMTP_FROM` | Expéditeur par défaut | `"ANØV <noreply@anov.fr>"` |
-| `CONTACT_EMAIL` | Email de réception des contacts | `contact@anov.fr` |
+| Variable        | Description                     | Exemple                                     |
+| --------------- | ------------------------------- | ------------------------------------------- |
+| `SMTP_HOST`     | Hôte du serveur SMTP            | `smtp.example.com`                          |
+| `SMTP_PORT`     | Port du serveur SMTP            | `587` (STARTTLS) ou `465` (SSL)             |
+| `SMTP_SECURE`   | Utiliser SSL (port 465)         | `false` pour port 587, `true` pour port 465 |
+| `SMTP_USER`     | Nom d'utilisateur SMTP          | `noreply@anov.fr`                           |
+| `SMTP_PASSWORD` | Mot de passe SMTP               | `votre_mot_de_passe`                        |
+| `SMTP_FROM`     | Expéditeur par défaut           | `"ANØV <noreply@anov.fr>"`                  |
+| `CONTACT_EMAIL` | Email de réception des contacts | `contact@anov.fr`                           |
 
 ### API Route
 
-| Route | Méthode | Description |
-|---|---|---|
-| `/api/contact` | POST | Envoi d'un message via le formulaire de contact |
+| Route          | Méthode | Description                                     |
+| -------------- | ------- | ----------------------------------------------- |
+| `/api/contact` | POST    | Envoi d'un message via le formulaire de contact |
 
 **Payload :**
+
 ```json
 {
   "name": "Jean Dupont",
@@ -215,6 +216,7 @@ Les variables d'environnement suivantes doivent être configurées :
 ```
 
 **Réponse :**
+
 ```json
 {
   "message": "Message envoyé avec succès",
@@ -229,17 +231,17 @@ Les variables d'environnement suivantes doivent être configurées :
 
 ## 5. Composants de la vitrine
 
-| Composant | Description |
-|---|---|
-| `Navbar` | Navigation responsive avec scroll fluide |
-| `Footer` | Footer avec données CMS (réseaux, avis) |
-| `Hero` | Section haute avec image et sous-titre |
-| `History` | Section histoire (jusqu'à 8 sections) |
-| `Gallery` | Galerie photos avec lightbox |
-| `Contact` | Section contact avec formulaire |
-| `MenuContent` | Affichage de la carte en onglets |
-| `OriginsMap` | Carte interactive des origines avec D3.js |
-| `SplashScreen` | Animation de chargement initial |
+| Composant      | Description                               |
+| -------------- | ----------------------------------------- |
+| `Navbar`       | Navigation responsive avec scroll fluide  |
+| `Footer`       | Footer avec données CMS (réseaux, avis)   |
+| `Hero`         | Section haute avec image et sous-titre    |
+| `History`      | Section histoire (jusqu'à 8 sections)     |
+| `Gallery`      | Galerie photos avec lightbox              |
+| `Contact`      | Section contact avec formulaire           |
+| `MenuContent`  | Affichage de la carte en onglets          |
+| `OriginsMap`   | Carte interactive des origines avec D3.js |
+| `SplashScreen` | Animation de chargement initial           |
 
 ### OriginsMap — Carte des origines
 
@@ -248,6 +250,7 @@ Les variables d'environnement suivantes doivent être configurées :
 **Données :** `/public/europe.geojson` (frontières Europe) + `content/origines.yaml` (points d'origine)
 
 **Mécanisme :**
+
 - Projection Mercator centrée sur Besançon (47.2378°N, 6.0244°E)
 - Lignes radiales dorées reliant chaque ville à Besançon
 - Masque SVG pour fondu vers les bords (desktop)
@@ -261,35 +264,36 @@ Les variables d'environnement suivantes doivent être configurées :
 
 ### 6.1 Authentification
 
-| Route | Méthode | Description |
-|---|---|---|
-| `/api/admin/auth` | POST | Connexion (username + password) |
-| `/api/admin/auth` | DELETE | Déconnexion |
+| Route             | Méthode | Description                     |
+| ----------------- | ------- | ------------------------------- |
+| `/api/admin/auth` | POST    | Connexion (username + password) |
+| `/api/admin/auth` | DELETE  | Déconnexion                     |
 
 ### 6.2 Keystatic
 
-| Route | Méthode | Description |
-|---|---|---|
+| Route                        | Méthode  | Description             |
+| ---------------------------- | -------- | ----------------------- |
 | `/api/keystatic/[...params]` | GET/POST | Routes Keystatic (CRUD) |
 
 ### 6.3 Contact
 
-| Route | Méthode | Description |
-|---|---|---|
-| `/api/contact` | POST | Envoi d'un message de contact |
+| Route          | Méthode | Description                   |
+| -------------- | ------- | ----------------------------- |
+| `/api/contact` | POST    | Envoi d'un message de contact |
 
 ### 6.4 Chèques Cadeaux
 
-| Route | Méthode | Description |
-|---|---|---|
-| `/api/gift-cards/checkout` | POST | Création d'une session de paiement Stripe (client) |
-| `/api/admin/gift-cards` | POST | Création manuelle d'un chèque cadeau (admin) |
-| `/api/admin/gift-cards` | PATCH | Actions sur un chèque (utiliser, annuler, supprimer) |
-| `/api/stripe/webhook` | POST | Webhook Stripe (gestion réservations + chèques cadeaux) |
+| Route                      | Méthode | Description                                             |
+| -------------------------- | ------- | ------------------------------------------------------- |
+| `/api/gift-cards/checkout` | POST    | Création d'une session de paiement Stripe (client)      |
+| `/api/admin/gift-cards`    | POST    | Création manuelle d'un chèque cadeau (admin)            |
+| `/api/admin/gift-cards`    | PATCH   | Actions sur un chèque (utiliser, annuler, supprimer)    |
+| `/api/stripe/webhook`      | POST    | Webhook Stripe (gestion réservations + chèques cadeaux) |
 
 #### `/api/gift-cards/checkout`
 
 **Payload :**
+
 ```json
 {
   "amount": "100",
@@ -299,6 +303,7 @@ Les variables d'environnement suivantes doivent être configurées :
 ```
 
 **Réponse :**
+
 ```json
 {
   "sessionId": "cs_test_...",
@@ -307,6 +312,7 @@ Les variables d'environnement suivantes doivent être configurées :
 ```
 
 **Logique :**
+
 1. Génère un code unique (`ANOV-G-XXXX-XXXX`)
 2. Crée l'enregistrement `GiftCard` en base avec statut `PENDING_PAYMENT`
 3. Crée la session Stripe Checkout
@@ -315,6 +321,7 @@ Les variables d'environnement suivantes doivent être configurées :
 #### `/api/admin/gift-cards` (POST)
 
 **Payload :**
+
 ```json
 {
   "amount": 100,
@@ -324,6 +331,7 @@ Les variables d'environnement suivantes doivent être configurées :
 ```
 
 **Réponse :**
+
 ```json
 {
   "id": "clxxxxx",
@@ -339,6 +347,7 @@ Les variables d'environnement suivantes doivent être configurées :
 ```
 
 **Logique :**
+
 1. Génère un code unique avec préfixe `ANOV-M-` (Manuel)
 2. Crée l'enregistrement `GiftCard` en base avec statut `ACTIVE`
 3. Envoie un email au destinataire si email fourni
@@ -346,11 +355,11 @@ Les variables d'environnement suivantes doivent être configurées :
 
 #### `/api/admin/gift-cards` (PATCH)
 
-| Action | Payload | Description |
-|--------|---------|-------------|
-| `markUsed` | `{ id, action: "markUsed" }` | Marque le chèque comme utilisé |
+| Action     | Payload                      | Description                       |
+| ---------- | ---------------------------- | --------------------------------- |
+| `markUsed` | `{ id, action: "markUsed" }` | Marque le chèque comme utilisé    |
 | `validate` | `{ id, action: "validate" }` | Remet le chèque comme non utilisé |
-| `delete` | `{ id, action: "delete" }` | Supprime le chèque |
+| `delete`   | `{ id, action: "delete" }`   | Supprime le chèque                |
 
 #### `/api/stripe/webhook`
 
@@ -360,9 +369,11 @@ Gère deux types de paiements :
 - **Chèques cadeaux** (metadata: `type: 'gift_card'`, `giftCardId`)
 
 **Webhook Events :**
+
 - `checkout.session.completed` : Confirme le paiement et active le chèque
 
 **Activation du chèque cadeau (client) :**
+
 1. Récupère le chèque via `giftCardId`
 2. Met à jour le statut à `ACTIVE`
 3. Envoie l'email avec le code au destinataire
@@ -370,32 +381,32 @@ Gère deux types de paiements :
 
 ### 6.5 Stripe
 
-| Variable | Description |
-|---|---|
-| `STRIPE_SECRET_KEY` | Clé API secrète |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Clé API publique |
-| `STRIPE_WEBHOOK_SECRET` | Secret de signature des webhooks |
+| Variable                             | Description                      |
+| ------------------------------------ | -------------------------------- |
+| `STRIPE_SECRET_KEY`                  | Clé API secrète                  |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Clé API publique                 |
+| `STRIPE_WEBHOOK_SECRET`              | Secret de signature des webhooks |
 
 ---
 
 ## 7. Configuration Vercel
 
-| Variable | Usage |
-|---|---|
-| `NEXTAUTH_SECRET` | Clé JWT (min. 32 caractères) |
-| `KEYSTATIC_GITHUB_CLIENT_ID` | GitHub App pour le CMS |
-| `KEYSTATIC_GITHUB_CLIENT_SECRET` | GitHub App |
-| `KEYSTATIC_SECRET` | Session Keystatic |
-| `KEYSTATIC_GITHUB_REPOSITORY` | Repository GitHub |
-| `NEXT_PUBLIC_BASE_URL` | URL du site |
-| `DATABASE_URL` | URL de connexion PostgreSQL (Neon) |
-| `SMTP_HOST` | Hôte du serveur SMTP |
-| `SMTP_PORT` | Port du serveur SMTP |
-| `SMTP_SECURE` | SSL activé (true/false) |
-| `SMTP_USER` | Utilisateur SMTP |
-| `SMTP_PASSWORD` | Mot de passe SMTP |
-| `SMTP_FROM` | Expéditeur par défaut |
-| `CONTACT_EMAIL` | Email de réception des contacts |
+| Variable                         | Usage                              |
+| -------------------------------- | ---------------------------------- |
+| `NEXTAUTH_SECRET`                | Clé JWT (min. 32 caractères)       |
+| `KEYSTATIC_GITHUB_CLIENT_ID`     | GitHub App pour le CMS             |
+| `KEYSTATIC_GITHUB_CLIENT_SECRET` | GitHub App                         |
+| `KEYSTATIC_SECRET`               | Session Keystatic                  |
+| `KEYSTATIC_GITHUB_REPOSITORY`    | Repository GitHub                  |
+| `NEXT_PUBLIC_BASE_URL`           | URL du site                        |
+| `DATABASE_URL`                   | URL de connexion PostgreSQL (Neon) |
+| `SMTP_HOST`                      | Hôte du serveur SMTP               |
+| `SMTP_PORT`                      | Port du serveur SMTP               |
+| `SMTP_SECURE`                    | SSL activé (true/false)            |
+| `SMTP_USER`                      | Utilisateur SMTP                   |
+| `SMTP_PASSWORD`                  | Mot de passe SMTP                  |
+| `SMTP_FROM`                      | Expéditeur par défaut              |
+| `CONTACT_EMAIL`                  | Email de réception des contacts    |
 
 ---
 
@@ -434,6 +445,7 @@ En production, **tu n'as pas besoin de `stripe listen`** car Vercel expose déj�
 #### Étapes de déploiement :
 
 1. **Déployer ton app sur Vercel**
+
    ```bash
    git push origin main  # ou pprod pour preview
    ```
@@ -453,10 +465,10 @@ En production, **tu n'as pas besoin de `stripe listen`** car Vercel expose déj�
 
    Dans les **Settings → Environment Variables** de ton projet Vercel :
 
-   | Variable | Valeur | Type |
-   |---|---|---|
-   | `STRIPE_SECRET_KEY` | `sk_live_xxxxxxxxxxxx` | Production |
-   | `STRIPE_WEBHOOK_SECRET` | `whsec_xxxxxxxxxxxx` | Production |
+   | Variable                             | Valeur                 | Type       |
+   | ------------------------------------ | ---------------------- | ---------- |
+   | `STRIPE_SECRET_KEY`                  | `sk_live_xxxxxxxxxxxx` | Production |
+   | `STRIPE_WEBHOOK_SECRET`              | `whsec_xxxxxxxxxxxx`   | Production |
    | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | `pk_live_xxxxxxxxxxxx` | Production |
 
    > **Important :** Cocher "Production" pour que les variables soient accessibles en prod.
@@ -476,6 +488,7 @@ curl -X POST https://ton-app.vercel.app/api/stripe/webhook \
 ```
 
 Pour un test complet, utilise l'interface Stripe :
+
 - Dashboard → **Webhooks** → Sélectionne ton endpoint
 - Clic sur **"Send test webhook"**
 - Choisir l'événement `checkout.session.completed`
@@ -506,6 +519,7 @@ sequenceDiagram
 ### 9.5 Codes de statut du webhook
 
 Le webhook retourne :
+
 - `200 OK` : Traitement successful
 - `400 Bad Request` : Signature invalide ou metadata manquantes
 - `500 Internal Error` : Erreur serveur (base de données, email, etc.)

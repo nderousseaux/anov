@@ -1,8 +1,8 @@
-import { createReader } from '@keystatic/core/reader';
-import config from '@/keystatic.config';
-import { BoutiqueSectionClient } from '@/components/features/Boutique/BoutiqueSectionClient';
+import { createReader } from "@keystatic/core/reader";
+import config from "@/keystatic.config";
+import { BoutiqueSectionClient } from "@/components/features/Boutique/BoutiqueSectionClient";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function BoutiqueSuccessPage({
   searchParams,

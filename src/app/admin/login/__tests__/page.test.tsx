@@ -1,11 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vitest";
 
-describe('AdminLoginPage', () => {
-  it('renders login form', () => {
+describe("AdminLoginPage", () => {
+  it("renders login form", () => {
     expect(true).toBe(true);
   });
 
-  it('handles form validation', () => {
+  it("handles form validation", () => {
     expect(true).toBe(true);
   });
 });

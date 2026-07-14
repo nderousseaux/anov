@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ShoppingBag, AlertCircle } from 'lucide-react';
+import { useState } from "react";
+import Image from "next/image";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ShoppingBag, AlertCircle } from "lucide-react";
 
-import { useLanguage } from '@/context/LanguageContext';
-import { OrderForm } from './OrderForm';
-import type { BoutiqueSectionClientProduct } from './BoutiqueSectionClient';
+import { useLanguage } from "@/context/LanguageContext";
+import { OrderForm } from "./OrderForm";
+import type { BoutiqueSectionClientProduct } from "./BoutiqueSectionClient";
 
 type Product = BoutiqueSectionClientProduct;
 
@@ -15,8 +16,11 @@ export function ProductCard({ product }: { product: Product }) {
   const { locale, t } = useLanguage();
   const [isOrderOpen, setIsOrderOpen] = useState(false);
   const [isAdding] = useState(false);
-  const title = (product[`title_${locale}` as keyof Product] as string) || product.title_fr || '';
-  const alt = product.alt_fr || product.alt_en || 'Produit';
+  const title =
+    (product[`title_${locale}` as keyof Product] as string) ||
+    product.title_fr ||
+    "";
+  const alt = product.alt_fr || product.alt_en || "Produit";
 
   const handleAddToCart = () => {
     setIsOrderOpen(true);
@@ -26,16 +30,19 @@ export function ProductCard({ product }: { product: Product }) {
     <>
       <Card className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
         <div className="aspect-video overflow-hidden bg-muted relative group flex-shrink-0">
-          <img
-            src={product.image || '/assets/placeholder-product.jpg'}
+          <Image
+            src={product.image || "/assets/placeholder-product.jpg"}
             alt={alt}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
         <CardContent className="p-6 flex flex-col flex-grow">
           <div className="mb-2 flex items-center justify-between flex-shrink-0">
-            <span className={`text-xs flex items-center gap-1 ${product.isDeliverable ? 'text-green-500' : 'text-amber-500'}`}>
+            <span
+              className={`text-xs flex items-center gap-1 ${product.isDeliverable ? "text-green-500" : "text-amber-500"}`}
+            >
               {product.isDeliverable ? (
                 <span>Livrable</span>
               ) : (
@@ -46,14 +53,22 @@ export function ProductCard({ product }: { product: Product }) {
               )}
             </span>
           </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2" style={{ fontFamily: 'var(--font-display)' }}>
+          <h3
+            className="text-lg font-semibold text-foreground mb-2"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
             {title}
           </h3>
           <p className="text-sm text-muted-foreground mb-4 flex-shrink-0 min-h-[3.5rem]">
-            {(product[`description_${locale}` as keyof Product] as string) || product.description_fr || ''}
+            {(product[`description_${locale}` as keyof Product] as string) ||
+              product.description_fr ||
+              ""}
           </p>
           <p className="text-2xl font-bold text-primary mb-4 flex-shrink-0">
-            {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(product.price ?? 0)}
+            {new Intl.NumberFormat("fr-FR", {
+              style: "currency",
+              currency: "EUR",
+            }).format(product.price ?? 0)}
           </p>
           <div className="mt-auto">
             <Button
@@ -62,7 +77,9 @@ export function ProductCard({ product }: { product: Product }) {
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               {isAdding ? (
-                <span className="animate-pulse">{t.boutique.product.addToCart} en cours...</span>
+                <span className="animate-pulse">
+                  {t.boutique.product.addToCart} en cours...
+                </span>
               ) : (
                 <>
                   <ShoppingBag className="w-4 h-4 mr-2" />
@@ -79,12 +96,12 @@ export function ProductCard({ product }: { product: Product }) {
           product={{
             id: `product-${product.title_fr}`,
             title_fr: product.title_fr,
-            title_en: product.title_en ?? '',
-            title_de: product.title_de ?? '',
+            title_en: product.title_en ?? "",
+            title_de: product.title_de ?? "",
             price: product.price ?? 0,
             maxOrder: product.maxOrder ?? 0,
             isDeliverable: product.isDeliverable,
-            image: product.image ?? '/assets/placeholder-product.jpg',
+            image: product.image ?? "/assets/placeholder-product.jpg",
           }}
           onClose={() => setIsOrderOpen(false)}
         />

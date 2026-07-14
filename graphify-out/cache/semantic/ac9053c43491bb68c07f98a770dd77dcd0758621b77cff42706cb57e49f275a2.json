@@ -1,1 +1,15 @@
-{"nodes": [{"id": "content:hero.yaml", "label": "hero.yaml", "type": "file", "source_file": "content/hero.yaml", "confidence": "EXTRACTED", "description": "Hero section YAML content file", "metadata": {"line_start": 1, "line_end": 3}}], "edges": [], "hyperedges": []}
+{
+  "nodes": [
+    {
+      "id": "content:hero.yaml",
+      "label": "hero.yaml",
+      "type": "file",
+      "source_file": "content/hero.yaml",
+      "confidence": "EXTRACTED",
+      "description": "Hero section YAML content file",
+      "metadata": { "line_start": 1, "line_end": 3 }
+    }
+  ],
+  "edges": [],
+  "hyperedges": []
+}

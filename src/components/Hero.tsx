@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
-import { useLanguage } from '@/context/LanguageContext';
-import { pickField } from '@/lib/langs';
-
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { ChevronDown } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+import { pickField } from "@/lib/langs";
 
 interface HeroProps {
   content?: Record<string, unknown> | null;
@@ -12,8 +12,10 @@ interface HeroProps {
 
 export function Hero({ content }: HeroProps) {
   const { locale, t } = useLanguage();
-  const subtitle = content ? pickField(content, 'subtitle', locale) : t.hero.reserve;
-  const heroImageUrl = content?.image ?? '/assets/hero.jpg';
+  const subtitle = content
+    ? pickField(content, "subtitle", locale)
+    : t.hero.reserve;
+  const heroImageUrl = content?.image ?? "/assets/hero.jpg";
   const [isArrowVisible, setIsArrowVisible] = useState(true);
 
   useEffect(() => {
@@ -24,28 +26,33 @@ export function Hero({ content }: HeroProps) {
     };
 
     updateScrollState();
-    window.addEventListener('scroll', updateScrollState, { passive: true });
+    window.addEventListener("scroll", updateScrollState, { passive: true });
 
     return () => {
-      window.removeEventListener('scroll', updateScrollState);
+      window.removeEventListener("scroll", updateScrollState);
     };
   }, []);
 
   const scrollToHistory = () => {
-    const element = document.getElementById('history');
+    const element = document.getElementById("history");
     if (element) {
       const yOffset = -80;
       const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      window.scrollTo({ top: y, behavior: "smooth" });
     }
   };
 
   return (
-    <section id="hero" className="relative h-screen flex items-center justify-center overflow-hidden">
+    <section
+      id="hero"
+      className="relative h-screen flex items-center justify-center overflow-hidden"
+    >
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <img
+        <Image
           src={heroImageUrl as string}
+          width={1920}
+          height={1080}
           alt="Ambiance restaurant"
           className="w-full h-full object-cover"
         />
@@ -54,17 +61,22 @@ export function Hero({ content }: HeroProps) {
 
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-        <img
-          src="/assets/text-logo.svg"
-          alt="Logo"
-          className="mx-auto mb-8 w-auto h-20 sm:h-24 md:h-36"
-        />
+        <div className="mx-auto mb-8 w-auto h-20 sm:h-24 md:h-36">
+          <Image
+            src="/assets/text-logo.svg"
+            alt="Logo"
+            width={400}
+            height={100}
+            className="w-full h-full object-contain"
+          />
+        </div>
 
         <p
           className="text-base sm:text-xl md:text-2xl mb-12 text-foreground max-w-2xl mx-auto italic leading-relaxed tracking-wide"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: "var(--font-display)" }}
         >
-          {subtitle || 'Où chaque plat raconte une histoire, où chaque saveur éveille les sens'}
+          {subtitle ||
+            "Où chaque plat raconte une histoire, où chaque saveur éveille les sens"}
         </p>
         {/* <Link href="/reservation">
           <Button
@@ -78,8 +90,9 @@ export function Hero({ content }: HeroProps) {
       {/* Scroll Indicator */}
       <button
         onClick={scrollToHistory}
-        className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce cursor-pointer transition-opacity duration-500 ${isArrowVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-          }`}
+        className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce cursor-pointer transition-opacity duration-500 ${
+          isArrowVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
       >
         <ChevronDown className="text-primary" size={32} />
       </button>

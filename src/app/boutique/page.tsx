@@ -1,14 +1,18 @@
-import { createReader } from '@keystatic/core/reader';
-import config from '@/keystatic.config';
-import { BoutiqueSectionClient } from '@/components/features/Boutique/BoutiqueSectionClient';
+import { createReader } from "@keystatic/core/reader";
+import config from "@/keystatic.config";
+import { BoutiqueSectionClient } from "@/components/features/Boutique/BoutiqueSectionClient";
 
 // Réutiliser les types de BoutiqueSectionClient pour éviter les doublons
-import type { BoutiqueSectionClientProduct, BoutiqueSectionClientBoutiqueContent } from '@/components/features/Boutique/BoutiqueSectionClient';
+import type {
+  BoutiqueSectionClientProduct,
+  BoutiqueSectionClientBoutiqueContent,
+} from "@/components/features/Boutique/BoutiqueSectionClient";
 
 export default async function BoutiquePage() {
   const reader = createReader(process.cwd(), config);
   const boutiqueContent = await reader.singletons.boutique.read();
-  const content = (boutiqueContent ?? {}) as BoutiqueSectionClientBoutiqueContent;
+  const content = (boutiqueContent ??
+    {}) as BoutiqueSectionClientBoutiqueContent;
 
   // Récupérer les produits depuis Keystatic
   const products = (content.products || []) as BoutiqueSectionClientProduct[];

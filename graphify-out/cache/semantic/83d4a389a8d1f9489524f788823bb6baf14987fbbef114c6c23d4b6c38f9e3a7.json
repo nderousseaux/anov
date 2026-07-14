@@ -1,1 +1,78 @@
-{"nodes": [{"id": "file:tests/menu.spec.ts", "label": "menu.spec.ts", "type": "test", "source_file": "tests/menu.spec.ts", "confidence": "EXTRACTED", "description": "Playwright tests for the menu page", "metadata": {"line_start": 1, "line_end": 236}}, {"id": "component:dish-card", "label": "Dish Card", "type": "component", "source_file": "tests/menu.spec.ts", "confidence": "EXTRACTED", "description": "Dish card with data-dish-card attribute showing menu items", "metadata": {"line_start": 36, "line_end": 170}}, {"id": "component:menu-tabs", "label": "Menu Tabs", "type": "component", "source_file": "tests/menu.spec.ts", "confidence": "EXTRACTED", "description": "Tab navigation for Carte de la semaine, Carte du soir, Vins, Cocktails", "metadata": {"line_start": 22, "line_end": 204}}, {"id": "page:menu", "label": "Menu Page (/menu)", "type": "page", "source_file": "tests/menu.spec.ts", "confidence": "EXTRACTED", "description": "Menu page with tabs for weekly menu, evening menu, wines, cocktails", "metadata": {"line_start": 12, "line_end": 205}}], "edges": [{"source": "file:tests/menu.spec.ts", "target": "component:dish-card", "type": "test_for", "source_file": "tests/menu.spec.ts", "confidence": "EXTRACTED"}, {"source": "file:tests/menu.spec.ts", "target": "component:menu-tabs", "type": "test_for", "source_file": "tests/menu.spec.ts", "confidence": "EXTRACTED"}, {"source": "page:menu", "target": "component:dish-card", "type": "contains", "source_file": "tests/menu.spec.ts", "confidence": "EXTRACTED"}, {"source": "page:menu", "target": "component:menu-tabs", "type": "contains", "source_file": "tests/menu.spec.ts", "confidence": "EXTRACTED"}, {"source": "config:playwright-baseurl", "target": "page:menu", "type": "configures", "source_file": "tests/menu.spec.ts", "confidence": "EXTRACTED"}], "hyperedges": []}
+{
+  "nodes": [
+    {
+      "id": "file:tests/menu.spec.ts",
+      "label": "menu.spec.ts",
+      "type": "test",
+      "source_file": "tests/menu.spec.ts",
+      "confidence": "EXTRACTED",
+      "description": "Playwright tests for the menu page",
+      "metadata": { "line_start": 1, "line_end": 236 }
+    },
+    {
+      "id": "component:dish-card",
+      "label": "Dish Card",
+      "type": "component",
+      "source_file": "tests/menu.spec.ts",
+      "confidence": "EXTRACTED",
+      "description": "Dish card with data-dish-card attribute showing menu items",
+      "metadata": { "line_start": 36, "line_end": 170 }
+    },
+    {
+      "id": "component:menu-tabs",
+      "label": "Menu Tabs",
+      "type": "component",
+      "source_file": "tests/menu.spec.ts",
+      "confidence": "EXTRACTED",
+      "description": "Tab navigation for Carte de la semaine, Carte du soir, Vins, Cocktails",
+      "metadata": { "line_start": 22, "line_end": 204 }
+    },
+    {
+      "id": "page:menu",
+      "label": "Menu Page (/menu)",
+      "type": "page",
+      "source_file": "tests/menu.spec.ts",
+      "confidence": "EXTRACTED",
+      "description": "Menu page with tabs for weekly menu, evening menu, wines, cocktails",
+      "metadata": { "line_start": 12, "line_end": 205 }
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/menu.spec.ts",
+      "target": "component:dish-card",
+      "type": "test_for",
+      "source_file": "tests/menu.spec.ts",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "file:tests/menu.spec.ts",
+      "target": "component:menu-tabs",
+      "type": "test_for",
+      "source_file": "tests/menu.spec.ts",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "page:menu",
+      "target": "component:dish-card",
+      "type": "contains",
+      "source_file": "tests/menu.spec.ts",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "page:menu",
+      "target": "component:menu-tabs",
+      "type": "contains",
+      "source_file": "tests/menu.spec.ts",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "config:playwright-baseurl",
+      "target": "page:menu",
+      "type": "configures",
+      "source_file": "tests/menu.spec.ts",
+      "confidence": "EXTRACTED"
+    }
+  ],
+  "hyperedges": []
+}

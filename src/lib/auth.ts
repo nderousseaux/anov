@@ -1,29 +1,29 @@
-import { SignJWT, jwtVerify } from 'jose';
-import { cookies } from 'next/headers';
+import { SignJWT, jwtVerify } from "jose";
+import { cookies } from "next/headers";
 
 const SECRET = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET ?? 'fallback-dev-secret-32-chars-min!!'
+  process.env.NEXTAUTH_SECRET ?? "fallback-dev-secret-32-chars-min!!",
 );
 
-const COOKIE_NAME = 'anov_admin_token';
+const COOKIE_NAME = "anov_admin_token";
 
 export async function signAdminToken(adminId: number): Promise<string> {
-  return new SignJWT({ sub: String(adminId), role: 'admin' })
-    .setProtectedHeader({ alg: 'HS256' })
+  return new SignJWT({ sub: String(adminId), role: "admin" })
+    .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime('8h')
+    .setExpirationTime("8h")
     .sign(SECRET);
 }
 
 export async function verifyAdminToken(
-  token: string
+  token: string,
 ): Promise<{ sub: string; role: string } | null> {
   try {
     const { payload } = await jwtVerify(token, SECRET);
     // Type check from JWTPayload
     const sub = payload.sub as string;
     const role = payload.role as string;
-    if (typeof sub !== 'string' || typeof role !== 'string') {
+    if (typeof sub !== "string" || typeof role !== "string") {
       return null;
     }
     return { sub, role };
@@ -37,7 +37,7 @@ export async function getAdminFromCookies(): Promise<{ id: number } | null> {
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
   const payload = await verifyAdminToken(token);
-  if (!payload || payload.role !== 'admin') return null;
+  if (!payload || payload.role !== "admin") return null;
   return { id: parseInt(payload.sub) };
 }
 

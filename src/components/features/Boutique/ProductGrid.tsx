@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { ProductCard } from './ProductCard';
-import { Loader2, Filter } from 'lucide-react';
-import { useLanguage } from '@/context/LanguageContext';
-import { BoutiqueSectionClientProduct } from './BoutiqueSectionClient';
+import { useEffect, useState } from "react";
+import { ProductCard } from "./ProductCard";
+import { Loader2, Filter } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+import { BoutiqueSectionClientProduct } from "./BoutiqueSectionClient";
 
 type Product = BoutiqueSectionClientProduct;
 
@@ -15,8 +15,8 @@ interface ProductGridProps {
 export function ProductGrid({ products }: ProductGridProps) {
   const [loading, setLoading] = useState(true);
   const [filteredProducts, setFilteredProducts] = useState(products);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [category, setCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [category, setCategory] = useState("all");
   const { t } = useLanguage();
 
   // Simulate loading
@@ -35,15 +35,15 @@ export function ProductGrid({ products }: ProductGridProps) {
       result = result.filter(
         (p) =>
           p.title_fr.toLowerCase().includes(term) ||
-          (p.title_en ?? '').toLowerCase().includes(term) ||
-          (p.title_de ?? '').toLowerCase().includes(term)
+          (p.title_en ?? "").toLowerCase().includes(term) ||
+          (p.title_de ?? "").toLowerCase().includes(term),
       );
     }
 
     // Filter by category (isDeliverable)
-    if (category === 'deliverable') {
+    if (category === "deliverable") {
       result = result.filter((p) => p.isDeliverable);
-    } else if (category === 'pickup') {
+    } else if (category === "pickup") {
       result = result.filter((p) => !p.isDeliverable);
     }
 
@@ -58,7 +58,9 @@ export function ProductGrid({ products }: ProductGridProps) {
           <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="text"
-            placeholder={t.boutique.searchPlaceholder || 'Rechercher un produit...'}
+            placeholder={
+              t.boutique.searchPlaceholder || "Rechercher un produit..."
+            }
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -67,28 +69,34 @@ export function ProductGrid({ products }: ProductGridProps) {
 
         <div className="flex gap-2 w-full sm:w-auto">
           <button
-            onClick={() => setCategory('all')}
+            onClick={() => setCategory("all")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              category === 'all' ? 'bg-primary/10 text-primary' : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+              category === "all"
+                ? "bg-primary/10 text-primary"
+                : "bg-muted/50 text-muted-foreground hover:bg-muted"
             }`}
           >
-            {t.boutique.all || 'Tous'}
+            {t.boutique.all || "Tous"}
           </button>
           <button
-            onClick={() => setCategory('deliverable')}
+            onClick={() => setCategory("deliverable")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              category === 'deliverable' ? 'bg-primary/10 text-primary' : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+              category === "deliverable"
+                ? "bg-primary/10 text-primary"
+                : "bg-muted/50 text-muted-foreground hover:bg-muted"
             }`}
           >
-            {t.boutique.deliverable || 'Livrable'}
+            {t.boutique.deliverable || "Livrable"}
           </button>
           <button
-            onClick={() => setCategory('pickup')}
+            onClick={() => setCategory("pickup")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              category === 'pickup' ? 'bg-primary/10 text-primary' : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+              category === "pickup"
+                ? "bg-primary/10 text-primary"
+                : "bg-muted/50 text-muted-foreground hover:bg-muted"
             }`}
           >
-            {t.boutique.pickup || 'Pickup'}
+            {t.boutique.pickup || "Pickup"}
           </button>
         </div>
       </div>
@@ -101,7 +109,7 @@ export function ProductGrid({ products }: ProductGridProps) {
       ) : filteredProducts.length === 0 ? (
         <div className="text-center py-20">
           <p className="text-muted-foreground">
-            {t.boutique.noProducts || 'Aucun produit trouvé.'}
+            {t.boutique.noProducts || "Aucun produit trouvé."}
           </p>
         </div>
       ) : (
@@ -114,7 +122,12 @@ export function ProductGrid({ products }: ProductGridProps) {
 
       {/* Results count */}
       <div className="text-center text-sm text-muted-foreground">
-        {filteredProducts.length} {t.boutique.productsCount || 'produit'}{filteredProducts.length > 1 ? (t.boutique.productsPlural || 's') : ''} {t.boutique.shown || 'affiché'}{filteredProducts.length > 1 ? (t.boutique.shownPlural || 's') : ''}
+        {filteredProducts.length} {t.boutique.productsCount || "produit"}
+        {filteredProducts.length > 1
+          ? t.boutique.productsPlural || "s"
+          : ""}{" "}
+        {t.boutique.shown || "affiché"}
+        {filteredProducts.length > 1 ? t.boutique.shownPlural || "s" : ""}
       </div>
     </div>
   );

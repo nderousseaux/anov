@@ -1,1 +1,63 @@
-{"nodes": [{"id": "users_nderousseaux_dev_anov_draft_readme_md", "label": "README.md", "file_type": "document", "source_file": "draft/README.md", "source_location": "L1"}, {"id": "draft_readme_anov", "label": "ANOV", "file_type": "document", "source_file": "draft/README.md", "source_location": "L1"}, {"id": "draft_readme_d\u00e9veloppement", "label": "D\u00e9veloppement", "file_type": "document", "source_file": "draft/README.md", "source_location": "L3"}, {"id": "draft_readme_commandes_de_gestion_de_la_base_de_donn\u00e9es", "label": "Commandes de gestion de la base de donn\u00e9es", "file_type": "document", "source_file": "draft/README.md", "source_location": "L16"}], "edges": [{"source": "users_nderousseaux_dev_anov_draft_readme_md", "target": "draft_readme_anov", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/README.md", "source_location": "L1", "weight": 1.0}, {"source": "draft_readme_anov", "target": "draft_readme_d\u00e9veloppement", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/README.md", "source_location": "L3", "weight": 1.0}, {"source": "draft_readme_d\u00e9veloppement", "target": "draft_readme_commandes_de_gestion_de_la_base_de_donn\u00e9es", "relation": "contains", "confidence": "EXTRACTED", "source_file": "draft/README.md", "source_location": "L16", "weight": 1.0}], "input_tokens": 0, "output_tokens": 0}
+{
+  "nodes": [
+    {
+      "id": "users_nderousseaux_dev_anov_draft_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "draft/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "draft_readme_anov",
+      "label": "ANOV",
+      "file_type": "document",
+      "source_file": "draft/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "draft_readme_d\u00e9veloppement",
+      "label": "D\u00e9veloppement",
+      "file_type": "document",
+      "source_file": "draft/README.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "draft_readme_commandes_de_gestion_de_la_base_de_donn\u00e9es",
+      "label": "Commandes de gestion de la base de donn\u00e9es",
+      "file_type": "document",
+      "source_file": "draft/README.md",
+      "source_location": "L16"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_nderousseaux_dev_anov_draft_readme_md",
+      "target": "draft_readme_anov",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_readme_anov",
+      "target": "draft_readme_d\u00e9veloppement",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/README.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "draft_readme_d\u00e9veloppement",
+      "target": "draft_readme_commandes_de_gestion_de_la_base_de_donn\u00e9es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "draft/README.md",
+      "source_location": "L16",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

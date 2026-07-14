@@ -1,5 +1,5 @@
-import { AdminNav } from '@/components/admin/AdminNav';
-import type { ReactNode } from 'react';
+import { AdminNav } from "@/components/admin/AdminNav";
+import type { ReactNode } from "react";
 
 export default function CmsLayout({ children }: { children: ReactNode }) {
   return (

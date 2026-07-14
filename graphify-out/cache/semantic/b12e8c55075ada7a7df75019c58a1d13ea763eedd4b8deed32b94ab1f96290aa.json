@@ -1,1 +1,15 @@
-{"nodes": [{"id": "content:footer.yaml", "label": "footer.yaml", "type": "file", "source_file": "content/footer.yaml", "confidence": "EXTRACTED", "description": "Footer YAML content file", "metadata": {"line_start": 1, "line_end": 1}}], "edges": [], "hyperedges": []}
+{
+  "nodes": [
+    {
+      "id": "content:footer.yaml",
+      "label": "footer.yaml",
+      "type": "file",
+      "source_file": "content/footer.yaml",
+      "confidence": "EXTRACTED",
+      "description": "Footer YAML content file",
+      "metadata": { "line_start": 1, "line_end": 1 }
+    }
+  ],
+  "edges": [],
+  "hyperedges": []
+}

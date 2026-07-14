@@ -1,13 +1,23 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useCallback, Suspense } from 'react';
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { AdminNav } from '@/components/admin/AdminNav';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Loader2, RefreshCw, ChevronLeft, ChevronRight, Search, CalendarDays, Gift, Mail, StickyNote } from 'lucide-react';
+import { useEffect, useState, useCallback, Suspense } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AdminNav } from "@/components/admin/AdminNav";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Loader2,
+  RefreshCw,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  CalendarDays,
+  Gift,
+  Mail,
+  StickyNote,
+} from "lucide-react";
 
 interface CustomerSummary {
   email: string;
@@ -26,12 +36,12 @@ interface CustomerListResponse {
 }
 
 function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Date(iso).toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
@@ -39,8 +49,10 @@ function ClientsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [search, setSearch] = useState(searchParams.get('search') || '');
-  const [page, setPage] = useState(parseInt(searchParams.get('page') || '1', 10));
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [page, setPage] = useState(
+    parseInt(searchParams.get("page") || "1", 10),
+  );
   const [customers, setCustomers] = useState<CustomerSummary[]>([]);
   const [total, setTotal] = useState(0);
   const [pageSize, setPageSize] = useState(25);
@@ -53,17 +65,17 @@ function ClientsContent() {
     setError(null);
     try {
       const params = new URLSearchParams();
-      if (search) params.append('search', search);
-      params.append('page', page.toString());
+      if (search) params.append("search", search);
+      params.append("page", page.toString());
 
       const res = await fetch(`/api/admin/customers?${params.toString()}`);
-      if (!res.ok) throw new Error('Erreur lors du chargement des clients');
+      if (!res.ok) throw new Error("Erreur lors du chargement des clients");
       const data: CustomerListResponse = await res.json();
       setCustomers(data.data);
       setTotal(data.total);
       setPageSize(data.pageSize);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      setError(err instanceof Error ? err.message : "Une erreur est survenue");
     } finally {
       setLoading(false);
     }
@@ -75,9 +87,12 @@ function ClientsContent() {
 
   useEffect(() => {
     const params = new URLSearchParams();
-    if (search) params.set('search', search);
-    if (page > 1) params.set('page', page.toString());
-    router.replace(`/admin/clients${params.toString() ? `?${params.toString()}` : ''}`, { scroll: false });
+    if (search) params.set("search", search);
+    if (page > 1) params.set("page", page.toString());
+    router.replace(
+      `/admin/clients${params.toString() ? `?${params.toString()}` : ""}`,
+      { scroll: false },
+    );
   }, [search, page, router]);
 
   const handleRefresh = () => {
@@ -93,9 +108,18 @@ function ClientsContent() {
 
       <div className="max-w-6xl mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-foreground">Fiches Client</h1>
-          <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing}>
-            <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+          <h1 className="text-2xl font-semibold text-foreground">
+            Fiches Client
+          </h1>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={refreshing}
+          >
+            <RefreshCw
+              className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`}
+            />
             Actualiser
           </Button>
         </div>
@@ -105,7 +129,10 @@ function ClientsContent() {
           <Input
             placeholder="Rechercher un email..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             className="pl-9"
           />
         </div>
@@ -133,7 +160,9 @@ function ClientsContent() {
                 className="bg-card border border-border rounded-lg p-4 hover:border-gold/30 transition-colors block"
               >
                 <div className="flex items-start justify-between gap-2 mb-3">
-                  <span className="font-medium text-foreground break-all">{customer.email}</span>
+                  <span className="font-medium text-foreground break-all">
+                    {customer.email}
+                  </span>
                   {customer.hasNote && (
                     <span title="Note présente">
                       <StickyNote className="w-4 h-4 text-primary shrink-0" />
@@ -142,7 +171,8 @@ function ClientsContent() {
                 </div>
                 <div className="flex flex-wrap gap-2 mb-3">
                   <Badge variant="secondary" className="gap-1">
-                    <CalendarDays className="w-3 h-3" /> {customer.reservationCount}
+                    <CalendarDays className="w-3 h-3" />{" "}
+                    {customer.reservationCount}
                   </Badge>
                   <Badge variant="secondary" className="gap-1">
                     <Gift className="w-3 h-3" /> {customer.giftCardCount}
@@ -189,7 +219,13 @@ function ClientsContent() {
 
 export default function ClientsPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          Loading...
+        </div>
+      }
+    >
       <ClientsContent />
     </Suspense>
   );

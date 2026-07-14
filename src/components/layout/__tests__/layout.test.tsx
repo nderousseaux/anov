@@ -1,25 +1,25 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vitest";
 
-describe('Navbar', () => {
-  it('renders navigation menu', () => {
+describe("Navbar", () => {
+  it("renders navigation menu", () => {
     expect(true).toBe(true);
   });
 });
 
-describe('NavbarDropdown', () => {
-  it('renders dropdown menu', () => {
+describe("NavbarDropdown", () => {
+  it("renders dropdown menu", () => {
     expect(true).toBe(true);
   });
 });
 
-describe('LanguageSelector', () => {
-  it('renders language selector', () => {
+describe("LanguageSelector", () => {
+  it("renders language selector", () => {
     expect(true).toBe(true);
   });
 });
 
-describe('Footer', () => {
-  it('renders footer', () => {
+describe("Footer", () => {
+  it("renders footer", () => {
     expect(true).toBe(true);
   });
 });

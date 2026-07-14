@@ -1,7 +1,7 @@
-import { createReader } from '@keystatic/core/reader';
-import config from '@/keystatic.config';
-import { LegalDocumentRenderer } from '@/components/shared/LegalDocumentRenderer';
-import { LegalLanguageNotice } from '@/components/shared/LegalLanguageNotice';
+import { createReader } from "@keystatic/core/reader";
+import config from "@/keystatic.config";
+import { LegalDocumentRenderer } from "@/components/shared/LegalDocumentRenderer";
+import { LegalLanguageNotice } from "@/components/shared/LegalLanguageNotice";
 
 export default async function PolitiqueConfidentialitePage() {
   const reader = createReader(process.cwd(), config);
@@ -14,9 +14,9 @@ export default async function PolitiqueConfidentialitePage() {
         <LegalLanguageNotice />
         <h1
           className="text-3xl md:text-4xl text-primary mb-10"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: "var(--font-display)" }}
         >
-          {content?.title ?? 'Politique de confidentialité'}
+          {content?.title ?? "Politique de confidentialité"}
         </h1>
         <div className="pb-16">
           {document && <LegalDocumentRenderer document={document} />}

@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import { pickField } from '@/lib/langs';
-import { ProductGrid } from '@/components/features/Boutique/ProductGrid';
-import { GiftCardButton } from '@/components/features/Boutique/GiftCardButton';
-import { Button } from '@/components/ui/button';
-import { ShoppingBag, Home } from 'lucide-react';
+import { pickField } from "@/lib/langs";
+import { ProductGrid } from "@/components/features/Boutique/ProductGrid";
+import { GiftCardButton } from "@/components/features/Boutique/GiftCardButton";
+import { Button } from "@/components/ui/button";
+import { ShoppingBag, Home } from "lucide-react";
+import Image from "next/image";
 
-import { useLanguage } from '@/context/LanguageContext';
+import { useLanguage } from "@/context/LanguageContext";
 
 export interface BoutiqueSectionClientBoutiqueContent {
   image?: string | null;
@@ -15,7 +16,7 @@ export interface BoutiqueSectionClientBoutiqueContent {
   title_de?: string;
   subtitle_fr?: string;
   subtitle_en?: string;
-  subtitle_de?: string
+  subtitle_de?: string;
   productsIntroTitle_fr?: string;
   productsIntroTitle_en?: string;
   productsIntroTitle_de?: string;
@@ -58,15 +59,15 @@ export function BoutiqueSectionClient({
   const { locale } = useLanguage();
 
   const giftCardsTitle = chequesCadeauxContent
-    ? pickField(chequesCadeauxContent, 'title', locale)
-    : 'Chèques Cadeaux';
+    ? pickField(chequesCadeauxContent, "title", locale)
+    : "Chèques Cadeaux";
 
   const productsIntroTitle = content.productsIntroTitle_fr
-    ? pickField(content, 'productsIntroTitle', locale)
-    : 'Nos Produits';
+    ? pickField(content, "productsIntroTitle", locale)
+    : "Nos Produits";
 
   const productsIntroSubtitle = content.productsIntroSubtitle_fr
-    ? pickField(content, 'productsIntroSubtitle', locale)
+    ? pickField(content, "productsIntroSubtitle", locale)
     : undefined;
 
   // Si c'est la page de succès, afficher un message de confirmation
@@ -77,7 +78,10 @@ export function BoutiqueSectionClient({
           <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <ShoppingBag className="w-10 h-10 text-green-500" />
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-6" style={{ fontFamily: 'var(--font-display)' }}>
+          <h1
+            className="text-4xl sm:text-5xl font-bold text-foreground mb-6"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
             Commande confirmée !
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
@@ -101,23 +105,27 @@ export function BoutiqueSectionClient({
       {/* Hero Section */}
       <div className="relative h-[36vh] sm:h-[55vh] flex items-center justify-center">
         <div className="absolute inset-0 z-0">
-          <img
-            src={content.image || 'https://images.unsplash.com/photo-1761095596755-99ba58997720?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwZGlzaCUyMHBsYXRpbmclMjBmaW5lJTIwZGluaW5mfGVufDF8fHx8MTc3MTUwOTU3N3ww&ixlib=rb-4.1.0&q=80&w=1080'}
+          <Image
+            src={
+              content.image ||
+              "https://images.unsplash.com/photo-1761095596755-99ba58997720?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwZGlzaCUyMHBsYXRpbmclMjBmaW5lJTIwZGluaW5mfGVufDF8fHx8MTc3MTUwOTU3N3ww&ixlib=rb-4.1.0&q=80&w=1080"
+            }
             alt="Boutique"
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/70 to-card" />
         </div>
         <div className="relative z-10 text-center sm:px-4 sm:pt-0 pt-16">
           <h1
             className="text-5xl sm:text-6xl md:text-7xl mb-6 text-primary"
-            style={{ fontFamily: 'var(--font-display)' }}
+            style={{ fontFamily: "var(--font-display)" }}
           >
-            {pickField(content, 'title', locale)}
+            {pickField(content, "title", locale)}
           </h1>
           {content.subtitle_fr && (
             <p className="text-lg sm:text-2xl text-muted-foreground max-w-3xl mx-auto">
-              {pickField(content, 'subtitle', locale)}
+              {pickField(content, "subtitle", locale)}
             </p>
           )}
         </div>
@@ -130,7 +138,7 @@ export function BoutiqueSectionClient({
             <div className="text-center mb-12">
               <h2
                 className="text-3xl sm:text-4xl font-bold text-foreground mb-4"
-                style={{ fontFamily: 'var(--font-display)' }}
+                style={{ fontFamily: "var(--font-display)" }}
               >
                 {productsIntroTitle}
               </h2>
@@ -157,12 +165,14 @@ export function BoutiqueSectionClient({
             <div className="text-center mb-12">
               <h2
                 className="text-3xl sm:text-4xl font-bold text-foreground mb-4"
-                style={{ fontFamily: 'var(--font-display)' }}
+                style={{ fontFamily: "var(--font-display)" }}
               >
                 {giftCardsTitle}
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Offrez une expérience gastronomique unique à vos proches avec nos chèques cadeaux. Valables 12 mois, ils peuvent être utilisés dans tous nos restaurants.
+                Offrez une expérience gastronomique unique à vos proches avec
+                nos chèques cadeaux. Valables 12 mois, ils peuvent être utilisés
+                dans tous nos restaurants.
               </p>
             </div>
 

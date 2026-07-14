@@ -1,1 +1,15 @@
-{"nodes": [{"id": "content:gift-card-success.yaml", "label": "gift-card-success.yaml", "type": "file", "source_file": "content/gift-card-success.yaml", "confidence": "EXTRACTED", "description": "Gift card success page YAML content file", "metadata": {"line_start": 1, "line_end": 1}}], "edges": [], "hyperedges": []}
+{
+  "nodes": [
+    {
+      "id": "content:gift-card-success.yaml",
+      "label": "gift-card-success.yaml",
+      "type": "file",
+      "source_file": "content/gift-card-success.yaml",
+      "confidence": "EXTRACTED",
+      "description": "Gift card success page YAML content file",
+      "metadata": { "line_start": 1, "line_end": 1 }
+    }
+  ],
+  "edges": [],
+  "hyperedges": []
+}

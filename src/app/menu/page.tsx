@@ -1,6 +1,6 @@
-import { createReader } from '@keystatic/core/reader';
-import config from '@/keystatic.config';
-import { MenuContent } from '@/components/shared/MenuContent';
+import { createReader } from "@keystatic/core/reader";
+import config from "@/keystatic.config";
+import { MenuContent } from "@/components/shared/MenuContent";
 
 export default async function Page() {
   const reader = createReader(process.cwd(), config);

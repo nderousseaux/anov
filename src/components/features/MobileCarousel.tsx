@@ -1,15 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
-
+import { useState, useEffect, useCallback, useRef } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import Image from "next/image";
 
 type PropType = {
   images: Array<{ url: string; caption: string }>;
 };
 
 export function MobileCarousel({ images }: PropType) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'center' });
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: "center",
+  });
   const autoPlayIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const isPlayingRef = useRef(true);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -23,7 +26,7 @@ export function MobileCarousel({ images }: PropType) {
     const onSelect = () => {
       setSelectedIndex(emblaApi.selectedScrollSnap());
     };
-    emblaApi.on('select', onSelect);
+    emblaApi.on("select", onSelect);
     setSelectedIndex(emblaApi.selectedScrollSnap());
 
     const delay = 3500;
@@ -48,7 +51,7 @@ export function MobileCarousel({ images }: PropType) {
       if (autoPlayIntervalRef.current) {
         clearInterval(autoPlayIntervalRef.current);
       }
-      emblaApi.off('select', onSelect);
+      emblaApi.off("select", onSelect);
     };
   }, [emblaApi]);
 
@@ -89,15 +92,19 @@ export function MobileCarousel({ images }: PropType) {
       onMouseEnter={handleInteraction}
       onMouseLeave={handleInteractionEnd}
     >
-      <div className="relative overflow-hidden rounded-lg border-2 border-primary/30" ref={emblaRef}>
+      <div
+        className="relative overflow-hidden rounded-lg border-2 border-primary/30"
+        ref={emblaRef}
+      >
         <div className="embla__container flex" ref={rootRef}>
           {images.map((image, index) => (
             <div className="embla__slide flex-shrink-0 w-full" key={index}>
               <div className="relative h-80">
-                <img
+                <Image
                   src={image.url}
                   alt={image.caption}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
                 <div className="absolute bottom-0 left-0 right-0 pt-12 pb-2 px-2 bg-gradient-to-t from-background via-background/60 to-transparent">
                   <p className="text-foreground text-sm">{image.caption}</p>
@@ -114,13 +121,16 @@ export function MobileCarousel({ images }: PropType) {
           <button
             key={i}
             aria-label={`Image ${i + 1}`}
-            className={`h-1.5 rounded-full transition-all duration-300 ${selectedIndex === i ? 'bg-primary w-4' : 'bg-primary/30 w-1.5'
-              }`}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              selectedIndex === i ? "bg-primary w-4" : "bg-primary/30 w-1.5"
+            }`}
             onClick={() => {
               if (emblaApi) {
                 emblaApi.scrollTo(i);
                 isPlayingRef.current = false;
-                setTimeout(() => { isPlayingRef.current = true; }, 200);
+                setTimeout(() => {
+                  isPlayingRef.current = true;
+                }, 200);
               }
             }}
           />

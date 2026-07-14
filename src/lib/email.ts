@@ -14,9 +14,9 @@ function createTransporter() {
     auth:
       process.env.SMTP_USER && process.env.SMTP_PASSWORD
         ? {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASSWORD,
-          }
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASSWORD,
+        }
         : undefined,
   });
 }
@@ -522,13 +522,12 @@ export async function sendProductOrderReadyEmail({
         </table>
         <div style="background:#f8f4e8;padding:16px;border-radius:8px;margin:16px 0;">
           <p style="margin:0;font-size:15px;">
-            ${
-              isDelivery
-                ? "Vous pouvez suivre l&apos;état de votre livraison avec le numéro de suivi qui vous a été communiqué."
-                : "Vous pouvez venir retirer votre commande " +
-                  restaurantAddress +
-                  ". Nous attendons votre venue !"
-            }
+            ${isDelivery
+        ? "Vous pouvez suivre l&apos;état de votre livraison avec le numéro de suivi qui vous a été communiqué."
+        : "Vous pouvez venir retirer votre commande " +
+        restaurantAddress +
+        ". Nous attendons votre venue !"
+      }
           </p>
         </div>
         <p style="margin-top:16px;">Pour toute information concernant votre commande, appelez-nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>.</p>
@@ -540,6 +539,56 @@ export async function sendProductOrderReadyEmail({
 }
 
 // Fonctions pour les chèques cadeaux
+
+/**
+ * Envoie un email de rappel 1 mois avant l'expiration d'un bon cadeau
+ */
+export async function sendGiftCardExpirationReminder({
+  to,
+  code,
+  amount,
+  expiresAt,
+}: {
+  to: string;
+  code: string;
+  amount: number;
+  expiresAt: string;
+}) {
+  const t = getTransporter();
+  if (!t) {
+    // Email service disabled - SMTP not configured
+    return null;
+  }
+
+  return t.sendMail({
+    from: FROM,
+    to,
+    subject: `Rappel — Votre chèque cadeau expire bientôt l'Anøv`,
+    html: `
+      <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
+        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
+        <h2 style="font-size:20px;font-weight:normal;">Rappel d'expiration</h2>
+        <p>Bonjour,</p>
+        <p>Ce chèque cadeau arrive à expiration sous peu :</p>
+        <div style="background:#f8f4e8;padding:24px;border-radius:8px;margin:24px 0;text-align:center;">
+          <p style="font-size:14px;color:#888;margin:0 0 8px 0;">Montant du chèque cadeau</p>
+          <p style="font-size:36px;color:#e3cb6b;font-weight:bold;margin:0 0 16px 0;">${amount}€</p>
+          <p style="font-size:14px;color:#888;margin:0 0 8px 0;">Code du chèque cadeau</p>
+          <p style="font-size:24px;color:#1a1a1a;font-weight:bold;letter-spacing:2px;margin:0;font-family:monospace;">${code}</p>
+        </div>
+        <p><strong>Date d'expiration :</strong> ${expiresAt}</p>
+        <p style="margin-top:16px;">
+          Ce chèque cadeau sera <strong>expiré</strong> après cette date et ne pourra plus être utilisé.
+        </p>
+        <p style="margin-top:16px;">
+          Vous pouvez l'utiliser avant cette date pour toute consommation chez l'Anøv.
+        </p>
+        <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
+        <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
+      </div>
+    `,
+  });
+}
 
 export async function sendGiftCardEmail({
   to,
@@ -568,15 +617,14 @@ export async function sendGiftCardEmail({
       <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
         <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
         <h2 style="font-size:20px;font-weight:normal;">Vous avez reçu un chèque cadeau !</h2>
-        ${
-          personalMessage
-            ? `
+        ${personalMessage
+        ? `
           <div style="padding:16px;background:#f5f5f5;border-left:4px solid #e3cb6b;margin:16px 0;">
             <p style="margin:0;white-space:pre-wrap;font-style:italic;">${personalMessage}</p>
           </div>
         `
-            : ""
-        }
+        : ""
+      }
         <p>Félicitations ! Vous avez reçu un chèque cadeau pour une expérience gastronomique chez l'Anøv.</p>
         <div style="background:#f8f4e8;padding:24px;border-radius:8px;margin:24px 0;text-align:center;">
           <p style="font-size:14px;color:#888;margin:0 0 8px 0;">Montant du chèque cadeau</p>

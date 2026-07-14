@@ -3,6 +3,11 @@
     {
       "path": "/api/cron/reminders",
       "schedule": "0 17 * * *"
+    },
+    {
+      "path": "/api/cron/gift-card-reminders",
+      "schedule": "0 9 * * *"
     }
+
   ]
 }

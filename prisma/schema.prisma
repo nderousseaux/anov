@@ -78,6 +78,7 @@ model GiftCard {
   expiresAt           DateTime?
   transactionExpireAt DateTime?
   usedAt              DateTime?
+  reminderEmailSent   Boolean        @default(false)
 }
 
 model ContactMessage {

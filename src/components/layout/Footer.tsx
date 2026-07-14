@@ -56,7 +56,7 @@ export function Footer({
 }) {
   const { locale, t } = useLanguage();
   const c = (content ?? {}) as Record<string, unknown>;
-  const logoUrl = "assets/img-logo.svg";
+  const logoUrl = "/assets/img-logo.svg";
   const description =
     pickField(c, "description", locale) ||
     "Une expérience gastronomique d'exception où chaque plat raconte une histoire.";

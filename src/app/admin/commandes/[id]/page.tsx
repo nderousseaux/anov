@@ -61,9 +61,9 @@ export default async function OrderDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-y-auto">
       <AdminNav />
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-6 pb-8">
         <Link
           href="/admin/commandes"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6"

@@ -65,6 +65,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
   const [unavailableDates, setUnavailableDates] = useState<Date[]>([]);
   const [todaySlots, setTodaySlots] = useState<SlotInfo[] | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -214,7 +215,11 @@ export function ReservationForm({ content }: ReservationFormProps) {
       }
       // Redirection vers Stripe Checkout
       if (data.url) {
-        window.location.href = data.url;
+        setRedirecting(true);
+        // Petit délai pour afficher le message avant la redirection
+        setTimeout(() => {
+          window.location.href = data.url;
+        }, 1500);
       } else {
         throw new Error("URL de paiement manquante");
       }
@@ -582,7 +587,9 @@ export function ReservationForm({ content }: ReservationFormProps) {
               disabled={submitting || !formData.time || !formData.phone}
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 text-base transition-all duration-300 disabled:opacity-50"
             >
-              {submitting ? (
+              {redirecting ? (
+                <span className="text-sm">{t.reservation.redirectingPayment}</span>
+              ) : submitting ? (
                 <span className="flex items-center gap-2">
                   <Loader2 size={18} className="animate-spin" />
                   {t.reservation.submitSubmitting}

@@ -120,6 +120,7 @@ const fr = {
     available: "places",
     pleaseSelectDate: "Choisissez d'abord une date.",
     submitSubmitting: "Réservation en cours…",
+    redirectingPayment: "Vous allez être redirigé vers notre partenaire de paiement",
     placeholderPhone: "+33 6 12 34 56 78",
     placeholderEmail: "jean@example.com",
     placeholderName: "Jean Dupont",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, useRef, type FormEvent } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,6 +75,26 @@ export function ChequesCadeauxContent({
     recipient: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [key, setKey] = useState(0); // Force re-render on return from Stripe
+
+  // Ref to track if we've already loaded from sessionStorage
+  const hasLoadedFromSessionStorage = useRef(false);
+
+  // Force re-render on return from Stripe by incrementing the key
+  useEffect(() => {
+    const forceReRender = () => {
+      setKey(prev => prev + 1);
+    };
+
+    // Listen for pageshow event
+    if (typeof window !== 'undefined') {
+      window.addEventListener('pageshow', forceReRender);
+      return () => {
+        window.removeEventListener('pageshow', forceReRender);
+      };
+    }
+  }, []);
 
   const c = (content ?? {}) as Record<string, unknown>;
 
@@ -88,14 +108,20 @@ export function ChequesCadeauxContent({
         if (storedData) {
           try {
             const parsedData = JSON.parse(storedData);
+            console.log('[GiftCard] Loading from sessionStorage:', parsedData);
             setGiftCard({
               amount: parsedData.amount || "",
               recipient: parsedData.recipient || "",
               message: parsedData.message || "",
             });
-          } catch {
+            setIsInitialized(true);
+            hasLoadedFromSessionStorage.current = true;
+          } catch (e) {
+            console.error('[GiftCard] Error parsing sessionStorage:', e);
             // Invalid JSON, ignore
           }
+        } else {
+          console.log('[GiftCard] No data in sessionStorage');
         }
       }
     };
@@ -104,17 +130,39 @@ export function ChequesCadeauxContent({
     loadFromSessionStorage();
 
     // Also listen for pageshow event (fired when page is restored from bfcache)
-    const handlePageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) {
+    // Note: pageshow is fired BEFORE useEffect runs in some cases, so we also
+    // check for bfcache restore using the performance API
+    let pageshowHandler: ((event: PageTransitionEvent) => void) | null = null;
+
+    if (typeof window !== 'undefined') {
+      pageshowHandler = (event: PageTransitionEvent) => {
+        console.log('[GiftCard] pageshow event, persisted:', event.persisted);
+        // Always load from sessionStorage on pageshow
+        // This handles both bfcache restore AND regular navigation back
+        loadFromSessionStorage();
+      };
+      window.addEventListener('pageshow', pageshowHandler);
+    }
+
+    // Check if page was restored from bfcache before this useEffect ran
+    // We can detect this by checking the performance entries
+    try {
+      const navEntries = performance?.getEntriesByType?.('navigation');
+      const isBfcacheRestore = navEntries?.[0]?.type === 'back_forward';
+      if (isBfcacheRestore && !hasLoadedFromSessionStorage.current) {
+        console.log('[GiftCard] Detected bfcache restore via performance API, loading data...');
         loadFromSessionStorage();
       }
-    };
+    } catch (e) {
+      // Ignore errors from performance API
+    }
 
-    window.addEventListener('pageshow', handlePageShow);
     return () => {
-      window.removeEventListener('pageshow', handlePageShow);
+      if (pageshowHandler) {
+        window.removeEventListener('pageshow', pageshowHandler);
+      }
     };
-  }, []);
+  }, [key]); // Re-run when key changes (after bfcache restore)
 
   // Parse amounts from comma-separated string
   const amounts = (
@@ -263,6 +311,7 @@ export function ChequesCadeauxContent({
                 {pickField(c, "labelAmount", locale)}
               </Label>
               <Select
+                key={giftCard.amount}
                 value={giftCard.amount}
                 onValueChange={(value) =>
                   setGiftCard({ ...giftCard, amount: value })

@@ -4,7 +4,7 @@ import { pickField } from "@/lib/langs";
 import { ProductGrid } from "@/components/features/Boutique/ProductGrid";
 import { GiftCardButton } from "@/components/features/Boutique/GiftCardButton";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Home } from "lucide-react";
+import { ShoppingBag, Home, ArrowRight } from "lucide-react";
 import Image from "next/image";
 
 import { useLanguage } from "@/context/LanguageContext";
@@ -72,6 +72,10 @@ export function BoutiqueSectionClient({
 
   // Si c'est la page de succès, afficher un message de confirmation
   if (isSuccess) {
+    // Check for stored order form data in sessionStorage
+    const hasFormData = typeof window !== 'undefined' && sessionStorage.getItem('productOrderFormData');
+    const formData = hasFormData ? JSON.parse(sessionStorage.getItem('productOrderFormData') || '{}') : null;
+
     return (
       <div className="min-h-screen bg-background flex items-center justify-center pt-20">
         <div className="container max-w-2xl mx-auto px-4 text-center">
@@ -87,9 +91,25 @@ export function BoutiqueSectionClient({
           <p className="text-xl text-muted-foreground mb-8">
             Votre commande a été prise en compte avec succès.
           </p>
+          {hasFormData && (
+            <div className="bg-muted/50 border border-primary/10 rounded-lg p-6 mb-6">
+              <p className="text-sm text-muted-foreground mb-4">
+                Vos coordonnées ont été enregistrées pour faciliter vos futures commandes.
+              </p>
+              <p className="text-sm text-foreground mb-4">
+                {formData.customerName} • {formData.customerEmail}
+              </p>
+            </div>
+          )}
           <div className="flex flex-col gap-4 justify-center">
             <Button asChild>
-              <a href="/" className="flex items-center gap-2">
+              <a href="/boutique" className="flex items-center justify-center gap-2">
+                <ArrowRight className="w-4 h-4" />
+                {hasFormData ? "Passer une nouvelle commande" : "Commander un produit"}
+              </a>
+            </Button>
+            <Button asChild variant="outline">
+              <a href="/" className="flex items-center justify-center gap-2">
                 <Home className="w-4 h-4" />
                 Retour à l&apos;accueil
               </a>

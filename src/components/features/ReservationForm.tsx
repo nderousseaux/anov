@@ -70,6 +70,56 @@ export function ReservationForm({ content }: ReservationFormProps) {
     setIsClient(true);
   }, []);
 
+  // Charger les données du formulaire depuis sessionStorage si disponibles
+  // (quand l'utilisateur revient de Stripe après paiement)
+  // Use pageshow event to handle back/forward cache (bfcache)
+  useEffect(() => {
+    const loadFromSessionStorage = () => {
+      if (typeof window !== 'undefined') {
+        const storedData = sessionStorage.getItem('reservationFormData');
+        if (storedData) {
+          try {
+            const parsedData = JSON.parse(storedData);
+            setFormData(parsedData);
+            // Keep data in sessionStorage for potential modifications
+          } catch {
+            // Invalid JSON, ignore
+          }
+        }
+      }
+    };
+
+    // Load immediately on mount
+    // Use a small timeout to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      if (typeof window !== 'undefined') {
+        const storedData = sessionStorage.getItem('reservationFormData');
+        if (storedData) {
+          try {
+            const parsedData = JSON.parse(storedData);
+            setFormData(parsedData);
+          } catch {
+            // Invalid JSON, ignore
+          }
+        }
+      }
+    }, 100);
+
+    // Also listen for pageshow event (fired when page is restored from bfcache)
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        loadFromSessionStorage();
+      }
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, []);
+
+  
   const loadSlots = useCallback(async (date: string, guests: string) => {
     if (!date || !guests) return;
     setLoadingSlots(true);
@@ -152,6 +202,11 @@ export function ReservationForm({ content }: ReservationFormProps) {
       if (!res.ok) {
         toast.error(data.error ?? t.reservation.errorReservation);
         return;
+      }
+      // Stocker les données du formulaire dans sessionStorage pour persistance
+      // après le paiement Stripe
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('reservationFormData', JSON.stringify(formData));
       }
       // Redirection vers Stripe Checkout
       if (data.url) {

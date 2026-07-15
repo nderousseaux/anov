@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { stripe, DEPOSIT_PER_GUEST_CENTS } from "@/lib/stripe";
 import { getAssignTable, setAssignTable } from "./utils";
+import { buildUrlWithEncodedData } from "@/lib/checkout-params";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
 
@@ -130,7 +131,7 @@ export async function POST(req: NextRequest) {
         guests: guestsNum.toString(),
         specialRequest: specialRequest?.trim() || "",
         reservationId: reservation.id,
-      },
+              },
     });
 
     // Mettre à jour la réservation avec l'ID de la session Stripe

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -78,6 +78,44 @@ export function ChequesCadeauxContent({
 
   const c = (content ?? {}) as Record<string, unknown>;
 
+  // Charger les données du formulaire depuis sessionStorage si disponibles
+  // (quand l'utilisateur revient de Stripe après paiement)
+  // Use pageshow event to handle back/forward cache (bfcache)
+  useEffect(() => {
+    const loadFromSessionStorage = () => {
+      if (typeof window !== 'undefined') {
+        const storedData = sessionStorage.getItem('giftCardFormData');
+        if (storedData) {
+          try {
+            const parsedData = JSON.parse(storedData);
+            setGiftCard({
+              amount: parsedData.amount || "",
+              recipient: parsedData.recipient || "",
+              message: parsedData.message || "",
+            });
+          } catch {
+            // Invalid JSON, ignore
+          }
+        }
+      }
+    };
+
+    // Load immediately on mount
+    loadFromSessionStorage();
+
+    // Also listen for pageshow event (fired when page is restored from bfcache)
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        loadFromSessionStorage();
+      }
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, []);
+
   // Parse amounts from comma-separated string
   const amounts = (
     ((c.amounts as string) || "50€, 100€, 150€, 200€, 250€, 500€") as string
@@ -128,6 +166,17 @@ export function ChequesCadeauxContent({
     setIsLoading(true);
 
     try {
+      // Stocker les données du formulaire dans sessionStorage pour persistance
+      // après le paiement Stripe
+      // Note: Don't clear immediately - keep for potential modifications
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('giftCardFormData', JSON.stringify({
+          amount: giftCard.amount,
+          recipient: giftCard.recipient,
+          message: giftCard.message,
+        }));
+      }
+
       // Appeler l'API pour créer une session de paiement Stripe
       const response = await fetch("/api/gift-cards/checkout", {
         method: "POST",

@@ -84,6 +84,26 @@ function GiftCardPageContent() {
     personalMessage: "",
   });
 
+  // Load stored form data from sessionStorage (when returning from Stripe)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedData = sessionStorage.getItem('giftCardFormData');
+      if (storedData) {
+        try {
+          const parsedData = JSON.parse(storedData);
+          setCreateFormData({
+            amount: parsedData.amount || "",
+            recipientEmail: parsedData.recipientEmail || "",
+            personalMessage: parsedData.personalMessage || "",
+          });
+          // Don't clear sessionStorage - keep data for potential modifications
+        } catch {
+          // Invalid JSON, ignore
+        }
+      }
+    }
+  }, []);
+
   // Filters state - must be inside a component wrapped by Suspense
   const searchParams = useSearchParams();
 

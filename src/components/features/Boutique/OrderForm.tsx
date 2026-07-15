@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { ShoppingBag, Truck, Store, Loader2, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -45,6 +44,54 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
     zipCode: "",
     country: "France",
   });
+
+  // Load stored form data from sessionStorage (when returning from Stripe)
+  // Use pageshow event to handle back/forward cache (bfcache)
+  useEffect(() => {
+    const loadFromSessionStorage = () => {
+      if (typeof window !== 'undefined') {
+        const storedData = sessionStorage.getItem('productOrderFormData');
+        if (storedData) {
+          try {
+            const parsedData = JSON.parse(storedData);
+            setFormData({
+              customerName: parsedData.customerName || "",
+              customerEmail: parsedData.customerEmail || "",
+              customerPhone: parsedData.customerPhone || "",
+              address: parsedData.address || "",
+              city: parsedData.city || "",
+              zipCode: parsedData.zipCode || "",
+              country: parsedData.country || "France",
+            });
+            if (parsedData.deliveryMethod) {
+              setDeliveryMethod(parsedData.deliveryMethod);
+            }
+            if (parsedData.quantity) {
+              setQuantity(parsedData.quantity);
+            }
+            // Don't clear sessionStorage - keep data for potential modifications
+          } catch {
+            // Invalid JSON, ignore
+          }
+        }
+      }
+    };
+
+    // Load immediately on mount
+    loadFromSessionStorage();
+
+    // Also listen for pageshow event (fired when page is restored from bfcache)
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        loadFromSessionStorage();
+      }
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, []);
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -120,6 +167,22 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
         throw new Error(
           data.error || "Erreur lors de la création de la commande",
         );
+      }
+
+      // Stocker les données du formulaire dans sessionStorage pour persistance
+      // après le paiement Stripe
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('productOrderFormData', JSON.stringify({
+          customerName: formData.customerName,
+          customerEmail: formData.customerEmail,
+          customerPhone: formData.customerPhone,
+          address: formData.address,
+          city: formData.city,
+          zipCode: formData.zipCode,
+          country: formData.country,
+          deliveryMethod,
+          quantity,
+        }));
       }
 
       // Redirect to Stripe URL returned by API

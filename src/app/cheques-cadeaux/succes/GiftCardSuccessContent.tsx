@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { CheckCircle2, Mail, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
@@ -51,10 +51,50 @@ export default function GiftCardSuccessContent({
 }: GiftCardSuccessContentProps) {
   const { locale } = useLanguage();
   const searchParams = useSearchParams();
-  const router = useRouter();
   const sessionId = searchParams?.get("session_id");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Load stored gift card form data from sessionStorage
+  const [hasFormData, setHasFormData] = useState(false);
+  const [formData, setFormData] = useState({
+    amount: "",
+    recipient: "",
+    message: "",
+  });
+
+  useEffect(() => {
+    const loadFromSessionStorage = () => {
+      if (typeof window !== 'undefined') {
+        const storedData = sessionStorage.getItem('giftCardFormData');
+        if (storedData) {
+          try {
+            const parsedData = JSON.parse(storedData);
+            setFormData(parsedData);
+            setHasFormData(true);
+            // Don't clear sessionStorage - keep data for potential modifications
+          } catch {
+            // Invalid JSON, ignore
+          }
+        }
+      }
+    };
+
+    // Load immediately on mount
+    loadFromSessionStorage();
+
+    // Also listen for pageshow event (fired when page is restored from bfcache)
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        loadFromSessionStorage();
+      }
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, []);
 
   const c = content ?? {};
 
@@ -120,7 +160,7 @@ export default function GiftCardSuccessContent({
                 ? "We were unable to process your payment. Please try again or contact us."
                 : "Wir konnten Ihre Zahlung nicht verarbeiten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns."}
           </p>
-          <Button onClick={() => router.push("/cheques-cadeaux")}>
+          <Button onClick={() => window.location.href = "/cheques-cadeaux"}>
             {locale === "fr"
               ? "Retour aux chèques cadeaux"
               : locale === "en"
@@ -174,10 +214,22 @@ export default function GiftCardSuccessContent({
             </p>
           </div>
 
+          {/* Informations du formulaire si données stockées */}
+          {hasFormData && (
+            <div className="bg-muted/50 border border-primary/10 rounded-lg p-4 mb-6">
+              <p className="text-sm text-muted-foreground">
+                Vos coordonnées ont été enregistrées pour faciliter vos futures commandes.
+              </p>
+              <p className="text-sm text-foreground mt-1">
+                {formData.recipient} • {formData.amount}
+              </p>
+            </div>
+          )}
+
           {/* Boutons d'action */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
-              onClick={() => router.push("/")}
+              onClick={() => window.location.href = "/"}
               variant="outline"
               className="border-primary/30"
             >
@@ -185,10 +237,10 @@ export default function GiftCardSuccessContent({
               {pickField(c, "buttonHome", locale)}
             </Button>
             <Button
-              onClick={() => router.push("/cheques-cadeaux")}
+              onClick={() => window.location.href = "/cheques-cadeaux"}
               className="bg-primary hover:bg-primary/90"
             >
-              {pickField(c, "buttonAnother", locale)}
+              {hasFormData ? "Acheter un nouveau chèque" : pickField(c, "buttonAnother", locale)}
             </Button>
           </div>
         </div>

@@ -4,13 +4,14 @@ import { getAdminFromCookies } from "@/lib/auth";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { date: string } },
+  { params }: { params: Promise<{ date: string }> },
 ) {
   const admin = await getAdminFromCookies();
   if (!admin)
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
-  const dateStr = params.date;
+  const { date } = await params;
+  const dateStr = date;
 
   // Vérifier que le jour n'est pas déjà passé
   const today = new Date();
@@ -52,13 +53,14 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { date: string } },
+  { params }: { params: Promise<{ date: string }> },
 ) {
   const admin = await getAdminFromCookies();
   if (!admin)
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
-  const dateStr = params.date;
+  const { date } = await params;
+  const dateStr = date;
 
   // Vérifier que le jour n'est pas déjà passé
   const today = new Date();

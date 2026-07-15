@@ -72,6 +72,7 @@ const en = {
     dinner: "Dinner",
     errorSelectDate: "Please select a date",
     errorSelectTime: "Please select a time",
+    errorPhone: "Phone is required",
     errorReservation: "Error during reservation",
     errorNetwork: "Network error, please try again",
   },

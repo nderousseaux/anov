@@ -73,6 +73,7 @@ const de = {
     dinner: "Abend",
     errorSelectDate: "Bitte wählen Sie ein Datum",
     errorSelectTime: "Bitte wählen Sie eine Uhrzeit",
+    errorPhone: "Telefon ist erforderlich",
     errorReservation: "Fehler bei der Reservierung",
     errorNetwork: "Netzwerkfehler, bitte versuchen Sie es erneut",
   },

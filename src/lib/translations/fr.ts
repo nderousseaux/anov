@@ -127,6 +127,7 @@ const fr = {
     dinner: "Dîner",
     errorSelectDate: "Veuillez choisir une date",
     errorSelectTime: "Veuillez choisir un horaire",
+    errorPhone: "Le téléphone est requis",
     errorReservation: "Erreur lors de la réservation",
     errorNetwork: "Erreur réseau, veuillez réessayer",
   },

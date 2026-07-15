@@ -183,6 +183,10 @@ export function ReservationForm({ content }: ReservationFormProps) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!formData.phone) {
+      toast.error(t.reservation.errorPhone);
+      return;
+    }
     if (!formData.date) {
       toast.error(t.reservation.errorSelectDate);
       return;
@@ -310,14 +314,12 @@ export function ReservationForm({ content }: ReservationFormProps) {
                   className="text-foreground flex items-center gap-2"
                 >
                   <Phone size={16} className="text-primary" />
-                  {t.reservation.phone}{" "}
-                  <span className="text-muted-foreground text-xs">
-                    (optionnel)
-                  </span>
+                  {t.reservation.phone}
                 </Label>
                 <Input
                   id="phone"
                   type="tel"
+                  required
                   value={formData.phone}
                   onChange={(e) =>
                     setFormData({ ...formData, phone: e.target.value })
@@ -577,7 +579,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
             {/* Bouton submit */}
             <Button
               type="submit"
-              disabled={submitting || !formData.time}
+              disabled={submitting || !formData.time || !formData.phone}
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 text-base transition-all duration-300 disabled:opacity-50"
             >
               {submitting ? (

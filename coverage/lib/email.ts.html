@@ -1,65 +1,65 @@
+
 <!doctype html>
 <html lang="en">
 
 <head>
-  <title>Code coverage report for lib/email.ts</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="../prettify.css" />
-  <link rel="stylesheet" href="../base.css" />
-  <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style type='text/css'>
-    .coverage-summary .sorter {
-      background-image: url(../sort-arrow-sprite.png);
-    }
-  </style>
+    <title>Code coverage report for lib/email.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
 </head>
-
+    
 <body>
-  <div class='wrapper'>
+<div class='wrapper'>
     <div class='pad1'>
-      <h1><a href="../index.html">All files</a> / <a href="index.html">lib</a> email.ts</h1>
-      <div class='clearfix'>
-
-        <div class='fl pad1y space-right2'>
-          <span class="strong">48.83% </span>
-          <span class="quiet">Statements</span>
-          <span class='fraction'>42/86</span>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">lib</a> email.ts</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">48.83% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>42/86</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">29.41% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>20/68</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">38.46% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>5/13</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">48.83% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>42/86</span>
+            </div>
+        
+            
         </div>
-
-
-        <div class='fl pad1y space-right2'>
-          <span class="strong">29.41% </span>
-          <span class="quiet">Branches</span>
-          <span class='fraction'>20/68</span>
-        </div>
-
-
-        <div class='fl pad1y space-right2'>
-          <span class="strong">38.46% </span>
-          <span class="quiet">Functions</span>
-          <span class='fraction'>5/13</span>
-        </div>
-
-
-        <div class='fl pad1y space-right2'>
-          <span class="strong">48.83% </span>
-          <span class="quiet">Lines</span>
-          <span class='fraction'>42/86</span>
-        </div>
-
-
-      </div>
-      <p class="quiet">
-        Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the
-        previous block.
-      </p>
-      <template id="filterTemplate">
-        <div class="quiet">
-          Filter:
-          <input type="search" id="fileSearch">
-        </div>
-      </template>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
     </div>
     <div class='status-line low'></div>
     <pre><table class="coverage">
@@ -713,9 +713,7 @@
 <a name='L648'></a><a href='#L648'>648</a>
 <a name='L649'></a><a href='#L649'>649</a>
 <a name='L650'></a><a href='#L650'>650</a>
-<a name='L651'></a><a href='#L651'>651</a>
-<a name='L652'></a><a href='#L652'>652</a>
-<a name='L653'></a><a href='#L653'>653</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L651'></a><a href='#L651'>651</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1271,7 +1269,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1328,7 +1325,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1383,9 +1379,9 @@ function createTransporter() {
     auth:
       process.env.SMTP_USER &amp;&amp; process.env.SMTP_PASSWORD
         ? {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASSWORD,
-          }
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASSWORD,
+        }
         : <span class="branch-1 cbranch-no" title="branch not covered" >undefined,</span>
   });
 }
@@ -1891,13 +1887,12 @@ export async function <span class="fstat-no" title="function not covered" >sendP
         &lt;/table&gt;
         &lt;div style="background:#f8f4e8;padding:16px;border-radius:8px;margin:16px 0;"&gt;
           &lt;p style="margin:0;font-size:15px;"&gt;
-            ${
-              isDelivery
-                ? "Vous pouvez suivre l&amp;apos;état de votre livraison avec le numéro de suivi qui vous a été communiqué."
-                : "Vous pouvez venir retirer votre commande " +
-                  restaurantAddress +
-                  ". Nous attendons votre venue !"
-            }
+            ${isDelivery
+        ? "Vous pouvez suivre l&amp;apos;état de votre livraison avec le numéro de suivi qui vous a été communiqué."
+        : "Vous pouvez venir retirer votre commande " +
+        restaurantAddress +
+        ". Nous attendons votre venue !"
+      }
           &lt;/p&gt;
         &lt;/div&gt;
         &lt;p style="margin-top:16px;"&gt;Pour toute information concernant votre commande, appelez-nous au &lt;a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;"&gt;${RESTAURANT_PHONE}&lt;/a&gt;.&lt;/p&gt;
@@ -1987,15 +1982,14 @@ export async function sendGiftCardEmail({
       &lt;div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;"&gt;
         &lt;h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;"&gt;l'Anøv&lt;/h1&gt;
         &lt;h2 style="font-size:20px;font-weight:normal;"&gt;Vous avez reçu un chèque cadeau !&lt;/h2&gt;
-        ${
-          personalMessage
-            ? <span class="branch-0 cbranch-no" title="branch not covered" >`</span>
+        ${personalMessage
+        ? <span class="branch-0 cbranch-no" title="branch not covered" >`</span>
           &lt;div style="padding:16px;background:#f5f5f5;border-left:4px solid #e3cb6b;margin:16px 0;"&gt;
             &lt;p style="margin:0;white-space:pre-wrap;font-style:italic;"&gt;${personalMessage}&lt;/p&gt;
           &lt;/div&gt;
         `
-            : ""
-        }
+        : ""
+      }
         &lt;p&gt;Félicitations ! Vous avez reçu un chèque cadeau pour une expérience gastronomique chez l'Anøv.&lt;/p&gt;
         &lt;div style="background:#f8f4e8;padding:24px;border-radius:8px;margin:24px 0;text-align:center;"&gt;
           &lt;p style="font-size:14px;color:#888;margin:0 0 8px 0;"&gt;Montant du chèque cadeau&lt;/p&gt;
@@ -2019,27 +2013,23 @@ export async function sendGiftCardEmail({
     `,
   });
 }
-&nbsp;</pre>
-    </td>
-    </tr>
-    </table>
-    </pre>
+&nbsp;</pre></td></tr></table></pre>
 
-    <div class='push'></div><!-- for sticky footer -->
-  </div><!-- /wrapper -->
-  <div class='footer quiet pad2 space-top1 center small'>
-    Code coverage generated by
-    <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-    at 2026-07-14T19:10:26.016Z
-  </div>
-  <script src="../prettify.js"></script>
-  <script>
-    window.onload = function () {
-      prettyPrint();
-    };
-  </script>
-  <script src="../sorter.js"></script>
-  <script src="../block-navigation.js"></script>
-</body>
-
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-07-15T19:32:58.200Z
+            </div>
+        <script src="../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../sorter.js"></script>
+        <script src="../block-navigation.js"></script>
+    </body>
 </html>
+    

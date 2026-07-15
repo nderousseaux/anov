@@ -504,7 +504,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
                                 setFormData({ ...formData, time: slot.time });
                               }}
                               className={[
-                                "flex items-center justify-center w-20 h-14 rounded border text-sm font-medium transition-all",
+                                "flex items-center justify-center w-16 h-12 rounded border text-sm font-medium transition-all",
                                 selected
                                   ? "bg-primary border-primary text-primary-foreground shadow-md"
                                   : disabled
@@ -539,7 +539,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
                                 setFormData({ ...formData, time: slot.time });
                               }}
                               className={[
-                                "flex items-center justify-center w-20 h-14 rounded border text-sm font-medium transition-all",
+                                "flex items-center justify-center w-16 h-12 rounded border text-sm font-medium transition-all",
                                 selected
                                   ? "bg-primary border-primary text-primary-foreground shadow-md"
                                   : disabled

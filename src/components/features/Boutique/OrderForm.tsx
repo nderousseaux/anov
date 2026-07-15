@@ -169,7 +169,7 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
         );
       }
 
-      // Stocker les données du formulaire dans sessionStorage pour persistance
+      // Stocker les données du formulaire et du produit dans sessionStorage pour persistance
       // après le paiement Stripe
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('productOrderFormData', JSON.stringify({
@@ -182,6 +182,11 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
           country: formData.country,
           deliveryMethod,
           quantity,
+          // Store product info to auto-open popup on return
+          productId: product.id,
+          productName: product.title_fr,
+          productPrice: product.price,
+          productImage: product.image,
         }));
       }
 

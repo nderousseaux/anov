@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,35 @@ export function ProductCard({ product }: { product: Product }) {
   const { locale, t } = useLanguage();
   const [isOrderOpen, setIsOrderOpen] = useState(false);
   const [isAdding] = useState(false);
+
+  // Generate a stable ID for this product (use original id if available, otherwise derive from title)
+  const productId = useMemo(() => {
+    return product.id || `product-${product.title_fr}`;
+  }, [product.id, product.title_fr]);
+
+  // Check if there's stored form data from a recent purchase (returning from Stripe)
+  // If yes, open the popup automatically with pre-filled data
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedData = sessionStorage.getItem('productOrderFormData');
+      if (storedData) {
+        try {
+          const parsedData = JSON.parse(storedData);
+          // Check if this is the product that was just ordered
+          if (parsedData.productId && parsedData.productId === productId) {
+            // Clear the sessionStorage so we don't auto-open on future visits
+            sessionStorage.removeItem('productOrderFormData');
+            // Small delay to ensure component is mounted
+            setTimeout(() => {
+              setIsOrderOpen(true);
+            }, 100);
+          }
+        } catch {
+          // Invalid JSON, ignore
+        }
+      }
+    }
+  }, [productId]);
   const title =
     (product[`title_${locale}` as keyof Product] as string) ||
     product.title_fr ||
@@ -94,7 +123,7 @@ export function ProductCard({ product }: { product: Product }) {
       {isOrderOpen && (
         <OrderForm
           product={{
-            id: `product-${product.title_fr}`,
+            id: productId,
             title_fr: product.title_fr,
             title_en: product.title_en ?? "",
             title_de: product.title_de ?? "",

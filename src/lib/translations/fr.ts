@@ -109,7 +109,7 @@ const fr = {
     guests: "Nombre de personnes",
     specialRequest: "Demande spéciale",
     specialRequestPlaceholder:
-      "Allergie, anniversaire, disposition particulière…",
+      "Dans le cadre de l'optimisation de votre moment, veuillez nous donner vos envies particulières",
     submit: "Confirmer la réservation",
     submitting: "Réservation en cours…",
     selectDate: "Sélectionner une date",

@@ -55,7 +55,8 @@ const de = {
     time: "Uhrzeit",
     guests: "Anzahl der Gäste",
     specialRequest: "Besonderer Wunsch",
-    specialRequestPlaceholder: "Allergie, Geburtstag, besondere Anordnung…",
+    specialRequestPlaceholder:
+      "Um Ihre Erfahrung zu optimieren, teilen Sie uns bitte Ihre Wünsche mit",
     submit: "Reservierung bestätigen",
     submitting: "Reservierung läuft…",
     selectDate: "Datum auswählen",

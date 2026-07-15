@@ -54,7 +54,8 @@ const en = {
     time: "Time",
     guests: "Number of guests",
     specialRequest: "Special request",
-    specialRequestPlaceholder: "Allergy, birthday, special arrangement…",
+    specialRequestPlaceholder:
+      "To optimize your experience, please let us know your specific preferences",
     submit: "Confirm reservation",
     submitting: "Booking…",
     selectDate: "Select a date",

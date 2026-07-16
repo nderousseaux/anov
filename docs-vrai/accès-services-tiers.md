@@ -9,7 +9,6 @@
 | **CMS** | anov.nldx.sh/keystatic | Modifier le contenu du site | `anovrestaurant` | _jybbo8-Gojsuw-nobdok_ |
 | **Mail** | email.ionos.fr | Mail contact | `contact@anovrestaurant.fr` | _pycfuj-soqqok-2puCsa_ |
 | **Mail Pro** | email.ionos.fr         | Mail contact pro            | `contactpro@anovrestaurant.fr` | _jezmez-ciDwep-5juvpo_ |
-| **Stripe** |  |  |  |  |
 
 
 ---

@@ -147,7 +147,7 @@ export function ChequesCadeauxContent({
     // Check if page was restored from bfcache before this useEffect ran
     // We can detect this by checking the performance entries
     try {
-      const navEntries = performance?.getEntriesByType?.('navigation');
+      const navEntries = performance?.getEntriesByType?.('navigation') as PerformanceNavigationTiming[];
       const isBfcacheRestore = navEntries?.[0]?.type === 'back_forward';
       if (isBfcacheRestore && !hasLoadedFromSessionStorage.current) {
         console.log('[GiftCard] Detected bfcache restore via performance API, loading data...');

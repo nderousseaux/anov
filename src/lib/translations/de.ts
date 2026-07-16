@@ -77,6 +77,7 @@ const de = {
     errorPhone: "Telefon ist erforderlich",
     errorReservation: "Fehler bei der Reservierung",
     errorNetwork: "Netzwerkfehler, bitte versuchen Sie es erneut",
+    redirectingPayment: "Sie werden zu unserem Zahlungspartner weitergeleitet",
   },
   hero: {
     reserve: "Tisch reservieren",

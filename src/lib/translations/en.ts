@@ -76,6 +76,7 @@ const en = {
     errorPhone: "Phone is required",
     errorReservation: "Error during reservation",
     errorNetwork: "Network error, please try again",
+    redirectingPayment: "You will be redirected to our payment partner",
   },
   hero: {
     reserve: "Book a table",

@@ -136,6 +136,7 @@ export interface ReservationTranslations {
   errorPhone: string;
   errorReservation: string;
   errorNetwork: string;
+  redirectingPayment: string;
 }
 
 export interface HeroTranslations {

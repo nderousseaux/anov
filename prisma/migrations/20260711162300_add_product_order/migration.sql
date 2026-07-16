@@ -1,3 +1,9 @@
+-- CreateEnum
+CREATE TYPE "DeliveryMethod" AS ENUM ('PICKUP', 'DELIVERY');
+
+-- CreateEnum
+CREATE TYPE "OrderStatus" AS ENUM ('PENDING_PAYMENT', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'READY', 'COMPLETED', 'CANCELLED', 'EXPIRED');
+
 -- CreateModel
 CREATE TABLE "ProductOrder" (
     "id" TEXT NOT NULL,
@@ -7,12 +13,12 @@ CREATE TABLE "ProductOrder" (
     "productName" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL,
     "totalPrice" DOUBLE PRECISION NOT NULL,
-    "deliveryMethod" TEXT NOT NULL DEFAULT 'PICKUP',
+    "deliveryMethod" "DeliveryMethod" NOT NULL DEFAULT 'PICKUP',
     "customerName" TEXT NOT NULL,
     "customerEmail" TEXT NOT NULL,
     "customerPhone" TEXT NOT NULL,
     "stripeSessionId" TEXT,
-    "status" TEXT NOT NULL DEFAULT 'PENDING_PAYMENT',
+    "status" "OrderStatus" NOT NULL DEFAULT 'PENDING_PAYMENT',
     "expiresAt" TIMESTAMP(3),
     "transactionExpireAt" TIMESTAMP(3),
 

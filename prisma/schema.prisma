@@ -51,9 +51,9 @@ model RestaurantSettings {
   maxCovers            Int    @default(20)
   mealDuration         Int    @default(90)
   openingDays          String @default("[2,3,4,5,6]")
-  openingSlots         String @default("[\"12:00\",\"12:15\",\"12:30\",\"12:45\",\"13:00\",\"13:15\",\"13:30\",\"13:45\",\"19:00\",\"19:15\",\"19:30\",\"19:45\",\"20:00\",\"20:15\",\"20:30\",\"20:45\",\"21:00\",\"21:15\",\"21:30\"]")
+  openingSlots         String @default("[\"12:00\",\"12:30\",\"13:00\",\"13:30\",\"19:00\",\"19:30\",\"20:00\",\"20:30\",\"21:00\",\"21:30\"]")
   depositPerGuestCents Int    @default(2000)
-  daysBeforeReminder   Int    @default(3)
+  daysBeforeReminder   Int    @default(1)
 }
 
 model DayOverride {
@@ -100,6 +100,38 @@ model CustomerNote {
   updatedAt DateTime @updatedAt
 }
 
+model ProductOrder {
+  id                  String          @id @default(cuid())
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  code                String          @unique
+  productName         String
+  quantity            Int
+  totalPrice          Float
+  deliveryMethod      String          @default("PICKUP")
+  customerName        String
+  customerEmail       String
+  customerPhone       String
+  stripeSessionId     String?         @unique
+  status              String          @default("PENDING_PAYMENT")
+  expiresAt           DateTime?
+  transactionExpireAt DateTime?
+  customerAddress     ProductAddress?
+}
+
+model ProductAddress {
+  id        String       @id @default(cuid())
+  orderId   String       @unique
+  firstName String
+  lastName  String
+  address   String
+  city      String
+  zipCode   String
+  country   String       @default("France")
+  phone     String
+  order     ProductOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
 enum ReservationStatus {
   PENDING_PAYMENT
   CONFIRMED
@@ -117,48 +149,17 @@ enum GiftCardStatus {
 }
 
 enum DeliveryMethod {
-  PICKUP    // Retrait au restaurant
-  DELIVERY  // Livraison à domicile
+  PICKUP
+  DELIVERY
 }
 
 enum OrderStatus {
-  PENDING_PAYMENT   // Paiement Stripe en cours
-  CONFIRMED         // Paiement réussi
-  PROCESSING        // En préparation
-  SHIPPED           // Envoyé (delivery)
-  READY             // Prêt (pickup)
-  COMPLETED         // Réception par client
-  CANCELLED         // Remboursé/annulé
-  EXPIRED           // Session Stripe expirée
-}
-
-model ProductOrder {
-  id                String         @id @default(cuid())
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  code              String         @unique // ANOV-PO-XXXX-XXXX
-  productName       String         // Nom du produit au moment de la commande
-  quantity          Int
-  totalPrice        Float
-  deliveryMethod    DeliveryMethod @default(PICKUP)
-  customerName      String
-  customerEmail     String
-  customerPhone     String
-  customerAddress   ProductAddress?
-  stripeSessionId   String?        @unique
-  status            OrderStatus    @default(PENDING_PAYMENT)
-  transactionExpireAt DateTime?    // Date d'expiration du paiement Stripe (masquage admin après 15 min si non complété)
-}
-
-model ProductAddress {
-  id          String        @id @default(cuid())
-  order       ProductOrder  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId     String        @unique
-  firstName   String
-  lastName    String
-  address     String
-  city        String
-  zipCode     String
-  country     String         @default("France")
-  phone       String
+  PENDING_PAYMENT
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  READY
+  COMPLETED
+  CANCELLED
+  EXPIRED
 }

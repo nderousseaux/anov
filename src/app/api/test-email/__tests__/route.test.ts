@@ -1,0 +1,260 @@
+// @ts-nocheck
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
+import { sendConfirmationEmail } from "@/lib/email";
+import { prisma } from "@/lib/prisma";
+
+vi.mock("@/lib/email", () => ({
+  sendConfirmationEmail: vi.fn(),
+}));
+
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    restaurantSettings: {
+      findUnique: vi.fn(),
+    },
+  },
+}));
+
+describe("Test Email API", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe("POST /api/test-email", () => {
+    it("returns 400 if required fields are missing", async () => {
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/test-email"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.error).toBe(
+        "Champs manquants (email, name, date, time, guests)",
+      );
+    });
+
+    it("returns 400 if email is missing", async () => {
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/test-email"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: "Test User",
+            date: "2024-06-15",
+            time: "19:00",
+            guests: 2,
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+    });
+
+    it("returns 400 if name is missing", async () => {
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/test-email"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: "test@example.com",
+            date: "2024-06-15",
+            time: "19:00",
+            guests: 2,
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+    });
+
+    it("returns 400 if date is missing", async () => {
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/test-email"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: "test@example.com",
+            name: "Test User",
+            time: "19:00",
+            guests: 2,
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+    });
+
+    it("returns 400 if time is missing", async () => {
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/test-email"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: "test@example.com",
+            name: "Test User",
+            date: "2024-06-15",
+            guests: 2,
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+    });
+
+    it("returns 400 if guests is missing", async () => {
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/test-email"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: "test@example.com",
+            name: "Test User",
+            date: "2024-06-15",
+            time: "19:00",
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+    });
+
+    it("sends email successfully with default duration", async () => {
+      vi.mocked(sendConfirmationEmail).mockResolvedValue({});
+
+      vi.mocked(prisma.restaurantSettings.findUnique).mockResolvedValue({
+        id: 1,
+        mealDuration: 90,
+      });
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/test-email"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: "test@example.com",
+            name: "Test User",
+            date: "2024-06-15",
+            time: "19:00",
+            guests: 2,
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.success).toBe(true);
+      expect(data.message).toContain("test@example.com");
+    });
+
+    it("uses provided durationMinutes if provided", async () => {
+      vi.mocked(sendConfirmationEmail).mockResolvedValue({});
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/test-email"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: "test@example.com",
+            name: "Test User",
+            date: "2024-06-15",
+            time: "19:00",
+            guests: 2,
+            durationMinutes: 120,
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(200);
+      expect(
+        vi.mocked(sendConfirmationEmail).mock.calls[0][0].durationMinutes,
+      ).toBe(120);
+    });
+
+    it("uses default duration from settings if not provided", async () => {
+      vi.mocked(sendConfirmationEmail).mockResolvedValue({});
+
+      vi.mocked(prisma.restaurantSettings.findUnique).mockResolvedValue({
+        id: 1,
+        mealDuration: 120,
+      });
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/test-email"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: "test@example.com",
+            name: "Test User",
+            date: "2024-06-15",
+            time: "19:00",
+            guests: 2,
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(200);
+      expect(
+        vi.mocked(sendConfirmationEmail).mock.calls[0][0].durationMinutes,
+      ).toBe(120);
+    });
+
+    it("returns 500 on error", async () => {
+      vi.mocked(sendConfirmationEmail).mockRejectedValue(
+        new Error("SMTP error"),
+      );
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/test-email"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: "test@example.com",
+            name: "Test User",
+            date: "2024-06-15",
+            time: "19:00",
+            guests: 2,
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(500);
+      const data = await res.json();
+      expect(data.error).toBe("Erreur serveur");
+    });
+  });
+});

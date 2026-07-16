@@ -1,64 +1,82 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { getAdminFromCookies } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getAdminFromCookies } from "@/lib/auth";
 
-type Params = { params: Promise<{ date: string }> };
-
-export async function GET(_req: NextRequest, { params }: Params) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<{ date: string }> },
+) {
   const admin = await getAdminFromCookies();
-  if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+  if (!admin)
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { date } = await params;
-  const dateObj = new Date(date + 'T00:00:00.000Z');
+  const dateStr = date;
 
-  const override = await prisma.dayOverride.findUnique({ where: { date: dateObj } });
-  if (!override) return NextResponse.json(null);
+  // Vérifier que le jour n'est pas déjà passé
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const selectedDate = new Date(dateStr + "T00:00:00.000Z");
+  if (selectedDate < today) {
+    return NextResponse.json(
+      { error: "Impossible de modifier un jour déjà passé" },
+      { status: 400 },
+    );
+  }
 
-  return NextResponse.json({
-    closed: override.closed,
-    openingSlots: override.openingSlots ? (JSON.parse(override.openingSlots) as string[]) : null,
-  });
-}
-
-export async function PUT(req: NextRequest, { params }: Params) {
-  const admin = await getAdminFromCookies();
-  if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
-
-  const { date } = await params;
-  const dateObj = new Date(date + 'T00:00:00.000Z');
   const body = await req.json();
+  const { closed, openingSlots } = body;
 
+  if (typeof closed !== "boolean") {
+    return NextResponse.json(
+      { error: "Le champ 'closed' est required" },
+      { status: 400 },
+    );
+  }
+
+  // Créer ou mettre à jour l'override
   const override = await prisma.dayOverride.upsert({
-    where: { date: dateObj },
+    where: { date: selectedDate },
     update: {
-      closed: body.closed ?? false,
-      openingSlots: body.openingSlots ? JSON.stringify(body.openingSlots) : null,
+      closed,
+      openingSlots: openingSlots ? JSON.stringify(openingSlots) : null,
     },
     create: {
-      date: dateObj,
-      closed: body.closed ?? false,
-      openingSlots: body.openingSlots ? JSON.stringify(body.openingSlots) : null,
+      date: selectedDate,
+      closed,
+      openingSlots: openingSlots ? JSON.stringify(openingSlots) : null,
     },
   });
 
-  return NextResponse.json({
-    closed: override.closed,
-    openingSlots: override.openingSlots ? (JSON.parse(override.openingSlots) as string[]) : null,
-  });
+  return NextResponse.json({ success: true, override });
 }
 
-export async function DELETE(_req: NextRequest, { params }: Params) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ date: string }> },
+) {
   const admin = await getAdminFromCookies();
-  if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+  if (!admin)
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { date } = await params;
-  const dateObj = new Date(date + 'T00:00:00.000Z');
+  const dateStr = date;
 
-  try {
-    await prisma.dayOverride.delete({ where: { date: dateObj } });
-  } catch {
-    // Not found — ignore
+  // Vérifier que le jour n'est pas déjà passé
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const selectedDate = new Date(dateStr + "T00:00:00.000Z");
+  if (selectedDate < today) {
+    return NextResponse.json(
+      { error: "Impossible de modifier un jour déjà passé" },
+      { status: 400 },
+    );
   }
+
+  // Supprimer l'override
+  await prisma.dayOverride.delete({
+    where: { date: selectedDate },
+  });
 
   return NextResponse.json({ success: true });
 }

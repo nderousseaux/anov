@@ -6,4 +6,5 @@ export interface GiftCardStats {
   inProgress: number;
 }
 
-export type GiftCardStatus = 'IN_PROGRESS_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED';
+export type GiftCardStatus =
+  "IN_PROGRESS_PAYMENT" | "ACTIVE" | "USED" | "EXPIRED";

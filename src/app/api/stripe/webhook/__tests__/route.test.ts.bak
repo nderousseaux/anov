@@ -1,0 +1,387 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
+import { stripe } from "@/lib/stripe";
+import { prisma } from "@/lib/prisma";
+import {
+  sendConfirmationEmail,
+  sendGiftCardEmail,
+  sendProductOrderConfirmationEmail,
+} from "@/lib/email";
+
+vi.mock("@/lib/stripe", () => ({
+  stripe: {
+    webhooks: {
+      constructEvent: vi.fn().mockReturnValue({}),
+    },
+  },
+}));
+
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    giftCard: {
+      findUnique: vi.fn().mockResolvedValue(null),
+      update: vi.fn().mockImplementation(({ where, data }) => ({
+        id: where.id,
+        ...data,
+      })),
+    },
+    productOrder: {
+      findUnique: vi.fn().mockResolvedValue(null),
+      update: vi.fn().mockImplementation(({ where, data }) => ({
+        id: where.id,
+        ...data,
+      })),
+    },
+    reservation: {
+      findUnique: vi.fn().mockResolvedValue(null),
+      update: vi.fn().mockImplementation(({ where, data }) => ({
+        id: where.id,
+        ...data,
+      })),
+      create: vi.fn().mockImplementation(({ data }) => ({
+        id: 1,
+        ...data,
+      })),
+    },
+    restaurantSettings: {
+      findUnique: vi.fn().mockResolvedValue({
+        id: 1,
+        mealDuration: 90,
+      }),
+    },
+  },
+}));
+
+vi.mock("@/lib/email", () => ({
+  sendConfirmationEmail: vi.fn().mockResolvedValue({}),
+  sendGiftCardEmail: vi.fn().mockResolvedValue({}),
+  sendProductOrderConfirmationEmail: vi.fn().mockResolvedValue({}),
+}));
+
+describe("stripe webhook API", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe("POST /api/stripe/webhook", () => {
+    it("returns 500 if webhook secret is not set", async () => {
+      const originalValue = process.env.STRIPE_WEBHOOK_SECRET;
+      delete process.env.STRIPE_WEBHOOK_SECRET;
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/stripe/webhook"),
+        {
+          method: "POST",
+          headers: { "stripe-signature": "test-signature" },
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(500);
+      const data = await res.json();
+      expect(data.error).toBe("Configuration serveur incorrecte");
+
+      if (originalValue) {
+        process.env.STRIPE_WEBHOOK_SECRET = originalValue;
+      }
+    });
+
+    it("returns 400 for missing signature", async () => {
+      const originalValue = process.env.STRIPE_WEBHOOK_SECRET;
+      process.env.STRIPE_WEBHOOK_SECRET = "test-secret";
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/stripe/webhook"),
+        {
+          method: "POST",
+          headers: {},
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.error).toBe("Signature manquante");
+
+      if (originalValue) {
+        process.env.STRIPE_WEBHOOK_SECRET = originalValue;
+      }
+    });
+
+    it("returns 400 for invalid signature", async () => {
+      const originalValue = process.env.STRIPE_WEBHOOK_SECRET;
+      process.env.STRIPE_WEBHOOK_SECRET = "test-secret";
+
+      vi.mocked(stripe.webhooks.constructEvent).mockImplementation(() => {
+        throw new Error("Invalid signature");
+      });
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/stripe/webhook"),
+        {
+          method: "POST",
+          headers: { "stripe-signature": "invalid" },
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.error).toBe("Webhook signature invalide");
+
+      if (originalValue) {
+        process.env.STRIPE_WEBHOOK_SECRET = originalValue;
+      }
+    });
+
+    it("handles gift card payment", async () => {
+      const originalValue = process.env.STRIPE_WEBHOOK_SECRET;
+      process.env.STRIPE_WEBHOOK_SECRET = "test-secret";
+
+      vi.mocked(stripe.webhooks.constructEvent).mockReturnValue({
+        type: "checkout.session.completed",
+        data: {
+          object: {
+            id: "cs_test123",
+            metadata: {
+              type: "gift_card",
+              giftCardId: "gift-card-123",
+            },
+          },
+        },
+      });
+
+      vi.mocked(prisma.giftCard.findUnique).mockResolvedValue({
+        id: "gift-card-123",
+        code: "ANOV-G-1234",
+        amount: 100,
+        recipientEmail: "recipient@example.com",
+        personalMessage: "Test message",
+        createdAt: new Date(),
+        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      });
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/stripe/webhook"),
+        {
+          method: "POST",
+          headers: { "stripe-signature": "test-signature" },
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.received).toBe(true);
+
+      if (originalValue) {
+        process.env.STRIPE_WEBHOOK_SECRET = originalValue;
+      }
+    });
+
+    it("handles product order payment", async () => {
+      const originalValue = process.env.STRIPE_WEBHOOK_SECRET;
+      process.env.STRIPE_WEBHOOK_SECRET = "test-secret";
+
+      vi.mocked(stripe.webhooks.constructEvent).mockReturnValue({
+        type: "checkout.session.completed",
+        data: {
+          object: {
+            id: "cs_test123",
+            metadata: {
+              type: "product_order",
+              orderId: "order-123",
+            },
+          },
+        },
+      });
+
+      vi.mocked(prisma.productOrder.findUnique).mockResolvedValue({
+        id: "order-123",
+        code: "ANOV-PO-1234",
+        productName: "Test Product",
+        quantity: 2,
+        customerEmail: "customer@example.com",
+        customerName: "Test Customer",
+        totalPrice: 200,
+        deliveryMethod: "pickup",
+      });
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/stripe/webhook"),
+        {
+          method: "POST",
+          headers: { "stripe-signature": "test-signature" },
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.received).toBe(true);
+
+      if (originalValue) {
+        process.env.STRIPE_WEBHOOK_SECRET = originalValue;
+      }
+    });
+
+    it("handles reservation payment (new format)", async () => {
+      const originalValue = process.env.STRIPE_WEBHOOK_SECRET;
+      process.env.STRIPE_WEBHOOK_SECRET = "test-secret";
+
+      vi.mocked(stripe.webhooks.constructEvent).mockReturnValue({
+        type: "checkout.session.completed",
+        data: {
+          object: {
+            id: "cs_test123",
+            metadata: {
+              reservation_name: "John Doe",
+              reservation_email: "test@example.com",
+              reservation_date: "2024-06-15",
+              reservation_guests: "4",
+            },
+          },
+        },
+      });
+
+      vi.mocked(prisma.restaurantSettings.findUnique).mockResolvedValue({
+        id: 1,
+        mealDuration: 90,
+      });
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/stripe/webhook"),
+        {
+          method: "POST",
+          headers: { "stripe-signature": "test-signature" },
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.received).toBe(true);
+
+      if (originalValue) {
+        process.env.STRIPE_WEBHOOK_SECRET = originalValue;
+      }
+    });
+
+    it("handles reservation payment (old format)", async () => {
+      const originalValue = process.env.STRIPE_WEBHOOK_SECRET;
+      process.env.STRIPE_WEBHOOK_SECRET = "test-secret";
+
+      vi.mocked(stripe.webhooks.constructEvent).mockReturnValue({
+        type: "checkout.session.completed",
+        data: {
+          object: {
+            id: "cs_test123",
+            metadata: {
+              name: "John Doe",
+              email: "test@example.com",
+              date: "2024-06-15",
+              guests: "4",
+            },
+          },
+        },
+      });
+
+      vi.mocked(prisma.restaurantSettings.findUnique).mockResolvedValue({
+        id: 1,
+        mealDuration: 90,
+      });
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/stripe/webhook"),
+        {
+          method: "POST",
+          headers: { "stripe-signature": "test-signature" },
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.received).toBe(true);
+
+      if (originalValue) {
+        process.env.STRIPE_WEBHOOK_SECRET = originalValue;
+      }
+    });
+
+    it("returns 400 for missing metadata", async () => {
+      const originalValue = process.env.STRIPE_WEBHOOK_SECRET;
+      process.env.STRIPE_WEBHOOK_SECRET = "test-secret";
+
+      vi.mocked(stripe.webhooks.constructEvent).mockReturnValue({
+        type: "checkout.session.completed",
+        data: {
+          object: {
+            id: "cs_test123",
+            metadata: {},
+          },
+        },
+      });
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/stripe/webhook"),
+        {
+          method: "POST",
+          headers: { "stripe-signature": "test-signature" },
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.error).toBe("Metadata manquantes");
+
+      if (originalValue) {
+        process.env.STRIPE_WEBHOOK_SECRET = originalValue;
+      }
+    });
+
+    it("handles unknown event types", async () => {
+      const originalValue = process.env.STRIPE_WEBHOOK_SECRET;
+      process.env.STRIPE_WEBHOOK_SECRET = "test-secret";
+
+      vi.mocked(stripe.webhooks.constructEvent).mockReturnValue({
+        type: "checkout.session.created",
+        data: {
+          object: {
+            id: "cs_test123",
+            metadata: {
+              type: "unknown",
+            },
+          },
+        },
+      });
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/stripe/webhook"),
+        {
+          method: "POST",
+          headers: { "stripe-signature": "test-signature" },
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.received).toBe(true);
+
+      if (originalValue) {
+        process.env.STRIPE_WEBHOOK_SECRET = originalValue;
+      }
+    });
+  });
+});

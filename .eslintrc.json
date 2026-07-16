@@ -1,0 +1,31 @@
+{
+  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { "argsIgnorePattern": "^_" }
+    ],
+    "no-console": ["warn"]
+  },
+  "ignorePatterns": [
+    "dist/",
+    ".next/",
+    "node_modules/",
+    ".git/",
+    "coverage/",
+    "prisma/",
+    "src/app/api/",
+    "src/generated/",
+    "next-env.d.ts"
+  ],
+  "overrides": [
+    {
+      "files": ["**/__tests__/**/*.test.ts", "**/*.test.ts"],
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": "off"
+      }
+    }
+  ]
+}

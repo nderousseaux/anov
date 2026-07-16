@@ -1,1 +1,0 @@
-{"nodes": [{"id": "content:reservation.yaml", "label": "reservation.yaml", "type": "file", "source_file": "content/reservation.yaml", "confidence": "EXTRACTED", "description": "Reservation page YAML content file", "metadata": {"line_start": 1, "line_end": 1}}], "edges": [], "hyperedges": []}

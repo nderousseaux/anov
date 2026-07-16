@@ -188,7 +188,8 @@ exports.Prisma.GiftCardScalarFieldEnum = {
   stripeSessionId: 'stripeSessionId',
   expiresAt: 'expiresAt',
   transactionExpireAt: 'transactionExpireAt',
-  usedAt: 'usedAt'
+  usedAt: 'usedAt',
+  reminderEmailSent: 'reminderEmailSent'
 };
 
 exports.Prisma.ContactMessageScalarFieldEnum = {
@@ -206,6 +207,35 @@ exports.Prisma.CustomerNoteScalarFieldEnum = {
   content: 'content',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProductOrderScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  code: 'code',
+  productName: 'productName',
+  quantity: 'quantity',
+  totalPrice: 'totalPrice',
+  deliveryMethod: 'deliveryMethod',
+  customerName: 'customerName',
+  customerEmail: 'customerEmail',
+  customerPhone: 'customerPhone',
+  stripeSessionId: 'stripeSessionId',
+  status: 'status',
+  transactionExpireAt: 'transactionExpireAt'
+};
+
+exports.Prisma.ProductAddressScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  address: 'address',
+  city: 'city',
+  zipCode: 'zipCode',
+  country: 'country',
+  phone: 'phone'
 };
 
 exports.Prisma.SortOrder = {
@@ -238,6 +268,22 @@ exports.GiftCardStatus = exports.$Enums.GiftCardStatus = {
   EXPIRED: 'EXPIRED'
 };
 
+exports.DeliveryMethod = exports.$Enums.DeliveryMethod = {
+  PICKUP: 'PICKUP',
+  DELIVERY: 'DELIVERY'
+};
+
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  PENDING_PAYMENT: 'PENDING_PAYMENT',
+  CONFIRMED: 'CONFIRMED',
+  PROCESSING: 'PROCESSING',
+  SHIPPED: 'SHIPPED',
+  READY: 'READY',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED'
+};
+
 exports.Prisma.ModelName = {
   Reservation: 'Reservation',
   Table: 'Table',
@@ -246,7 +292,9 @@ exports.Prisma.ModelName = {
   DayOverride: 'DayOverride',
   GiftCard: 'GiftCard',
   ContactMessage: 'ContactMessage',
-  CustomerNote: 'CustomerNote'
+  CustomerNote: 'CustomerNote',
+  ProductOrder: 'ProductOrder',
+  ProductAddress: 'ProductAddress'
 };
 
 /**

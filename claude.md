@@ -19,6 +19,7 @@ pnpm test:ui              # Run tests with UI
 **Stack:** Next.js 15 (App Router) + TypeScript + Prisma + PostgreSQL + Keystatic CMS
 
 **Project Structure:**
+
 ```
 anov/
 ├── content/              # Keystatic YAML files (hero,histoire,galerie,contact,menu,footer...)
@@ -46,6 +47,7 @@ anov/
 ## Key Concepts
 
 **CMS System (Keystatic):**
+
 - Content stored in `content/*.yaml` files
 - Singletons: `hero`, `histoire`, `galerie`, `contact`, `menu`, `footer`, `gift-card-success`
 - Configured with GitHub storage (read/write via GitHub App)
@@ -53,50 +55,56 @@ anov/
 - Pages fetch CMS data at runtime via `createReader()` from `@keystatic/core`
 
 **Internationalization:**
+
 - 3 languages: French (default), English, German
 - URL param: `?lang=fr|en|de`
 - Stored in localStorage
 - Translation files in `src/lib/translations/`
 
 **Authentication:**
+
 - JWT-based admin auth using `jose` library
 - Cookie: `anov_admin_token` (8h expiration)
 - Middleware protects `/admin/*`, `/keystatic/*`
 - Admin users stored in PostgreSQL `Admin` table (SHA-256 password hash)
 
 **Database (Prisma):**
+
 - PostgreSQL via Neon serverless (production) or local Docker
 - Models: `Reservation`, `Admin`, `RestaurantSettings`, `DayOverride`, `GiftCard`
 - Auto-detects adapter (local vs Neon) based on `DATABASE_URL`
 
 **Availability Logic:**
+
 - Configurable by restaurant settings (max covers, opening days, time slots)
 - Per-day overrides for special cases (closed, custom hours)
 - Tracks reservation coverage across meal duration
 - Utility functions: `getAvailableSlots()`, `getSlotsWithAvailability()`, `getUnavailableDatesForMonth()`
 
 **Email System:**
+
 - SMTP via `nodemailer` (environment: `SMTP_HOST`, `SMTP_PORT`, etc.)
 - Templates: contact, reservation confirmation/reminder/cancellation, gift cards
 - Mailcatcher available locally on port 1080
 
 **Payment (Stripe):**
+
 - Gift card sales via Checkout Sessions
 - Webhook handles `checkout.session.completed`
 - Admin manual gift card creation with `ANOV-M-` prefix
 
 ## Common Tasks
 
-| Task | Command/Location |
-|------|------------------|
-| Update site content | Edit `content/*.yaml` files via `/admin/cms` |
-| Add new page route | `src/app/new-page/page.tsx` |
-| Add new component | `src/components/features/Component.tsx` |
+| Task                   | Command/Location                                   |
+| ---------------------- | -------------------------------------------------- |
+| Update site content    | Edit `content/*.yaml` files via `/admin/cms`       |
+| Add new page route     | `src/app/new-page/page.tsx`                        |
+| Add new component      | `src/components/features/Component.tsx`            |
 | Change database schema | Edit `prisma/schema.prisma` then `pnpm db:migrate` |
-| Add translation | Add to `src/lib/translations/{en,de}.ts` |
-| Modify CMS schema | Edit `keystatic.config.ts` |
-| Add API route | `src/app/api/route.ts` |
-| Modify admin auth | Edit `src/lib/auth.ts` + `src/middleware.ts` |
+| Add translation        | Add to `src/lib/translations/{en,de}.ts`           |
+| Modify CMS schema      | Edit `keystatic.config.ts`                         |
+| Add API route          | `src/app/api/route.ts`                             |
+| Modify admin auth      | Edit `src/lib/auth.ts` + `src/middleware.ts`       |
 
 ## Deployment
 

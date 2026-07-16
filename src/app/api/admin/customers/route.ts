@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { getAdminFromCookies } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getAdminFromCookies } from "@/lib/auth";
 
 interface CustomerSummary {
   email: string;
@@ -13,32 +13,34 @@ interface CustomerSummary {
 
 export async function GET(req: NextRequest) {
   const admin = await getAdminFromCookies();
-  if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+  if (!admin)
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { searchParams } = req.nextUrl;
-  const search = searchParams.get('search')?.trim().toLowerCase() ?? '';
-  const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10));
+  const search = searchParams.get("search")?.trim().toLowerCase() ?? "";
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const perPage = 25;
 
-  const [reservationGroups, giftCardGroups, contactGroups, notes] = await Promise.all([
-    prisma.reservation.groupBy({
-      by: ['email'],
-      _count: { _all: true },
-      _max: { date: true },
-    }),
-    prisma.giftCard.groupBy({
-      by: ['recipientEmail'],
-      where: { recipientEmail: { not: null } },
-      _count: { _all: true },
-      _max: { createdAt: true },
-    }),
-    prisma.contactMessage.groupBy({
-      by: ['email'],
-      _count: { _all: true },
-      _max: { createdAt: true },
-    }),
-    prisma.customerNote.findMany({ select: { email: true } }),
-  ]);
+  const [reservationGroups, giftCardGroups, contactGroups, notes] =
+    await Promise.all([
+      prisma.reservation.groupBy({
+        by: ["email"],
+        _count: { _all: true },
+        _max: { date: true },
+      }),
+      prisma.giftCard.groupBy({
+        by: ["recipientEmail"],
+        where: { recipientEmail: { not: null } },
+        _count: { _all: true },
+        _max: { createdAt: true },
+      }),
+      prisma.contactMessage.groupBy({
+        by: ["email"],
+        _count: { _all: true },
+        _max: { createdAt: true },
+      }),
+      prisma.customerNote.findMany({ select: { email: true } }),
+    ]);
 
   const notesByEmail = new Set(notes.map((n) => n.email.toLowerCase()));
   const customers = new Map<string, CustomerSummary>();
@@ -92,7 +94,10 @@ export async function GET(req: NextRequest) {
     all = all.filter((c) => c.email.toLowerCase().includes(search));
   }
 
-  all.sort((a, b) => new Date(b.lastEventAt).getTime() - new Date(a.lastEventAt).getTime());
+  all.sort(
+    (a, b) =>
+      new Date(b.lastEventAt).getTime() - new Date(a.lastEventAt).getTime(),
+  );
 
   const total = all.length;
   const start = (page - 1) * perPage;

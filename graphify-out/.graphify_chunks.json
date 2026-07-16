@@ -1,1 +1,37 @@
-{"chunks": [["/Users/nderousseaux/Dev/anov/README.md", "/Users/nderousseaux/Dev/anov/claude.md", "/Users/nderousseaux/Dev/anov/content/boutique.yaml", "/Users/nderousseaux/Dev/anov/content/contact.yaml", "/Users/nderousseaux/Dev/anov/content/footer.yaml", "/Users/nderousseaux/Dev/anov/content/galerie.yaml", "/Users/nderousseaux/Dev/anov/content/gift-card-success.yaml", "/Users/nderousseaux/Dev/anov/content/hero.yaml", "/Users/nderousseaux/Dev/anov/content/histoire.yaml", "/Users/nderousseaux/Dev/anov/content/menu.yaml", "/Users/nderousseaux/Dev/anov/content/origines.yaml", "/Users/nderousseaux/Dev/anov/content/reservation.yaml", "/Users/nderousseaux/Dev/anov/docker-compose.yml", "/Users/nderousseaux/Dev/anov/docs/DOCUMENTATION-FONCTIONNELLE.md", "/Users/nderousseaux/Dev/anov/docs/DOCUMENTATION-TECHNIQUE.md", "/Users/nderousseaux/Dev/anov/docs/MODERNIZATION-PLAN.md", "/Users/nderousseaux/Dev/anov/docs/draft.md", "/Users/nderousseaux/Dev/anov/draft/README.md", "/Users/nderousseaux/Dev/anov/draft/workflow.md", "/Users/nderousseaux/Dev/anov/index.html"], ["/Users/nderousseaux/Dev/anov/public/assets/hero.jpg", "/Users/nderousseaux/Dev/anov/public/assets/img-logo.jpg", "/Users/nderousseaux/Dev/anov/public/assets/img-logo.svg", "/Users/nderousseaux/Dev/anov/public/assets/logo.jpg", "/Users/nderousseaux/Dev/anov/public/assets/logo.svg", "/Users/nderousseaux/Dev/anov/public/assets/text-logo.svg", "/Users/nderousseaux/Dev/anov/public/favicon.svg"]], "num_chunks": 2, "chunk_size": 20}
+{
+  "chunks": [
+    [
+      "/Users/nderousseaux/Dev/anov/README.md",
+      "/Users/nderousseaux/Dev/anov/claude.md",
+      "/Users/nderousseaux/Dev/anov/content/boutique.yaml",
+      "/Users/nderousseaux/Dev/anov/content/contact.yaml",
+      "/Users/nderousseaux/Dev/anov/content/footer.yaml",
+      "/Users/nderousseaux/Dev/anov/content/galerie.yaml",
+      "/Users/nderousseaux/Dev/anov/content/gift-card-success.yaml",
+      "/Users/nderousseaux/Dev/anov/content/hero.yaml",
+      "/Users/nderousseaux/Dev/anov/content/histoire.yaml",
+      "/Users/nderousseaux/Dev/anov/content/menu.yaml",
+      "/Users/nderousseaux/Dev/anov/content/origines.yaml",
+      "/Users/nderousseaux/Dev/anov/content/reservation.yaml",
+      "/Users/nderousseaux/Dev/anov/docker-compose.yml",
+      "/Users/nderousseaux/Dev/anov/docs/DOCUMENTATION-FONCTIONNELLE.md",
+      "/Users/nderousseaux/Dev/anov/docs/DOCUMENTATION-TECHNIQUE.md",
+      "/Users/nderousseaux/Dev/anov/docs/MODERNIZATION-PLAN.md",
+      "/Users/nderousseaux/Dev/anov/docs/draft.md",
+      "/Users/nderousseaux/Dev/anov/draft/README.md",
+      "/Users/nderousseaux/Dev/anov/draft/workflow.md",
+      "/Users/nderousseaux/Dev/anov/index.html"
+    ],
+    [
+      "/Users/nderousseaux/Dev/anov/public/assets/hero.jpg",
+      "/Users/nderousseaux/Dev/anov/public/assets/img-logo.jpg",
+      "/Users/nderousseaux/Dev/anov/public/assets/img-logo.svg",
+      "/Users/nderousseaux/Dev/anov/public/assets/logo.jpg",
+      "/Users/nderousseaux/Dev/anov/public/assets/logo.svg",
+      "/Users/nderousseaux/Dev/anov/public/assets/text-logo.svg",
+      "/Users/nderousseaux/Dev/anov/public/favicon.svg"
+    ]
+  ],
+  "num_chunks": 2,
+  "chunk_size": 20
+}

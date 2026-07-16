@@ -8,10 +8,13 @@
  * @param locale - The locale to use for formatting (default: 'fr-FR')
  * @returns Formatted currency string
  */
-export function formatCurrency(amount: number, locale: string = 'fr-FR'): string {
+export function formatCurrency(
+  amount: number,
+  locale: string = "fr-FR",
+): string {
   return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: 'EUR',
+    style: "currency",
+    currency: "EUR",
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   }).format(amount);
@@ -25,10 +28,15 @@ export function formatCurrency(amount: number, locale: string = 'fr-FR'): string
  */
 export function formatDate(
   date: Date | string,
-  options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+  options: Intl.DateTimeFormatOptions = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  },
 ): string {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return new Intl.DateTimeFormat('fr-FR', options).format(dateObj);
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  return new Intl.DateTimeFormat("fr-FR", options).format(dateObj);
 }
 
 /**
@@ -37,7 +45,7 @@ export function formatDate(
  * @returns Short formatted date string
  */
 export function formatDateShort(date: Date | string): string {
-  return formatDate(date, { day: 'numeric', month: 'long', year: 'numeric' });
+  return formatDate(date, { day: "numeric", month: "long", year: "numeric" });
 }
 
 /**
@@ -48,13 +56,16 @@ export function formatDateShort(date: Date | string): string {
  */
 export function formatTime(
   time: string,
-  options: { hour: '2-digit'; minute: '2-digit' } = { hour: '2-digit', minute: '2-digit' }
+  options: { hour: "2-digit"; minute: "2-digit" } = {
+    hour: "2-digit",
+    minute: "2-digit",
+  },
 ): string {
   try {
-    const [hours, minutes] = time.split(':').map(Number);
+    const [hours, minutes] = time.split(":").map(Number);
     const date = new Date();
     date.setHours(hours, minutes, 0, 0);
-    return new Intl.DateTimeFormat('fr-FR', options).format(date);
+    return new Intl.DateTimeFormat("fr-FR", options).format(date);
   } catch {
     return time;
   }
@@ -66,7 +77,7 @@ export function formatTime(
  * @returns True if the date is today
  */
 export function isToday(date: Date | string): boolean {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const dateObj = typeof date === "string" ? new Date(date) : date;
   const today = new Date();
   // Use UTC methods to avoid timezone issues when comparing dates
   return (
@@ -82,7 +93,7 @@ export function isToday(date: Date | string): boolean {
  * @returns Date object representing the previous Monday
  */
 export function getPreviousMonday(date: Date | string = new Date()): Date {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const dateObj = typeof date === "string" ? new Date(date) : date;
   // Calculate the day of week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
   // We need to get the day in UTC to match the date string
   const dayOfWeek = dateObj.getUTCDay();
@@ -90,7 +101,8 @@ export function getPreviousMonday(date: Date | string = new Date()): Date {
   // If today is Monday (1), we want to go back 7 days to get the previous Monday
   // If today is Sunday (0), we go back 6 days to get the previous Monday
   // If today is Wednesday (3), we go back 2 days to get the previous Monday
-  const daysToSubtract = dayOfWeek === 0 ? 6 : (dayOfWeek === 1 ? 7 : dayOfWeek - 1);
+  const daysToSubtract =
+    dayOfWeek === 0 ? 6 : dayOfWeek === 1 ? 7 : dayOfWeek - 1;
   const previousMonday = new Date(dateObj);
   previousMonday.setUTCDate(dateObj.getUTCDate() - daysToSubtract);
   previousMonday.setUTCHours(0, 0, 0, 0);
@@ -103,21 +115,29 @@ export function getPreviousMonday(date: Date | string = new Date()): Date {
  * @returns Formatted date string
  */
 export function formatReservationDate(date: Date | string): string {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  const days = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  const days = [
+    "dimanche",
+    "lundi",
+    "mardi",
+    "mercredi",
+    "jeudi",
+    "vendredi",
+    "samedi",
+  ];
   const months = [
-    'janvier',
-    'février',
-    'mars',
-    'avril',
-    'mai',
-    'juin',
-    'juillet',
-    'août',
-    'septembre',
-    'octobre',
-    'novembre',
-    'décembre',
+    "janvier",
+    "février",
+    "mars",
+    "avril",
+    "mai",
+    "juin",
+    "juillet",
+    "août",
+    "septembre",
+    "octobre",
+    "novembre",
+    "décembre",
   ];
   return `${days[dateObj.getDay()]} ${dateObj.getDate()} ${months[dateObj.getMonth()]}`;
 }

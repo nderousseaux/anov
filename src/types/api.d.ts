@@ -20,7 +20,7 @@ export interface GiftCard {
   recipientEmail: string | null;
   personalMessage: string | null;
   isPaid: boolean;
-  status: 'PENDING_PAYMENT' | 'ACTIVE' | 'USED';
+  status: "PENDING_PAYMENT" | "ACTIVE" | "USED";
   createdAt: string;
   expiresAt: string | null;
   usedAt: string | null;
@@ -35,7 +35,7 @@ export interface GiftCardCreateRequest {
 
 export interface GiftCardActionRequest {
   id: string;
-  action: 'validate' | 'markUsed' | 'delete';
+  action: "validate" | "markUsed" | "delete";
 }
 
 // Stripe webhook payload types
@@ -72,6 +72,6 @@ export interface Reservation {
   guests: number;
   specialRequest: string | null;
   wantsSmsReminder: boolean;
-  status: 'CONFIRMED' | 'PENDING' | 'CANCELLED';
+  status: "CONFIRMED" | "PENDING" | "CANCELLED";
   cancelToken: string | null;
 }

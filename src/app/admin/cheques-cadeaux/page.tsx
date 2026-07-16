@@ -1,14 +1,13 @@
-'use client';
+"use client";
 
-import { Suspense, useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { AdminNav } from '@/components/admin/AdminNav';
-import { GiftCardStats } from '@/components/admin/GiftCardStats';
-import type { GiftCardStats as GiftCardStatsType } from '@/components/admin/types';
-import { GiftCardCard } from '@/components/admin/GiftCardCard';
-import { GiftCardFilters } from '@/components/admin/GiftCardFilters';
-import { Loader2, RefreshCw, AlertCircle, Check, Trash2, Plus, Mail, X } from 'lucide-react';
+import { Suspense, useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
+import { AdminNav } from "@/components/admin/AdminNav";
+import { GiftCardStats } from "@/components/admin/GiftCardStats";
+import type { GiftCardStats as GiftCardStatsType } from "@/components/admin/types";
+import { GiftCardCard } from "@/components/admin/GiftCardCard";
+import { GiftCardFilters } from "@/components/admin/GiftCardFilters";
+import { RefreshCw, Plus, Mail, X } from "lucide-react";
 
 interface GiftCard {
   id: string;
@@ -17,7 +16,7 @@ interface GiftCard {
   recipientEmail: string | null;
   personalMessage: string | null;
   isPaid: boolean;
-  status: 'IN_PROGRESS_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED';
+  status: "IN_PROGRESS_PAYMENT" | "ACTIVE" | "USED" | "EXPIRED";
   createdAt: string;
   expiresAt: string | null;
   transactionExpireAt: string | null;
@@ -66,34 +65,6 @@ function GiftCardListFallback() {
   );
 }
 
-function loadScript(src: string) {
-  return new Promise<void>((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = src;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error(`Failed to load ${src}`));
-    document.body.appendChild(script);
-  });
-}
-
-async function loadStripe() {
-  if (typeof window === 'undefined') return null;
-
-  // Vérifier si Stripe est déjà chargé
-  if ((window as any).Stripe) {
-    return (window as any).Stripe;
-  }
-
-  try {
-    await loadScript('https://js.stripe.com/v3/');
-    return (window as any).Stripe;
-  } catch (error) {
-    console.error('Error loading Stripe:', error);
-    return null;
-  }
-}
-
 function GiftCardPageContent() {
   const [giftCards, setGiftCards] = useState<GiftCard[]>([]);
   const [stats, setStats] = useState<GiftCardStatsType>({
@@ -108,58 +79,83 @@ function GiftCardPageContent() {
   const [refreshing, setRefreshing] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [createFormData, setCreateFormData] = useState({
-    amount: '',
-    recipientEmail: '',
-    personalMessage: '',
+    amount: "",
+    recipientEmail: "",
+    personalMessage: "",
   });
+
+  // Load stored form data from sessionStorage (when returning from Stripe)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedData = sessionStorage.getItem('giftCardFormData');
+      if (storedData) {
+        try {
+          const parsedData = JSON.parse(storedData);
+          setCreateFormData({
+            amount: parsedData.amount || "",
+            recipientEmail: parsedData.recipientEmail || "",
+            personalMessage: parsedData.personalMessage || "",
+          });
+          // Don't clear sessionStorage - keep data for potential modifications
+        } catch {
+          // Invalid JSON, ignore
+        }
+      }
+    }
+  }, []);
 
   // Filters state - must be inside a component wrapped by Suspense
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const [filters, setFilters] = useState({
-    status: searchParams.get('status') || '',
-    code: searchParams.get('code') || '',
-    email: searchParams.get('email') || '',
-    page: parseInt(searchParams.get('page') || '1', 10),
+    status: searchParams.get("status") || "",
+    code: searchParams.get("code") || "",
+    email: searchParams.get("email") || "",
+    page: parseInt(searchParams.get("page") || "1", 10),
   });
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
       // Fetch gift cards list
       const params = new URLSearchParams();
-      if (filters.status) params.append('status', filters.status);
-      if (filters.code) params.append('code', filters.code);
-      if (filters.email) params.append('email', filters.email);
-      params.append('page', filters.page.toString());
+      if (filters.status) params.append("status", filters.status);
+      if (filters.code) params.append("code", filters.code);
+      if (filters.email) params.append("email", filters.email);
+      params.append("page", filters.page.toString());
 
-      const listResponse = await fetch(`/api/admin/gift-cards?${params.toString()}`);
-      if (!listResponse.ok) throw new Error('Erreur lors du chargement des chèques cadeaux');
+      const listResponse = await fetch(
+        `/api/admin/gift-cards?${params.toString()}`,
+      );
+      if (!listResponse.ok)
+        throw new Error("Erreur lors du chargement des chèques cadeaux");
 
       const listData: GiftCardListResponse = await listResponse.json();
       setGiftCards(listData.data);
 
       // Fetch stats
-      const statsResponse = await fetch('/api/admin/gift-cards/stats');
-      if (!statsResponse.ok) throw new Error('Erreur lors du chargement des statistiques');
+      const statsResponse = await fetch("/api/admin/gift-cards/stats");
+      if (!statsResponse.ok)
+        throw new Error("Erreur lors du chargement des statistiques");
 
       const statsData: GiftCardStatsType = await statsResponse.json();
       setStats(statsData);
-
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      setError(err instanceof Error ? err.message : "Une erreur est survenue");
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters.status, filters.code, filters.email, filters.page]);
 
   // Fetch data when filters change or component mounts
   useEffect(() => {
-    fetchData();
-  }, [filters.status, filters.code, filters.email, filters.page]);
+    const fetchDataWithFilters = async () => {
+      await fetchData();
+    };
+    fetchDataWithFilters();
+  }, [fetchData]);
 
   // Reload stats when refreshing
   const handleRefresh = () => {
@@ -170,26 +166,26 @@ function GiftCardPageContent() {
 
   const handleValidateGiftCard = async (id: string) => {
     try {
-      const response = await fetch('/api/admin/gift-cards', {
-        method: 'PATCH',
+      const response = await fetch("/api/admin/gift-cards", {
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           id,
-          action: 'validate',
+          action: "validate",
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Erreur lors de la validation');
+        throw new Error(errorData.error || "Erreur lors de la validation");
       }
 
       // Refresh data
       handleRefresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      setError(err instanceof Error ? err.message : "Une erreur est survenue");
     }
   };
 
@@ -203,11 +199,19 @@ function GiftCardPageContent() {
     }
 
     if (isExpired) {
-      const formattedDate = giftCard.expiresAt ? formatDateTime(giftCard.expiresAt) : '';
-      if (!confirm(`Attention, ce bon cadeau est expiré depuis le ${formattedDate}. Êtes-vous sûr de vouloir le marquer comme utilisé ?`)) {
+      const formattedDate = giftCard.expiresAt
+        ? formatDateTime(giftCard.expiresAt)
+        : "";
+      if (
+        !confirm(
+          `Attention, ce bon cadeau est expiré depuis le ${formattedDate}. Êtes-vous sûr de vouloir le marquer comme utilisé ?`,
+        )
+      ) {
         return;
       }
-    } else if (!confirm('Êtes-vous sûr de vouloir marquer ce bon comme utilisé ?')) {
+    } else if (
+      !confirm("Êtes-vous sûr de vouloir marquer ce bon comme utilisé ?")
+    ) {
       return;
     }
 
@@ -215,60 +219,81 @@ function GiftCardPageContent() {
   };
 
   // Wrapper function for GiftCardCard component (only passes required props)
-  const handleMarkUsedForCard = ({ id, expiresAt }: { id: string; expiresAt?: string | null }) => {
-    handleMarkUsed({ id, code: '', amount: 0, recipientEmail: null, personalMessage: null, isPaid: false, status: 'ACTIVE', createdAt: '', expiresAt: expiresAt ?? '', transactionExpireAt: null, usedAt: null });
+  const handleMarkUsedForCard = ({
+    id,
+    expiresAt,
+  }: {
+    id: string;
+    expiresAt?: string | null;
+  }) => {
+    handleMarkUsed({
+      id,
+      code: "",
+      amount: 0,
+      recipientEmail: null,
+      personalMessage: null,
+      isPaid: false,
+      status: "ACTIVE",
+      createdAt: "",
+      expiresAt: expiresAt ?? "",
+      transactionExpireAt: null,
+      usedAt: null,
+    });
   };
 
   const handleMarkUsedAction = async (id: string) => {
     try {
-      const response = await fetch('/api/admin/gift-cards', {
-        method: 'PATCH',
+      const response = await fetch("/api/admin/gift-cards", {
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           id,
-          action: 'markUsed',
+          action: "markUsed",
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Erreur lors de la mise à jour');
+        throw new Error(errorData.error || "Erreur lors de la mise à jour");
       }
 
       // Refresh data
       handleRefresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      setError(err instanceof Error ? err.message : "Une erreur est survenue");
     }
   };
 
   // La suppression de bons cadeaux est désactivée
   const handleDeleteGiftCard = () => {
-    setError('La suppression de bons cadeaux n\'est pas autorisée.');
+    setError("La suppression de bons cadeaux n'est pas autorisée.");
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
+    return new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "EUR",
+    }).format(amount);
   };
 
   const formatDateTime = (dateString: string | null) => {
-    if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    if (!dateString) return "";
+    return new Date(dateString).toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const formatDateString = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
+    return new Date(dateString).toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
   };
 
@@ -276,37 +301,40 @@ function GiftCardPageContent() {
     e.preventDefault();
 
     if (!createFormData.amount) {
-      setError('Le montant est requis');
+      setError("Le montant est requis");
       return;
     }
 
     const amountValue = parseInt(createFormData.amount, 10);
     if (isNaN(amountValue) || amountValue <= 0) {
-      setError('Veuillez entrer un montant valide (nombre entier)');
+      setError("Veuillez entrer un montant valide (nombre entier)");
       return;
     }
 
     // Vérifier que le montant ne contient pas de décimales
-    if (createFormData.amount.includes('.')) {
-      setError('Le montant doit être un nombre entier (sans décimales)');
+    if (createFormData.amount.includes(".")) {
+      setError("Le montant doit être un nombre entier (sans décimales)");
       return;
     }
 
     // Vérifier l'email si présent
-    if (createFormData.recipientEmail && createFormData.recipientEmail.trim() !== '') {
+    if (
+      createFormData.recipientEmail &&
+      createFormData.recipientEmail.trim() !== ""
+    ) {
       const emailValue = createFormData.recipientEmail.trim();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(emailValue)) {
-        setError('Veuillez entrer une adresse email valide');
+        setError("Veuillez entrer une adresse email valide");
         return;
       }
     }
 
     try {
-      const response = await fetch('/api/admin/gift-cards', {
-        method: 'POST',
+      const response = await fetch("/api/admin/gift-cards", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           amount: createFormData.amount,
@@ -317,7 +345,7 @@ function GiftCardPageContent() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Erreur lors de la création');
+        throw new Error(errorData.error || "Erreur lors de la création");
       }
 
       const newGiftCard = await response.json();
@@ -327,7 +355,11 @@ function GiftCardPageContent() {
 
       // Reset form and close modal
       setIsCreateModalOpen(false);
-      setCreateFormData({ amount: '', recipientEmail: '', personalMessage: '' });
+      setCreateFormData({
+        amount: "",
+        recipientEmail: "",
+        personalMessage: "",
+      });
 
       // Clear error
       setError(null);
@@ -336,46 +368,51 @@ function GiftCardPageContent() {
       if (window) {
         // Display the code in a simple alert since we're on admin interface
         // For better UX, we could add a toast notification system
-        alert(`Code créé avec succès : ${newGiftCard.code}\n\nCe code a été créé depuis l'interface admin.\n${newGiftCard.recipientEmail ? `Email envoyé à : ${newGiftCard.recipientEmail}` : 'Aucun email envoyé - le code doit être partagé manuellement.'}`);
+        alert(
+          `Code créé avec succès : ${newGiftCard.code}\n\nCe code a été créé depuis l'interface admin.\n${newGiftCard.recipientEmail ? `Email envoyé à : ${newGiftCard.recipientEmail}` : "Aucun email envoyé - le code doit être partagé manuellement."}`,
+        );
       }
-
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      setError(err instanceof Error ? err.message : "Une erreur est survenue");
     }
   };
 
   const handleCloseModal = () => {
     setIsCreateModalOpen(false);
-    setCreateFormData({ amount: '', recipientEmail: '', personalMessage: '' });
+    setCreateFormData({ amount: "", recipientEmail: "", personalMessage: "" });
     setError(null);
   };
 
   // Gestion de la touche Échap pour fermer la modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         handleCloseModal();
       }
     };
 
     if (isCreateModalOpen) {
-      window.addEventListener('keydown', handleKeyDown);
+      window.addEventListener("keydown", handleKeyDown);
     }
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isCreateModalOpen]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col overflow-y-auto">
+    <div className="min-h-screen bg-background text-foreground overflow-y-auto">
       <AdminNav />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gold">Bons Cadeaux</h1>
-            <p className="text-muted-foreground mt-1">Gestion complète des chèques cadeaux</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gold">
+              Bons Cadeaux
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Gestion complète des chèques cadeaux
+            </p>
           </div>
 
           <div className="mt-4 md:mt-0 flex flex-wrap gap-3 items-center">
@@ -393,7 +430,9 @@ function GiftCardPageContent() {
               disabled={loading || refreshing}
               className="flex items-center gap-2 px-4 py-2 bg-[#262626] hover:bg-[#333333] text-[#fcf8f2] hover:text-[#f5e6c6] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+              />
               <span className="hidden md:inline">Rafraîchir</span>
               <RefreshCw className="w-4 h-4 md:hidden" />
             </button>
@@ -407,10 +446,7 @@ function GiftCardPageContent() {
 
         {/* Filters */}
         <div className="mb-6">
-          <GiftCardFilters
-            filters={filters}
-            setFilters={setFilters}
-          />
+          <GiftCardFilters filters={filters} setFilters={setFilters} />
         </div>
 
         {/* Error Message */}
@@ -428,8 +464,12 @@ function GiftCardPageContent() {
             {giftCards.length === 0 ? (
               <div className="text-center py-16">
                 <div className="bg-card border border-border rounded-lg p-8 inline-block">
-                  <h3 className="text-xl font-semibold text-foreground mb-2">Aucun chèque cadeau</h3>
-                  <p className="text-muted-foreground">Les bons cadeaux seront disponibles prochainement</p>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">
+                    Aucun chèque cadeau
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Les bons cadeaux seront disponibles prochainement
+                  </p>
                 </div>
               </div>
             ) : (
@@ -454,7 +494,12 @@ function GiftCardPageContent() {
               <div className="mt-8 flex items-center justify-center gap-2">
                 {Math.ceil(stats.totalIssued / 25) > 1 && (
                   <button
-                    onClick={() => setFilters(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
+                    onClick={() =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        page: Math.max(1, prev.page - 1),
+                      }))
+                    }
                     disabled={filters.page === 1 || loading}
                     className="px-4 py-2 bg-primary hover:bg-primary/80 text-primary-foreground rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
@@ -463,12 +508,15 @@ function GiftCardPageContent() {
                 )}
 
                 <span className="text-foreground/80">
-                  Page {filters.page} sur {Math.ceil(stats.totalIssued / 25) || 1}
+                  Page {filters.page} sur{" "}
+                  {Math.ceil(stats.totalIssued / 25) || 1}
                 </span>
 
                 {Math.ceil(stats.totalIssued / 25) > 1 && (
                   <button
-                    onClick={() => setFilters(prev => ({ ...prev, page: prev.page + 1 }))}
+                    onClick={() =>
+                      setFilters((prev) => ({ ...prev, page: prev.page + 1 }))
+                    }
                     disabled={filters.page * 25 >= stats.totalIssued || loading}
                     className="px-4 py-2 bg-primary hover:bg-primary/80 text-primary-foreground rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
@@ -483,10 +531,18 @@ function GiftCardPageContent() {
 
       {/* Modal de création de bon cadeau */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={handleCloseModal}>
-          <div className="bg-card border border-border rounded-lg shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200 relative" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          onClick={handleCloseModal}
+        >
+          <div
+            className="bg-card border border-border rounded-lg shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-foreground">Créer un bon cadeau</h2>
+              <h2 className="text-xl font-bold text-foreground">
+                Créer un bon cadeau
+              </h2>
               <button
                 onClick={handleCloseModal}
                 className="p-2 hover:bg-muted rounded-full transition-colors w-8 h-8 flex items-center justify-center"
@@ -499,11 +555,16 @@ function GiftCardPageContent() {
             <form onSubmit={handleCreateGiftCard} className="space-y-4">
               {/* Montant */}
               <div>
-                <label htmlFor="amount" className="block text-sm font-medium text-foreground mb-2">
+                <label
+                  htmlFor="amount"
+                  className="block text-sm font-medium text-foreground mb-2"
+                >
                   Montant <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">€</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    €
+                  </span>
                   <input
                     id="amount"
                     type="number"
@@ -514,8 +575,11 @@ function GiftCardPageContent() {
                     onChange={(e) => {
                       // Ne permettre que les nombres entiers
                       const value = e.target.value;
-                      if (value === '' || /^\d+$/.test(value)) {
-                        setCreateFormData(prev => ({ ...prev, amount: value }));
+                      if (value === "" || /^\d+$/.test(value)) {
+                        setCreateFormData((prev) => ({
+                          ...prev,
+                          amount: value,
+                        }));
                       }
                     }}
                     className="w-full pl-8 pr-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
@@ -526,8 +590,14 @@ function GiftCardPageContent() {
 
               {/* Email destinataire (optionnel) */}
               <div>
-                <label htmlFor="recipientEmail" className="block text-sm font-medium text-foreground mb-2">
-                  Email du destinataire <span className="text-muted-foreground text-xs">(optionnel)</span>
+                <label
+                  htmlFor="recipientEmail"
+                  className="block text-sm font-medium text-foreground mb-2"
+                >
+                  Email du destinataire{" "}
+                  <span className="text-muted-foreground text-xs">
+                    (optionnel)
+                  </span>
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -536,26 +606,43 @@ function GiftCardPageContent() {
                     type="email"
                     required={!!createFormData.recipientEmail}
                     value={createFormData.recipientEmail}
-                    onChange={(e) => setCreateFormData(prev => ({ ...prev, recipientEmail: e.target.value }))}
+                    onChange={(e) =>
+                      setCreateFormData((prev) => ({
+                        ...prev,
+                        recipientEmail: e.target.value,
+                      }))
+                    }
                     className="w-full pl-10 pr-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
                     placeholder="destinataire@example.com"
                   />
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Laissez vide pour créer le bon sans email (le code sera affiché à la création)
+                  Laissez vide pour créer le bon sans email (le code sera
+                  affiché à la création)
                 </p>
               </div>
 
               {/* Message personnalisé */}
               <div>
-                <label htmlFor="personalMessage" className="block text-sm font-medium text-foreground mb-2">
-                  Message personnalisé <span className="text-muted-foreground text-xs">(optionnel)</span>
+                <label
+                  htmlFor="personalMessage"
+                  className="block text-sm font-medium text-foreground mb-2"
+                >
+                  Message personnalisé{" "}
+                  <span className="text-muted-foreground text-xs">
+                    (optionnel)
+                  </span>
                 </label>
                 <textarea
                   id="personalMessage"
                   rows={3}
                   value={createFormData.personalMessage}
-                  onChange={(e) => setCreateFormData(prev => ({ ...prev, personalMessage: e.target.value }))}
+                  onChange={(e) =>
+                    setCreateFormData((prev) => ({
+                      ...prev,
+                      personalMessage: e.target.value,
+                    }))
+                  }
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent resize-none"
                   placeholder="Un message personnalisé à inclure..."
                 />
@@ -573,10 +660,11 @@ function GiftCardPageContent() {
                 <button
                   type="submit"
                   disabled={!createFormData.amount}
-                  className={`flex-1 px-4 py-2 font-semibold rounded-lg transition-colors ${createFormData.amount
-                      ? 'bg-[#C5A236] hover:bg-[#d4b14b] text-[#1C1C1C]'
-                      : 'bg-muted text-muted-foreground cursor-not-allowed'
-                    }`}
+                  className={`flex-1 px-4 py-2 font-semibold rounded-lg transition-colors ${
+                    createFormData.amount
+                      ? "bg-[#C5A236] hover:bg-[#d4b14b] text-[#1C1C1C]"
+                      : "bg-muted text-muted-foreground cursor-not-allowed"
+                  }`}
                 >
                   Créer le bon
                 </button>

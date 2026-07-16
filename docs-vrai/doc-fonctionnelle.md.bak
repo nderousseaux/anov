@@ -1,0 +1,367 @@
+# Documentation Fonctionnelle - Anov Restaurant
+
+**Version:** 1.0
+**Dernière mise à jour:** Juillet 2026
+
+Ce document explique comment utiliser le site web du restaurant **l'Anøv**.
+
+Le site permet aux clients de :
+- Réserver une table en ligne
+- Acheter des chèques cadeaux
+- Commander des produits
+- Contacter le restaurant
+
+## Table des matières
+
+1. [Comment accéder au site](#comment-accéder-au-site)
+2. [Comment gérer le contenu du site](#comment-gérer-le-contenu-du-site)
+3. [Comment gérer les réservations](#comment-gérer-les-réservations)
+4. [Comment gérer les chèques cadeaux](#comment-gérer-les-chèques-cadeaux)
+5. [Comment gérer les produits](#comment-gérer-les-produits)
+6. [Comment gérer la boutique (commandes)](#comment-gérer-la-boutique-commandes)
+7. [Fiches client](#fiches-client)
+8. [Comment gérer les contacts](#comment-gérer-les-contacts)
+9. [Paramètres du restaurant](#paramètres-du-restaurant)
+10. [Contact technique](#contact-technique)
+
+
+## Comment accéder au site {#comment-accéder-au-site}
+
+### Pour les clients (site public)
+
+1. Se rendre sur votre site : **https://anov.fr**
+2. Naviguer librement :
+   - **Accueil** : Présentation, histoire, galerie
+   - **Menu** : Carte complète
+   - **Réservez** : Réservation en ligne
+   - **Chèques cadeaux** : Achat de chèques
+   - **Boutique** : Produits
+   - **Contact** : Formulaire de contact
+
+### Pour vous (admin)
+
+1. Se rendre sur : **https://anov.fr/admin**
+2. Se connecter avec ses identifiants
+3. Accès au dashboard administrateur
+
+
+---
+
+## Comment gérer le contenu du site {#comment-gérer-le-contenu-du-site}
+
+### Étapes pour modifier le contenu
+
+1. Se connecter à **https://anov.fr/admin**
+2. Clic sur **"CMS"**
+3. Plusieurs sections s'affichent :
+   - **Hero** : Image et sous-titre de la page d'accueil
+   - **Notre Histoire** : Les 8 sections du texte d'introduction
+   - **Origines** : Carte des origines (Besançon + autres villes)
+   - **Galerie** : Photos du restaurant
+   - **Contact** : Adresse, téléphone, horaires
+   - **Menu** : Structure du menu (onglets, catégories, plats)
+   - **Footer** : Pied de page, réseaux sociaux
+
+### Comment éditer
+
+1. Clic sur la section à modifier
+2. Modifier le texte dans les champs (français, anglais, allemand)
+3. Télécharger une nouvelle image si besoin
+4. Clic sur **"Sauvegarder"**
+
+### Astuces
+
+- Les champs en **français** sont obligatoires
+- Les traductions **anglaise** et **allemande** sont optionnelles
+
+> Les modifications sont visibles au bout d'environ 5 minutes sur le site public après sauvegarde.
+
+---
+
+## Comment gérer les réservations {#comment-gérer-les-réservations}
+
+### Vue d'ensemble
+
+Les clients réservent via : **https://anov.fr/reservation**
+
+### Pour vous (admin)
+
+1. Se connecter à **https://anov.fr/admin**
+2. Se rendre dans **"Réservations"**
+3. Toutes les réservations s'affichent avec :
+   - Nom du client
+   - Date et heure
+   - Nombre de couverts
+   - Statut (en attente, confirmé, annulé)
+
+### Statuts de réservation
+
+| Statut | Signification |
+|--------|---------------|
+| **En attente** | Le client a commencé la réservation mais n'a pas payé |
+| **Confirmé** | Le paiement a été reçu |
+| **Annulé** | Le client a annulé |
+| **Complété** | Le client est venu |
+| **Expiré** | Le paiement n'a pas été effectué à temps |
+
+### Gérer une réservation
+
+#### Annuler une réservation
+1. Se rendre dans **Réservations**
+2. Clic sur la réservation
+3. Clic sur **"Annuler"**
+
+
+### Notifications
+
+- Le client reçoit un **email de confirmation** après paiement
+- Un **email de rappel** est envoyé la veille
+- Le client reçoit un **email d'annulation** s'il annule
+
+---
+
+## Comment gérer les chèques cadeaux {#comment-gérer-les-chèques-cadeaux}
+
+### Vue d'ensemble
+
+Les clients achètent des chèques cadeaux via : **https://anov.fr/cheques-cadeaux**
+
+### Pour vous (admin)
+
+1. Se connecter à **https://anov.fr/admin**
+2. Se rendre dans **"Chèques cadeaux"**
+3. Tous les chèques s'affichent avec :
+   - Code (ex: ANOV-G-ABCD-1234)
+   - Montant
+   - Destinataire
+   - Statut (actif, utilisé, expiré)
+
+### Créer un chèque cadeau (manuellement)
+
+Si vous voulez offrir un chèque cadeau à un client :
+
+1. Se connecter à **https://anov.fr/admin**
+2. Se rendre dans **"Chèques cadeaux"**
+3. Clic sur **"Créer un chèque"**
+4. Remplir :
+   - **Montant** : 50, 100, 150, 200, 250 ou 500
+   - **Email du destinataire** : (ex: client@exemple.com)
+   - **Message personnel** : (facultatif)
+5. Clic sur **"Créer"**
+
+Le code est généré automatiquement. Vous pouvez le copier et l'envoyer au client.
+
+### Statuts des chèques
+
+| Statut | Signification |
+|--------|---------------|
+| **Actif** | Le chèque est valable |
+| **Utilisé** | Le chèque a été utilisé |
+| **Expiré** | Le chèque a dépassé sa date de validité (12 mois) |
+
+### Rappel d'expiration
+
+- Le système envoie un email de rappel **30 jours** avant l'expiration
+- Le client reçoit un email avec les détails du chèque
+
+---
+
+## Comment gérer les produits (boutique) {#comment-gérer-les-produits}
+
+### Vue d'overview
+
+Les produits sont gérés depuis le **CMS** et affichés dans la page **Boutique**. Chaque produit peut être commandé en ligne avec livraison ou retrait au restaurant.
+
+### Pour ajouter ou modifier un produit
+
+1. Se connecter à **https://anov.fr/admin**
+2. Se rendre dans le **CMS**
+3. Cliquer sur la section **"Boutique"**
+4. Remplir les champs pour chaque produit :
+
+| Champ | Description |
+|-------|-------------|
+| **Titre** | Nom du produit (obligatoire, en français) |
+| **Description** | Description détaillée du produit |
+| **Prix** | Prix en euros (nombre entier) |
+| **Quantité maximale** | Nombre maximum d'unités commandables |
+| **Livraison** | Cocher si le produit est livrable |
+| **Image** | Photo du produit (stockée dans `public/assets/boutique/`) |
+| **Texte alternatif** | Description d'accessibilité pour l'image |
+
+### Langues
+
+Les produits supportent 3 langues :
+- **Français** (obligatoire)
+- **Anglais** (optionnel)
+- **Allemand** (optionnel)
+
+### Exemple de produit
+
+```
+Titre (FR): Boîte de 6 Macarons
+Titre (EN): Box of 6 Macarons
+Description (FR): Une délicieuse sélection de macarons artisanaux
+Prix: 25
+Quantité maximale: 10
+Livraison: Non
+```
+
+### Affichage dans la boutique
+
+Après sauvegarde, le produit apparaît automatiquement sur la page **https://anov.fr/boutique**. Les clients peuvent alors commander en choisissant la quantité et le mode de livraison.
+
+---
+
+## Comment gérer la boutique (commandes) {#comment-gérer-la-boutique-commandes}
+
+### Vue d'overview
+
+Les clients commandent des produits via : **https://anov.fr/boutique**
+
+### Pour vous (admin)
+
+1. Se connecter à **https://anov.fr/admin**
+2. Se rendre dans **"Boutique"**
+3. Toutes les commandes s'affichent avec :
+   - Référence (ex: ANOV-PO-ABCD-1234)
+   - Nom du produit
+   - Quantité
+   - Montant
+   - Méthode de livraison (retrait ou livraison)
+   - État (en attente, confirmé, en cours, expédié)
+
+### Gérer une commande
+
+1. Se rendre dans **Boutique**
+2. Clic sur la commande
+3. Mettre à jour l'état :
+   - **Confirmé** : Le paiement est reçu
+   - **En cours** : Le produit est en préparation
+   - **Prêt** : Le produit est prêt à retirer
+   - **Envoyé** : Le produit est envoyé
+   - **Complété** : Le client a reçu
+   - **Annulé** : La commande est annulée
+
+### Modes de livraison
+
+| Mode | Description |
+|------|-------------|
+| **Retrait au restaurant** | Le client vient chercher au restaurant |
+| **Livraison à domicile** | Le produit est livré à l'adresse du client |
+
+### Paiement Stripe
+
+Les commandes produits sont payées via **Stripe Checkout** :
+- Le client est redirigé vers Stripe pour le paiement
+- Une fois payé, la commande passe à l'état **En attente...**
+- L'admin voit la transaction dans la liste des commandes
+- Le paiement est sécurisé par Stripe (PCI compliant)
+
+---
+
+## Comment gérer les contacts {#comment-gérer-les-contacts}
+
+### Vue d'overview
+
+Les clients contactent via : **https://anov.fr/contact**
+
+### Envoi des messages
+
+Lorsqu'un client envoie un message via le formulaire de contact :
+1. Le message est stocké dans la base de données (fiche client)
+2. Un email est envoyé à **contact@anovrestaurant.fr** sur le compte IONOS
+3. Le client reçoit une confirmation de réception
+
+### Accès au compte mail IONOS
+
+1. Rendez-vous sur **[https://webmail.ionos.fr](https://webmail.ionos.fr)**
+2. Connectez-vous avec l'adresse email du restaurant (ex: `contact@anovrestaurant.fr`)
+3. Le mot de passe est celui configuré chez IONOS
+4. Vous retrouvez tous les messages provenant du site
+
+> **Webmail IONOS :** [https://webmail.ionos.fr](https://webmail.ionos.fr)
+
+### En cas de problème
+
+- Vérifiez que l'adresse email est correcte
+- Utilisez la fonction **Mot de passe oublié** sur la page de connexion IONOS
+- Ou contactez le support IONOS : [https://www.ionos.fr/assistance](https://www.ionos.fr/assistance)
+
+---
+
+## Fiches client {#fiches-client}
+
+### Vue d'overview
+
+La gestion des clients se fait via la page **Fiches Client** avec un historique complet de leurs interactions.
+
+### Accès aux fiches client
+
+1. Se connecter à **https://anov.fr/admin**
+2. Se rendre dans **"Clients"**
+3. Toutes les fiches clients s'affichent avec :
+   - Email du client
+   - Nombre de réservations
+   - Nombre de bons cadeaux
+   - Nombre de messages de contact
+   - Dernière activité
+
+### Voir une fiche client
+
+1. Cliquer sur l'email d'un client
+2. La fiche complète s'affiche avec :
+   - **Note** : Espace pour noter des informations spécifiques sur le client
+   - **Toutes les interactions** regroupées dans un timeline :
+     - Réservations
+     - Bons cadeaux achetés ou reçus
+     - Commandes produits
+     - Messages de contact
+
+### Gérer les interactions
+
+Chaque interaction est listée avec :
+- La date et l'heure
+- Les détails (couverts, montant, statut)
+- Les actions possibles (ex: annuler une réservation)
+
+### Recherche et filtres
+
+- Rechercher par email
+- Filter par statut (commandes, réservations, etc.)
+- Pagination (25 éléments par page)
+
+---
+
+## Paramètres du restaurant {#paramètres-du-restaurant}
+
+Les paramètres globaux du restaurant sont configurables depuis la page **Réservations** (admin).
+
+### Accès aux paramètres
+
+1. Se connecter à **https://anov.fr/admin**
+2. Se rendre dans **"Réservations"**
+3. Cliquer sur l'onglet **"Paramètres"** (en haut à droite)
+
+### Paramètres disponibles
+
+| Paramètre | Description | Exemple |
+|-----------|-------------|---------|
+| **Jours d'ouverture** | Jours habituellement ouverts (surchargeables jour par jour) | Mardi-Samedi |
+| **Acompte par couvert** | Montant débité au moment de la réservation | 20 € |
+| **Durée du repas** | Temps d'occupation d'un créneau par table | 90 min |
+| **Jours avant rappel** | Quand envoyer le rappel (email/SMS) | 1 jour |
+| **Créneaux horaires** | Heures de service disponibles | 12:00-14:30, 19:00-22:30 |
+
+### Comment modifier
+
+1. Dans la page Réservations, cliquer sur l'onglet **"Paramètres"**
+2. Modifier les valeurs (cocher/décocher les jours, ajuster les créneaux)
+3. Clic sur **"Enregistrer"**
+
+> **Note :** Les modifications affectent les nouvelles réservations. Pour les jours avec réservations existantes, utiliser l'**override** du jour (panneau latéral en cliquant sur une date).
+
+## Contact technique {#contact-technique}
+Nathanaël Derousseaux
+n.derousseaux@icloud.com
++33 6 20 00 46 28

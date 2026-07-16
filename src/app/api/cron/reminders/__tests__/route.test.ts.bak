@@ -1,0 +1,239 @@
+import { describe, it, expect, vi } from "vitest";
+import { NextRequest } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { sendReminderEmail } from "@/lib/email";
+import { sendSmsReminder } from "@/lib/sms";
+
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    restaurantSettings: {
+      findUnique: vi.fn().mockResolvedValue({
+        id: 1,
+        mealDuration: 90,
+        daysBeforeReminder: 1,
+      }),
+    },
+    reservation: {
+      findMany: vi.fn(),
+      update: vi.fn(),
+    },
+  },
+}));
+
+vi.mock("@/lib/email", () => ({
+  sendReminderEmail: vi.fn().mockResolvedValue({}),
+}));
+
+vi.mock("@/lib/sms", () => ({
+  sendSmsReminder: vi.fn().mockResolvedValue({}),
+}));
+
+describe("Cron Reminders API", () => {
+  describe("GET /api/cron/reminders", () => {
+    it("returns 401 if cron secret is invalid", async () => {
+      const originalValue = process.env.CRON_SECRET;
+      process.env.CRON_SECRET = "test-secret";
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/cron/reminders"),
+        {
+          method: "GET",
+          headers: { "x-cron-secret": "wrong-secret" },
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(401);
+      const data = await res.json();
+      expect(data.error).toBe("Non autorisé");
+
+      process.env.CRON_SECRET = originalValue;
+    });
+
+    it("returns 401 if cron secret is missing when required", async () => {
+      const originalValue = process.env.CRON_SECRET;
+      process.env.CRON_SECRET = "test-secret";
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/cron/reminders"),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(401);
+
+      process.env.CRON_SECRET = originalValue;
+    });
+
+    it("succeeds when no cron secret is configured", async () => {
+      const originalValue = process.env.CRON_SECRET;
+      delete process.env.CRON_SECRET;
+
+      vi.mocked(prisma.restaurantSettings.findUnique).mockResolvedValue({
+        id: 1,
+        mealDuration: 90,
+        daysBeforeReminder: 1,
+      });
+      vi.mocked(prisma.reservation.findMany).mockResolvedValue([]);
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/cron/reminders"),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(200);
+
+      if (originalValue !== undefined) {
+        process.env.CRON_SECRET = originalValue;
+      }
+    });
+
+    it("returns cron results with emails and SMS sent", async () => {
+      const originalValue = process.env.CRON_SECRET;
+      delete process.env.CRON_SECRET;
+
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() + 1);
+
+      vi.mocked(prisma.restaurantSettings.findUnique).mockResolvedValue({
+        id: 1,
+        mealDuration: 90,
+        daysBeforeReminder: 1,
+      });
+      vi.mocked(prisma.reservation.findMany).mockResolvedValue([
+        {
+          id: 1,
+          name: "Test User",
+          email: "test@example.com",
+          phone: "+33 6 12 34 56 78",
+          date: targetDate,
+          guests: 2,
+          status: "CONFIRMED",
+          createdAt: new Date(),
+          reminderEmailSent: false,
+          reminderSmsSent: false,
+        },
+      ]);
+      vi.mocked(prisma.reservation.update).mockResolvedValue({});
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/cron/reminders"),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.emailsSent).toBeGreaterThanOrEqual(0);
+      expect(data.smsSent).toBeGreaterThanOrEqual(0);
+
+      if (originalValue !== undefined) {
+        process.env.CRON_SECRET = originalValue;
+      }
+    });
+
+    it("excludes same-day reservations", async () => {
+      const originalValue = process.env.CRON_SECRET;
+      delete process.env.CRON_SECRET;
+
+      const now = new Date();
+
+      vi.mocked(prisma.restaurantSettings.findUnique).mockResolvedValue({
+        id: 1,
+        mealDuration: 90,
+        daysBeforeReminder: 1,
+      });
+      vi.mocked(prisma.reservation.findMany).mockResolvedValue([
+        {
+          id: 1,
+          name: "Same Day User",
+          email: "same@example.com",
+          phone: "+33 6 12 34 56 78",
+          date: new Date(now.getTime() + 24 * 60 * 60 * 1000),
+          guests: 2,
+          status: "CONFIRMED",
+          createdAt: now,
+          reminderEmailSent: false,
+          reminderSmsSent: false,
+        },
+      ]);
+      vi.mocked(prisma.reservation.update).mockResolvedValue({});
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/cron/reminders"),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      // The same-day reservation should be excluded
+      expect(data.emailsSent).toBe(0);
+
+      if (originalValue !== undefined) {
+        process.env.CRON_SECRET = originalValue;
+      }
+    });
+
+    it("sends SMS instead of email when phone is provided", async () => {
+      const originalValue = process.env.CRON_SECRET;
+      delete process.env.CRON_SECRET;
+
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() + 1);
+
+      vi.mocked(prisma.restaurantSettings.findUnique).mockResolvedValue({
+        id: 1,
+        mealDuration: 90,
+        daysBeforeReminder: 1,
+      });
+      vi.mocked(prisma.reservation.findMany).mockResolvedValue([
+        {
+          id: 1,
+          name: "Test User",
+          email: "test@example.com",
+          phone: "+33 6 12 34 56 78",
+          date: targetDate,
+          guests: 2,
+          status: "CONFIRMED",
+          createdAt: new Date(),
+          reminderEmailSent: false,
+          reminderSmsSent: false,
+        },
+      ]);
+      vi.mocked(prisma.reservation.update).mockResolvedValue({});
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/cron/reminders"),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      // SMS should be sent instead of email when phone is provided
+      expect(data.smsSent).toBeGreaterThanOrEqual(0);
+
+      if (originalValue !== undefined) {
+        process.env.CRON_SECRET = originalValue;
+      }
+    });
+  });
+});

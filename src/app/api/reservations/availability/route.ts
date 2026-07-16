@@ -1,27 +1,33 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getSlotsWithAvailability, getUnavailableDatesForMonth } from '@/lib/availability';
+import { NextRequest, NextResponse } from "next/server";
+import {
+  getSlotsWithAvailability,
+  getUnavailableDatesForMonth,
+} from "@/lib/availability";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
 
-  const guestsParam = searchParams.get('guests');
-  const guests = parseInt(guestsParam ?? '', 10);
+  const guestsParam = searchParams.get("guests");
+  const guests = parseInt(guestsParam ?? "", 10);
   if (!guestsParam || isNaN(guests) || guests < 1 || guests > 4) {
-    return NextResponse.json({ error: 'guests invalide (1 à 4)' }, { status: 400 });
+    return NextResponse.json(
+      { error: "guests invalide (1 à 4)" },
+      { status: 400 },
+    );
   }
 
-  const month = searchParams.get('month');
+  const month = searchParams.get("month");
   if (month) {
     if (!/^\d{4}-\d{2}$/.test(month)) {
-      return NextResponse.json({ error: 'month invalide' }, { status: 400 });
+      return NextResponse.json({ error: "month invalide" }, { status: 400 });
     }
     const unavailableDates = await getUnavailableDatesForMonth(month, guests);
     return NextResponse.json({ unavailableDates });
   }
 
-  const date = searchParams.get('date');
+  const date = searchParams.get("date");
   if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    return NextResponse.json({ error: 'date invalide' }, { status: 400 });
+    return NextResponse.json({ error: "date invalide" }, { status: 400 });
   }
 
   const today = new Date();

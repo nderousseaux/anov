@@ -3,6 +3,7 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
+import type { Locale } from "date-fns";
 
 import { cn } from "./utils";
 import { buttonVariants } from "./button";
@@ -12,8 +13,8 @@ import { fr } from "date-fns/locale";
 import { enUS } from "date-fns/locale";
 import { de } from "date-fns/locale";
 
-// Map locale string to date-fns locale
-function getLocale(locale?: string): any {
+// Map locale string to date-fns Locale
+function getLocale(locale?: string): Locale | undefined {
   switch (locale) {
     case "en":
       return enUS;
@@ -24,15 +25,18 @@ function getLocale(locale?: string): any {
   }
 }
 
-// @ts-ignore - Type compatibility between our Locale and date-fns Locale
 function Calendar({
   className,
   classNames,
-  locale = "fr",
+  locale,
   showOutsideDays = true,
   ...props
-}: any) {
-
+}: {
+  className?: string;
+  classNames?: Record<string, string>;
+  locale?: string;
+  showOutsideDays?: boolean;
+} & React.ComponentProps<typeof DayPicker>) {
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}

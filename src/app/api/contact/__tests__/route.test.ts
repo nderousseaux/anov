@@ -1,0 +1,257 @@
+// @ts-nocheck
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { sendContactNotification, sendContactConfirmation } from "@/lib/email";
+
+vi.mock("@/lib/email", () => ({
+  sendContactNotification: vi.fn(),
+  sendContactConfirmation: vi.fn(),
+}));
+
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    contactMessage: {
+      create: vi.fn(),
+    },
+  },
+}));
+
+describe("Contact API", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe("POST /api/contact", () => {
+    it("returns 400 if required fields are missing", async () => {
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/contact"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.error).toBe("Tous les champs sont requis");
+    });
+
+    it("returns 400 if email is invalid", async () => {
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/contact"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: "Test User",
+            email: "invalid-email",
+            subject: "Test Subject",
+            message: "Test message",
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.error).toBe("Adresse email invalide");
+    });
+
+    it("returns 400 if name exceeds length limit", async () => {
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/contact"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: "a".repeat(101),
+            email: "test@example.com",
+            subject: "Test Subject",
+            message: "Test message",
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.error).toBe(
+        "Un ou plusieurs champs dépassent la longueur maximale",
+      );
+    });
+
+    it("returns 400 if subject exceeds length limit", async () => {
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/contact"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: "Test User",
+            email: "test@example.com",
+            subject: "a".repeat(201),
+            message: "Test message",
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+    });
+
+    it("returns 400 if message exceeds length limit", async () => {
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/contact"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: "Test User",
+            email: "test@example.com",
+            subject: "Test Subject",
+            message: "a".repeat(2001),
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(400);
+    });
+
+    it("creates contact message and sends emails on success", async () => {
+      vi.mocked(sendContactNotification).mockResolvedValue({});
+      vi.mocked(sendContactConfirmation).mockResolvedValue({});
+
+      vi.mocked(prisma.contactMessage.create).mockResolvedValue({
+        id: 1,
+        name: "Test User",
+      });
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/contact"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: "Test User",
+            email: "test@example.com",
+            subject: "Test Subject",
+            message: "Test message",
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.message).toBe("Message envoyé avec succès");
+      expect(data.details.notificationSent).toBe(true);
+      expect(data.details.confirmationSent).toBe(true);
+    });
+
+    it("handles email send failure gracefully", async () => {
+      vi.mocked(sendContactNotification).mockRejectedValue(
+        new Error("SMTP error"),
+      );
+      vi.mocked(sendContactConfirmation).mockRejectedValue(
+        new Error("SMTP error"),
+      );
+
+      vi.mocked(prisma.contactMessage.create).mockResolvedValue({
+        id: 1,
+        name: "Test User",
+      });
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/contact"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: "Test User",
+            email: "test@example.com",
+            subject: "Test Subject",
+            message: "Test message",
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(500);
+      const data = await res.json();
+      expect(data.error).toBe(
+        "Erreur lors de l'envoi du message. Veuillez réessayer.",
+      );
+    });
+
+    it("handles partial email failure", async () => {
+      vi.mocked(sendContactNotification).mockResolvedValue({});
+      vi.mocked(sendContactConfirmation).mockRejectedValue(
+        new Error("SMTP error"),
+      );
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/contact"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: "Test User",
+            email: "test@example.com",
+            subject: "Test Subject",
+            message: "Test message",
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.details.confirmationSent).toBe(false);
+    });
+
+    it("persists message even if email fails", async () => {
+      vi.mocked(sendContactNotification).mockRejectedValue(
+        new Error("SMTP error"),
+      );
+      vi.mocked(sendContactConfirmation).mockRejectedValue(
+        new Error("SMTP error"),
+      );
+
+      vi.mocked(prisma.contactMessage.create).mockResolvedValue({
+        id: 1,
+        name: "Test User",
+      });
+
+      const { POST } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/contact"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: "Test User",
+            email: "test@example.com",
+            subject: "Test Subject",
+            message: "Test message",
+          }),
+        },
+      );
+      const res = await POST(req as any);
+
+      expect(vi.mocked(prisma.contactMessage.create)).toHaveBeenCalled();
+      expect(res.status).toBe(500);
+    });
+  });
+});

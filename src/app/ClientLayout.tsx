@@ -1,33 +1,50 @@
-'use client';
+"use client";
 
-import { useEffect, useState, type ReactNode } from 'react';
-import { usePathname } from 'next/navigation';
-import { Toaster } from '@/components/ui/sonner';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer, type FooterContent } from '@/components/layout/Footer';
-import { SplashScreen } from '@/components/shared/SplashScreen';
-import { LanguageProvider } from '@/context/LanguageContext';
+import { useEffect, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { Toaster } from "@/components/ui/sonner";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { SplashScreen } from "@/components/shared/SplashScreen";
+import { LanguageProvider } from "@/context/LanguageContext";
 
-export default function ClientLayout({ children, footerContent }: { children: ReactNode; footerContent?: Record<string, unknown> | null }) {
+export default function ClientLayout({
+  children,
+  footerContent,
+}: {
+  children: ReactNode;
+  footerContent?: Record<string, unknown> | null;
+}) {
   return (
     <LanguageProvider>
-      <ClientLayoutInner footerContent={footerContent}>{children}</ClientLayoutInner>
+      <ClientLayoutInner footerContent={footerContent}>
+        {children}
+      </ClientLayoutInner>
     </LanguageProvider>
   );
 }
 
-function ClientLayoutInner({ children, footerContent }: { children: ReactNode; footerContent?: Record<string, unknown> | null }) {
+function ClientLayoutInner({
+  children,
+  footerContent,
+}: {
+  children: ReactNode;
+  footerContent?: Record<string, unknown> | null;
+}) {
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith('/admin') || pathname.startsWith('/keystatic');
+  const isAdmin =
+    pathname.startsWith("/admin") || pathname.startsWith("/keystatic");
 
   // Pages où le splash screen ne doit pas s'afficher
   const noSplashPages = [
-    '/cheques-cadeaux/succes',
-    '/reservation/succes',
-    '/reservation/paiement',
-    '/reservation/cancel',
+    "/cheques-cadeaux/succes",
+    "/cheques-cadeaux",
+    "/reservation/succes",
+    "/reservation/paiement",
+    "/reservation/cancel",
   ];
-  const shouldShowSplash = !isAdmin && !noSplashPages.some(page => pathname.startsWith(page));
+  const shouldShowSplash =
+    !isAdmin && !noSplashPages.some((page) => pathname.startsWith(page));
 
   const [showSplash, setShowSplash] = useState(shouldShowSplash);
   const [isSplashFading, setIsSplashFading] = useState(false);
@@ -60,9 +77,9 @@ function ClientLayoutInner({ children, footerContent }: { children: ReactNode; f
           richColors
           toastOptions={{
             style: {
-              background: 'var(--card)',
-              color: 'var(--foreground)',
-              border: '1px solid var(--border)',
+              background: "var(--card)",
+              color: "var(--foreground)",
+              border: "1px solid var(--border)",
             },
           }}
         />
@@ -84,9 +101,9 @@ function ClientLayoutInner({ children, footerContent }: { children: ReactNode; f
           richColors
           toastOptions={{
             style: {
-              background: 'var(--card)',
-              color: 'var(--foreground)',
-              border: '1px solid var(--border)',
+              background: "var(--card)",
+              color: "var(--foreground)",
+              border: "1px solid var(--border)",
             },
           }}
         />

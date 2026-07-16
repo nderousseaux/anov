@@ -8,26 +8,26 @@ datasource db {
 }
 
 model Reservation {
-  id                String            @id @default(cuid())
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  name              String
-  email             String
-  phone             String?
-  date              DateTime
-  guests            Int
-  specialRequest    String?
-  wantsSmsReminder  Boolean           @default(false)
-  status            ReservationStatus @default(PENDING_PAYMENT)
-  stripeSessionId   String?           @unique
-  expiresAt         DateTime?
-  reminderEmailSent Boolean           @default(false)
-  reminderSmsSent   Boolean           @default(false)
-  cancelToken       String            @unique @default(cuid())
+  id                  String            @id @default(cuid())
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  name                String
+  email               String
+  phone               String?
+  date                DateTime
+  guests              Int
+  specialRequest      String?
+  wantsSmsReminder    Boolean           @default(false)
+  status              ReservationStatus @default(PENDING_PAYMENT)
+  stripeSessionId     String?           @unique
+  expiresAt           DateTime?
+  reminderEmailSent   Boolean           @default(false)
+  reminderSmsSent     Boolean           @default(false)
+  cancelToken         String            @unique @default(cuid())
   transactionExpireAt DateTime?
-  depositPaidCents  Int?
-  tableId           Int?
-  table             Table?            @relation(fields: [tableId], references: [id])
+  depositPaidCents    Int?
+  tableId             Int?
+  table               Table?            @relation(fields: [tableId], references: [id])
 }
 
 model Table {
@@ -53,6 +53,7 @@ model RestaurantSettings {
   openingDays          String @default("[2,3,4,5,6]")
   openingSlots         String @default("[\"12:00\",\"12:30\",\"13:00\",\"13:30\",\"19:00\",\"19:30\",\"20:00\",\"20:30\",\"21:00\",\"21:30\"]")
   depositPerGuestCents Int    @default(2000)
+  daysBeforeReminder   Int    @default(1)
 }
 
 model DayOverride {
@@ -77,6 +78,7 @@ model GiftCard {
   expiresAt           DateTime?
   transactionExpireAt DateTime?
   usedAt              DateTime?
+  reminderEmailSent   Boolean        @default(false)
 }
 
 model ContactMessage {
@@ -98,6 +100,38 @@ model CustomerNote {
   updatedAt DateTime @updatedAt
 }
 
+model ProductOrder {
+  id                  String          @id @default(cuid())
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  code                String          @unique
+  productName         String
+  quantity            Int
+  totalPrice          Float
+  deliveryMethod      String          @default("PICKUP")
+  customerName        String
+  customerEmail       String
+  customerPhone       String
+  stripeSessionId     String?         @unique
+  status              String          @default("PENDING_PAYMENT")
+  expiresAt           DateTime?
+  transactionExpireAt DateTime?
+  customerAddress     ProductAddress?
+}
+
+model ProductAddress {
+  id        String       @id @default(cuid())
+  orderId   String       @unique
+  firstName String
+  lastName  String
+  address   String
+  city      String
+  zipCode   String
+  country   String       @default("France")
+  phone     String
+  order     ProductOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
 enum ReservationStatus {
   PENDING_PAYMENT
   CONFIRMED
@@ -111,5 +145,21 @@ enum GiftCardStatus {
   IN_PROGRESS_PAYMENT
   ACTIVE
   USED
+  EXPIRED
+}
+
+enum DeliveryMethod {
+  PICKUP
+  DELIVERY
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  READY
+  COMPLETED
+  CANCELLED
   EXPIRED
 }

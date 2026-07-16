@@ -20,7 +20,7 @@ export function validateEmail(email: string): boolean {
  */
 export function validatePhone(phone: string): boolean {
   // Remove spaces and dashes
-  const cleanedPhone = phone.replace(/\s/g, '').replace(/-/g, '');
+  const cleanedPhone = phone.replace(/\s/g, "").replace(/-/g, "");
   // French phone regex: starts with 0, then 9 digits
   const phoneRegex = /^0[1-9]\d{8}$/;
   return phoneRegex.test(cleanedPhone);

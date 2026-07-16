@@ -7,6 +7,7 @@
 **Architecture:** Application Next.js 15 avec Prisma/PostgreSQL, Keystatic pour le CMS, Filament pour l'admin panel. stack moderne mais nécessitant une refonte structurelle et une détection de code mort.
 
 **Tech Stack:**
+
 - Next.js 15.3.0 (App Router)
 - TypeScript 5.7.0
 - Prisma 7.8.0 (ORM)
@@ -37,27 +38,29 @@
 
 ### Fichiers de gros volume (>200 lignes)
 
-| Fichier | Lignes | Recommandation |
-|---|---|---|
-| `src/app/admin/reservation/page.tsx` | 740 | Refactoriser en plusieurs composants |
-| `src/components/ui/sidebar.tsx` | 726 | Peut être réduit/simplifié |
-| `src/components/OriginsMap.tsx` | 612 | Extraire logic D3 dans un hook |
-| `src/app/admin/cheques-cadeaux/page.tsx` | 585 | Découper en sous-composants |
-| `src/app/reservation/page.tsx` | 413 | Possible split |
-| `src/app/api/admin/gift-cards/route.ts` | 186 | OK (API route) |
-| `src/lib/availability.ts` | 222 | OK (service) |
-| `src/components/History.tsx` | 288 | Découper les sections |
-| `src/components/Navbar.tsx` | 231 | Possible split |
-| `src/components/Footer.tsx` | 157 | OK |
-| `src/components/OriginsMap.tsx` | 612 | Extraire D3 logic |
+| Fichier                                  | Lignes | Recommandation                       |
+| ---------------------------------------- | ------ | ------------------------------------ |
+| `src/app/admin/reservation/page.tsx`     | 740    | Refactoriser en plusieurs composants |
+| `src/components/ui/sidebar.tsx`          | 726    | Peut être réduit/simplifié           |
+| `src/components/OriginsMap.tsx`          | 612    | Extraire logic D3 dans un hook       |
+| `src/app/admin/cheques-cadeaux/page.tsx` | 585    | Découper en sous-composants          |
+| `src/app/reservation/page.tsx`           | 413    | Possible split                       |
+| `src/app/api/admin/gift-cards/route.ts`  | 186    | OK (API route)                       |
+| `src/lib/availability.ts`                | 222    | OK (service)                         |
+| `src/components/History.tsx`             | 288    | Découper les sections                |
+| `src/components/Navbar.tsx`              | 231    | Possible split                       |
+| `src/components/Footer.tsx`              | 157    | OK                                   |
+| `src/components/OriginsMap.tsx`          | 612    | Extraire D3 logic                    |
 
 ### Console.log à nettoyer
 
 **Fichier**: `src/app/api/admin/gift-cards/route.ts`
+
 - Ligne 115: `console.log('[admin/gift-cards] Email envoyé à:', emailValue);`
 - Ligne 117: `console.error('[admin/gift-cards] Erreur lors de l\'envoi de l\'email:', error);`
 
 **Fichier**: `src/app/api/stripe/webhook/route.ts`
+
 - Ligne 12: `console.error('[stripe/webhook] STRIPE_WEBHOOK_SECRET manquant');`
 - Ligne 26: `console.error('[stripe/webhook] Signature invalide :', err);`
 - Ligne 42: `console.error('[stripe/webhook] Metadata incomplètes', meta);`
@@ -68,6 +71,7 @@
 - Ligne 142: `console.error('[stripe/webhook] Erreur lors du traitement de la réservation:', error);`
 
 **Fichier**: `src/lib/email.ts`
+
 - Ligne 38: `console.log('Envoi email de confirmation désactivé - SMTP non configuré');`
 - Ligne 83: `console.log('Envoi email de rappel désactivé - SMTP non configuré');`
 - Ligne 124: `console.log('Envoi email d\'annulation désactivé - SMTP non configuré');`
@@ -100,10 +104,12 @@
 ### Task 1: Analyse de structure et identification des fichiers orphelins
 
 **Files:**
+
 - Analyser: `/Users/nderousseaux/Dev/anov/src/**/*.{ts,tsx,js,jsx}`
 - Exclure: `node_modules/`, `.next/`, `dist/`
 
 **Interfaces:**
+
 - Consumes: None (audit initial)
 - Produces: `docs/superpowers/plans/2026-06-20-file-analysis.md` (à créer)
 
@@ -147,6 +153,7 @@ find src -name "*.bak" -o -name "*.old" -o -name "*~"
 - [ ] **Step 5: Créer le rapport d'analyse**
 
 Créer le fichier `docs/superpowers/plans/2026-06-20-file-analysis.md` avec:
+
 - Liste complète des fichiers
 - Fichiers orphelins identifiés
 - Fichiers `.bak` ou `~`
@@ -158,9 +165,11 @@ Créer le fichier `docs/superpowers/plans/2026-06-20-file-analysis.md` avec:
 ### Task 2: Analyse de taille des fichiers et identification des candidats au refactoring
 
 **Files:**
+
 - Analyser: `/Users/nderousseaux/Dev/anov/src/**/*.ts`, `src/**/*.tsx`
 
 **Interfaces:**
+
 - Consumes: Résultat de Task 1
 - Produces: `docs/superpowers/plans/2026-06-20-file-size-analysis.md`
 
@@ -178,6 +187,7 @@ cat /tmp/file_sizes.txt
 - [ ] **Step 2: Identifier les fichiers > 250 lignes**
 
 Fichiers à revoir:
+
 - `src/app/admin/reservation/page.tsx` (740 lignes)
 - `src/components/ui/sidebar.tsx` (726 lignes)
 - `src/components/OriginsMap.tsx` (612 lignes)
@@ -189,6 +199,7 @@ Fichiers à revoir:
 - [ ] **Step 3: Créer le rapport de détection de gros fichiers**
 
 Créer `docs/superpowers/plans/2026-06-20-file-size-analysis.md` avec:
+
 - Liste des fichiers > 200 lignes
 - Recommandations de découpage
 - Architecture proposée
@@ -198,9 +209,11 @@ Créer `docs/superpowers/plans/2026-06-20-file-size-analysis.md` avec:
 ### Task 3: Audit de qualité du code (console.log, TODO, code mort)
 
 **Files:**
+
 - Analyser: `/Users/nderousseaux/Dev/anov/src/**/*.ts`, `src/**/*.tsx`
 
 **Interfaces:**
+
 - Consumes: None
 - Produces: `docs/superpowers/plans/2026-06-20-code-quality.md`
 
@@ -228,6 +241,7 @@ npx tsc --noEmit --skipLibCheck
 - [ ] **Step 4: Créer le rapport de qualité**
 
 Créer `docs/superpowers/plans/2026-06-20-code-quality.md` avec:
+
 - Liste des console.log à supprimer/remplacer
 - Liste des TODO/FIXME à résoudre
 - Liste des imports inutilisés
@@ -238,9 +252,11 @@ Créer `docs/superpowers/plans/2026-06-20-code-quality.md` avec:
 ### Task 4: Analyse des dépendances (package.json)
 
 **Files:**
+
 - Analyser: `/Users/nderousseaux/Dev/anov/package.json`
 
 **Interfaces:**
+
 - Consumes: None
 - Produces: `docs/superpowers/plans/2026-06-20-dependencies.md`
 
@@ -262,6 +278,7 @@ npm view <package> versions --json | tail -5
 - [ ] **Step 3: Analyser l'utilisation des dépendances**
 
 Pour chaque dépendance, vérifier si elle est importée:
+
 ```bash
 grep -r "import.*from ['\"]package-name['\"]\|import.*from ['\"]package-name" src/ --include="*.ts" --include="*.tsx"
 ```
@@ -269,6 +286,7 @@ grep -r "import.*from ['\"]package-name['\"]\|import.*from ['\"]package-name" sr
 - [ ] **Step 4: Créer le rapport de dépendances**
 
 Créer `docs/superpowers/plans/2026-06-20-dependencies.md` avec:
+
 - Liste des dépendances avec version actuelle/latest
 - Dépendances inutilisées
 - Recommandations de mise à jour
@@ -279,9 +297,11 @@ Créer `docs/superpowers/plans/2026-06-20-dependencies.md` avec:
 ### Task 5: Analyse des tests et couverture
 
 **Files:**
+
 - Analyser: `/Users/nderousseaux/Dev/anov/__tests__/**`, `src/**/*.test.{ts,tsx}`, `src/**/*.spec.{ts,tsx}`
 
 **Interfaces:**
+
 - Consumes: None
 - Produces: `docs/superpowers/plans/2026-06-20-tests.md`
 
@@ -298,6 +318,7 @@ Lister les fichiers dans `src/app/api/` et identifier ceux sans tests
 - [ ] **Step 3: Créer le rapport de tests**
 
 Créer `docs/superpowers/plans/2026-06-20-tests.md` avec:
+
 - Couverture actuelle
 - Fichiers critiques sans tests
 - Plan de test recommandé
@@ -332,6 +353,7 @@ src/
 ```
 
 **Interfaces:**
+
 - Consumes: Résultats Tasks 1-5
 - Produces: Nouvelle structure
 
@@ -352,6 +374,7 @@ mkdir -p /Users/nderousseaux/Dev/anov/src/hooks
 - [ ] **Step 2: Déplacer les fichiers (groupe par groupe)**
 
 Déplacer les fichiers selon le plan:
+
 - Layout components: `Footer.tsx`, `Navbar.tsx`, `LanguageSelector.tsx` → `components/layout/`
 - Feature components: `History.tsx`, `Gallery.tsx`, `Contact.tsx`, `OriginsMap.tsx` → `components/features/`
 - Admin components: `GiftCard*.tsx`, `AdminNav.tsx` → `components/admin/` (garder tel quel)
@@ -387,13 +410,14 @@ npm run build
 
 **Fichier**: `src/lib/email.ts`
 Supprimer ou remplacer les console.log par des logs via un logger (ex: winston) ou supprimer si pas critique:
+
 ```typescript
 // Ancien
-console.log('Envoi email de confirmation désactivé - SMTP non configuré');
+console.log("Envoi email de confirmation désactivé - SMTP non configuré");
 
 // Nouveau (option 1: logger)
-import { logger } from '@/lib/logger';
-logger.debug('Email service disabled - SMTP not configured');
+import { logger } from "@/lib/logger";
+logger.debug("Email service disabled - SMTP not configured");
 
 // Ou option 2: suppression si non critique
 // Simply remove the console.log line
@@ -401,14 +425,19 @@ logger.debug('Email service disabled - SMTP not configured');
 
 **Fichier**: `src/app/api/stripe/webhook/route.ts`
 Supprimer les console.log pour production:
+
 ```typescript
 // Remplacer par:
-import { logger } from '@/lib/logger';
-logger.info('[stripe/webhook] Email envoyé avec succès:', giftCard.recipientEmail);
+import { logger } from "@/lib/logger";
+logger.info(
+  "[stripe/webhook] Email envoyé avec succès:",
+  giftCard.recipientEmail,
+);
 ```
 
 **Fichier**: `src/app/api/admin/gift-cards/route.ts`
 Supprimer les console.log de debug:
+
 ```typescript
 // Remplacer par un logger ou supprimer
 ```
@@ -453,6 +482,7 @@ grep -rn "any" src/ --include="*.ts" --include="*.tsx" | grep -v "generated/"
 - [ ] **Step 2: Créer les types**
 
 Créer `src/types/` avec:
+
 - `reservation.ts`
 - `gift-card.ts`
 - `user.ts`
@@ -488,6 +518,7 @@ npx tsc --noEmit
 - [ ] **Step 1: Identifier les fonctions réutilisables**
 
 Fonctions à extraire:
+
 - `formatCurrency(amount: number, currency: string = 'EUR'): string` (dans BoutiqueContent.tsx, GiftCardCard.tsx)
 - `formatDate(date: Date, locale: Locale): string` (dans plusieurs endroits)
 - `formatTime(iso: string): string` (dans AdminReservationsPage.tsx)
@@ -501,63 +532,161 @@ Fonctions à extraire:
 Créer `src/lib/utils/` avec:
 
 **`src/lib/utils/currency.ts`**
+
 ```typescript
-export function formatCurrency(amount: number, currency: string = 'EUR'): string {
-  return new Intl.NumberFormat('fr-FR', { 
-    style: 'currency', 
+export function formatCurrency(
+  amount: number,
+  currency: string = "EUR",
+): string {
+  return new Intl.NumberFormat("fr-FR", {
+    style: "currency",
     currency,
-    currencyDisplay: 'symbol'
+    currencyDisplay: "symbol",
   }).format(amount);
 }
 ```
 
 **`src/lib/utils/date.ts`**
-```typescript
-import type { Locale } from '@/lib/langs';
 
-export const MONTHS_ABBR = ['janv', 'févr', 'mars', 'avr', 'mai', 'juin', 'juil', 'août', 'sept', 'oct', 'nov', 'déc'];
-export const MONTHS_FULL = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
-export const DAYS_SHORT = { 0: 'Dim', 1: 'Lun', 2: 'Mar', 3: 'Mer', 4: 'Jeu', 5: 'Ven', 6: 'Sam' };
-export const DAYS_FULL = { 0: 'Dimanche', 1: 'Lundi', 2: 'Mardi', 3: 'Mercredi', 4: 'Jeudi', 5: 'Vendredi', 6: 'Samedi' };
+```typescript
+import type { Locale } from "@/lib/langs";
+
+export const MONTHS_ABBR = [
+  "janv",
+  "févr",
+  "mars",
+  "avr",
+  "mai",
+  "juin",
+  "juil",
+  "août",
+  "sept",
+  "oct",
+  "nov",
+  "déc",
+];
+export const MONTHS_FULL = [
+  "janvier",
+  "février",
+  "mars",
+  "avril",
+  "mai",
+  "juin",
+  "juillet",
+  "août",
+  "septembre",
+  "octobre",
+  "novembre",
+  "décembre",
+];
+export const DAYS_SHORT = {
+  0: "Dim",
+  1: "Lun",
+  2: "Mar",
+  3: "Mer",
+  4: "Jeu",
+  5: "Ven",
+  6: "Sam",
+};
+export const DAYS_FULL = {
+  0: "Dimanche",
+  1: "Lundi",
+  2: "Mardi",
+  3: "Mercredi",
+  4: "Jeudi",
+  5: "Vendredi",
+  6: "Samedi",
+};
 
 export function formatDate(date: Date, locale: Locale): string {
   return new Intl.DateTimeFormat(locale, {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   }).format(date);
 }
 
 export function formatFullDate(dateStr: string, locale: Locale): string {
-  const d = new Date(dateStr + 'T00:00:00.000Z');
-  const dayName = locale === 'fr' ? DAYS_FULL[d.getUTCDay()] : 
-                  locale === 'en' ? ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][d.getUTCDay()] :
-                  ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'][d.getUTCDay()];
-  const monthName = locale === 'fr' ? MONTHS_FULL[d.getUTCMonth()] :
-                    locale === 'en' ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][d.getUTCMonth()] :
-                    ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'][d.getUTCMonth()];
+  const d = new Date(dateStr + "T00:00:00.000Z");
+  const dayName =
+    locale === "fr"
+      ? DAYS_FULL[d.getUTCDay()]
+      : locale === "en"
+        ? [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+          ][d.getUTCDay()]
+        : [
+            "Sonntag",
+            "Montag",
+            "Dienstag",
+            "Mittwoch",
+            "Donnerstag",
+            "Freitag",
+            "Samstag",
+          ][d.getUTCDay()];
+  const monthName =
+    locale === "fr"
+      ? MONTHS_FULL[d.getUTCMonth()]
+      : locale === "en"
+        ? [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ][d.getUTCMonth()]
+        : [
+            "Januar",
+            "Februar",
+            "März",
+            "April",
+            "Mai",
+            "Juni",
+            "Juli",
+            "August",
+            "September",
+            "Oktober",
+            "November",
+            "Dezember",
+          ][d.getUTCMonth()];
   return `${dayName} ${d.getUTCDate()} ${monthName} ${d.getUTCFullYear()}`;
 }
 
 export function formatTime(iso: string): string {
   const d = new Date(iso);
-  return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
+  return `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
 }
 
 export function isToday(dateStr: string): boolean {
-  return dateStr === new Date().toISOString().split('T')[0];
+  return dateStr === new Date().toISOString().split("T")[0];
 }
 
 export function getPreviousMonday(): string {
   const now = new Date();
-  const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+  const d = new Date(
+    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()),
+  );
   const dow = d.getUTCDay();
   d.setUTCDate(d.getUTCDate() - (dow === 0 ? 6 : dow - 1));
-  return d.toISOString().split('T')[0];
+  return d.toISOString().split("T")[0];
 }
 ```
 
 **`src/lib/utils/validation.ts`**
+
 ```typescript
 export function validateEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -569,15 +698,18 @@ export function validateEmail(email: string): boolean {
 
 ```typescript
 // Exemple: Dans ChequesCadeauxContent.tsx
-import { formatCurrency } from '@/lib/utils/currency';
-import { validateEmail } from '@/lib/utils/validation';
+import { formatCurrency } from "@/lib/utils/currency";
+import { validateEmail } from "@/lib/utils/validation";
 
 // Remplacer:
-const formatted = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
+const formatted = new Intl.NumberFormat("fr-FR", {
+  style: "currency",
+  currency: "EUR",
+}).format(amount);
 
 // Par:
-import { formatCurrency } from '@/lib/utils/currency';
-const formatted = formatCurrency(amount, 'EUR');
+import { formatCurrency } from "@/lib/utils/currency";
+const formatted = formatCurrency(amount, "EUR");
 ```
 
 - [ ] **Step 4: Vérifier le build**
@@ -597,11 +729,11 @@ npm run build
 
 ```typescript
 // src/lib/__tests__/stripe.test.ts
-import { describe, it, expect } from 'vitest';
-import { stripe } from '../stripe';
+import { describe, it, expect } from "vitest";
+import { stripe } from "../stripe";
 
-describe('stripe', () => {
-  it('should initialize stripe with correct API key', () => {
+describe("stripe", () => {
+  it("should initialize stripe with correct API key", () => {
     expect(stripe).toBeDefined();
     expect(stripe?.getPublishableKey()).toBeDefined();
   });
@@ -612,11 +744,15 @@ describe('stripe', () => {
 
 ```typescript
 // src/lib/__tests__/availability.test.ts
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getAvailableSlots, getSlotsWithAvailability, getUnavailableDatesForMonth } from '../availability';
-import { prisma } from '../prisma';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import {
+  getAvailableSlots,
+  getSlotsWithAvailability,
+  getUnavailableDatesForMonth,
+} from "../availability";
+import { prisma } from "../prisma";
 
-vi.mock('../prisma', () => ({
+vi.mock("../prisma", () => ({
   prisma: {
     restaurantSettings: { findFirst: vi.fn() },
     dayOverride: { findUnique: vi.fn(), findMany: vi.fn() },
@@ -624,31 +760,38 @@ vi.mock('../prisma', () => ({
   },
 }));
 
-describe('availability', () => {
+describe("availability", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should return available slots for a valid date', async () => {
+  it("should return available slots for a valid date", async () => {
     vi.mocked(prisma.restaurantSettings.findFirst).mockResolvedValue({
       maxCovers: 20,
       mealDuration: 90,
       openingDays: JSON.stringify([2, 3, 4, 5, 6]),
-      openingSlots: JSON.stringify(['12:00', '12:30', '13:00', '19:00', '19:30', '20:00']),
+      openingSlots: JSON.stringify([
+        "12:00",
+        "12:30",
+        "13:00",
+        "19:00",
+        "19:30",
+        "20:00",
+      ]),
     });
     vi.mocked(prisma.dayOverride.findUnique).mockResolvedValue(null);
     vi.mocked(prisma.reservation.findMany).mockResolvedValue([]);
 
-    const slots = await getAvailableSlots('2026-06-21');
+    const slots = await getAvailableSlots("2026-06-21");
     expect(slots.length).toBeGreaterThan(0);
   });
 
-  it('should return empty array for closed day', async () => {
+  it("should return empty array for closed day", async () => {
     vi.mocked(prisma.dayOverride.findUnique).mockResolvedValue({
       closed: true,
     } as any);
 
-    const slots = await getAvailableSlots('2026-06-21');
+    const slots = await getAvailableSlots("2026-06-21");
     expect(slots).toEqual([]);
   });
 });
@@ -658,22 +801,22 @@ describe('availability', () => {
 
 ```typescript
 // src/lib/__tests__/email.test.ts
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { sendConfirmationEmail, sendGiftCardEmail } from '../email';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { sendConfirmationEmail, sendGiftCardEmail } from "../email";
 
-describe('email', () => {
+describe("email", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should return null when SMTP not configured', async () => {
+  it("should return null when SMTP not configured", async () => {
     const result = await sendConfirmationEmail({
-      to: 'test@example.com',
-      name: 'Test User',
-      date: '2026-06-21',
-      time: '19:00',
+      to: "test@example.com",
+      name: "Test User",
+      date: "2026-06-21",
+      time: "19:00",
       guests: 2,
-      cancelUrl: 'http://localhost:3000/cancel',
+      cancelUrl: "http://localhost:3000/cancel",
     });
     expect(result).toBeNull();
   });
@@ -700,12 +843,13 @@ pnpm add -D vitest @vitest/ui
 ```
 
 Créer `vitest.config.ts`:
+
 ```typescript
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    environment: 'node',
+    environment: "node",
     globals: true,
   },
 });
@@ -742,6 +886,7 @@ git commit -m "refactor: modernize codebase - restructure, clean, type"
 - [ ] **Step 3: Documentation**
 
 Créer `docs/MODERNIZATION.md` avec:
+
 - Nouvelle structure
 - Guidelines de contribution
 - Checklist de maintenance
@@ -751,14 +896,17 @@ Créer `docs/MODERNIZATION.md` avec:
 ## Ordre de priorité recommandé
 
 ### Phase 1 - Nettoyage immédiat (risque faible, impact élevé)
+
 1. Task 7: Supprimer les console.log et les fichiers .bak
 2. Task 8: Créer les types TypeScript manquants (remplacer `any`)
 
 ### Phase 2 - Refactoring structurel
+
 3. Task 6: Déplacement et structuration des fichiers
 4. Task 9: Extraction des fonctions utilitaires
 
 ### Phase 3 - Tests et validation
+
 5. Task 10: Tests unitaires pour les fonctions critiques
 6. Task 11: Finalisation et validation
 
@@ -781,13 +929,13 @@ Créer `docs/MODERNIZATION.md` avec:
 
 ## Estimation de l'effort
 
-| Phase | Durée estimée | Risque |
-|---|---|---|
-| Phase 1: Nettoyage (Tasks 7-8) | 2-3 heures | Faible |
-| Phase 2: Refactoring (Tasks 6-9) | 6-8 heures | Moyen |
-| Phase 3: Tests (Task 10) | 4-5 heures | Faible |
-| Phase 4: Finalisation (Task 11) | 2-3 heures | Faible |
-| **Total** | **14-19 heures** | **Moyen** |
+| Phase                            | Durée estimée    | Risque    |
+| -------------------------------- | ---------------- | --------- |
+| Phase 1: Nettoyage (Tasks 7-8)   | 2-3 heures       | Faible    |
+| Phase 2: Refactoring (Tasks 6-9) | 6-8 heures       | Moyen     |
+| Phase 3: Tests (Task 10)         | 4-5 heures       | Faible    |
+| Phase 4: Finalisation (Task 11)  | 2-3 heures       | Faible    |
+| **Total**                        | **14-19 heures** | **Moyen** |
 
 ---
 

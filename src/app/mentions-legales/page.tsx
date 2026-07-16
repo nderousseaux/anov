@@ -1,7 +1,7 @@
-import { createReader } from '@keystatic/core/reader';
-import config from '../../../keystatic.config';
-import { LegalDocumentRenderer } from '@/components/shared/LegalDocumentRenderer';
-import { LegalLanguageNotice } from '@/components/shared/LegalLanguageNotice';
+import { createReader } from "@keystatic/core/reader";
+import config from "@/keystatic.config";
+import { LegalDocumentRenderer } from "@/components/shared/LegalDocumentRenderer";
+import { LegalLanguageNotice } from "@/components/shared/LegalLanguageNotice";
 
 export default async function MentionsLegalesPage() {
   const reader = createReader(process.cwd(), config);
@@ -14,13 +14,12 @@ export default async function MentionsLegalesPage() {
         <LegalLanguageNotice />
         <h1
           className="text-3xl md:text-4xl text-primary mb-10"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: "var(--font-display)" }}
         >
-          {content?.title ?? 'Mentions légales'}
+          {content?.title ?? "Mentions légales"}
         </h1>
         <div className="pb-16">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {document && <LegalDocumentRenderer document={document as any} />}
+          {document && <LegalDocumentRenderer document={document} />}
         </div>
       </div>
     </div>

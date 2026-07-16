@@ -11,11 +11,15 @@
     "db:reset": "prisma migrate reset --force && tsx prisma/seed.ts",
     "build": "next build",
     "test": "pnpm test:unit && pnpm test:e2e",
-    "test:unit": "vitest",
+    "test:unit": "vitest run --coverage",
     "test:unit:ui": "vitest --ui",
     "test:e2e": "playwright test",
     "test:e2e:headless": "playwright test --headless",
-    "cron:reminders": "tsx scripts/run-cron-reminders.ts"
+    "cron:reminders": "tsx scripts/run-cron-reminders.ts",
+    "cron:gift-card-reminders": "tsx scripts/run-cron-gift-card-reminders.ts",
+    "tsc": "tsc --noEmit",
+    "lint": "eslint . --fix",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@keystatic/core": "^0.5.50",
@@ -65,6 +69,7 @@
     "lucide-react": "0.487.0",
     "next": "^15.3.0",
     "nodemailer": "^8.0.10",
+    "prettier": "^3.9.5",
     "react": "18.3.1",
     "react-day-picker": "8.10.1",
     "react-dom": "18.3.1",
@@ -89,6 +94,7 @@
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^8.61.1",
     "@typescript-eslint/parser": "^8.61.1",
+    "@vitest/coverage-v8": "4.1.9",
     "@vitest/ui": "^4.1.9",
     "eslint": "8.57.1",
     "eslint-config-next": "14.2.5",

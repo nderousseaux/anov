@@ -276,12 +276,12 @@ Lorsqu'un client envoie un message via le formulaire de contact :
 
 ### Accès au compte mail IONOS
 
-1. Rendez-vous sur **[https://webmail.ionos.fr](https://webmail.ionos.fr)**
+1. Rendez-vous sur **[https://email.ionos.fr](https://email.ionos.fr)**
 2. Connectez-vous avec l'adresse email du restaurant (ex: `contact@anovrestaurant.fr`)
 3. Le mot de passe est celui configuré chez IONOS
 4. Vous retrouvez tous les messages provenant du site
 
-> **Webmail IONOS :** [https://webmail.ionos.fr](https://webmail.ionos.fr)
+> **Webmail IONOS :** [https://email.ionos.fr](https://email.ionos.fr)
 
 ---
 

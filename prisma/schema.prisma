@@ -108,12 +108,12 @@ model ProductOrder {
   productName         String
   quantity            Int
   totalPrice          Float
-  deliveryMethod      String          @default("PICKUP")
+  deliveryMethod      DeliveryMethod  @default(PICKUP)
   customerName        String
   customerEmail       String
   customerPhone       String
   stripeSessionId     String?         @unique
-  status              String          @default("PENDING_PAYMENT")
+  status              OrderStatus     @default(PENDING_PAYMENT)
   expiresAt           DateTime?
   transactionExpireAt DateTime?
   customerAddress     ProductAddress?

@@ -133,6 +133,7 @@ export interface ReservationTranslations {
   dinner: string;
   errorSelectDate: string;
   errorSelectTime: string;
+  errorPhone: string;
   errorReservation: string;
   errorNetwork: string;
 }

@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   CheckCircle,
   Users,
   Mail,
   Phone,
   XCircle,
-  ArrowRight,
   Calendar,
   Clock as ClockIcon,
 } from "lucide-react";
@@ -31,12 +30,12 @@ type Reservation = {
 
 function ReservationSuccessForm() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const sessionId = searchParams.get("session_id");
   const [reservation, setReservation] = useState<Reservation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isExpired, setIsExpired] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -175,10 +174,6 @@ function ReservationSuccessForm() {
     );
   }
 
-  // Si on a des données encodées, afficher un bouton pour reprendre le formulaire
-  // (data is read from sessionStorage)
-  const hasFormData = Object.values(formData).some(v => v);
-
   // Format de la date pour l'affichage
   const d = new Date(reservation.date);
   const formattedDate = d.toLocaleDateString("fr-FR", {
@@ -236,7 +231,7 @@ function ReservationSuccessForm() {
 
         <div className="text-center mt-6">
           <Link href="/" className="inline-block">
-            <Button variant="outline">Retour à l'accueil</Button>
+            <Button variant="outline">Retour à l&apos;accueil</Button>
           </Link>
         </div>
       </div>

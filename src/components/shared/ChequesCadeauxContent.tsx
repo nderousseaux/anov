@@ -75,7 +75,6 @@ export function ChequesCadeauxContent({
     recipient: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
   const [key, setKey] = useState(0); // Force re-render on return from Stripe
 
   // Ref to track if we've already loaded from sessionStorage
@@ -108,20 +107,17 @@ export function ChequesCadeauxContent({
         if (storedData) {
           try {
             const parsedData = JSON.parse(storedData);
-            console.log('[GiftCard] Loading from sessionStorage:', parsedData);
             setGiftCard({
               amount: parsedData.amount || "",
               recipient: parsedData.recipient || "",
               message: parsedData.message || "",
             });
-            setIsInitialized(true);
             hasLoadedFromSessionStorage.current = true;
-          } catch (e) {
-            console.error('[GiftCard] Error parsing sessionStorage:', e);
+          } catch {
             // Invalid JSON, ignore
           }
         } else {
-          console.log('[GiftCard] No data in sessionStorage');
+          // No data in sessionStorage
         }
       }
     };
@@ -135,8 +131,7 @@ export function ChequesCadeauxContent({
     let pageshowHandler: ((event: PageTransitionEvent) => void) | null = null;
 
     if (typeof window !== 'undefined') {
-      pageshowHandler = (event: PageTransitionEvent) => {
-        console.log('[GiftCard] pageshow event, persisted:', event.persisted);
+      pageshowHandler = (_event: PageTransitionEvent) => {
         // Always load from sessionStorage on pageshow
         // This handles both bfcache restore AND regular navigation back
         loadFromSessionStorage();
@@ -150,10 +145,9 @@ export function ChequesCadeauxContent({
       const navEntries = performance?.getEntriesByType?.('navigation') as PerformanceNavigationTiming[];
       const isBfcacheRestore = navEntries?.[0]?.type === 'back_forward';
       if (isBfcacheRestore && !hasLoadedFromSessionStorage.current) {
-        console.log('[GiftCard] Detected bfcache restore via performance API, loading data...');
         loadFromSessionStorage();
       }
-    } catch (e) {
+    } catch {
       // Ignore errors from performance API
     }
 

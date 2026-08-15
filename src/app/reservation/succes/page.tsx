@@ -8,7 +8,6 @@ import {
   Mail,
   Phone,
   XCircle,
-  ArrowLeft,
   ArrowRight,
   Calendar,
   Clock as ClockIcon,
@@ -235,48 +234,9 @@ function ReservationSuccessForm() {
           )}
         </div>
 
-        <div className="bg-muted/50 border border-primary/10 rounded-lg p-6 mb-6 text-center">
-          <p className="text-foreground mb-4">
-            {hasFormData
-              ? "Vous avez changé d'avis ou voulez modifier votre réservation ?"
-              : "Souhaitez-vous faire une nouvelle réservation ?"}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            {hasFormData ? (
-              <Button
-                onClick={() => {
-                  // Force a refresh to re-run useEffect in ReservationForm
-                  router.refresh();
-                  window.location.href = "/reservation";
-                }}
-                variant="outline"
-                className="border-primary/30"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Reprendre ma réservation
-              </Button>
-            ) : null}
-            <Button
-              onClick={() => {
-                router.refresh();
-                window.location.href = "/reservation";
-              }}
-              className="bg-primary hover:bg-primary/90"
-            >
-              <ArrowRight className="w-4 h-4 mr-2" />
-              {hasFormData ? "Modifier la réservation" : "Faire une réservation"}
-            </Button>
-          </div>
-        </div>
-
-        <div className="text-center">
-          <Link href="/">
-            <Button
-              variant="outline"
-              className="border-primary/30 text-foreground hover:bg-primary/10"
-            >
-              Retour à l&apos;accueil
-            </Button>
+        <div className="text-center mt-6">
+          <Link href="/" className="inline-block">
+            <Button variant="outline">Retour à l'accueil</Button>
           </Link>
         </div>
       </div>

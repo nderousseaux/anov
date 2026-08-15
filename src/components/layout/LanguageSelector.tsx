@@ -20,7 +20,7 @@ export function LanguageSelector({ className }: { className?: string }) {
         <Button
           variant="ghost"
           size="sm"
-          className={`gap-1.5 text-foreground/80 hover:text-white focus-visible:outline-none ${className ?? ""}`}
+          className={`gap-1.5 text-foreground/80 hover:text-white focus-visible:outline-none cursor-pointer ${className ?? ""}`}
           aria-label="Changer de langue"
         >
           <Globe size={15} strokeWidth={1.8} />

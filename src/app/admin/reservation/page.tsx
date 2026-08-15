@@ -484,7 +484,14 @@ export default function AdminReservationsPage() {
           (!r.transactionExpireAt || new Date(r.transactionExpireAt) > now)),
     );
 
-    if (overrideMode === "closed" && activeReservations.length > 0) {
+    // Vérifier si on veut fermer le jour
+    // Cas 1: overrideMode === "closed" → on ferme le jour
+    // Cas 2: overrideMode === "global" ET le jour est actuellement fermé (effectiveOpen === false) → on ouvre le jour (pas de problème)
+    // Donc on bloque SEULEMENT si overrideMode === "closed"
+    // (car c'est le seul cas où on passe d'ouvert à fermé, ou on maintient fermé)
+    const willCloseDay = overrideMode === "closed";
+
+    if (willCloseDay && activeReservations.length > 0) {
       alert(
         `Impossible de fermer ce jour : ${activeReservations.length} réservation(s) active(s) en cours.\nAnnulez-les d'abord.`,
       );

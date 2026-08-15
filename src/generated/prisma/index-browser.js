@@ -192,6 +192,26 @@ exports.Prisma.GiftCardScalarFieldEnum = {
   reminderEmailSent: 'reminderEmailSent'
 };
 
+exports.Prisma.GourmetOfferScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  code: 'code',
+  offerName: 'offerName',
+  offerDescription: 'offerDescription',
+  offerImage: 'offerImage',
+  price: 'price',
+  recipientEmail: 'recipientEmail',
+  personalMessage: 'personalMessage',
+  isPaid: 'isPaid',
+  status: 'status',
+  stripeSessionId: 'stripeSessionId',
+  expiresAt: 'expiresAt',
+  transactionExpireAt: 'transactionExpireAt',
+  usedAt: 'usedAt',
+  reminderEmailSent: 'reminderEmailSent'
+};
+
 exports.Prisma.ContactMessageScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
@@ -223,6 +243,7 @@ exports.Prisma.ProductOrderScalarFieldEnum = {
   customerPhone: 'customerPhone',
   stripeSessionId: 'stripeSessionId',
   status: 'status',
+  expiresAt: 'expiresAt',
   transactionExpireAt: 'transactionExpireAt'
 };
 
@@ -268,6 +289,13 @@ exports.GiftCardStatus = exports.$Enums.GiftCardStatus = {
   EXPIRED: 'EXPIRED'
 };
 
+exports.GourmetOfferStatus = exports.$Enums.GourmetOfferStatus = {
+  IN_PROGRESS_PAYMENT: 'IN_PROGRESS_PAYMENT',
+  ACTIVE: 'ACTIVE',
+  USED: 'USED',
+  EXPIRED: 'EXPIRED'
+};
+
 exports.DeliveryMethod = exports.$Enums.DeliveryMethod = {
   PICKUP: 'PICKUP',
   DELIVERY: 'DELIVERY'
@@ -291,6 +319,7 @@ exports.Prisma.ModelName = {
   RestaurantSettings: 'RestaurantSettings',
   DayOverride: 'DayOverride',
   GiftCard: 'GiftCard',
+  GourmetOffer: 'GourmetOffer',
   ContactMessage: 'ContactMessage',
   CustomerNote: 'CustomerNote',
   ProductOrder: 'ProductOrder',

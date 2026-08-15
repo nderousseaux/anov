@@ -10,11 +10,17 @@ import {
   Gift,
   Users,
   Package,
+  UtensilsCrossed,
 } from "lucide-react";
 
 const navLinks = [
   { href: "/admin/reservation", label: "Réservations", icon: CalendarDays },
   { href: "/admin/cheques-cadeaux", label: "Bons Cadeaux", icon: Gift },
+  {
+    href: "/admin/offres-gourmandes",
+    label: "Offre Gourmande",
+    icon: UtensilsCrossed,
+  },
   { href: "/admin/commandes", label: "Commandes", icon: Package },
   { href: "/admin/clients", label: "Fiches Client", icon: Users },
   {

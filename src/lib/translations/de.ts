@@ -140,6 +140,34 @@ const de = {
       secure: "Alle Käufe sind sicher",
       valid: "Gutscheine und Gutschein sind 12 Monate gültig",
     },
+    gourmetOffer: {
+      introTitle: "Gourmet-Angebot",
+      introText: "Verschenken Sie ein kulinarisches Erlebnis bei l'Anøv",
+      noOffers: "Derzeit ist kein Gourmet-Angebot verfügbar.",
+      offerButton: "Verschenken",
+      form: {
+        title: "{title} verschenken",
+        recipientLabel: "E-Mail des Empfängers",
+        placeholderRecipient: "empfaenger@example.com",
+        messageLabel: "Persönliche Nachricht",
+        placeholderMessage: "Fügen Sie eine persönliche Nachricht hinzu...",
+        submit: "Jetzt kaufen",
+        cancel: "Abbrechen",
+        paymentInfo: "Sichere Zahlung • Lieferung per E-Mail",
+        errors: {
+          recipient: "Bitte geben Sie eine gültige E-Mail ein",
+          network: "Netzwerkfehler, bitte versuchen Sie es erneut",
+        },
+      },
+      success: {
+        title: "Vielen Dank für Ihren Einkauf!",
+        emailSentTitle:
+          "Eine E-Mail mit Ihrem Gourmet-Angebot wurde an den Empfänger gesendet.",
+        emailSentDescription:
+          "Der Empfänger erhält einen einzigartigen Code, der 12 Monate lang gültig ist, um dieses Gourmet-Angebot bei ANØV zu genießen.",
+        buttonAnother: "Ein weiteres Gourmet-Angebot verschenken",
+      },
+    },
   },
   legal: {
     frenchOnly: "(Dokument nur auf Französisch verfügbar)",

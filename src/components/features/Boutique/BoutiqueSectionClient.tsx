@@ -2,6 +2,7 @@
 
 import { pickField } from "@/lib/langs";
 import { ProductGrid } from "@/components/features/Boutique/ProductGrid";
+import { GourmetOfferGrid } from "@/components/features/Boutique/GourmetOfferGrid";
 import { GiftCardButton } from "@/components/features/Boutique/GiftCardButton";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Home, ArrowRight } from "lucide-react";
@@ -24,6 +25,13 @@ export interface BoutiqueSectionClientBoutiqueContent {
   productsIntroSubtitle_en?: string;
   productsIntroSubtitle_de?: string;
   products?: readonly BoutiqueSectionClientProduct[];
+  gourmetOfferIntroTitle_fr?: string;
+  gourmetOfferIntroTitle_en?: string;
+  gourmetOfferIntroTitle_de?: string;
+  gourmetOfferIntroSubtitle_fr?: string;
+  gourmetOfferIntroSubtitle_en?: string;
+  gourmetOfferIntroSubtitle_de?: string;
+  gourmetOffers?: readonly BoutiqueSectionClientGourmetOffer[];
   [key: string]: unknown;
 }
 
@@ -44,19 +52,37 @@ export interface BoutiqueSectionClientProduct {
   [key: string]: unknown;
 }
 
+export interface BoutiqueSectionClientGourmetOffer {
+  id?: string;
+  title_fr: string;
+  title_en?: string;
+  title_de?: string;
+  description_fr?: string;
+  description_en?: string;
+  description_de?: string;
+  price?: number | null;
+  image?: string | null;
+  alt_fr?: string;
+  alt_en?: string;
+  alt_de?: string;
+  [key: string]: unknown;
+}
+
 export function BoutiqueSectionClient({
   content,
   products,
+  gourmetOffers = [],
   chequesCadeauxContent,
   isSuccess = false,
 }: {
   content: BoutiqueSectionClientBoutiqueContent;
   products: BoutiqueSectionClientProduct[];
+  gourmetOffers?: BoutiqueSectionClientGourmetOffer[];
   chequesCadeauxContent?: Record<string, unknown> | null;
   isSuccess?: boolean;
   sessionId?: string;
 }) {
-  const { locale } = useLanguage();
+  const { locale, t } = useLanguage();
 
   const giftCardsTitle = chequesCadeauxContent
     ? pickField(chequesCadeauxContent, "title", locale)
@@ -69,6 +95,14 @@ export function BoutiqueSectionClient({
   const productsIntroSubtitle = content.productsIntroSubtitle_fr
     ? pickField(content, "productsIntroSubtitle", locale)
     : undefined;
+
+  const gourmetOfferIntroTitle = content.gourmetOfferIntroTitle_fr
+    ? pickField(content, "gourmetOfferIntroTitle", locale)
+    : t.boutique.gourmetOffer.introTitle;
+
+  const gourmetOfferIntroSubtitle = content.gourmetOfferIntroSubtitle_fr
+    ? pickField(content, "gourmetOfferIntroSubtitle", locale)
+    : t.boutique.gourmetOffer.introText;
 
   // Si c'est la page de succès, afficher un message de confirmation
   if (isSuccess) {
@@ -175,6 +209,33 @@ export function BoutiqueSectionClient({
               <div className="text-center py-12 bg-secondary/50 rounded-xl border border-primary/10">
                 <p className="text-muted-foreground">
                   Aucun produit disponible pour le moment.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Section Offre Gourmande */}
+          <div className="mt-16 pt-16 border-t border-border">
+            <div className="text-center mb-12">
+              <h2
+                className="text-3xl sm:text-4xl font-bold text-foreground mb-4"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {gourmetOfferIntroTitle}
+              </h2>
+              {gourmetOfferIntroSubtitle && (
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                  {gourmetOfferIntroSubtitle}
+                </p>
+              )}
+            </div>
+
+            {gourmetOffers.length > 0 ? (
+              <GourmetOfferGrid offers={gourmetOffers} />
+            ) : (
+              <div className="text-center py-12 bg-secondary/50 rounded-xl border border-primary/10">
+                <p className="text-muted-foreground">
+                  {t.boutique.gourmetOffer.noOffers}
                 </p>
               </div>
             )}

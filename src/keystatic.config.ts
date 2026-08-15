@@ -751,6 +751,56 @@ export default config({
             itemLabel: (props) => props.fields.title_fr.value,
           },
         ),
+        gourmetOfferIntroTitle_fr: fields.text({
+          label: "Offre Gourmande — Titre 🇫🇷",
+        }),
+        gourmetOfferIntroTitle_en: fields.text({
+          label: "Offre Gourmande — Titre 🇬🇧",
+        }),
+        gourmetOfferIntroTitle_de: fields.text({
+          label: "Offre Gourmande — Titre 🇩🇪",
+        }),
+        gourmetOfferIntroSubtitle_fr: fields.text({
+          label: "Offre Gourmande — Sous-titre 🇫🇷",
+        }),
+        gourmetOfferIntroSubtitle_en: fields.text({
+          label: "Offre Gourmande — Sous-titre 🇬🇧",
+        }),
+        gourmetOfferIntroSubtitle_de: fields.text({
+          label: "Offre Gourmande — Sous-titre 🇩🇪",
+        }),
+        gourmetOffers: fields.array(
+          fields.object({
+            title_fr: fields.text({ label: "Titre 🇫🇷" }),
+            title_en: fields.text({ label: "Titre 🇬🇧" }),
+            title_de: fields.text({ label: "Titre 🇩🇪" }),
+            description_fr: fields.text({
+              label: "Description 🇫🇷",
+              multiline: true,
+            }),
+            description_en: fields.text({
+              label: "Description 🇬🇧",
+              multiline: true,
+            }),
+            description_de: fields.text({
+              label: "Description 🇩🇪",
+              multiline: true,
+            }),
+            price: fields.number({ label: "Prix" }),
+            image: fields.image({
+              label: "Image",
+              directory: "public/assets/boutique",
+              publicPath: "/assets/boutique/",
+            }),
+            alt_fr: fields.text({ label: "Texte alternatif 🇫🇷" }),
+            alt_en: fields.text({ label: "Texte alternatif 🇬🇧" }),
+            alt_de: fields.text({ label: "Texte alternatif 🇩🇪" }),
+          }),
+          {
+            label: "Offres Gourmandes",
+            itemLabel: (props) => props.fields.title_fr.value,
+          },
+        ),
       },
     }),
     giftCardSuccess: singleton({

@@ -44,6 +44,11 @@ export type DayOverride = $Result.DefaultSelection<Prisma.$DayOverridePayload>
  */
 export type GiftCard = $Result.DefaultSelection<Prisma.$GiftCardPayload>
 /**
+ * Model GourmetOffer
+ * 
+ */
+export type GourmetOffer = $Result.DefaultSelection<Prisma.$GourmetOfferPayload>
+/**
  * Model ContactMessage
  * 
  */
@@ -98,6 +103,16 @@ export const DeliveryMethod: {
 export type DeliveryMethod = (typeof DeliveryMethod)[keyof typeof DeliveryMethod]
 
 
+export const GourmetOfferStatus: {
+  IN_PROGRESS_PAYMENT: 'IN_PROGRESS_PAYMENT',
+  ACTIVE: 'ACTIVE',
+  USED: 'USED',
+  EXPIRED: 'EXPIRED'
+};
+
+export type GourmetOfferStatus = (typeof GourmetOfferStatus)[keyof typeof GourmetOfferStatus]
+
+
 export const OrderStatus: {
   PENDING_PAYMENT: 'PENDING_PAYMENT',
   CONFIRMED: 'CONFIRMED',
@@ -124,6 +139,10 @@ export const GiftCardStatus: typeof $Enums.GiftCardStatus
 export type DeliveryMethod = $Enums.DeliveryMethod
 
 export const DeliveryMethod: typeof $Enums.DeliveryMethod
+
+export type GourmetOfferStatus = $Enums.GourmetOfferStatus
+
+export const GourmetOfferStatus: typeof $Enums.GourmetOfferStatus
 
 export type OrderStatus = $Enums.OrderStatus
 
@@ -309,6 +328,16 @@ export class PrismaClient<
     * ```
     */
   get giftCard(): Prisma.GiftCardDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.gourmetOffer`: Exposes CRUD operations for the **GourmetOffer** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GourmetOffers
+    * const gourmetOffers = await prisma.gourmetOffer.findMany()
+    * ```
+    */
+  get gourmetOffer(): Prisma.GourmetOfferDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.contactMessage`: Exposes CRUD operations for the **ContactMessage** model.
@@ -789,6 +818,7 @@ export namespace Prisma {
     RestaurantSettings: 'RestaurantSettings',
     DayOverride: 'DayOverride',
     GiftCard: 'GiftCard',
+    GourmetOffer: 'GourmetOffer',
     ContactMessage: 'ContactMessage',
     CustomerNote: 'CustomerNote',
     ProductOrder: 'ProductOrder',
@@ -808,7 +838,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "reservation" | "table" | "admin" | "restaurantSettings" | "dayOverride" | "giftCard" | "contactMessage" | "customerNote" | "productOrder" | "productAddress"
+      modelProps: "reservation" | "table" | "admin" | "restaurantSettings" | "dayOverride" | "giftCard" | "gourmetOffer" | "contactMessage" | "customerNote" | "productOrder" | "productAddress"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1256,6 +1286,80 @@ export namespace Prisma {
           }
         }
       }
+      GourmetOffer: {
+        payload: Prisma.$GourmetOfferPayload<ExtArgs>
+        fields: Prisma.GourmetOfferFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GourmetOfferFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GourmetOfferPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GourmetOfferFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GourmetOfferPayload>
+          }
+          findFirst: {
+            args: Prisma.GourmetOfferFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GourmetOfferPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GourmetOfferFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GourmetOfferPayload>
+          }
+          findMany: {
+            args: Prisma.GourmetOfferFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GourmetOfferPayload>[]
+          }
+          create: {
+            args: Prisma.GourmetOfferCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GourmetOfferPayload>
+          }
+          createMany: {
+            args: Prisma.GourmetOfferCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.GourmetOfferCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GourmetOfferPayload>[]
+          }
+          delete: {
+            args: Prisma.GourmetOfferDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GourmetOfferPayload>
+          }
+          update: {
+            args: Prisma.GourmetOfferUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GourmetOfferPayload>
+          }
+          deleteMany: {
+            args: Prisma.GourmetOfferDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GourmetOfferUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.GourmetOfferUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GourmetOfferPayload>[]
+          }
+          upsert: {
+            args: Prisma.GourmetOfferUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GourmetOfferPayload>
+          }
+          aggregate: {
+            args: Prisma.GourmetOfferAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGourmetOffer>
+          }
+          groupBy: {
+            args: Prisma.GourmetOfferGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GourmetOfferGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.GourmetOfferCountArgs<ExtArgs>
+            result: $Utils.Optional<GourmetOfferCountAggregateOutputType> | number
+          }
+        }
+      }
       ContactMessage: {
         payload: Prisma.$ContactMessagePayload<ExtArgs>
         fields: Prisma.ContactMessageFieldRefs
@@ -1666,6 +1770,7 @@ export namespace Prisma {
     restaurantSettings?: RestaurantSettingsOmit
     dayOverride?: DayOverrideOmit
     giftCard?: GiftCardOmit
+    gourmetOffer?: GourmetOfferOmit
     contactMessage?: ContactMessageOmit
     customerNote?: CustomerNoteOmit
     productOrder?: ProductOrderOmit
@@ -8494,6 +8599,1196 @@ export namespace Prisma {
 
 
   /**
+   * Model GourmetOffer
+   */
+
+  export type AggregateGourmetOffer = {
+    _count: GourmetOfferCountAggregateOutputType | null
+    _avg: GourmetOfferAvgAggregateOutputType | null
+    _sum: GourmetOfferSumAggregateOutputType | null
+    _min: GourmetOfferMinAggregateOutputType | null
+    _max: GourmetOfferMaxAggregateOutputType | null
+  }
+
+  export type GourmetOfferAvgAggregateOutputType = {
+    price: number | null
+  }
+
+  export type GourmetOfferSumAggregateOutputType = {
+    price: number | null
+  }
+
+  export type GourmetOfferMinAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    code: string | null
+    offerName: string | null
+    offerDescription: string | null
+    offerImage: string | null
+    price: number | null
+    recipientEmail: string | null
+    personalMessage: string | null
+    isPaid: boolean | null
+    status: $Enums.GourmetOfferStatus | null
+    stripeSessionId: string | null
+    expiresAt: Date | null
+    transactionExpireAt: Date | null
+    usedAt: Date | null
+    reminderEmailSent: boolean | null
+  }
+
+  export type GourmetOfferMaxAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    code: string | null
+    offerName: string | null
+    offerDescription: string | null
+    offerImage: string | null
+    price: number | null
+    recipientEmail: string | null
+    personalMessage: string | null
+    isPaid: boolean | null
+    status: $Enums.GourmetOfferStatus | null
+    stripeSessionId: string | null
+    expiresAt: Date | null
+    transactionExpireAt: Date | null
+    usedAt: Date | null
+    reminderEmailSent: boolean | null
+  }
+
+  export type GourmetOfferCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    updatedAt: number
+    code: number
+    offerName: number
+    offerDescription: number
+    offerImage: number
+    price: number
+    recipientEmail: number
+    personalMessage: number
+    isPaid: number
+    status: number
+    stripeSessionId: number
+    expiresAt: number
+    transactionExpireAt: number
+    usedAt: number
+    reminderEmailSent: number
+    _all: number
+  }
+
+
+  export type GourmetOfferAvgAggregateInputType = {
+    price?: true
+  }
+
+  export type GourmetOfferSumAggregateInputType = {
+    price?: true
+  }
+
+  export type GourmetOfferMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    code?: true
+    offerName?: true
+    offerDescription?: true
+    offerImage?: true
+    price?: true
+    recipientEmail?: true
+    personalMessage?: true
+    isPaid?: true
+    status?: true
+    stripeSessionId?: true
+    expiresAt?: true
+    transactionExpireAt?: true
+    usedAt?: true
+    reminderEmailSent?: true
+  }
+
+  export type GourmetOfferMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    code?: true
+    offerName?: true
+    offerDescription?: true
+    offerImage?: true
+    price?: true
+    recipientEmail?: true
+    personalMessage?: true
+    isPaid?: true
+    status?: true
+    stripeSessionId?: true
+    expiresAt?: true
+    transactionExpireAt?: true
+    usedAt?: true
+    reminderEmailSent?: true
+  }
+
+  export type GourmetOfferCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    code?: true
+    offerName?: true
+    offerDescription?: true
+    offerImage?: true
+    price?: true
+    recipientEmail?: true
+    personalMessage?: true
+    isPaid?: true
+    status?: true
+    stripeSessionId?: true
+    expiresAt?: true
+    transactionExpireAt?: true
+    usedAt?: true
+    reminderEmailSent?: true
+    _all?: true
+  }
+
+  export type GourmetOfferAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GourmetOffer to aggregate.
+     */
+    where?: GourmetOfferWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GourmetOffers to fetch.
+     */
+    orderBy?: GourmetOfferOrderByWithRelationInput | GourmetOfferOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GourmetOfferWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GourmetOffers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GourmetOffers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GourmetOffers
+    **/
+    _count?: true | GourmetOfferCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: GourmetOfferAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GourmetOfferSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GourmetOfferMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GourmetOfferMaxAggregateInputType
+  }
+
+  export type GetGourmetOfferAggregateType<T extends GourmetOfferAggregateArgs> = {
+        [P in keyof T & keyof AggregateGourmetOffer]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGourmetOffer[P]>
+      : GetScalarType<T[P], AggregateGourmetOffer[P]>
+  }
+
+
+
+
+  export type GourmetOfferGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GourmetOfferWhereInput
+    orderBy?: GourmetOfferOrderByWithAggregationInput | GourmetOfferOrderByWithAggregationInput[]
+    by: GourmetOfferScalarFieldEnum[] | GourmetOfferScalarFieldEnum
+    having?: GourmetOfferScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GourmetOfferCountAggregateInputType | true
+    _avg?: GourmetOfferAvgAggregateInputType
+    _sum?: GourmetOfferSumAggregateInputType
+    _min?: GourmetOfferMinAggregateInputType
+    _max?: GourmetOfferMaxAggregateInputType
+  }
+
+  export type GourmetOfferGroupByOutputType = {
+    id: string
+    createdAt: Date
+    updatedAt: Date
+    code: string
+    offerName: string
+    offerDescription: string | null
+    offerImage: string | null
+    price: number
+    recipientEmail: string | null
+    personalMessage: string | null
+    isPaid: boolean
+    status: $Enums.GourmetOfferStatus
+    stripeSessionId: string | null
+    expiresAt: Date | null
+    transactionExpireAt: Date | null
+    usedAt: Date | null
+    reminderEmailSent: boolean
+    _count: GourmetOfferCountAggregateOutputType | null
+    _avg: GourmetOfferAvgAggregateOutputType | null
+    _sum: GourmetOfferSumAggregateOutputType | null
+    _min: GourmetOfferMinAggregateOutputType | null
+    _max: GourmetOfferMaxAggregateOutputType | null
+  }
+
+  type GetGourmetOfferGroupByPayload<T extends GourmetOfferGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GourmetOfferGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GourmetOfferGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GourmetOfferGroupByOutputType[P]>
+            : GetScalarType<T[P], GourmetOfferGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GourmetOfferSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    code?: boolean
+    offerName?: boolean
+    offerDescription?: boolean
+    offerImage?: boolean
+    price?: boolean
+    recipientEmail?: boolean
+    personalMessage?: boolean
+    isPaid?: boolean
+    status?: boolean
+    stripeSessionId?: boolean
+    expiresAt?: boolean
+    transactionExpireAt?: boolean
+    usedAt?: boolean
+    reminderEmailSent?: boolean
+  }, ExtArgs["result"]["gourmetOffer"]>
+
+  export type GourmetOfferSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    code?: boolean
+    offerName?: boolean
+    offerDescription?: boolean
+    offerImage?: boolean
+    price?: boolean
+    recipientEmail?: boolean
+    personalMessage?: boolean
+    isPaid?: boolean
+    status?: boolean
+    stripeSessionId?: boolean
+    expiresAt?: boolean
+    transactionExpireAt?: boolean
+    usedAt?: boolean
+    reminderEmailSent?: boolean
+  }, ExtArgs["result"]["gourmetOffer"]>
+
+  export type GourmetOfferSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    code?: boolean
+    offerName?: boolean
+    offerDescription?: boolean
+    offerImage?: boolean
+    price?: boolean
+    recipientEmail?: boolean
+    personalMessage?: boolean
+    isPaid?: boolean
+    status?: boolean
+    stripeSessionId?: boolean
+    expiresAt?: boolean
+    transactionExpireAt?: boolean
+    usedAt?: boolean
+    reminderEmailSent?: boolean
+  }, ExtArgs["result"]["gourmetOffer"]>
+
+  export type GourmetOfferSelectScalar = {
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    code?: boolean
+    offerName?: boolean
+    offerDescription?: boolean
+    offerImage?: boolean
+    price?: boolean
+    recipientEmail?: boolean
+    personalMessage?: boolean
+    isPaid?: boolean
+    status?: boolean
+    stripeSessionId?: boolean
+    expiresAt?: boolean
+    transactionExpireAt?: boolean
+    usedAt?: boolean
+    reminderEmailSent?: boolean
+  }
+
+  export type GourmetOfferOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "offerName" | "offerDescription" | "offerImage" | "price" | "recipientEmail" | "personalMessage" | "isPaid" | "status" | "stripeSessionId" | "expiresAt" | "transactionExpireAt" | "usedAt" | "reminderEmailSent", ExtArgs["result"]["gourmetOffer"]>
+
+  export type $GourmetOfferPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GourmetOffer"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      createdAt: Date
+      updatedAt: Date
+      code: string
+      offerName: string
+      offerDescription: string | null
+      offerImage: string | null
+      price: number
+      recipientEmail: string | null
+      personalMessage: string | null
+      isPaid: boolean
+      status: $Enums.GourmetOfferStatus
+      stripeSessionId: string | null
+      expiresAt: Date | null
+      transactionExpireAt: Date | null
+      usedAt: Date | null
+      reminderEmailSent: boolean
+    }, ExtArgs["result"]["gourmetOffer"]>
+    composites: {}
+  }
+
+  type GourmetOfferGetPayload<S extends boolean | null | undefined | GourmetOfferDefaultArgs> = $Result.GetResult<Prisma.$GourmetOfferPayload, S>
+
+  type GourmetOfferCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GourmetOfferFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GourmetOfferCountAggregateInputType | true
+    }
+
+  export interface GourmetOfferDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GourmetOffer'], meta: { name: 'GourmetOffer' } }
+    /**
+     * Find zero or one GourmetOffer that matches the filter.
+     * @param {GourmetOfferFindUniqueArgs} args - Arguments to find a GourmetOffer
+     * @example
+     * // Get one GourmetOffer
+     * const gourmetOffer = await prisma.gourmetOffer.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GourmetOfferFindUniqueArgs>(args: SelectSubset<T, GourmetOfferFindUniqueArgs<ExtArgs>>): Prisma__GourmetOfferClient<$Result.GetResult<Prisma.$GourmetOfferPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GourmetOffer that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GourmetOfferFindUniqueOrThrowArgs} args - Arguments to find a GourmetOffer
+     * @example
+     * // Get one GourmetOffer
+     * const gourmetOffer = await prisma.gourmetOffer.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GourmetOfferFindUniqueOrThrowArgs>(args: SelectSubset<T, GourmetOfferFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GourmetOfferClient<$Result.GetResult<Prisma.$GourmetOfferPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GourmetOffer that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GourmetOfferFindFirstArgs} args - Arguments to find a GourmetOffer
+     * @example
+     * // Get one GourmetOffer
+     * const gourmetOffer = await prisma.gourmetOffer.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GourmetOfferFindFirstArgs>(args?: SelectSubset<T, GourmetOfferFindFirstArgs<ExtArgs>>): Prisma__GourmetOfferClient<$Result.GetResult<Prisma.$GourmetOfferPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GourmetOffer that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GourmetOfferFindFirstOrThrowArgs} args - Arguments to find a GourmetOffer
+     * @example
+     * // Get one GourmetOffer
+     * const gourmetOffer = await prisma.gourmetOffer.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GourmetOfferFindFirstOrThrowArgs>(args?: SelectSubset<T, GourmetOfferFindFirstOrThrowArgs<ExtArgs>>): Prisma__GourmetOfferClient<$Result.GetResult<Prisma.$GourmetOfferPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GourmetOffers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GourmetOfferFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GourmetOffers
+     * const gourmetOffers = await prisma.gourmetOffer.findMany()
+     * 
+     * // Get first 10 GourmetOffers
+     * const gourmetOffers = await prisma.gourmetOffer.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const gourmetOfferWithIdOnly = await prisma.gourmetOffer.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GourmetOfferFindManyArgs>(args?: SelectSubset<T, GourmetOfferFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GourmetOfferPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GourmetOffer.
+     * @param {GourmetOfferCreateArgs} args - Arguments to create a GourmetOffer.
+     * @example
+     * // Create one GourmetOffer
+     * const GourmetOffer = await prisma.gourmetOffer.create({
+     *   data: {
+     *     // ... data to create a GourmetOffer
+     *   }
+     * })
+     * 
+     */
+    create<T extends GourmetOfferCreateArgs>(args: SelectSubset<T, GourmetOfferCreateArgs<ExtArgs>>): Prisma__GourmetOfferClient<$Result.GetResult<Prisma.$GourmetOfferPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GourmetOffers.
+     * @param {GourmetOfferCreateManyArgs} args - Arguments to create many GourmetOffers.
+     * @example
+     * // Create many GourmetOffers
+     * const gourmetOffer = await prisma.gourmetOffer.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GourmetOfferCreateManyArgs>(args?: SelectSubset<T, GourmetOfferCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many GourmetOffers and returns the data saved in the database.
+     * @param {GourmetOfferCreateManyAndReturnArgs} args - Arguments to create many GourmetOffers.
+     * @example
+     * // Create many GourmetOffers
+     * const gourmetOffer = await prisma.gourmetOffer.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many GourmetOffers and only return the `id`
+     * const gourmetOfferWithIdOnly = await prisma.gourmetOffer.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends GourmetOfferCreateManyAndReturnArgs>(args?: SelectSubset<T, GourmetOfferCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GourmetOfferPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a GourmetOffer.
+     * @param {GourmetOfferDeleteArgs} args - Arguments to delete one GourmetOffer.
+     * @example
+     * // Delete one GourmetOffer
+     * const GourmetOffer = await prisma.gourmetOffer.delete({
+     *   where: {
+     *     // ... filter to delete one GourmetOffer
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GourmetOfferDeleteArgs>(args: SelectSubset<T, GourmetOfferDeleteArgs<ExtArgs>>): Prisma__GourmetOfferClient<$Result.GetResult<Prisma.$GourmetOfferPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GourmetOffer.
+     * @param {GourmetOfferUpdateArgs} args - Arguments to update one GourmetOffer.
+     * @example
+     * // Update one GourmetOffer
+     * const gourmetOffer = await prisma.gourmetOffer.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GourmetOfferUpdateArgs>(args: SelectSubset<T, GourmetOfferUpdateArgs<ExtArgs>>): Prisma__GourmetOfferClient<$Result.GetResult<Prisma.$GourmetOfferPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GourmetOffers.
+     * @param {GourmetOfferDeleteManyArgs} args - Arguments to filter GourmetOffers to delete.
+     * @example
+     * // Delete a few GourmetOffers
+     * const { count } = await prisma.gourmetOffer.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GourmetOfferDeleteManyArgs>(args?: SelectSubset<T, GourmetOfferDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GourmetOffers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GourmetOfferUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GourmetOffers
+     * const gourmetOffer = await prisma.gourmetOffer.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GourmetOfferUpdateManyArgs>(args: SelectSubset<T, GourmetOfferUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GourmetOffers and returns the data updated in the database.
+     * @param {GourmetOfferUpdateManyAndReturnArgs} args - Arguments to update many GourmetOffers.
+     * @example
+     * // Update many GourmetOffers
+     * const gourmetOffer = await prisma.gourmetOffer.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more GourmetOffers and only return the `id`
+     * const gourmetOfferWithIdOnly = await prisma.gourmetOffer.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends GourmetOfferUpdateManyAndReturnArgs>(args: SelectSubset<T, GourmetOfferUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GourmetOfferPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one GourmetOffer.
+     * @param {GourmetOfferUpsertArgs} args - Arguments to update or create a GourmetOffer.
+     * @example
+     * // Update or create a GourmetOffer
+     * const gourmetOffer = await prisma.gourmetOffer.upsert({
+     *   create: {
+     *     // ... data to create a GourmetOffer
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GourmetOffer we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GourmetOfferUpsertArgs>(args: SelectSubset<T, GourmetOfferUpsertArgs<ExtArgs>>): Prisma__GourmetOfferClient<$Result.GetResult<Prisma.$GourmetOfferPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of GourmetOffers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GourmetOfferCountArgs} args - Arguments to filter GourmetOffers to count.
+     * @example
+     * // Count the number of GourmetOffers
+     * const count = await prisma.gourmetOffer.count({
+     *   where: {
+     *     // ... the filter for the GourmetOffers we want to count
+     *   }
+     * })
+    **/
+    count<T extends GourmetOfferCountArgs>(
+      args?: Subset<T, GourmetOfferCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GourmetOfferCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GourmetOffer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GourmetOfferAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GourmetOfferAggregateArgs>(args: Subset<T, GourmetOfferAggregateArgs>): Prisma.PrismaPromise<GetGourmetOfferAggregateType<T>>
+
+    /**
+     * Group by GourmetOffer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GourmetOfferGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GourmetOfferGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GourmetOfferGroupByArgs['orderBy'] }
+        : { orderBy?: GourmetOfferGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GourmetOfferGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGourmetOfferGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GourmetOffer model
+   */
+  readonly fields: GourmetOfferFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GourmetOffer.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GourmetOfferClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GourmetOffer model
+   */
+  interface GourmetOfferFieldRefs {
+    readonly id: FieldRef<"GourmetOffer", 'String'>
+    readonly createdAt: FieldRef<"GourmetOffer", 'DateTime'>
+    readonly updatedAt: FieldRef<"GourmetOffer", 'DateTime'>
+    readonly code: FieldRef<"GourmetOffer", 'String'>
+    readonly offerName: FieldRef<"GourmetOffer", 'String'>
+    readonly offerDescription: FieldRef<"GourmetOffer", 'String'>
+    readonly offerImage: FieldRef<"GourmetOffer", 'String'>
+    readonly price: FieldRef<"GourmetOffer", 'Float'>
+    readonly recipientEmail: FieldRef<"GourmetOffer", 'String'>
+    readonly personalMessage: FieldRef<"GourmetOffer", 'String'>
+    readonly isPaid: FieldRef<"GourmetOffer", 'Boolean'>
+    readonly status: FieldRef<"GourmetOffer", 'GourmetOfferStatus'>
+    readonly stripeSessionId: FieldRef<"GourmetOffer", 'String'>
+    readonly expiresAt: FieldRef<"GourmetOffer", 'DateTime'>
+    readonly transactionExpireAt: FieldRef<"GourmetOffer", 'DateTime'>
+    readonly usedAt: FieldRef<"GourmetOffer", 'DateTime'>
+    readonly reminderEmailSent: FieldRef<"GourmetOffer", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GourmetOffer findUnique
+   */
+  export type GourmetOfferFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GourmetOffer
+     */
+    select?: GourmetOfferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GourmetOffer
+     */
+    omit?: GourmetOfferOmit<ExtArgs> | null
+    /**
+     * Filter, which GourmetOffer to fetch.
+     */
+    where: GourmetOfferWhereUniqueInput
+  }
+
+  /**
+   * GourmetOffer findUniqueOrThrow
+   */
+  export type GourmetOfferFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GourmetOffer
+     */
+    select?: GourmetOfferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GourmetOffer
+     */
+    omit?: GourmetOfferOmit<ExtArgs> | null
+    /**
+     * Filter, which GourmetOffer to fetch.
+     */
+    where: GourmetOfferWhereUniqueInput
+  }
+
+  /**
+   * GourmetOffer findFirst
+   */
+  export type GourmetOfferFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GourmetOffer
+     */
+    select?: GourmetOfferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GourmetOffer
+     */
+    omit?: GourmetOfferOmit<ExtArgs> | null
+    /**
+     * Filter, which GourmetOffer to fetch.
+     */
+    where?: GourmetOfferWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GourmetOffers to fetch.
+     */
+    orderBy?: GourmetOfferOrderByWithRelationInput | GourmetOfferOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GourmetOffers.
+     */
+    cursor?: GourmetOfferWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GourmetOffers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GourmetOffers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GourmetOffers.
+     */
+    distinct?: GourmetOfferScalarFieldEnum | GourmetOfferScalarFieldEnum[]
+  }
+
+  /**
+   * GourmetOffer findFirstOrThrow
+   */
+  export type GourmetOfferFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GourmetOffer
+     */
+    select?: GourmetOfferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GourmetOffer
+     */
+    omit?: GourmetOfferOmit<ExtArgs> | null
+    /**
+     * Filter, which GourmetOffer to fetch.
+     */
+    where?: GourmetOfferWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GourmetOffers to fetch.
+     */
+    orderBy?: GourmetOfferOrderByWithRelationInput | GourmetOfferOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GourmetOffers.
+     */
+    cursor?: GourmetOfferWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GourmetOffers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GourmetOffers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GourmetOffers.
+     */
+    distinct?: GourmetOfferScalarFieldEnum | GourmetOfferScalarFieldEnum[]
+  }
+
+  /**
+   * GourmetOffer findMany
+   */
+  export type GourmetOfferFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GourmetOffer
+     */
+    select?: GourmetOfferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GourmetOffer
+     */
+    omit?: GourmetOfferOmit<ExtArgs> | null
+    /**
+     * Filter, which GourmetOffers to fetch.
+     */
+    where?: GourmetOfferWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GourmetOffers to fetch.
+     */
+    orderBy?: GourmetOfferOrderByWithRelationInput | GourmetOfferOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GourmetOffers.
+     */
+    cursor?: GourmetOfferWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GourmetOffers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GourmetOffers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GourmetOffers.
+     */
+    distinct?: GourmetOfferScalarFieldEnum | GourmetOfferScalarFieldEnum[]
+  }
+
+  /**
+   * GourmetOffer create
+   */
+  export type GourmetOfferCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GourmetOffer
+     */
+    select?: GourmetOfferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GourmetOffer
+     */
+    omit?: GourmetOfferOmit<ExtArgs> | null
+    /**
+     * The data needed to create a GourmetOffer.
+     */
+    data: XOR<GourmetOfferCreateInput, GourmetOfferUncheckedCreateInput>
+  }
+
+  /**
+   * GourmetOffer createMany
+   */
+  export type GourmetOfferCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GourmetOffers.
+     */
+    data: GourmetOfferCreateManyInput | GourmetOfferCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * GourmetOffer createManyAndReturn
+   */
+  export type GourmetOfferCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GourmetOffer
+     */
+    select?: GourmetOfferSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GourmetOffer
+     */
+    omit?: GourmetOfferOmit<ExtArgs> | null
+    /**
+     * The data used to create many GourmetOffers.
+     */
+    data: GourmetOfferCreateManyInput | GourmetOfferCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * GourmetOffer update
+   */
+  export type GourmetOfferUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GourmetOffer
+     */
+    select?: GourmetOfferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GourmetOffer
+     */
+    omit?: GourmetOfferOmit<ExtArgs> | null
+    /**
+     * The data needed to update a GourmetOffer.
+     */
+    data: XOR<GourmetOfferUpdateInput, GourmetOfferUncheckedUpdateInput>
+    /**
+     * Choose, which GourmetOffer to update.
+     */
+    where: GourmetOfferWhereUniqueInput
+  }
+
+  /**
+   * GourmetOffer updateMany
+   */
+  export type GourmetOfferUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GourmetOffers.
+     */
+    data: XOR<GourmetOfferUpdateManyMutationInput, GourmetOfferUncheckedUpdateManyInput>
+    /**
+     * Filter which GourmetOffers to update
+     */
+    where?: GourmetOfferWhereInput
+    /**
+     * Limit how many GourmetOffers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GourmetOffer updateManyAndReturn
+   */
+  export type GourmetOfferUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GourmetOffer
+     */
+    select?: GourmetOfferSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GourmetOffer
+     */
+    omit?: GourmetOfferOmit<ExtArgs> | null
+    /**
+     * The data used to update GourmetOffers.
+     */
+    data: XOR<GourmetOfferUpdateManyMutationInput, GourmetOfferUncheckedUpdateManyInput>
+    /**
+     * Filter which GourmetOffers to update
+     */
+    where?: GourmetOfferWhereInput
+    /**
+     * Limit how many GourmetOffers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GourmetOffer upsert
+   */
+  export type GourmetOfferUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GourmetOffer
+     */
+    select?: GourmetOfferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GourmetOffer
+     */
+    omit?: GourmetOfferOmit<ExtArgs> | null
+    /**
+     * The filter to search for the GourmetOffer to update in case it exists.
+     */
+    where: GourmetOfferWhereUniqueInput
+    /**
+     * In case the GourmetOffer found by the `where` argument doesn't exist, create a new GourmetOffer with this data.
+     */
+    create: XOR<GourmetOfferCreateInput, GourmetOfferUncheckedCreateInput>
+    /**
+     * In case the GourmetOffer was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GourmetOfferUpdateInput, GourmetOfferUncheckedUpdateInput>
+  }
+
+  /**
+   * GourmetOffer delete
+   */
+  export type GourmetOfferDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GourmetOffer
+     */
+    select?: GourmetOfferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GourmetOffer
+     */
+    omit?: GourmetOfferOmit<ExtArgs> | null
+    /**
+     * Filter which GourmetOffer to delete.
+     */
+    where: GourmetOfferWhereUniqueInput
+  }
+
+  /**
+   * GourmetOffer deleteMany
+   */
+  export type GourmetOfferDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GourmetOffers to delete
+     */
+    where?: GourmetOfferWhereInput
+    /**
+     * Limit how many GourmetOffers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GourmetOffer without action
+   */
+  export type GourmetOfferDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GourmetOffer
+     */
+    select?: GourmetOfferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GourmetOffer
+     */
+    omit?: GourmetOfferOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Model ContactMessage
    */
 
@@ -10576,6 +11871,7 @@ export namespace Prisma {
     customerPhone: string | null
     stripeSessionId: string | null
     status: $Enums.OrderStatus | null
+    expiresAt: Date | null
     transactionExpireAt: Date | null
   }
 
@@ -10593,6 +11889,7 @@ export namespace Prisma {
     customerPhone: string | null
     stripeSessionId: string | null
     status: $Enums.OrderStatus | null
+    expiresAt: Date | null
     transactionExpireAt: Date | null
   }
 
@@ -10610,6 +11907,7 @@ export namespace Prisma {
     customerPhone: number
     stripeSessionId: number
     status: number
+    expiresAt: number
     transactionExpireAt: number
     _all: number
   }
@@ -10639,6 +11937,7 @@ export namespace Prisma {
     customerPhone?: true
     stripeSessionId?: true
     status?: true
+    expiresAt?: true
     transactionExpireAt?: true
   }
 
@@ -10656,6 +11955,7 @@ export namespace Prisma {
     customerPhone?: true
     stripeSessionId?: true
     status?: true
+    expiresAt?: true
     transactionExpireAt?: true
   }
 
@@ -10673,6 +11973,7 @@ export namespace Prisma {
     customerPhone?: true
     stripeSessionId?: true
     status?: true
+    expiresAt?: true
     transactionExpireAt?: true
     _all?: true
   }
@@ -10777,6 +12078,7 @@ export namespace Prisma {
     customerPhone: string
     stripeSessionId: string | null
     status: $Enums.OrderStatus
+    expiresAt: Date | null
     transactionExpireAt: Date | null
     _count: ProductOrderCountAggregateOutputType | null
     _avg: ProductOrderAvgAggregateOutputType | null
@@ -10813,6 +12115,7 @@ export namespace Prisma {
     customerPhone?: boolean
     stripeSessionId?: boolean
     status?: boolean
+    expiresAt?: boolean
     transactionExpireAt?: boolean
     customerAddress?: boolean | ProductOrder$customerAddressArgs<ExtArgs>
   }, ExtArgs["result"]["productOrder"]>
@@ -10831,6 +12134,7 @@ export namespace Prisma {
     customerPhone?: boolean
     stripeSessionId?: boolean
     status?: boolean
+    expiresAt?: boolean
     transactionExpireAt?: boolean
   }, ExtArgs["result"]["productOrder"]>
 
@@ -10848,6 +12152,7 @@ export namespace Prisma {
     customerPhone?: boolean
     stripeSessionId?: boolean
     status?: boolean
+    expiresAt?: boolean
     transactionExpireAt?: boolean
   }, ExtArgs["result"]["productOrder"]>
 
@@ -10865,10 +12170,11 @@ export namespace Prisma {
     customerPhone?: boolean
     stripeSessionId?: boolean
     status?: boolean
+    expiresAt?: boolean
     transactionExpireAt?: boolean
   }
 
-  export type ProductOrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "productName" | "quantity" | "totalPrice" | "deliveryMethod" | "customerName" | "customerEmail" | "customerPhone" | "stripeSessionId" | "status" | "transactionExpireAt", ExtArgs["result"]["productOrder"]>
+  export type ProductOrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "productName" | "quantity" | "totalPrice" | "deliveryMethod" | "customerName" | "customerEmail" | "customerPhone" | "stripeSessionId" | "status" | "expiresAt" | "transactionExpireAt", ExtArgs["result"]["productOrder"]>
   export type ProductOrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     customerAddress?: boolean | ProductOrder$customerAddressArgs<ExtArgs>
   }
@@ -10894,6 +12200,7 @@ export namespace Prisma {
       customerPhone: string
       stripeSessionId: string | null
       status: $Enums.OrderStatus
+      expiresAt: Date | null
       transactionExpireAt: Date | null
     }, ExtArgs["result"]["productOrder"]>
     composites: {}
@@ -11332,6 +12639,7 @@ export namespace Prisma {
     readonly customerPhone: FieldRef<"ProductOrder", 'String'>
     readonly stripeSessionId: FieldRef<"ProductOrder", 'String'>
     readonly status: FieldRef<"ProductOrder", 'OrderStatus'>
+    readonly expiresAt: FieldRef<"ProductOrder", 'DateTime'>
     readonly transactionExpireAt: FieldRef<"ProductOrder", 'DateTime'>
   }
     
@@ -12982,6 +14290,29 @@ export namespace Prisma {
   export type GiftCardScalarFieldEnum = (typeof GiftCardScalarFieldEnum)[keyof typeof GiftCardScalarFieldEnum]
 
 
+  export const GourmetOfferScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    code: 'code',
+    offerName: 'offerName',
+    offerDescription: 'offerDescription',
+    offerImage: 'offerImage',
+    price: 'price',
+    recipientEmail: 'recipientEmail',
+    personalMessage: 'personalMessage',
+    isPaid: 'isPaid',
+    status: 'status',
+    stripeSessionId: 'stripeSessionId',
+    expiresAt: 'expiresAt',
+    transactionExpireAt: 'transactionExpireAt',
+    usedAt: 'usedAt',
+    reminderEmailSent: 'reminderEmailSent'
+  };
+
+  export type GourmetOfferScalarFieldEnum = (typeof GourmetOfferScalarFieldEnum)[keyof typeof GourmetOfferScalarFieldEnum]
+
+
   export const ContactMessageScalarFieldEnum: {
     id: 'id',
     createdAt: 'createdAt',
@@ -13019,6 +14350,7 @@ export namespace Prisma {
     customerPhone: 'customerPhone',
     stripeSessionId: 'stripeSessionId',
     status: 'status',
+    expiresAt: 'expiresAt',
     transactionExpireAt: 'transactionExpireAt'
   };
 
@@ -13157,6 +14489,20 @@ export namespace Prisma {
    * Reference to a field of type 'GiftCardStatus[]'
    */
   export type ListEnumGiftCardStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GiftCardStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'GourmetOfferStatus'
+   */
+  export type EnumGourmetOfferStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GourmetOfferStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'GourmetOfferStatus[]'
+   */
+  export type ListEnumGourmetOfferStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GourmetOfferStatus[]'>
     
 
 
@@ -13641,6 +14987,120 @@ export namespace Prisma {
     reminderEmailSent?: BoolWithAggregatesFilter<"GiftCard"> | boolean
   }
 
+  export type GourmetOfferWhereInput = {
+    AND?: GourmetOfferWhereInput | GourmetOfferWhereInput[]
+    OR?: GourmetOfferWhereInput[]
+    NOT?: GourmetOfferWhereInput | GourmetOfferWhereInput[]
+    id?: StringFilter<"GourmetOffer"> | string
+    createdAt?: DateTimeFilter<"GourmetOffer"> | Date | string
+    updatedAt?: DateTimeFilter<"GourmetOffer"> | Date | string
+    code?: StringFilter<"GourmetOffer"> | string
+    offerName?: StringFilter<"GourmetOffer"> | string
+    offerDescription?: StringNullableFilter<"GourmetOffer"> | string | null
+    offerImage?: StringNullableFilter<"GourmetOffer"> | string | null
+    price?: FloatFilter<"GourmetOffer"> | number
+    recipientEmail?: StringNullableFilter<"GourmetOffer"> | string | null
+    personalMessage?: StringNullableFilter<"GourmetOffer"> | string | null
+    isPaid?: BoolFilter<"GourmetOffer"> | boolean
+    status?: EnumGourmetOfferStatusFilter<"GourmetOffer"> | $Enums.GourmetOfferStatus
+    stripeSessionId?: StringNullableFilter<"GourmetOffer"> | string | null
+    expiresAt?: DateTimeNullableFilter<"GourmetOffer"> | Date | string | null
+    transactionExpireAt?: DateTimeNullableFilter<"GourmetOffer"> | Date | string | null
+    usedAt?: DateTimeNullableFilter<"GourmetOffer"> | Date | string | null
+    reminderEmailSent?: BoolFilter<"GourmetOffer"> | boolean
+  }
+
+  export type GourmetOfferOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    code?: SortOrder
+    offerName?: SortOrder
+    offerDescription?: SortOrderInput | SortOrder
+    offerImage?: SortOrderInput | SortOrder
+    price?: SortOrder
+    recipientEmail?: SortOrderInput | SortOrder
+    personalMessage?: SortOrderInput | SortOrder
+    isPaid?: SortOrder
+    status?: SortOrder
+    stripeSessionId?: SortOrderInput | SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    transactionExpireAt?: SortOrderInput | SortOrder
+    usedAt?: SortOrderInput | SortOrder
+    reminderEmailSent?: SortOrder
+  }
+
+  export type GourmetOfferWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    code?: string
+    stripeSessionId?: string
+    AND?: GourmetOfferWhereInput | GourmetOfferWhereInput[]
+    OR?: GourmetOfferWhereInput[]
+    NOT?: GourmetOfferWhereInput | GourmetOfferWhereInput[]
+    createdAt?: DateTimeFilter<"GourmetOffer"> | Date | string
+    updatedAt?: DateTimeFilter<"GourmetOffer"> | Date | string
+    offerName?: StringFilter<"GourmetOffer"> | string
+    offerDescription?: StringNullableFilter<"GourmetOffer"> | string | null
+    offerImage?: StringNullableFilter<"GourmetOffer"> | string | null
+    price?: FloatFilter<"GourmetOffer"> | number
+    recipientEmail?: StringNullableFilter<"GourmetOffer"> | string | null
+    personalMessage?: StringNullableFilter<"GourmetOffer"> | string | null
+    isPaid?: BoolFilter<"GourmetOffer"> | boolean
+    status?: EnumGourmetOfferStatusFilter<"GourmetOffer"> | $Enums.GourmetOfferStatus
+    expiresAt?: DateTimeNullableFilter<"GourmetOffer"> | Date | string | null
+    transactionExpireAt?: DateTimeNullableFilter<"GourmetOffer"> | Date | string | null
+    usedAt?: DateTimeNullableFilter<"GourmetOffer"> | Date | string | null
+    reminderEmailSent?: BoolFilter<"GourmetOffer"> | boolean
+  }, "id" | "code" | "stripeSessionId">
+
+  export type GourmetOfferOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    code?: SortOrder
+    offerName?: SortOrder
+    offerDescription?: SortOrderInput | SortOrder
+    offerImage?: SortOrderInput | SortOrder
+    price?: SortOrder
+    recipientEmail?: SortOrderInput | SortOrder
+    personalMessage?: SortOrderInput | SortOrder
+    isPaid?: SortOrder
+    status?: SortOrder
+    stripeSessionId?: SortOrderInput | SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    transactionExpireAt?: SortOrderInput | SortOrder
+    usedAt?: SortOrderInput | SortOrder
+    reminderEmailSent?: SortOrder
+    _count?: GourmetOfferCountOrderByAggregateInput
+    _avg?: GourmetOfferAvgOrderByAggregateInput
+    _max?: GourmetOfferMaxOrderByAggregateInput
+    _min?: GourmetOfferMinOrderByAggregateInput
+    _sum?: GourmetOfferSumOrderByAggregateInput
+  }
+
+  export type GourmetOfferScalarWhereWithAggregatesInput = {
+    AND?: GourmetOfferScalarWhereWithAggregatesInput | GourmetOfferScalarWhereWithAggregatesInput[]
+    OR?: GourmetOfferScalarWhereWithAggregatesInput[]
+    NOT?: GourmetOfferScalarWhereWithAggregatesInput | GourmetOfferScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GourmetOffer"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"GourmetOffer"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"GourmetOffer"> | Date | string
+    code?: StringWithAggregatesFilter<"GourmetOffer"> | string
+    offerName?: StringWithAggregatesFilter<"GourmetOffer"> | string
+    offerDescription?: StringNullableWithAggregatesFilter<"GourmetOffer"> | string | null
+    offerImage?: StringNullableWithAggregatesFilter<"GourmetOffer"> | string | null
+    price?: FloatWithAggregatesFilter<"GourmetOffer"> | number
+    recipientEmail?: StringNullableWithAggregatesFilter<"GourmetOffer"> | string | null
+    personalMessage?: StringNullableWithAggregatesFilter<"GourmetOffer"> | string | null
+    isPaid?: BoolWithAggregatesFilter<"GourmetOffer"> | boolean
+    status?: EnumGourmetOfferStatusWithAggregatesFilter<"GourmetOffer"> | $Enums.GourmetOfferStatus
+    stripeSessionId?: StringNullableWithAggregatesFilter<"GourmetOffer"> | string | null
+    expiresAt?: DateTimeNullableWithAggregatesFilter<"GourmetOffer"> | Date | string | null
+    transactionExpireAt?: DateTimeNullableWithAggregatesFilter<"GourmetOffer"> | Date | string | null
+    usedAt?: DateTimeNullableWithAggregatesFilter<"GourmetOffer"> | Date | string | null
+    reminderEmailSent?: BoolWithAggregatesFilter<"GourmetOffer"> | boolean
+  }
+
   export type ContactMessageWhereInput = {
     AND?: ContactMessageWhereInput | ContactMessageWhereInput[]
     OR?: ContactMessageWhereInput[]
@@ -13769,6 +15229,7 @@ export namespace Prisma {
     customerPhone?: StringFilter<"ProductOrder"> | string
     stripeSessionId?: StringNullableFilter<"ProductOrder"> | string | null
     status?: EnumOrderStatusFilter<"ProductOrder"> | $Enums.OrderStatus
+    expiresAt?: DateTimeNullableFilter<"ProductOrder"> | Date | string | null
     transactionExpireAt?: DateTimeNullableFilter<"ProductOrder"> | Date | string | null
     customerAddress?: XOR<ProductAddressNullableScalarRelationFilter, ProductAddressWhereInput> | null
   }
@@ -13787,6 +15248,7 @@ export namespace Prisma {
     customerPhone?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
     status?: SortOrder
+    expiresAt?: SortOrderInput | SortOrder
     transactionExpireAt?: SortOrderInput | SortOrder
     customerAddress?: ProductAddressOrderByWithRelationInput
   }
@@ -13808,6 +15270,7 @@ export namespace Prisma {
     customerEmail?: StringFilter<"ProductOrder"> | string
     customerPhone?: StringFilter<"ProductOrder"> | string
     status?: EnumOrderStatusFilter<"ProductOrder"> | $Enums.OrderStatus
+    expiresAt?: DateTimeNullableFilter<"ProductOrder"> | Date | string | null
     transactionExpireAt?: DateTimeNullableFilter<"ProductOrder"> | Date | string | null
     customerAddress?: XOR<ProductAddressNullableScalarRelationFilter, ProductAddressWhereInput> | null
   }, "id" | "code" | "stripeSessionId">
@@ -13826,6 +15289,7 @@ export namespace Prisma {
     customerPhone?: SortOrder
     stripeSessionId?: SortOrderInput | SortOrder
     status?: SortOrder
+    expiresAt?: SortOrderInput | SortOrder
     transactionExpireAt?: SortOrderInput | SortOrder
     _count?: ProductOrderCountOrderByAggregateInput
     _avg?: ProductOrderAvgOrderByAggregateInput
@@ -13851,6 +15315,7 @@ export namespace Prisma {
     customerPhone?: StringWithAggregatesFilter<"ProductOrder"> | string
     stripeSessionId?: StringNullableWithAggregatesFilter<"ProductOrder"> | string | null
     status?: EnumOrderStatusWithAggregatesFilter<"ProductOrder"> | $Enums.OrderStatus
+    expiresAt?: DateTimeNullableWithAggregatesFilter<"ProductOrder"> | Date | string | null
     transactionExpireAt?: DateTimeNullableWithAggregatesFilter<"ProductOrder"> | Date | string | null
   }
 
@@ -14427,6 +15892,146 @@ export namespace Prisma {
     reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
   }
 
+  export type GourmetOfferCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    code: string
+    offerName: string
+    offerDescription?: string | null
+    offerImage?: string | null
+    price: number
+    recipientEmail?: string | null
+    personalMessage?: string | null
+    isPaid?: boolean
+    status?: $Enums.GourmetOfferStatus
+    stripeSessionId?: string | null
+    expiresAt?: Date | string | null
+    transactionExpireAt?: Date | string | null
+    usedAt?: Date | string | null
+    reminderEmailSent?: boolean
+  }
+
+  export type GourmetOfferUncheckedCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    code: string
+    offerName: string
+    offerDescription?: string | null
+    offerImage?: string | null
+    price: number
+    recipientEmail?: string | null
+    personalMessage?: string | null
+    isPaid?: boolean
+    status?: $Enums.GourmetOfferStatus
+    stripeSessionId?: string | null
+    expiresAt?: Date | string | null
+    transactionExpireAt?: Date | string | null
+    usedAt?: Date | string | null
+    reminderEmailSent?: boolean
+  }
+
+  export type GourmetOfferUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    code?: StringFieldUpdateOperationsInput | string
+    offerName?: StringFieldUpdateOperationsInput | string
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    offerImage?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
+    recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isPaid?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumGourmetOfferStatusFieldUpdateOperationsInput | $Enums.GourmetOfferStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type GourmetOfferUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    code?: StringFieldUpdateOperationsInput | string
+    offerName?: StringFieldUpdateOperationsInput | string
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    offerImage?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
+    recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isPaid?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumGourmetOfferStatusFieldUpdateOperationsInput | $Enums.GourmetOfferStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type GourmetOfferCreateManyInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    code: string
+    offerName: string
+    offerDescription?: string | null
+    offerImage?: string | null
+    price: number
+    recipientEmail?: string | null
+    personalMessage?: string | null
+    isPaid?: boolean
+    status?: $Enums.GourmetOfferStatus
+    stripeSessionId?: string | null
+    expiresAt?: Date | string | null
+    transactionExpireAt?: Date | string | null
+    usedAt?: Date | string | null
+    reminderEmailSent?: boolean
+  }
+
+  export type GourmetOfferUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    code?: StringFieldUpdateOperationsInput | string
+    offerName?: StringFieldUpdateOperationsInput | string
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    offerImage?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
+    recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isPaid?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumGourmetOfferStatusFieldUpdateOperationsInput | $Enums.GourmetOfferStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type GourmetOfferUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    code?: StringFieldUpdateOperationsInput | string
+    offerName?: StringFieldUpdateOperationsInput | string
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    offerImage?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
+    recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isPaid?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumGourmetOfferStatusFieldUpdateOperationsInput | $Enums.GourmetOfferStatus
+    stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderEmailSent?: BoolFieldUpdateOperationsInput | boolean
+  }
+
   export type ContactMessageCreateInput = {
     id?: string
     createdAt?: Date | string
@@ -14557,6 +16162,7 @@ export namespace Prisma {
     customerPhone: string
     stripeSessionId?: string | null
     status?: $Enums.OrderStatus
+    expiresAt?: Date | string | null
     transactionExpireAt?: Date | string | null
     customerAddress?: ProductAddressCreateNestedOneWithoutOrderInput
   }
@@ -14575,6 +16181,7 @@ export namespace Prisma {
     customerPhone: string
     stripeSessionId?: string | null
     status?: $Enums.OrderStatus
+    expiresAt?: Date | string | null
     transactionExpireAt?: Date | string | null
     customerAddress?: ProductAddressUncheckedCreateNestedOneWithoutOrderInput
   }
@@ -14593,6 +16200,7 @@ export namespace Prisma {
     customerPhone?: StringFieldUpdateOperationsInput | string
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     customerAddress?: ProductAddressUpdateOneWithoutOrderNestedInput
   }
@@ -14611,6 +16219,7 @@ export namespace Prisma {
     customerPhone?: StringFieldUpdateOperationsInput | string
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     customerAddress?: ProductAddressUncheckedUpdateOneWithoutOrderNestedInput
   }
@@ -14629,6 +16238,7 @@ export namespace Prisma {
     customerPhone: string
     stripeSessionId?: string | null
     status?: $Enums.OrderStatus
+    expiresAt?: Date | string | null
     transactionExpireAt?: Date | string | null
   }
 
@@ -14646,6 +16256,7 @@ export namespace Prisma {
     customerPhone?: StringFieldUpdateOperationsInput | string
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -14663,6 +16274,7 @@ export namespace Prisma {
     customerPhone?: StringFieldUpdateOperationsInput | string
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -15297,6 +16909,91 @@ export namespace Prisma {
     _max?: NestedEnumGiftCardStatusFilter<$PrismaModel>
   }
 
+  export type EnumGourmetOfferStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.GourmetOfferStatus | EnumGourmetOfferStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.GourmetOfferStatus[] | ListEnumGourmetOfferStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GourmetOfferStatus[] | ListEnumGourmetOfferStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumGourmetOfferStatusFilter<$PrismaModel> | $Enums.GourmetOfferStatus
+  }
+
+  export type GourmetOfferCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    code?: SortOrder
+    offerName?: SortOrder
+    offerDescription?: SortOrder
+    offerImage?: SortOrder
+    price?: SortOrder
+    recipientEmail?: SortOrder
+    personalMessage?: SortOrder
+    isPaid?: SortOrder
+    status?: SortOrder
+    stripeSessionId?: SortOrder
+    expiresAt?: SortOrder
+    transactionExpireAt?: SortOrder
+    usedAt?: SortOrder
+    reminderEmailSent?: SortOrder
+  }
+
+  export type GourmetOfferAvgOrderByAggregateInput = {
+    price?: SortOrder
+  }
+
+  export type GourmetOfferMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    code?: SortOrder
+    offerName?: SortOrder
+    offerDescription?: SortOrder
+    offerImage?: SortOrder
+    price?: SortOrder
+    recipientEmail?: SortOrder
+    personalMessage?: SortOrder
+    isPaid?: SortOrder
+    status?: SortOrder
+    stripeSessionId?: SortOrder
+    expiresAt?: SortOrder
+    transactionExpireAt?: SortOrder
+    usedAt?: SortOrder
+    reminderEmailSent?: SortOrder
+  }
+
+  export type GourmetOfferMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    code?: SortOrder
+    offerName?: SortOrder
+    offerDescription?: SortOrder
+    offerImage?: SortOrder
+    price?: SortOrder
+    recipientEmail?: SortOrder
+    personalMessage?: SortOrder
+    isPaid?: SortOrder
+    status?: SortOrder
+    stripeSessionId?: SortOrder
+    expiresAt?: SortOrder
+    transactionExpireAt?: SortOrder
+    usedAt?: SortOrder
+    reminderEmailSent?: SortOrder
+  }
+
+  export type GourmetOfferSumOrderByAggregateInput = {
+    price?: SortOrder
+  }
+
+  export type EnumGourmetOfferStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GourmetOfferStatus | EnumGourmetOfferStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.GourmetOfferStatus[] | ListEnumGourmetOfferStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GourmetOfferStatus[] | ListEnumGourmetOfferStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumGourmetOfferStatusWithAggregatesFilter<$PrismaModel> | $Enums.GourmetOfferStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumGourmetOfferStatusFilter<$PrismaModel>
+    _max?: NestedEnumGourmetOfferStatusFilter<$PrismaModel>
+  }
+
   export type ContactMessageCountOrderByAggregateInput = {
     id?: SortOrder
     createdAt?: SortOrder
@@ -15389,6 +17086,7 @@ export namespace Prisma {
     customerPhone?: SortOrder
     stripeSessionId?: SortOrder
     status?: SortOrder
+    expiresAt?: SortOrder
     transactionExpireAt?: SortOrder
   }
 
@@ -15411,6 +17109,7 @@ export namespace Prisma {
     customerPhone?: SortOrder
     stripeSessionId?: SortOrder
     status?: SortOrder
+    expiresAt?: SortOrder
     transactionExpireAt?: SortOrder
   }
 
@@ -15428,6 +17127,7 @@ export namespace Prisma {
     customerPhone?: SortOrder
     stripeSessionId?: SortOrder
     status?: SortOrder
+    expiresAt?: SortOrder
     transactionExpireAt?: SortOrder
   }
 
@@ -15605,6 +17305,10 @@ export namespace Prisma {
 
   export type EnumGiftCardStatusFieldUpdateOperationsInput = {
     set?: $Enums.GiftCardStatus
+  }
+
+  export type EnumGourmetOfferStatusFieldUpdateOperationsInput = {
+    set?: $Enums.GourmetOfferStatus
   }
 
   export type ProductAddressCreateNestedOneWithoutOrderInput = {
@@ -15912,6 +17616,23 @@ export namespace Prisma {
     _max?: NestedEnumGiftCardStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumGourmetOfferStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.GourmetOfferStatus | EnumGourmetOfferStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.GourmetOfferStatus[] | ListEnumGourmetOfferStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GourmetOfferStatus[] | ListEnumGourmetOfferStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumGourmetOfferStatusFilter<$PrismaModel> | $Enums.GourmetOfferStatus
+  }
+
+  export type NestedEnumGourmetOfferStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GourmetOfferStatus | EnumGourmetOfferStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.GourmetOfferStatus[] | ListEnumGourmetOfferStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GourmetOfferStatus[] | ListEnumGourmetOfferStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumGourmetOfferStatusWithAggregatesFilter<$PrismaModel> | $Enums.GourmetOfferStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumGourmetOfferStatusFilter<$PrismaModel>
+    _max?: NestedEnumGourmetOfferStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumDeliveryMethodFilter<$PrismaModel = never> = {
     equals?: $Enums.DeliveryMethod | EnumDeliveryMethodFieldRefInput<$PrismaModel>
     in?: $Enums.DeliveryMethod[] | ListEnumDeliveryMethodFieldRefInput<$PrismaModel>
@@ -16159,6 +17880,7 @@ export namespace Prisma {
     customerPhone: string
     stripeSessionId?: string | null
     status?: $Enums.OrderStatus
+    expiresAt?: Date | string | null
     transactionExpireAt?: Date | string | null
   }
 
@@ -16176,6 +17898,7 @@ export namespace Prisma {
     customerPhone: string
     stripeSessionId?: string | null
     status?: $Enums.OrderStatus
+    expiresAt?: Date | string | null
     transactionExpireAt?: Date | string | null
   }
 
@@ -16209,6 +17932,7 @@ export namespace Prisma {
     customerPhone?: StringFieldUpdateOperationsInput | string
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -16226,6 +17950,7 @@ export namespace Prisma {
     customerPhone?: StringFieldUpdateOperationsInput | string
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactionExpireAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 

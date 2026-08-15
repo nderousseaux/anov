@@ -17,12 +17,14 @@ import {
   Gift,
   Mail,
   StickyNote,
+  UtensilsCrossed,
 } from "lucide-react";
 
 interface CustomerSummary {
   email: string;
   reservationCount: number;
   giftCardCount: number;
+  gourmetOfferCount: number;
   contactCount: number;
   lastEventAt: string;
   hasNote: boolean;
@@ -176,6 +178,10 @@ function ClientsContent() {
                   </Badge>
                   <Badge variant="secondary" className="gap-1">
                     <Gift className="w-3 h-3" /> {customer.giftCardCount}
+                  </Badge>
+                  <Badge variant="secondary" className="gap-1">
+                    <UtensilsCrossed className="w-3 h-3" />{" "}
+                    {customer.gourmetOfferCount}
                   </Badge>
                   <Badge variant="secondary" className="gap-1">
                     <Mail className="w-3 h-3" /> {customer.contactCount}

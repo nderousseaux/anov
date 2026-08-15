@@ -16,6 +16,7 @@ import {
   Mail,
   Check,
   Package,
+  UtensilsCrossed,
 } from "lucide-react";
 
 interface ReservationRow {
@@ -34,6 +35,17 @@ interface GiftCardRow {
   id: string;
   code: string;
   amount: number;
+  recipientEmail: string | null;
+  personalMessage: string | null;
+  status: string;
+  createdAt: string;
+  usedAt: string | null;
+}
+
+interface GourmetOfferRow {
+  id: string;
+  code: string;
+  offerName: string;
   recipientEmail: string | null;
   personalMessage: string | null;
   status: string;
@@ -63,6 +75,7 @@ interface ProductOrderRow {
 interface CustomerDetailResponse {
   reservations: ReservationRow[];
   giftCards: GiftCardRow[];
+  gourmetOffers: GourmetOfferRow[];
   contactMessages: ContactMessageRow[];
   productOrders: ProductOrderRow[];
   note: { content: string } | null;
@@ -71,6 +84,7 @@ interface CustomerDetailResponse {
 type TimelineItem =
   | { type: "reservation"; date: string; data: ReservationRow }
   | { type: "giftCard"; date: string; data: GiftCardRow }
+  | { type: "gourmetOffer"; date: string; data: GourmetOfferRow }
   | { type: "contact"; date: string; data: ContactMessageRow }
   | { type: "productOrder"; date: string; data: ProductOrderRow };
 
@@ -155,6 +169,11 @@ export default function ClientDetailPage({
         type: "giftCard" as const,
         date: g.createdAt,
         data: g,
+      })),
+      ...detail.gourmetOffers.map((o) => ({
+        type: "gourmetOffer" as const,
+        date: o.createdAt,
+        data: o,
       })),
       ...detail.contactMessages.map((c) => ({
         type: "contact" as const,
@@ -259,6 +278,9 @@ export default function ClientDetailPage({
                 <TabsTrigger value="giftCard">
                   Bons cadeaux ({detail?.giftCards.length ?? 0})
                 </TabsTrigger>
+                <TabsTrigger value="gourmetOffer">
+                  Offres gourmandes ({detail?.gourmetOffers.length ?? 0})
+                </TabsTrigger>
                 <TabsTrigger value="contact">
                   Contacts ({detail?.contactMessages.length ?? 0})
                 </TabsTrigger>
@@ -272,6 +294,7 @@ export default function ClientDetailPage({
                   "all",
                   "reservation",
                   "giftCard",
+                  "gourmetOffer",
                   "contact",
                   "productOrder",
                 ] as const
@@ -347,6 +370,33 @@ function TimelineCard({ item }: { item: TimelineItem }) {
           {g.personalMessage && (
             <p className="text-sm text-muted-foreground mt-2">
               {g.personalMessage}
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (item.type === "gourmetOffer") {
+    const o = item.data;
+    return (
+      <div className="bg-card border border-border rounded-lg p-4 flex gap-3">
+        <UtensilsCrossed className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <span className="text-sm font-medium text-foreground">
+              Offre gourmande — {o.code}
+            </span>
+            <Badge variant="secondary">
+              {STATUS_LABELS[o.status] ?? o.status}
+            </Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {formatDateTime(o.createdAt)} — {o.offerName}
+          </p>
+          {o.personalMessage && (
+            <p className="text-sm text-muted-foreground mt-2">
+              {o.personalMessage}
             </p>
           )}
         </div>

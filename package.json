@@ -17,6 +17,7 @@
     "test:e2e:headless": "playwright test --headless",
     "cron:reminders": "tsx scripts/run-cron-reminders.ts",
     "cron:gift-card-reminders": "tsx scripts/run-cron-gift-card-reminders.ts",
+    "cron:gourmet-offer-reminders": "tsx scripts/run-cron-gourmet-offer-reminders.ts",
     "tsc": "tsc --noEmit",
     "lint": "eslint . --fix",
     "format": "prettier --write ."

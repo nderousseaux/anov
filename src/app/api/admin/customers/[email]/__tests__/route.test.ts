@@ -12,6 +12,9 @@ vi.mock("@/lib/prisma", () => ({
     giftCard: {
       findMany: vi.fn(),
     },
+    gourmetOffer: {
+      findMany: vi.fn(),
+    },
     contactMessage: {
       findMany: vi.fn(),
     },
@@ -31,6 +34,7 @@ vi.mock("@/lib/auth", () => ({
 describe("Admin Customer Details API", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(prisma.gourmetOffer.findMany).mockResolvedValue([]);
   });
 
   describe("GET /api/admin/customers/[email]", () => {
@@ -101,9 +105,57 @@ describe("Admin Customer Details API", () => {
       const data = await res.json();
       expect(data.reservations.length).toBe(1);
       expect(data.giftCards).toEqual([]);
+      expect(data.gourmetOffers).toEqual([]);
       expect(data.contactMessages).toEqual([]);
       expect(data.productOrders).toEqual([]);
       expect(data.note).toBeNull();
+    });
+
+    it("returns customer data with gourmet offers", async () => {
+      vi.mocked(getAdminFromCookies).mockResolvedValue({ id: 1 });
+
+      vi.mocked(prisma.reservation.findMany).mockResolvedValue([]);
+      vi.mocked(prisma.giftCard.findMany).mockResolvedValue([]);
+      vi.mocked(prisma.gourmetOffer.findMany).mockResolvedValue([
+        {
+          id: "1",
+          code: "ANOV-OG-ABCD1234",
+          offerName: "Menu Découverte",
+          offerDescription: null,
+          offerImage: null,
+          price: 89,
+          status: "ACTIVE" as const,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          stripeSessionId: null,
+          expiresAt: null,
+          transactionExpireAt: null,
+          recipientEmail: null,
+          personalMessage: null,
+          isPaid: false,
+          usedAt: null,
+          reminderEmailSent: false,
+        },
+      ]);
+      vi.mocked(prisma.contactMessage.findMany).mockResolvedValue([]);
+      vi.mocked(prisma.productOrder.findMany).mockResolvedValue([]);
+      vi.mocked(prisma.customerNote.findUnique).mockResolvedValue(null);
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/admin/customers/test@example.com"),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(
+        req as any,
+        { params: Promise.resolve({ email: "test@example.com" }) } as any,
+      );
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.gourmetOffers.length).toBe(1);
     });
 
     it("returns customer data with gift cards", async () => {

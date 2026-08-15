@@ -51,3 +51,32 @@ products:
     alt_fr: Boîte de thés exotiques
     alt_en: Box of exotic teas
     alt_de: Box mit exotischen Tees
+gourmetOfferIntroTitle_fr: Offre Gourmande
+gourmetOfferIntroTitle_en: Gourmet Offer
+gourmetOfferIntroTitle_de: Gourmet-Angebot
+gourmetOfferIntroSubtitle_fr: Offrez une expérience culinaire signature chez l'Anøv
+gourmetOfferIntroSubtitle_en: Give the gift of a signature culinary experience at l'Anøv
+gourmetOfferIntroSubtitle_de: Verschenken Sie ein kulinarisches Erlebnis bei l'Anøv
+gourmetOffers:
+  - title_fr: Menu Découverte
+    title_en: Discovery Menu
+    title_de: Entdeckermenü
+    description_fr: Un parcours en plusieurs services pour découvrir l'univers du chef
+    description_en: A multi-course journey through the chef's world
+    description_de: Ein mehrgängiges Menü, das die Welt des Küchenchefs entdecken lässt
+    price: 89
+    image: /assets/boutique/cafe.png
+    alt_fr: Assiette du menu découverte
+    alt_en: Discovery menu plate
+    alt_de: Teller des Entdeckermenüs
+  - title_fr: Menu Prestige
+    title_en: Prestige Menu
+    title_de: Prestige-Menü
+    description_fr: L'expérience gastronomique complète, accord mets et vins inclus
+    description_en: The full gastronomic experience, with wine pairing included
+    description_de: Das komplette gastronomische Erlebnis inklusive Weinbegleitung
+    price: 149
+    image: /assets/boutique/thes.png
+    alt_fr: Table dressée pour le menu prestige
+    alt_en: Table set for the prestige menu
+    alt_de: Gedeckter Tisch für das Prestige-Menü

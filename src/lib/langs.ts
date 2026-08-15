@@ -81,6 +81,32 @@ export interface BoutiqueTranslations {
       valid: string;
     };
   };
+  gourmetOffer: {
+    introTitle: string;
+    introText: string;
+    noOffers: string;
+    offerButton: string;
+    form: {
+      title: string;
+      recipientLabel: string;
+      placeholderRecipient: string;
+      messageLabel: string;
+      placeholderMessage: string;
+      submit: string;
+      cancel: string;
+      paymentInfo: string;
+      errors: {
+        recipient: string;
+        network: string;
+      };
+    };
+    success: {
+      title: string;
+      emailSentTitle: string;
+      emailSentDescription: string;
+      buttonAnother: string;
+    };
+  };
 }
 
 export interface ContactTranslations {

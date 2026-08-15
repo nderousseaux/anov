@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import {
   sendConfirmationEmail,
   sendGiftCardEmail,
+  sendGourmetOfferEmail,
   sendProductOrderConfirmationEmail,
 } from "@/lib/email";
 
@@ -44,6 +45,10 @@ export async function POST(req: NextRequest) {
     // Gérer les chèques cadeaux
     if (meta.type === "gift_card" && meta.giftCardId) {
       await handleGiftCardPayment(meta.giftCardId, session.id);
+    }
+    // Gérer les offres gourmandes
+    else if (meta.type === "gourmet_offer" && meta.gourmetOfferId) {
+      await handleGourmetOfferPayment(meta.gourmetOfferId, session.id);
     }
     // Gérer les commandes produits
     else if (meta.type === "product_order" && meta.orderId) {
@@ -120,6 +125,65 @@ async function handleGiftCardPayment(giftCardId: string, sessionId: string) {
     }
 
     // Gift card activated (for monitoring)
+  } catch (error) {
+    // Log error (for monitoring)
+  }
+}
+
+/**
+ * Gère le paiement d'une offre gourmande
+ */
+async function handleGourmetOfferPayment(
+  gourmetOfferId: string,
+  sessionId: string,
+) {
+  try {
+    // Récupérer l'offre gourmande
+    const gourmetOffer = await prisma.gourmetOffer.findUnique({
+      where: { id: gourmetOfferId },
+    });
+
+    if (!gourmetOffer) {
+      // Log missing gourmet offer (for monitoring)
+      return;
+    }
+
+    // Mettre à jour le statut de l'offre gourmande et effacer l'expiration de la transaction
+    await prisma.gourmetOffer.update({
+      where: { id: gourmetOfferId },
+      data: {
+        status: "ACTIVE",
+        stripeSessionId: sessionId,
+        transactionExpireAt: null, // La transaction est terminée
+      },
+    });
+
+    // Envoyer l'email avec l'offre gourmande au destinataire (sans le prix)
+    try {
+      if (gourmetOffer.recipientEmail) {
+        await sendGourmetOfferEmail({
+          to: gourmetOffer.recipientEmail,
+          code: gourmetOffer.code,
+          offerName: gourmetOffer.offerName,
+          offerDescription: gourmetOffer.offerDescription || undefined,
+          personalMessage: gourmetOffer.personalMessage || undefined,
+          expiresAt: gourmetOffer.expiresAt
+            ? gourmetOffer.expiresAt.toLocaleDateString("fr-FR", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })
+            : "",
+        });
+        // Email sent (for monitoring)
+      } else {
+        // No email to send for gourmet offer
+      }
+    } catch (emailError) {
+      // Log email error (for monitoring)
+    }
+
+    // Gourmet offer activated (for monitoring)
   } catch (error) {
     // Log error (for monitoring)
   }

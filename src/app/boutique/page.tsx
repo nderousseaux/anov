@@ -5,6 +5,7 @@ import { BoutiqueSectionClient } from "@/components/features/Boutique/BoutiqueSe
 // Réutiliser les types de BoutiqueSectionClient pour éviter les doublons
 import type {
   BoutiqueSectionClientProduct,
+  BoutiqueSectionClientGourmetOffer,
   BoutiqueSectionClientBoutiqueContent,
 } from "@/components/features/Boutique/BoutiqueSectionClient";
 
@@ -17,6 +18,10 @@ export default async function BoutiquePage() {
   // Récupérer les produits depuis Keystatic
   const products = (content.products || []) as BoutiqueSectionClientProduct[];
 
+  // Récupérer les offres gourmandes depuis Keystatic
+  const gourmetOffers = (content.gourmetOffers ||
+    []) as BoutiqueSectionClientGourmetOffer[];
+
   // Récupérer le contenu des chèques cadeaux pour la section
   const chequesCadeauxContent = await reader.singletons.chequesCadeaux.read();
 
@@ -25,6 +30,7 @@ export default async function BoutiquePage() {
       <BoutiqueSectionClient
         content={content}
         products={products}
+        gourmetOffers={gourmetOffers}
         chequesCadeauxContent={chequesCadeauxContent}
       />
     </div>

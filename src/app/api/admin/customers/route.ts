@@ -6,6 +6,7 @@ interface CustomerSummary {
   email: string;
   reservationCount: number;
   giftCardCount: number;
+  gourmetOfferCount: number;
   contactCount: number;
   lastEventAt: string;
   hasNote: boolean;
@@ -21,26 +22,37 @@ export async function GET(req: NextRequest) {
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const perPage = 25;
 
-  const [reservationGroups, giftCardGroups, contactGroups, notes] =
-    await Promise.all([
-      prisma.reservation.groupBy({
-        by: ["email"],
-        _count: { _all: true },
-        _max: { date: true },
-      }),
-      prisma.giftCard.groupBy({
-        by: ["recipientEmail"],
-        where: { recipientEmail: { not: null } },
-        _count: { _all: true },
-        _max: { createdAt: true },
-      }),
-      prisma.contactMessage.groupBy({
-        by: ["email"],
-        _count: { _all: true },
-        _max: { createdAt: true },
-      }),
-      prisma.customerNote.findMany({ select: { email: true } }),
-    ]);
+  const [
+    reservationGroups,
+    giftCardGroups,
+    gourmetOfferGroups,
+    contactGroups,
+    notes,
+  ] = await Promise.all([
+    prisma.reservation.groupBy({
+      by: ["email"],
+      _count: { _all: true },
+      _max: { date: true },
+    }),
+    prisma.giftCard.groupBy({
+      by: ["recipientEmail"],
+      where: { recipientEmail: { not: null } },
+      _count: { _all: true },
+      _max: { createdAt: true },
+    }),
+    prisma.gourmetOffer.groupBy({
+      by: ["recipientEmail"],
+      where: { recipientEmail: { not: null } },
+      _count: { _all: true },
+      _max: { createdAt: true },
+    }),
+    prisma.contactMessage.groupBy({
+      by: ["email"],
+      _count: { _all: true },
+      _max: { createdAt: true },
+    }),
+    prisma.customerNote.findMany({ select: { email: true } }),
+  ]);
 
   const notesByEmail = new Set(notes.map((n) => n.email.toLowerCase()));
   const customers = new Map<string, CustomerSummary>();
@@ -53,6 +65,7 @@ export async function GET(req: NextRequest) {
         email: rawEmail,
         reservationCount: 0,
         giftCardCount: 0,
+        gourmetOfferCount: 0,
         contactCount: 0,
         lastEventAt: new Date(0).toISOString(),
         hasNote: notesByEmail.has(key),
@@ -79,6 +92,13 @@ export async function GET(req: NextRequest) {
     if (!group.recipientEmail) continue;
     const entry = getOrCreate(group.recipientEmail);
     entry.giftCardCount = group._count._all;
+    bumpLastEventAt(entry, group._max.createdAt);
+  }
+
+  for (const group of gourmetOfferGroups) {
+    if (!group.recipientEmail) continue;
+    const entry = getOrCreate(group.recipientEmail);
+    entry.gourmetOfferCount = group._count._all;
     bumpLastEventAt(entry, group._max.createdAt);
   }
 

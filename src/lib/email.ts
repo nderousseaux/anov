@@ -648,3 +648,116 @@ export async function sendGiftCardEmail({
     `,
   });
 }
+
+export async function sendGourmetOfferExpirationReminder({
+  to,
+  code,
+  offerName,
+  expiresAt,
+}: {
+  to: string;
+  code: string;
+  offerName: string;
+  expiresAt: string;
+}) {
+  const t = getTransporter();
+  if (!t) {
+    // Email service disabled - SMTP not configured
+    return null;
+  }
+
+  return t.sendMail({
+    from: FROM,
+    to,
+    subject: `Rappel — Votre offre gourmande expire bientôt l'Anøv`,
+    html: `
+      <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
+        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
+        <h2 style="font-size:20px;font-weight:normal;">Rappel d'expiration</h2>
+        <p>Bonjour,</p>
+        <p>Cette offre gourmande arrive à expiration sous peu :</p>
+        <div style="background:#f8f4e8;padding:24px;border-radius:8px;margin:24px 0;text-align:center;">
+          <p style="font-size:14px;color:#888;margin:0 0 8px 0;">Offre gourmande</p>
+          <p style="font-size:28px;color:#e3cb6b;font-weight:bold;margin:0 0 16px 0;">${offerName}</p>
+          <p style="font-size:14px;color:#888;margin:0 0 8px 0;">Code de l'offre</p>
+          <p style="font-size:24px;color:#1a1a1a;font-weight:bold;letter-spacing:2px;margin:0;font-family:monospace;">${code}</p>
+        </div>
+        <p><strong>Date d'expiration :</strong> ${expiresAt}</p>
+        <p style="margin-top:16px;">
+          Cette offre gourmande sera <strong>expirée</strong> après cette date et ne pourra plus être utilisée.
+        </p>
+        <p style="margin-top:16px;">
+          Vous pouvez l'utiliser avant cette date pour toute réservation chez l'Anøv.
+        </p>
+        <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
+        <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
+      </div>
+    `,
+  });
+}
+
+export async function sendGourmetOfferEmail({
+  to,
+  code,
+  offerName,
+  offerDescription,
+  personalMessage,
+  expiresAt,
+}: {
+  to: string;
+  code: string;
+  offerName: string;
+  offerDescription?: string;
+  personalMessage?: string;
+  expiresAt: string;
+}) {
+  const t = getTransporter();
+  if (!t) {
+    // Email service disabled - SMTP not configured
+    return null;
+  }
+
+  // Le prix n'est volontairement jamais affiché dans cet email
+  return t.sendMail({
+    from: FROM,
+    to,
+    subject: `Vous avez reçu une offre gourmande l'Anøv`,
+    html: `
+      <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
+        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
+        <h2 style="font-size:20px;font-weight:normal;">Vous avez reçu une offre gourmande !</h2>
+        ${personalMessage
+        ? `
+          <div style="padding:16px;background:#f5f5f5;border-left:4px solid #e3cb6b;margin:16px 0;">
+            <p style="margin:0;white-space:pre-wrap;font-style:italic;">${personalMessage}</p>
+          </div>
+        `
+        : ""
+      }
+        <p>Félicitations ! Vous avez reçu une offre gourmande pour une expérience culinaire signature chez l'Anøv.</p>
+        <div style="background:#f8f4e8;padding:24px;border-radius:8px;margin:24px 0;text-align:center;">
+          <p style="font-size:14px;color:#888;margin:0 0 8px 0;">Offre gourmande</p>
+          <p style="font-size:28px;color:#e3cb6b;font-weight:bold;margin:0 0 8px 0;">${offerName}</p>
+          ${offerDescription
+        ? `<p style="font-size:14px;color:#555;margin:0 0 16px 0;">${offerDescription}</p>`
+        : ""
+      }
+          <p style="font-size:14px;color:#888;margin:0 0 8px 0;">Code de l'offre</p>
+          <p style="font-size:24px;color:#1a1a1a;font-weight:bold;letter-spacing:2px;margin:0;font-family:monospace;">${code}</p>
+        </div>
+        <p><strong>Comment utiliser votre offre gourmande :</strong></p>
+        <ol style="line-height:1.8;">
+          <li>Réservez votre table sur notre site ou par téléphone</li>
+          <li>Présentez ce code lors de votre visite</li>
+          <li>Profitez de votre expérience gastronomique !</li>
+        </ol>
+        <p style="color:#888;font-size:13px;margin-top:24px;">
+          Valable jusqu'au ${expiresAt}<br/>
+          Cette offre gourmande est valable pour toute réservation chez l'Anøv.
+        </p>
+        <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
+        <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
+      </div>
+    `,
+  });
+}

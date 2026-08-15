@@ -75,6 +75,34 @@ const fr = {
       secure: "Tous les achats sont sécurisés",
       valid: "Les bons et chèques cadeaux sont valables 12 mois",
     },
+    gourmetOffer: {
+      introTitle: "Offre Gourmande",
+      introText: "Offrez une expérience culinaire signature chez l'Anøv",
+      noOffers: "Aucune offre gourmande disponible pour le moment.",
+      offerButton: "Offrir",
+      form: {
+        title: "Offrir {title}",
+        recipientLabel: "Email du destinataire",
+        placeholderRecipient: "destinataire@example.com",
+        messageLabel: "Message personnel",
+        placeholderMessage: "Ajoutez un message personnalisé...",
+        submit: "Acheter maintenant",
+        cancel: "Annuler",
+        paymentInfo: "Paiement sécurisé • Livraison par email",
+        errors: {
+          recipient: "Veuillez entrer un email valide",
+          network: "Erreur de réseau, veuillez réessayer",
+        },
+      },
+      success: {
+        title: "Merci pour votre achat !",
+        emailSentTitle:
+          "Un email contenant votre offre gourmande a été envoyé au destinataire.",
+        emailSentDescription:
+          "Le destinataire recevra un code unique valable 12 mois pour profiter de cette offre gourmande chez ANØV.",
+        buttonAnother: "Offrir une autre offre gourmande",
+      },
+    },
   },
   contact: {
     name: "Nom",

@@ -139,6 +139,34 @@ const en = {
       secure: "All purchases are secure",
       valid: "Vouchers and gift cards are valid for 12 months",
     },
+    gourmetOffer: {
+      introTitle: "Gourmet Offer",
+      introText: "Give the gift of a signature culinary experience at l'Anøv",
+      noOffers: "No gourmet offer available at the moment.",
+      offerButton: "Gift it",
+      form: {
+        title: "Gift {title}",
+        recipientLabel: "Recipient's email",
+        placeholderRecipient: "recipient@example.com",
+        messageLabel: "Personal message",
+        placeholderMessage: "Add a personalized message...",
+        submit: "Buy now",
+        cancel: "Cancel",
+        paymentInfo: "Secure payment • Email delivery",
+        errors: {
+          recipient: "Please enter a valid email",
+          network: "Network error, please try again",
+        },
+      },
+      success: {
+        title: "Thank you for your purchase!",
+        emailSentTitle:
+          "An email containing your gourmet offer has been sent to the recipient.",
+        emailSentDescription:
+          "The recipient will receive a unique code valid for 12 months to enjoy this gourmet offer at ANØV.",
+        buttonAnother: "Gift another gourmet offer",
+      },
+    },
   },
   legal: {
     frenchOnly: "(Document available in French only)",

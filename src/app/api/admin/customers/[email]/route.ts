@@ -13,13 +13,17 @@ export async function GET(
   const { email: rawEmail } = await params;
   const email = decodeURIComponent(rawEmail);
 
-  const [reservations, giftCards, contactMessages, productOrders, note] =
+  const [reservations, giftCards, gourmetOffers, contactMessages, productOrders, note] =
     await Promise.all([
       prisma.reservation.findMany({
         where: { email: { equals: email, mode: "insensitive" } },
         orderBy: { date: "desc" },
       }),
       prisma.giftCard.findMany({
+        where: { recipientEmail: { equals: email, mode: "insensitive" } },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.gourmetOffer.findMany({
         where: { recipientEmail: { equals: email, mode: "insensitive" } },
         orderBy: { createdAt: "desc" },
       }),
@@ -39,6 +43,7 @@ export async function GET(
   return NextResponse.json({
     reservations,
     giftCards,
+    gourmetOffers,
     contactMessages,
     productOrders,
     note,

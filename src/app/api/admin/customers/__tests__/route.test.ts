@@ -10,6 +10,9 @@ vi.mock("@/lib/prisma", () => ({
     giftCard: {
       groupBy: vi.fn(),
     },
+    gourmetOffer: {
+      groupBy: vi.fn(),
+    },
     contactMessage: {
       groupBy: vi.fn(),
     },
@@ -60,6 +63,7 @@ describe("Admin Customers API", () => {
         },
       ]);
       (prisma.giftCard.groupBy as any).mockResolvedValue([]);
+      (prisma.gourmetOffer.groupBy as any).mockResolvedValue([]);
       (prisma.contactMessage.groupBy as any).mockResolvedValue([]);
       (prisma.customerNote.findMany as any).mockResolvedValue([]);
 
@@ -98,6 +102,7 @@ describe("Admin Customers API", () => {
         },
       ]);
       (prisma.giftCard.groupBy as any).mockResolvedValue([]);
+      (prisma.gourmetOffer.groupBy as any).mockResolvedValue([]);
       (prisma.contactMessage.groupBy as any).mockResolvedValue([]);
       (prisma.customerNote.findMany as any).mockResolvedValue([]);
 
@@ -172,6 +177,7 @@ describe("Admin Customers API", () => {
         },
       ]);
       (prisma.giftCard.groupBy as any).mockResolvedValue([]);
+      (prisma.gourmetOffer.groupBy as any).mockResolvedValue([]);
       (prisma.contactMessage.groupBy as any).mockResolvedValue([]);
       (prisma.customerNote.findMany as any).mockResolvedValue([
         { email: "test@example.com" },
@@ -209,6 +215,7 @@ describe("Admin Customers API", () => {
         },
       ]);
       (prisma.giftCard.groupBy as any).mockResolvedValue([]);
+      (prisma.gourmetOffer.groupBy as any).mockResolvedValue([]);
       (prisma.contactMessage.groupBy as any).mockResolvedValue([]);
       (prisma.customerNote.findMany as any).mockResolvedValue([]);
 

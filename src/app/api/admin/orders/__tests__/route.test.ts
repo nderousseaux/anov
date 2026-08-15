@@ -59,6 +59,7 @@ describe("Admin Orders API", () => {
           createdAt: new Date("2024-06-15"),
           updatedAt: new Date("2024-06-15"),
           stripeSessionId: null,
+          expiresAt: null,
           transactionExpireAt: null,
         },
         {
@@ -75,6 +76,7 @@ describe("Admin Orders API", () => {
           createdAt: new Date("2024-06-14"),
           updatedAt: new Date("2024-06-14"),
           stripeSessionId: null,
+          expiresAt: null,
           transactionExpireAt: null,
         },
       ]);
@@ -115,6 +117,7 @@ describe("Admin Orders API", () => {
           createdAt: new Date("2024-06-15"),
           updatedAt: new Date("2024-06-15"),
           stripeSessionId: null,
+          expiresAt: null,
           transactionExpireAt: null,
         },
       ]);
@@ -152,6 +155,7 @@ describe("Admin Orders API", () => {
           createdAt: new Date("2024-06-15"),
           updatedAt: new Date("2024-06-15"),
           stripeSessionId: null,
+          expiresAt: null,
           transactionExpireAt: null,
         },
       ]);
@@ -190,6 +194,7 @@ describe("Admin Orders API", () => {
           createdAt: new Date("2024-06-15"),
           updatedAt: new Date("2024-06-15"),
           stripeSessionId: null,
+          expiresAt: null,
           transactionExpireAt: null,
         },
         {
@@ -207,6 +212,7 @@ describe("Admin Orders API", () => {
           createdAt: new Date("2024-06-01"),
           updatedAt: new Date("2024-06-01"),
           stripeSessionId: null,
+          expiresAt: null,
         },
       ]);
 
@@ -245,6 +251,7 @@ describe("Admin Orders API", () => {
           createdAt: new Date("2024-06-15"),
           updatedAt: new Date("2024-06-15"),
           stripeSessionId: null,
+          expiresAt: null,
           transactionExpireAt: null,
         },
         {
@@ -261,6 +268,7 @@ describe("Admin Orders API", () => {
           createdAt: new Date("2024-06-14"),
           updatedAt: new Date("2024-06-14"),
           stripeSessionId: null,
+          expiresAt: null,
           transactionExpireAt: null,
         },
       ]);
@@ -303,6 +311,7 @@ describe("Admin Orders API", () => {
           createdAt: new Date(),
           updatedAt: new Date(),
           stripeSessionId: null,
+          expiresAt: null,
         },
       ]);
 

@@ -207,7 +207,7 @@ export async function sendConfirmationEmail({
           <tr><td style="padding:8px;font-weight:bold;">Couverts</td><td style="padding:8px;">${guests} personne${guests > 1 ? "s" : ""}</td></tr>
         </table>
         <p style="margin-top:16px;">Besoin d&apos;annuler ?<br/>
-          Appeler nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>
+          Appelez-nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>
         </p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
         <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
@@ -281,7 +281,7 @@ export async function sendReminderEmail({
         </table>
         <p style="margin-top:16px;">${messageIntro}.</p>
         <p style="margin-top:16px;">Besoin d&apos;annuler ou modifier ?<br/>
-          Appeler nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>
+          Appelez-nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>
         </p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
         <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>

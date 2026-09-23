@@ -3,6 +3,17 @@ node_modules
 
 ./src/generated/prisma
 dist
+
+# build caches (regenerated)
+tsconfig.tsbuildinfo
+package-lock.json
+
+# test outputs
+coverage
+test-results
+playwright-report
+
+.DS_Store
 .env
 .env.local
 .env.preview.local

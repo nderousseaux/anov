@@ -1,4 +1,7 @@
 const de = {
+  common: {
+    backToHome: "Zurück zur Startseite",
+  },
   nav: {
     ourStory: "Unsere Geschichte",
     gallery: "Galerie",
@@ -124,6 +127,7 @@ const de = {
       successTitle: "Bestellung bestätigt!",
       successDesc:
         "Ihre Bestellung wurde verarbeitet. Sie erhalten bald Neuigkeiten von uns.",
+      successButtonShop: "Zurück zum Shop",
       errors: {
         name: "Name ist erforderlich",
         email: "Bitte geben Sie eine gültige E-Mail ein",

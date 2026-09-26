@@ -3,6 +3,10 @@
 export type Locale = "fr" | "en" | "de";
 
 // Type definitions for translations
+export interface CommonTranslations {
+  backToHome: string;
+}
+
 export interface NavTranslations {
   ourStory: string;
   gallery: string;
@@ -65,6 +69,7 @@ export interface BoutiqueTranslations {
     zipCode: string;
     successTitle: string;
     successDesc: string;
+    successButtonShop: string;
     errors: {
       name: string;
       email: string;
@@ -184,6 +189,7 @@ export interface LegalTranslations {
 }
 
 export interface Translations {
+  common: CommonTranslations;
   nav: NavTranslations;
   footer: FooterTranslations;
   gallery: GalleryTranslations;

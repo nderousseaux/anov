@@ -10,9 +10,12 @@ import {
   XCircle,
   Calendar,
   Clock as ClockIcon,
+  Home,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import {
+  PostPaymentScreen,
+  PostPaymentLoading,
+} from "@/components/shared/PostPaymentScreen";
 
 // SYSTEME DE PAIEMENT ACTIVE
 // Le CMS est fonctionnel coté admin, le système de paiement Stripe est maintenant actif
@@ -110,67 +113,40 @@ function ReservationSuccessForm() {
   }, [sessionId]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-primary text-xl">Chargement...</div>
-      </div>
-    );
+    return <PostPaymentLoading message="Chargement..." />;
   }
 
   if (error || !reservation) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center pt-20">
-        <div className="text-center">
-          <XCircle size={64} className="text-destructive mx-auto mb-4" />
-          <p className="text-foreground text-xl mb-6">
-            {error ?? "Systeme de paiement temporairement desactive"}
-          </p>
-          <p className="text-muted-foreground text-sm mb-6">
-            Veuillez utiliser le CMS admin pour faire vos reservations
-          </p>
-          <Link href="/reservation">
-            <Button className="bg-primary text-primary-foreground">
-              Faire une réservation via CMS
-            </Button>
-          </Link>
-        </div>
-      </div>
+      <PostPaymentScreen
+        tone="error"
+        icon={<XCircle className="w-10 h-10" />}
+        title={error ?? "Systeme de paiement temporairement desactive"}
+        description="Veuillez utiliser le CMS admin pour faire vos reservations"
+        actions={[
+          { label: "Faire une réservation via CMS", href: "/reservation" },
+        ]}
+      />
     );
   }
 
   // Si la réservation est expirée (PENDING_PAYMENT + transactionExpireAt dépassé)
   if (isExpired) {
     return (
-      <div className="min-h-screen bg-background pt-24 pb-16 px-4">
-        <div className="max-w-lg mx-auto">
-          <div className="text-center mb-10">
-            <ClockIcon size={72} className="text-amber-500 mx-auto mb-4" />
-            <h1
-              className="text-4xl sm:text-5xl text-amber-500 mb-3"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              Transaction expirée
-            </h1>
-            <p className="text-muted-foreground">
-              Votre paiement n&apos;a pas été complété dans les 10 minutes. La
-              réservation a été annulée.
-            </p>
-          </div>
-          <div className="bg-card border border-primary/20 rounded-lg p-8 space-y-5">
-            <p className="text-foreground">
-              Votre acompte n&apos;a pas été débité. Le créneau est de nouveau
-              disponible.
-            </p>
-          </div>
-          <div className="text-center mt-8">
-            <Link href="/reservation">
-              <Button className="bg-primary text-primary-foreground">
-                Faire une nouvelle réservation
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
+      <PostPaymentScreen
+        tone="warning"
+        icon={<ClockIcon className="w-10 h-10" />}
+        title="Transaction expirée"
+        description="Votre paiement n'a pas été complété dans les 10 minutes. La réservation a été annulée."
+        actions={[
+          { label: "Faire une nouvelle réservation", href: "/reservation" },
+        ]}
+      >
+        <p className="text-foreground">
+          Votre acompte n&apos;a pas été débité. Le créneau est de nouveau
+          disponible.
+        </p>
+      </PostPaymentScreen>
     );
   }
 
@@ -186,68 +162,50 @@ function ReservationSuccessForm() {
   const formattedTime = `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-16 px-4">
-      <div className="max-w-lg mx-auto">
-        <div className="text-center mb-10">
-          <CheckCircle size={72} className="text-primary mx-auto mb-4" />
-          <h1
-            className="text-4xl sm:text-5xl text-primary mb-3"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Réservation confirmée
-          </h1>
-          <p className="text-muted-foreground">
-            Votre acompte a bien été reçu. Un email de confirmation vous a été
-            envoyé.
-          </p>
-        </div>
-
-        <div className="bg-card border border-primary/20 rounded-lg p-8 space-y-5 mb-6">
-          <div className="flex items-center gap-3 text-foreground">
-            <Calendar size={20} className="text-primary shrink-0" />
-            <span>{formattedDate}</span>
-          </div>
-          <div className="flex items-center gap-3 text-foreground">
-            <ClockIcon size={20} className="text-primary shrink-0" />
-            <span>{formattedTime}</span>
-          </div>
-          <div className="flex items-center gap-3 text-foreground">
-            <Users size={20} className="text-primary shrink-0" />
-            <span>
-              {reservation.guests} personne{reservation.guests > 1 ? "s" : ""}
-            </span>
-          </div>
-          <div className="flex items-center gap-3 text-foreground">
-            <Mail size={20} className="text-primary shrink-0" />
-            <span>{reservation.email}</span>
-          </div>
-          {reservation.phone && (
-            <div className="flex items-center gap-3 text-foreground">
-              <Phone size={20} className="text-primary shrink-0" />
-              <span>{reservation.phone}</span>
-            </div>
-          )}
-        </div>
-
-        <div className="text-center mt-6">
-          <Link href="/" className="inline-block">
-            <Button variant="outline">Retour à l&apos;accueil</Button>
-          </Link>
-        </div>
+    <PostPaymentScreen
+      icon={<CheckCircle className="w-10 h-10" />}
+      title="Réservation confirmée"
+      description="Votre acompte a bien été reçu. Un email de confirmation vous a été envoyé."
+      actions={[
+        {
+          label: "Retour à l'accueil",
+          href: "/",
+          icon: <Home className="w-4 h-4" />,
+          variant: "outline",
+        },
+      ]}
+    >
+      <div className="flex items-center gap-3 text-foreground">
+        <Calendar size={20} className="text-primary shrink-0" />
+        <span>{formattedDate}</span>
       </div>
-    </div>
+      <div className="flex items-center gap-3 text-foreground">
+        <ClockIcon size={20} className="text-primary shrink-0" />
+        <span>{formattedTime}</span>
+      </div>
+      <div className="flex items-center gap-3 text-foreground">
+        <Users size={20} className="text-primary shrink-0" />
+        <span>
+          {reservation.guests} personne{reservation.guests > 1 ? "s" : ""}
+        </span>
+      </div>
+      <div className="flex items-center gap-3 text-foreground">
+        <Mail size={20} className="text-primary shrink-0" />
+        <span>{reservation.email}</span>
+      </div>
+      {reservation.phone && (
+        <div className="flex items-center gap-3 text-foreground">
+          <Phone size={20} className="text-primary shrink-0" />
+          <span>{reservation.phone}</span>
+        </div>
+      )}
+    </PostPaymentScreen>
   );
 }
 
 export default function ReservationSuccessPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-background flex items-center justify-center pt-20">
-          <p className="text-foreground text-xl">Chargement...</p>
-        </div>
-      }
-    >
+    <Suspense fallback={<PostPaymentLoading message="Chargement..." />}>
       <ReservationSuccessForm />
     </Suspense>
   );

@@ -1,4 +1,7 @@
 const en = {
+  common: {
+    backToHome: "Back to home",
+  },
   nav: {
     ourStory: "Our Story",
     gallery: "Gallery",
@@ -123,6 +126,7 @@ const en = {
       successTitle: "Order confirmed!",
       successDesc:
         "Your order has been processed. You will receive news from us soon.",
+      successButtonShop: "Back to the shop",
       errors: {
         name: "Name is required",
         email: "Please enter a valid email",

@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ShoppingBag, Gift, Home, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
+import { PostPaymentScreen } from "@/components/shared/PostPaymentScreen";
 
 export function BoutiqueSuccessClient() {
   const searchParams = useSearchParams();
@@ -61,85 +61,61 @@ export function BoutiqueSuccessClient() {
 
   const hasFormData = formData !== null;
 
+  const homeAction = {
+    label: t.common.backToHome,
+    href: "/",
+    icon: <Home className="w-4 h-4" />,
+    variant: "outline" as const,
+  };
+
   if (isGourmetOffer) {
     const g = t.boutique.gourmetOffer.success;
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center pt-20">
-        <div className="container max-w-2xl mx-auto px-4 text-center">
-          <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Gift className="w-10 h-10 text-green-500" />
-          </div>
-          <h1
-            className="text-4xl sm:text-5xl font-bold text-foreground mb-6"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            {g.title}
-          </h1>
-          <p className="text-xl text-muted-foreground mb-4">
-            {g.emailSentTitle}
-          </p>
-          <p className="text-base text-muted-foreground mb-8">
-            {g.emailSentDescription}
-          </p>
-          <div className="flex flex-col gap-4 justify-center">
-            <Button asChild>
-              <a href="/boutique" className="flex items-center justify-center gap-2">
-                <ArrowRight className="w-4 h-4" />
-                {g.buttonAnother}
-              </a>
-            </Button>
-            <Button asChild variant="outline">
-              <a href="/" className="flex items-center justify-center gap-2">
-                <Home className="w-4 h-4" />
-                Retour à l&apos;accueil
-              </a>
-            </Button>
-          </div>
-        </div>
-      </div>
+      <PostPaymentScreen
+        icon={<Gift className="w-10 h-10" />}
+        title={g.title}
+        description={
+          <>
+            <p className="mb-2">{g.emailSentTitle}</p>
+            <p className="text-sm">{g.emailSentDescription}</p>
+          </>
+        }
+        actions={[
+          {
+            label: g.buttonAnother,
+            href: "/boutique",
+            icon: <ArrowRight className="w-4 h-4" />,
+          },
+          homeAction,
+        ]}
+      />
     );
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center pt-20">
-      <div className="container max-w-2xl mx-auto px-4 text-center">
-        <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-          <ShoppingBag className="w-10 h-10 text-green-500" />
+    <PostPaymentScreen
+      icon={<ShoppingBag className="w-10 h-10" />}
+      title={t.boutique.product.successTitle}
+      description={t.boutique.product.successDesc}
+      actions={[
+        {
+          label: t.boutique.product.successButtonShop,
+          href: "/boutique",
+          icon: <ArrowRight className="w-4 h-4" />,
+        },
+        homeAction,
+      ]}
+    >
+      {hasFormData && (
+        <div>
+          <p className="text-sm text-muted-foreground mb-2">
+            Vos coordonnées ont été enregistrées pour faciliter vos futures commandes.
+          </p>
+          <p className="text-sm text-foreground">
+            {formData.customerName} • {formData.customerEmail}
+          </p>
         </div>
-        <h1
-          className="text-4xl sm:text-5xl font-bold text-foreground mb-6"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Commande confirmée !
-        </h1>
-        <p className="text-xl text-muted-foreground mb-8">
-          Votre commande a été prise en compte avec succès.
-        </p>
-        {hasFormData && (
-          <div className="bg-muted/50 border border-primary/10 rounded-lg p-6 mb-6">
-            <p className="text-sm text-muted-foreground mb-4">
-              Vos coordonnées ont été enregistrées pour faciliter vos futures commandes.
-            </p>
-            <p className="text-sm text-foreground mb-4">
-              {formData.customerName} • {formData.customerEmail}
-            </p>
-          </div>
-        )}
-        <div className="flex flex-col gap-4 justify-center">
-          <Button asChild>
-            <a href="/boutique" className="flex items-center justify-center gap-2">
-              <ArrowRight className="w-4 h-4" />
-              {hasFormData ? "Passer une nouvelle commande" : "Commander un produit"}
-            </a>
-          </Button>
-          <Button asChild variant="outline">
-            <a href="/" className="flex items-center justify-center gap-2">
-              <Home className="w-4 h-4" />
-              Retour à l&apos;accueil
-            </a>
-          </Button>
-        </div>
-      </div>
-    </div>
+      )}
+    </PostPaymentScreen>
   );
 }

@@ -1,4 +1,7 @@
 const fr = {
+  common: {
+    backToHome: "Retour à l'accueil",
+  },
   nav: {
     ourStory: "Notre Histoire",
     gallery: "Galerie",
@@ -59,6 +62,7 @@ const fr = {
       successTitle: "Commande confirmée !",
       successDesc:
         "Votre commande a été prise en compte. Vous recevrez bientôt des nouvelles de nous.",
+      successButtonShop: "Retourner à la boutique",
       errors: {
         name: "Le nom est requis",
         email: "Veuillez entrer un email valide",

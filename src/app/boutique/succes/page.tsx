@@ -1,12 +1,11 @@
 import { Suspense } from "react";
 import { BoutiqueSuccessClient } from "@/components/features/Boutique/BoutiqueSuccessClient";
+import { PostPaymentLoading } from "@/components/shared/PostPaymentScreen";
 
 export default async function BoutiqueSuccessPage() {
   return (
-    <div className="min-h-screen bg-background pt-20">
-      <Suspense>
-        <BoutiqueSuccessClient />
-      </Suspense>
-    </div>
+    <Suspense fallback={<PostPaymentLoading message="Chargement..." />}>
+      <BoutiqueSuccessClient />
+    </Suspense>
   );
 }

@@ -25,7 +25,9 @@ export interface GiftCardFormData {
  * Encode form data into URL query string
  * Uses base64 encoding for security (avoids issues with special chars)
  */
-export function encodeFormData<T extends Record<string, unknown>>(data: T): string {
+export function encodeFormData<T extends Record<string, unknown>>(
+  data: T,
+): string {
   const json = JSON.stringify(data);
   return btoa(json);
 }
@@ -46,13 +48,15 @@ export function decodeFormData<T>(encoded: string | null): T | null {
 /**
  * Get param name for data type
  */
-function getParamName(paramType: 'reservation' | 'giftCard' | 'productOrder'): string {
+function getParamName(
+  paramType: "reservation" | "giftCard" | "productOrder",
+): string {
   const paramNameMap: Record<string, string> = {
-    reservation: 'r',
-    giftCard: 'g',
-    productOrder: 'p',
+    reservation: "r",
+    giftCard: "g",
+    productOrder: "p",
   };
-  return paramNameMap[paramType] || 'r';
+  return paramNameMap[paramType] || "r";
 }
 
 /**
@@ -64,13 +68,13 @@ function getParamName(paramType: 'reservation' | 'giftCard' | 'productOrder'): s
 export function buildUrlWithEncodedData(
   baseUrl: string,
   formData: Record<string, unknown>,
-  paramType: 'reservation' | 'giftCard' | 'productOrder' = 'reservation',
+  paramType: "reservation" | "giftCard" | "productOrder" = "reservation",
 ): string {
   const encodedData = encodeFormData(formData);
   const paramName = getParamName(paramType);
 
   // Only use on client side
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return baseUrl;
   }
 
@@ -84,11 +88,13 @@ export function buildUrlWithEncodedData(
  * Parse query params from current URL and extract encoded form data
  * @param paramType - Type of data: 'reservation', 'giftCard', or 'productOrder'
  */
-export function getEncodedFormDataFromUrl(paramType: 'reservation' | 'giftCard' | 'productOrder' = 'reservation'): string | null {
+export function getEncodedFormDataFromUrl(
+  paramType: "reservation" | "giftCard" | "productOrder" = "reservation",
+): string | null {
   const paramName = getParamName(paramType);
 
   // Only use on client side
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return null;
   }
 
@@ -100,7 +106,7 @@ export function getEncodedFormDataFromUrl(paramType: 'reservation' | 'giftCard' 
  * Extract reservation form data from URL query params
  */
 export function getReservationFormDataFromUrl(): ReservationFormData | null {
-  const encoded = getEncodedFormDataFromUrl('reservation');
+  const encoded = getEncodedFormDataFromUrl("reservation");
   return encoded ? decodeFormData<ReservationFormData>(encoded) : null;
 }
 
@@ -108,7 +114,7 @@ export function getReservationFormDataFromUrl(): ReservationFormData | null {
  * Extract gift card form data from URL query params
  */
 export function getGiftCardFormDataFromUrl(): GiftCardFormData | null {
-  const encoded = getEncodedFormDataFromUrl('giftCard');
+  const encoded = getEncodedFormDataFromUrl("giftCard");
   return encoded ? decodeFormData<GiftCardFormData>(encoded) : null;
 }
 
@@ -116,7 +122,7 @@ export function getGiftCardFormDataFromUrl(): GiftCardFormData | null {
  * Extract product order form data from URL query params
  */
 export function getProductOrderFormDataFromUrl(): ReservationFormData | null {
-  const encoded = getEncodedFormDataFromUrl('productOrder');
+  const encoded = getEncodedFormDataFromUrl("productOrder");
   return encoded ? decodeFormData<ReservationFormData>(encoded) : null;
 }
 
@@ -124,11 +130,13 @@ export function getProductOrderFormDataFromUrl(): ReservationFormData | null {
  * Clear form data params from current URL
  * @param paramType - Type of data to clear
  */
-export function clearEncodedFormData(paramType: 'reservation' | 'giftCard' | 'productOrder' = 'reservation'): void {
+export function clearEncodedFormData(
+  paramType: "reservation" | "giftCard" | "productOrder" = "reservation",
+): void {
   const paramName = getParamName(paramType);
 
   // Only use on client side
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return;
   }
 

@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
         guests: guestsNum.toString(),
         specialRequest: specialRequest?.trim() || "",
         reservationId: reservation.id,
-              },
+      },
     });
 
     // Mettre à jour la réservation avec l'ID de la session Stripe

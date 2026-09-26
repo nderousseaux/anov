@@ -189,13 +189,11 @@ describe("Reservations API", () => {
       vi.mocked(prisma.$transaction).mockImplementation(async (cb) => {
         const tx = {
           reservation: {
-            create: vi
-              .fn()
-              .mockResolvedValue({
-                id: 1,
-                name: "Test User",
-                email: "test@example.com",
-              }),
+            create: vi.fn().mockResolvedValue({
+              id: 1,
+              name: "Test User",
+              email: "test@example.com",
+            }),
             findMany: vi.fn().mockResolvedValue([]),
           },
           table: { findMany: vi.fn().mockResolvedValue([]) },

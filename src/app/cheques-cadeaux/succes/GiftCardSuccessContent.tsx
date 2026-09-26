@@ -68,8 +68,8 @@ export default function GiftCardSuccessContent({
 
   useEffect(() => {
     const loadFromSessionStorage = () => {
-      if (typeof window !== 'undefined') {
-        const storedData = sessionStorage.getItem('giftCardFormData');
+      if (typeof window !== "undefined") {
+        const storedData = sessionStorage.getItem("giftCardFormData");
         if (storedData) {
           try {
             const parsedData = JSON.parse(storedData);
@@ -93,9 +93,9 @@ export default function GiftCardSuccessContent({
       }
     };
 
-    window.addEventListener('pageshow', handlePageShow);
+    window.addEventListener("pageshow", handlePageShow);
     return () => {
-      window.removeEventListener('pageshow', handlePageShow);
+      window.removeEventListener("pageshow", handlePageShow);
     };
   }, []);
 
@@ -202,7 +202,8 @@ export default function GiftCardSuccessContent({
       {hasFormData && (
         <div className="bg-muted/50 border border-primary/10 rounded-lg p-4">
           <p className="text-sm text-muted-foreground">
-            Vos coordonnées ont été enregistrées pour faciliter vos futures commandes.
+            Vos coordonnées ont été enregistrées pour faciliter vos futures
+            commandes.
           </p>
           <p className="text-sm text-foreground mt-1">
             {formData.recipient} • {formData.amount}

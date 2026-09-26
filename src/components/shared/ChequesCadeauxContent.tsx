@@ -90,14 +90,14 @@ export function ChequesCadeauxContent({
   // Force re-render on return from Stripe by incrementing the key
   useEffect(() => {
     const forceReRender = () => {
-      setKey(prev => prev + 1);
+      setKey((prev) => prev + 1);
     };
 
     // Listen for pageshow event
-    if (typeof window !== 'undefined') {
-      window.addEventListener('pageshow', forceReRender);
+    if (typeof window !== "undefined") {
+      window.addEventListener("pageshow", forceReRender);
       return () => {
-        window.removeEventListener('pageshow', forceReRender);
+        window.removeEventListener("pageshow", forceReRender);
       };
     }
   }, []);
@@ -109,8 +109,8 @@ export function ChequesCadeauxContent({
   // Use pageshow event to handle back/forward cache (bfcache)
   useEffect(() => {
     const loadFromSessionStorage = () => {
-      if (typeof window !== 'undefined') {
-        const storedData = sessionStorage.getItem('giftCardFormData');
+      if (typeof window !== "undefined") {
+        const storedData = sessionStorage.getItem("giftCardFormData");
         if (storedData) {
           try {
             const parsedData = JSON.parse(storedData);
@@ -138,20 +138,22 @@ export function ChequesCadeauxContent({
     // check for bfcache restore using the performance API
     let pageshowHandler: ((event: PageTransitionEvent) => void) | null = null;
 
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       pageshowHandler = (_event: PageTransitionEvent) => {
         // Always load from sessionStorage on pageshow
         // This handles both bfcache restore AND regular navigation back
         loadFromSessionStorage();
       };
-      window.addEventListener('pageshow', pageshowHandler);
+      window.addEventListener("pageshow", pageshowHandler);
     }
 
     // Check if page was restored from bfcache before this useEffect ran
     // We can detect this by checking the performance entries
     try {
-      const navEntries = performance?.getEntriesByType?.('navigation') as PerformanceNavigationTiming[];
-      const isBfcacheRestore = navEntries?.[0]?.type === 'back_forward';
+      const navEntries = performance?.getEntriesByType?.(
+        "navigation",
+      ) as PerformanceNavigationTiming[];
+      const isBfcacheRestore = navEntries?.[0]?.type === "back_forward";
       if (isBfcacheRestore && !hasLoadedFromSessionStorage.current) {
         loadFromSessionStorage();
       }
@@ -161,7 +163,7 @@ export function ChequesCadeauxContent({
 
     return () => {
       if (pageshowHandler) {
-        window.removeEventListener('pageshow', pageshowHandler);
+        window.removeEventListener("pageshow", pageshowHandler);
       }
     };
   }, [key]); // Re-run when key changes (after bfcache restore)
@@ -219,13 +221,16 @@ export function ChequesCadeauxContent({
       // Stocker les données du formulaire dans sessionStorage pour persistance
       // après le paiement Stripe
       // Note: Don't clear immediately - keep for potential modifications
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('giftCardFormData', JSON.stringify({
-          amount: giftCard.amount,
-          name: giftCard.name,
-          recipient: giftCard.recipient,
-          message: giftCard.message,
-        }));
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(
+          "giftCardFormData",
+          JSON.stringify({
+            amount: giftCard.amount,
+            name: giftCard.name,
+            recipient: giftCard.recipient,
+            message: giftCard.message,
+          }),
+        );
       }
 
       // Appeler l'API pour créer une session de paiement Stripe

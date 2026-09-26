@@ -6,6 +6,7 @@
 Ce document explique comment utiliser le site web du restaurant **l'Anøv**.
 
 Le site permet aux clients de :
+
 - Réserver une table en ligne
 - Acheter des chèques cadeaux
 - Commander des produits
@@ -25,8 +26,7 @@ Le site permet aux clients de :
 10. [Stripe](#stripe)
 11. [Contact technique](#contact-technique)
 
-
-## Comment accéder au site <span id="comment-accéder-au-site"></span> 
+## Comment accéder au site <span id="comment-accéder-au-site"></span>
 
 ### Pour les clients (site public)
 
@@ -44,7 +44,6 @@ Le site permet aux clients de :
 1. Se rendre sur : **https://anov.fr/admin**
 2. Se connecter avec ses identifiants
 3. Accès au dashboard administrateur
-
 
 ---
 
@@ -97,21 +96,21 @@ Les clients réservent via : **https://anov.fr/reservation**
 
 ### Statuts de réservation
 
-| Statut | Signification |
-|--------|---------------|
+| Statut         | Signification                                         |
+| -------------- | ----------------------------------------------------- |
 | **En attente** | Le client a commencé la réservation mais n'a pas payé |
-| **Confirmé** | Le paiement a été reçu |
-| **Annulé** | Le client a annulé |
-| **Complété** | Le client est venu |
-| **Expiré** | Le paiement n'a pas été effectué à temps |
+| **Confirmé**   | Le paiement a été reçu                                |
+| **Annulé**     | Le client a annulé                                    |
+| **Complété**   | Le client est venu                                    |
+| **Expiré**     | Le paiement n'a pas été effectué à temps              |
 
 ### Gérer une réservation
 
 #### Annuler une réservation
+
 1. Se rendre dans **Réservations**
 2. Clic sur la réservation
 3. Clic sur **"Annuler"**
-
 
 ### Notifications
 
@@ -154,11 +153,11 @@ Le code est généré automatiquement. Vous pouvez le copier et l'envoyer au cli
 
 ### Statuts des chèques
 
-| Statut | Signification |
-|--------|---------------|
-| **Actif** | Le chèque est valable |
-| **Utilisé** | Le chèque a été utilisé |
-| **Expiré** | Le chèque a dépassé sa date de validité (12 mois) |
+| Statut      | Signification                                     |
+| ----------- | ------------------------------------------------- |
+| **Actif**   | Le chèque est valable                             |
+| **Utilisé** | Le chèque a été utilisé                           |
+| **Expiré**  | Le chèque a dépassé sa date de validité (12 mois) |
 
 ### Rappel d'expiration
 
@@ -180,19 +179,20 @@ Les produits sont gérés depuis le **CMS** et affichés dans la page **Boutique
 3. Cliquer sur la section **"Boutique"**
 4. Remplir les champs pour chaque produit :
 
-| Champ | Description |
-|-------|-------------|
-| **Titre** | Nom du produit (obligatoire, en français) |
-| **Description** | Description détaillée du produit |
-| **Prix** | Prix en euros (nombre entier) |
-| **Quantité maximale** | Nombre maximum d'unités commandables |
-| **Livraison** | Cocher si le produit est livrable |
-| **Image** | Photo du produit (stockée dans `public/assets/boutique/`) |
-| **Texte alternatif** | Description d'accessibilité pour l'image |
+| Champ                 | Description                                               |
+| --------------------- | --------------------------------------------------------- |
+| **Titre**             | Nom du produit (obligatoire, en français)                 |
+| **Description**       | Description détaillée du produit                          |
+| **Prix**              | Prix en euros (nombre entier)                             |
+| **Quantité maximale** | Nombre maximum d'unités commandables                      |
+| **Livraison**         | Cocher si le produit est livrable                         |
+| **Image**             | Photo du produit (stockée dans `public/assets/boutique/`) |
+| **Texte alternatif**  | Description d'accessibilité pour l'image                  |
 
 ### Langues
 
 Les produits supportent 3 langues :
+
 - **Français** (obligatoire)
 - **Anglais** (optionnel)
 - **Allemand** (optionnel)
@@ -246,14 +246,15 @@ Les clients commandent des produits via : **https://anov.fr/boutique**
 
 ### Modes de livraison
 
-| Mode | Description |
-|------|-------------|
-| **Retrait au restaurant** | Le client vient chercher au restaurant |
-| **Livraison à domicile** | Le produit est livré à l'adresse du client |
+| Mode                      | Description                                |
+| ------------------------- | ------------------------------------------ |
+| **Retrait au restaurant** | Le client vient chercher au restaurant     |
+| **Livraison à domicile**  | Le produit est livré à l'adresse du client |
 
 ### Paiement Stripe
 
 Les commandes produits sont payées via **Stripe Checkout** :
+
 - Le client est redirigé vers Stripe pour le paiement
 - Une fois payé, la commande passe à l'état **En attente...**
 - L'admin voit la transaction dans la liste des commandes
@@ -261,7 +262,7 @@ Les commandes produits sont payées via **Stripe Checkout** :
 
 ---
 
-## Comment gérer les contacts 
+## Comment gérer les contacts
 
 ### Vue d'overview
 
@@ -270,6 +271,7 @@ Les clients contactent via : **https://anov.fr/contact**
 ### Envoi des messages
 
 Lorsqu'un client envoie un message via le formulaire de contact :
+
 1. Le message est stocké dans la base de données (fiche client)
 2. Un email est envoyé à **contact@anovrestaurant.fr** sur le compte IONOS
 3. Le client reçoit une confirmation de réception
@@ -316,6 +318,7 @@ La gestion des clients se fait via la page **Fiches Client** avec un historique 
 ### Gérer les interactions
 
 Chaque interaction est listée avec :
+
 - La date et l'heure
 - Les détails (couverts, montant, statut)
 - Les actions possibles (ex: annuler une réservation)
@@ -328,7 +331,7 @@ Chaque interaction est listée avec :
 
 ---
 
-## Paramètres du restaurant 
+## Paramètres du restaurant
 
 Les paramètres globaux du restaurant sont configurables depuis la page **Réservations** (admin).
 
@@ -340,13 +343,13 @@ Les paramètres globaux du restaurant sont configurables depuis la page **Réser
 
 ### Paramètres disponibles
 
-| Paramètre | Description | Exemple |
-|-----------|-------------|---------|
-| **Jours d'ouverture** | Jours habituellement ouverts (surchargeables jour par jour) | Mardi-Samedi |
-| **Acompte par couvert** | Montant débité au moment de la réservation | 20 € |
-| **Durée du repas** | Temps d'occupation d'un créneau par table | 90 min |
-| **Jours avant rappel** | Quand envoyer le rappel (email/SMS) | 1 jour |
-| **Créneaux horaires** | Heures de service disponibles | 12:00-14:30, 19:00-22:30 |
+| Paramètre               | Description                                                 | Exemple                  |
+| ----------------------- | ----------------------------------------------------------- | ------------------------ |
+| **Jours d'ouverture**   | Jours habituellement ouverts (surchargeables jour par jour) | Mardi-Samedi             |
+| **Acompte par couvert** | Montant débité au moment de la réservation                  | 20 €                     |
+| **Durée du repas**      | Temps d'occupation d'un créneau par table                   | 90 min                   |
+| **Jours avant rappel**  | Quand envoyer le rappel (email/SMS)                         | 1 jour                   |
+| **Créneaux horaires**   | Heures de service disponibles                               | 12:00-14:30, 19:00-22:30 |
 
 ### Comment modifier
 
@@ -373,7 +376,8 @@ Le dashboard Stripe permet de suivre les paiements effectués via le site :
 
 ---
 
-## Contact technique 
+## Contact technique
+
 Nathanaël Derousseaux
 n.derousseaux@icloud.com
 +33 6 20 00 46 28

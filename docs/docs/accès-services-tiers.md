@@ -3,13 +3,12 @@
 **Version:** 1.0
 **Dernière mise à jour:** Juillet 2026
 
-| Service | URL | Usage | Identifiant | Mot de passe |
-|---|---|---|---|---|
-| **Admin** | anov.nldx.sh/admin | Accéder à l'interface admin | `admin` | _mavb-d5a7-t21w_ |
-| **CMS** | anov.nldx.sh/keystatic | Modifier le contenu du site | `anovrestaurant` | _jybbo8-Gojsuw-nobdok_ |
-| **Mail** | email.ionos.fr | Mail contact | `contact@anovrestaurant.fr` | _pycfuj-soqqok-2puCsa_ |
+| Service      | URL                    | Usage                       | Identifiant                    | Mot de passe           |
+| ------------ | ---------------------- | --------------------------- | ------------------------------ | ---------------------- |
+| **Admin**    | anov.nldx.sh/admin     | Accéder à l'interface admin | `admin`                        | _mavb-d5a7-t21w_       |
+| **CMS**      | anov.nldx.sh/keystatic | Modifier le contenu du site | `anovrestaurant`               | _jybbo8-Gojsuw-nobdok_ |
+| **Mail**     | email.ionos.fr         | Mail contact                | `contact@anovrestaurant.fr`    | _pycfuj-soqqok-2puCsa_ |
 | **Mail Pro** | email.ionos.fr         | Mail contact pro            | `contactpro@anovrestaurant.fr` | _jezmez-ciDwep-5juvpo_ |
-
 
 ---
 

@@ -13,32 +13,38 @@ export async function GET(
   const { email: rawEmail } = await params;
   const email = decodeURIComponent(rawEmail);
 
-  const [reservations, giftCards, gourmetOffers, contactMessages, productOrders, note] =
-    await Promise.all([
-      prisma.reservation.findMany({
-        where: { email: { equals: email, mode: "insensitive" } },
-        orderBy: { date: "desc" },
-      }),
-      prisma.giftCard.findMany({
-        where: { recipientEmail: { equals: email, mode: "insensitive" } },
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.gourmetOffer.findMany({
-        where: { recipientEmail: { equals: email, mode: "insensitive" } },
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.contactMessage.findMany({
-        where: { email: { equals: email, mode: "insensitive" } },
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.productOrder.findMany({
-        where: { customerEmail: { equals: email, mode: "insensitive" } },
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.customerNote.findUnique({
-        where: { email: email.toLowerCase() },
-      }),
-    ]);
+  const [
+    reservations,
+    giftCards,
+    gourmetOffers,
+    contactMessages,
+    productOrders,
+    note,
+  ] = await Promise.all([
+    prisma.reservation.findMany({
+      where: { email: { equals: email, mode: "insensitive" } },
+      orderBy: { date: "desc" },
+    }),
+    prisma.giftCard.findMany({
+      where: { recipientEmail: { equals: email, mode: "insensitive" } },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.gourmetOffer.findMany({
+      where: { recipientEmail: { equals: email, mode: "insensitive" } },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.contactMessage.findMany({
+      where: { email: { equals: email, mode: "insensitive" } },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.productOrder.findMany({
+      where: { customerEmail: { equals: email, mode: "insensitive" } },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.customerNote.findUnique({
+      where: { email: email.toLowerCase() },
+    }),
+  ]);
 
   // Le nom affiché en titre de la fiche est le dernier nom renseigné,
   // tous formulaires confondus (réservation, commande, contact, bon cadeau, offre gourmande).

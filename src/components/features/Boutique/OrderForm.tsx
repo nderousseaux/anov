@@ -51,8 +51,8 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
   // Use pageshow event to handle back/forward cache (bfcache)
   useEffect(() => {
     const loadFromSessionStorage = () => {
-      if (typeof window !== 'undefined') {
-        const storedData = sessionStorage.getItem('productOrderFormData');
+      if (typeof window !== "undefined") {
+        const storedData = sessionStorage.getItem("productOrderFormData");
         if (storedData) {
           try {
             const parsedData = JSON.parse(storedData);
@@ -89,9 +89,9 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
       }
     };
 
-    window.addEventListener('pageshow', handlePageShow);
+    window.addEventListener("pageshow", handlePageShow);
     return () => {
-      window.removeEventListener('pageshow', handlePageShow);
+      window.removeEventListener("pageshow", handlePageShow);
     };
   }, []);
 
@@ -184,23 +184,26 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
 
       // Stocker les données du formulaire et du produit dans sessionStorage pour persistance
       // après le paiement Stripe
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('productOrderFormData', JSON.stringify({
-          customerName: formData.customerName,
-          customerEmail: formData.customerEmail,
-          customerPhone: formData.customerPhone,
-          address: formData.address,
-          city: formData.city,
-          zipCode: formData.zipCode,
-          country: formData.country,
-          deliveryMethod,
-          quantity,
-          // Store product info to auto-open popup on return
-          productId: product.id,
-          productName: product.title_fr,
-          productPrice: product.price,
-          productImage: product.image,
-        }));
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(
+          "productOrderFormData",
+          JSON.stringify({
+            customerName: formData.customerName,
+            customerEmail: formData.customerEmail,
+            customerPhone: formData.customerPhone,
+            address: formData.address,
+            city: formData.city,
+            zipCode: formData.zipCode,
+            country: formData.country,
+            deliveryMethod,
+            quantity,
+            // Store product info to auto-open popup on return
+            productId: product.id,
+            productName: product.title_fr,
+            productPrice: product.price,
+            productImage: product.image,
+          }),
+        );
       }
 
       // Redirect to Stripe URL returned by API
@@ -252,7 +255,12 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
 
         {/* Form Steps */}
         {step === "form" && (
-          <form ref={formRef} onSubmit={handleSubmit} className="p-6 space-y-6" autoComplete="shipping">
+          <form
+            ref={formRef}
+            onSubmit={handleSubmit}
+            className="p-6 space-y-6"
+            autoComplete="shipping"
+          >
             <div className="text-center mb-6">
               <h2
                 className="text-2xl font-bold text-foreground mb-2"

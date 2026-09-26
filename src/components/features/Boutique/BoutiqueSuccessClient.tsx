@@ -19,8 +19,8 @@ export function BoutiqueSuccessClient() {
   // Use pageshow event to handle back/forward cache (bfcache)
   useEffect(() => {
     const loadFromSessionStorage = () => {
-      if (typeof window !== 'undefined') {
-        const storedData = sessionStorage.getItem('productOrderFormData');
+      if (typeof window !== "undefined") {
+        const storedData = sessionStorage.getItem("productOrderFormData");
         if (storedData) {
           try {
             const parsedData = JSON.parse(storedData);
@@ -33,11 +33,8 @@ export function BoutiqueSuccessClient() {
           }
         }
 
-        const gourmetOfferData = sessionStorage.getItem('gourmetOfferFormData');
-        if (
-          searchParams?.get("type") === "gourmet-offer" ||
-          gourmetOfferData
-        ) {
+        const gourmetOfferData = sessionStorage.getItem("gourmetOfferFormData");
+        if (searchParams?.get("type") === "gourmet-offer" || gourmetOfferData) {
           setIsGourmetOffer(true);
         }
       }
@@ -53,9 +50,9 @@ export function BoutiqueSuccessClient() {
       }
     };
 
-    window.addEventListener('pageshow', handlePageShow);
+    window.addEventListener("pageshow", handlePageShow);
     return () => {
-      window.removeEventListener('pageshow', handlePageShow);
+      window.removeEventListener("pageshow", handlePageShow);
     };
   }, [searchParams]);
 
@@ -109,7 +106,8 @@ export function BoutiqueSuccessClient() {
       {hasFormData && (
         <div>
           <p className="text-sm text-muted-foreground mb-2">
-            Vos coordonnées ont été enregistrées pour faciliter vos futures commandes.
+            Vos coordonnées ont été enregistrées pour faciliter vos futures
+            commandes.
           </p>
           <p className="text-sm text-foreground">
             {formData.customerName} • {formData.customerEmail}

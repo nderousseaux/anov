@@ -408,7 +408,9 @@ function GourmetOfferPageContent() {
               className="flex items-center gap-2 px-4 py-2 bg-[#C5A236] hover:bg-[#d4b14b] text-[#1C1C1C] font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
             >
               <Plus className="w-4 h-4" />
-              <span className="hidden md:inline">Créer une offre gourmande</span>
+              <span className="hidden md:inline">
+                Créer une offre gourmande
+              </span>
               <span className="md:hidden">Créer</span>
             </button>
 
@@ -624,8 +626,8 @@ function GourmetOfferPageContent() {
                   />
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Laissez vide pour créer l&apos;offre sans email (le code
-                  sera affiché à la création)
+                  Laissez vide pour créer l&apos;offre sans email (le code sera
+                  affiché à la création)
                 </p>
               </div>
 

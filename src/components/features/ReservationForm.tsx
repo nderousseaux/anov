@@ -76,8 +76,8 @@ export function ReservationForm({ content }: ReservationFormProps) {
   // Use pageshow event to handle back/forward cache (bfcache)
   useEffect(() => {
     const loadFromSessionStorage = () => {
-      if (typeof window !== 'undefined') {
-        const storedData = sessionStorage.getItem('reservationFormData');
+      if (typeof window !== "undefined") {
+        const storedData = sessionStorage.getItem("reservationFormData");
         if (storedData) {
           try {
             const parsedData = JSON.parse(storedData);
@@ -93,8 +93,8 @@ export function ReservationForm({ content }: ReservationFormProps) {
     // Load immediately on mount
     // Use a small timeout to ensure DOM is ready
     const timeoutId = setTimeout(() => {
-      if (typeof window !== 'undefined') {
-        const storedData = sessionStorage.getItem('reservationFormData');
+      if (typeof window !== "undefined") {
+        const storedData = sessionStorage.getItem("reservationFormData");
         if (storedData) {
           try {
             const parsedData = JSON.parse(storedData);
@@ -113,13 +113,12 @@ export function ReservationForm({ content }: ReservationFormProps) {
       }
     };
 
-    window.addEventListener('pageshow', handlePageShow);
+    window.addEventListener("pageshow", handlePageShow);
     return () => {
       clearTimeout(timeoutId);
-      window.removeEventListener('pageshow', handlePageShow);
+      window.removeEventListener("pageshow", handlePageShow);
     };
   }, []);
-
 
   const loadSlots = useCallback(async (date: string, guests: string) => {
     if (!date || !guests) return;
@@ -179,7 +178,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
           ),
         );
       })
-      .catch(() => { });
+      .catch(() => {});
   }, [calendarMonth, formData.guests]);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -210,8 +209,8 @@ export function ReservationForm({ content }: ReservationFormProps) {
       }
       // Stocker les données du formulaire dans sessionStorage pour persistance
       // après le paiement Stripe
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('reservationFormData', JSON.stringify(formData));
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("reservationFormData", JSON.stringify(formData));
       }
       // Redirection vers Stripe Checkout
       if (data.url) {
@@ -588,7 +587,9 @@ export function ReservationForm({ content }: ReservationFormProps) {
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 text-base transition-all duration-300 disabled:opacity-50"
             >
               {redirecting ? (
-                <span className="text-sm">{t.reservation.redirectingPayment}</span>
+                <span className="text-sm">
+                  {t.reservation.redirectingPayment}
+                </span>
               ) : submitting ? (
                 <span className="flex items-center gap-2">
                   <Loader2 size={18} className="animate-spin" />

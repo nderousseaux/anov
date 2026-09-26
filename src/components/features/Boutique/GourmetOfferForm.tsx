@@ -180,9 +180,7 @@ export function GourmetOfferForm({ offer, onClose }: GourmetOfferFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="gourmet-offer-recipient">
-              {f.recipientLabel}
-            </Label>
+            <Label htmlFor="gourmet-offer-recipient">{f.recipientLabel}</Label>
             <Input
               id="gourmet-offer-recipient"
               type="email"

@@ -24,32 +24,41 @@ export async function GET(req: NextRequest) {
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const perPage = 25;
 
-  const [reservations, giftCards, gourmetOffers, contactMessages, productOrders, notes] =
-    await Promise.all([
-      prisma.reservation.findMany({
-        select: { email: true, name: true, date: true, createdAt: true },
-      }),
-      prisma.giftCard.findMany({
-        where: { recipientEmail: { not: null } },
-        select: { recipientEmail: true, name: true, createdAt: true },
-      }),
-      prisma.gourmetOffer.findMany({
-        where: { recipientEmail: { not: null } },
-        select: { recipientEmail: true, name: true, createdAt: true },
-      }),
-      prisma.contactMessage.findMany({
-        select: { email: true, name: true, createdAt: true },
-      }),
-      prisma.productOrder.findMany({
-        select: { customerEmail: true, customerName: true, createdAt: true },
-      }),
-      prisma.customerNote.findMany({ select: { email: true } }),
-    ]);
+  const [
+    reservations,
+    giftCards,
+    gourmetOffers,
+    contactMessages,
+    productOrders,
+    notes,
+  ] = await Promise.all([
+    prisma.reservation.findMany({
+      select: { email: true, name: true, date: true, createdAt: true },
+    }),
+    prisma.giftCard.findMany({
+      where: { recipientEmail: { not: null } },
+      select: { recipientEmail: true, name: true, createdAt: true },
+    }),
+    prisma.gourmetOffer.findMany({
+      where: { recipientEmail: { not: null } },
+      select: { recipientEmail: true, name: true, createdAt: true },
+    }),
+    prisma.contactMessage.findMany({
+      select: { email: true, name: true, createdAt: true },
+    }),
+    prisma.productOrder.findMany({
+      select: { customerEmail: true, customerName: true, createdAt: true },
+    }),
+    prisma.customerNote.findMany({ select: { email: true } }),
+  ]);
 
   const notesByEmail = new Set(notes.map((n) => n.email.toLowerCase()));
   const customers = new Map<string, CustomerSummary>();
   // Suit le nom le plus récemment renseigné pour chaque email, tous formulaires confondus
-  const latestNameByEmail = new Map<string, { name: string; createdAt: Date }>();
+  const latestNameByEmail = new Map<
+    string,
+    { name: string; createdAt: Date }
+  >();
 
   const getOrCreate = (rawEmail: string): CustomerSummary => {
     const key = rawEmail.toLowerCase();

@@ -107,8 +107,12 @@ export function BoutiqueSectionClient({
   // Si c'est la page de succès, afficher un message de confirmation
   if (isSuccess) {
     // Check for stored order form data in sessionStorage
-    const hasFormData = typeof window !== 'undefined' && sessionStorage.getItem('productOrderFormData');
-    const formData = hasFormData ? JSON.parse(sessionStorage.getItem('productOrderFormData') || '{}') : null;
+    const hasFormData =
+      typeof window !== "undefined" &&
+      sessionStorage.getItem("productOrderFormData");
+    const formData = hasFormData
+      ? JSON.parse(sessionStorage.getItem("productOrderFormData") || "{}")
+      : null;
 
     return (
       <div className="min-h-screen bg-background flex items-center justify-center pt-20">
@@ -128,7 +132,8 @@ export function BoutiqueSectionClient({
           {hasFormData && (
             <div className="bg-muted/50 border border-primary/10 rounded-lg p-6 mb-6">
               <p className="text-sm text-muted-foreground mb-4">
-                Vos coordonnées ont été enregistrées pour faciliter vos futures commandes.
+                Vos coordonnées ont été enregistrées pour faciliter vos futures
+                commandes.
               </p>
               <p className="text-sm text-foreground mb-4">
                 {formData.customerName} • {formData.customerEmail}
@@ -137,9 +142,14 @@ export function BoutiqueSectionClient({
           )}
           <div className="flex flex-col gap-4 justify-center">
             <Button asChild>
-              <a href="/boutique" className="flex items-center justify-center gap-2">
+              <a
+                href="/boutique"
+                className="flex items-center justify-center gap-2"
+              >
                 <ArrowRight className="w-4 h-4" />
-                {hasFormData ? "Passer une nouvelle commande" : "Commander un produit"}
+                {hasFormData
+                  ? "Passer une nouvelle commande"
+                  : "Commander un produit"}
               </a>
             </Button>
             <Button asChild variant="outline">

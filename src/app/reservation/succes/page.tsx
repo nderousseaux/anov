@@ -52,8 +52,8 @@ function ReservationSuccessForm() {
   // Use pageshow event to handle back/forward cache (bfcache)
   useEffect(() => {
     const loadFromSessionStorage = () => {
-      if (typeof window !== 'undefined') {
-        const storedData = sessionStorage.getItem('reservationFormData');
+      if (typeof window !== "undefined") {
+        const storedData = sessionStorage.getItem("reservationFormData");
         if (storedData) {
           try {
             const parsedData = JSON.parse(storedData);
@@ -75,9 +75,9 @@ function ReservationSuccessForm() {
       }
     };
 
-    window.addEventListener('pageshow', handlePageShow);
+    window.addEventListener("pageshow", handlePageShow);
     return () => {
-      window.removeEventListener('pageshow', handlePageShow);
+      window.removeEventListener("pageshow", handlePageShow);
     };
   }, []);
 

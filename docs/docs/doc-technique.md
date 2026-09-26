@@ -58,44 +58,48 @@ src/
 
 ## Stack technique
 
-| Composant | Technologie | Version |
-|-----------|-------------|---------|
-| Framework | Next.js | 15.3.0 (App Router) |
-| Base de données | PostgreSQL | (Neon en prod, Docker en local) |
-| ORM | Prisma | 7.8.0 |
-| CMS | Keystatic | 0.5.50 |
-| UI Framework | React | 18.3.1 |
-| Styles | Tailwind CSS | 4.1.12 |
-| Composants UI | shadcn/ui | (Radix UI) |
-| Authentification | JWT (jose) | |
-| Paiements | Stripe | 22.2.0-beta.3 |
-| Emails | Nodemailer | |
-| SMS | Twilio | |
+| Composant        | Technologie  | Version                         |
+| ---------------- | ------------ | ------------------------------- |
+| Framework        | Next.js      | 15.3.0 (App Router)             |
+| Base de données  | PostgreSQL   | (Neon en prod, Docker en local) |
+| ORM              | Prisma       | 7.8.0                           |
+| CMS              | Keystatic    | 0.5.50                          |
+| UI Framework     | React        | 18.3.1                          |
+| Styles           | Tailwind CSS | 4.1.12                          |
+| Composants UI    | shadcn/ui    | (Radix UI)                      |
+| Authentification | JWT (jose)   |                                 |
+| Paiements        | Stripe       | 22.2.0-beta.3                   |
+| Emails           | Nodemailer   |                                 |
+| SMS              | Twilio       |                                 |
 
 ---
 
 ## Architecture de l'application
 
 ### Page d'accueil (`src/app/page.tsx`)
+
 - Fetch des données CMS (hero, histoire, galerie, contact, origines)
 - Composants : Hero, History, Gallery, OriginsMap, Contact
 - URL paramètre `?lang=fr|en|de` pour la langue
 
 ### Page menu (`src/app/menu/page.tsx`)
+
 - Fetch du menu depuis Keystatic
 - Structure : Onglets → Catégories → Plats
 - Affichage des prix et descriptions
 
 ### Layout client (`src/app/ClientLayout.tsx`)
+
 - Navbar avec navigation et langue
 - Footer avec infos contact
 - SplashScreen (animation d'entrée)
 - LanguageProvider (localStorage)
 
 ### Authentification admin
+
 - Middleware protège `/admin/*`, `/keystatic/*`
 - JWT stocké dans cookie `anov_admin_token`
--Expiration : 8h
+  -Expiration : 8h
 
 ---
 
@@ -123,56 +127,56 @@ CustomerNote     # Notes clients
 
 ### Modèle Reservation
 
-| Champ | Type | Description |
-|-------|------|-------------|
-| id | String (cuid) | ID unique |
-| name | String | Nom du client |
-| email | String | Email |
-| phone | String? | Téléphone optionnel |
-| date | DateTime | Date et heure de la réservation |
-| guests | Int | Nombre de couverts |
-| specialRequest | String? | Demandes spéciales |
-| wantsSmsReminder | Boolean | Rappel SMS |
-| status | ReservationStatus | PENDING_PAYMENT, CONFIRMED, CANCELLED, COMPLETED, EXPIRED |
-| stripeSessionId | String? | Session Stripe |
-| depositPaidCents | Int? | Montant de l'acompte |
-| tableId | Int? | Table attribuée |
-| reminderEmailSent | Boolean | Rappel email envoyé |
-| reminderSmsSent | Boolean | Rappel SMS envoyé |
+| Champ             | Type              | Description                                               |
+| ----------------- | ----------------- | --------------------------------------------------------- |
+| id                | String (cuid)     | ID unique                                                 |
+| name              | String            | Nom du client                                             |
+| email             | String            | Email                                                     |
+| phone             | String?           | Téléphone optionnel                                       |
+| date              | DateTime          | Date et heure de la réservation                           |
+| guests            | Int               | Nombre de couverts                                        |
+| specialRequest    | String?           | Demandes spéciales                                        |
+| wantsSmsReminder  | Boolean           | Rappel SMS                                                |
+| status            | ReservationStatus | PENDING_PAYMENT, CONFIRMED, CANCELLED, COMPLETED, EXPIRED |
+| stripeSessionId   | String?           | Session Stripe                                            |
+| depositPaidCents  | Int?              | Montant de l'acompte                                      |
+| tableId           | Int?              | Table attribuée                                           |
+| reminderEmailSent | Boolean           | Rappel email envoyé                                       |
+| reminderSmsSent   | Boolean           | Rappel SMS envoyé                                         |
 
 ### Modèle Table
 
-| Champ | Type | Description |
-|-------|------|-------------|
-| id | Int | ID auto-increment |
-| name | String | Nom de la table (T1-T6) |
-| capacity | Int | Capacité (2-4 personnes) |
-| posX/posY | Float | Position D3.js |
+| Champ     | Type   | Description              |
+| --------- | ------ | ------------------------ |
+| id        | Int    | ID auto-increment        |
+| name      | String | Nom de la table (T1-T6)  |
+| capacity  | Int    | Capacité (2-4 personnes) |
+| posX/posY | Float  | Position D3.js           |
 
 ### Modèle GiftCard
 
-| Champ | Type | Description |
-|-------|------|-------------|
-| id | String (cuid) | ID unique |
-| code | String | Code unique (ANOV-G-XXXX-XXXX) |
-| amount | Float | Montant |
-| recipientEmail | String | Destinataire |
-| personalMessage | String? | Message personnel |
-| isPaid | Boolean | Payment effectué |
-| status | GiftCardStatus | IN_PROGRESS_PAYMENT, ACTIVE, USED, EXPIRED |
-| expiresAt | DateTime | Date d'expiration (12 mois) |
+| Champ           | Type           | Description                                |
+| --------------- | -------------- | ------------------------------------------ |
+| id              | String (cuid)  | ID unique                                  |
+| code            | String         | Code unique (ANOV-G-XXXX-XXXX)             |
+| amount          | Float          | Montant                                    |
+| recipientEmail  | String         | Destinataire                               |
+| personalMessage | String?        | Message personnel                          |
+| isPaid          | Boolean        | Payment effectué                           |
+| status          | GiftCardStatus | IN_PROGRESS_PAYMENT, ACTIVE, USED, EXPIRED |
+| expiresAt       | DateTime       | Date d'expiration (12 mois)                |
 
 ### Modèle RestaurantSettings (Singleton)
 
-| Champ | Type | Description |
-|-------|------|-------------|
-| id | Int | 1 (singleton) |
-| maxCovers | Int | Nombre maximum de couverts |
-| mealDuration | Int | Durée du repas (par défaut 90 min) |
-| openingDays | String | Jours ouverts [2,3,4,5,6] (Mar-Sam) |
-| openingSlots | String | Creneaux ["12:00", "12:15", ...] |
-| depositPerGuestCents | Int | Dépôt par couvert (2000 = 20€) |
-| daysBeforeReminder | Int | Jours avant rappel (par défaut 3) |
+| Champ                | Type   | Description                         |
+| -------------------- | ------ | ----------------------------------- |
+| id                   | Int    | 1 (singleton)                       |
+| maxCovers            | Int    | Nombre maximum de couverts          |
+| mealDuration         | Int    | Durée du repas (par défaut 90 min)  |
+| openingDays          | String | Jours ouverts [2,3,4,5,6] (Mar-Sam) |
+| openingSlots         | String | Creneaux ["12:00", "12:15", ...]    |
+| depositPerGuestCents | Int    | Dépôt par couvert (2000 = 20€)      |
+| daysBeforeReminder   | Int    | Jours avant rappel (par défaut 3)   |
 
 ---
 
@@ -185,28 +189,29 @@ CustomerNote     # Notes clients
 
 ### Singletons CMS
 
-| Nom | Fichier | Description |
-|-----|---------|-------------|
-| hero | `content/hero.yaml` | Image et sous-titre (3 langues) |
-| histoire | `content/histoire.yaml` | "Notre histoire" (8 sections) |
-| origines | `content/origines.yaml` | Carte des origines |
-| galerie | `content/galerie.yaml` | Galerie photos |
-| contact | `content/contact.yaml` | Info contact, horaires |
-| menu | `content/menu.yaml` | Menu structure (onglets/catégories/plats) |
-| footer | `content/footer.yaml` | Footer, réseaux sociaux |
-| mentionsLegales | `content/mentions-legales.mdoc` | Mentions légales |
-| politiqueConfidentialite | `content/politique-de-confidentialite.mdoc` | RGPD |
-| cgv | `content/cgv.yaml` | CGV |
-| boutique | `content/boutique.yaml` | Boutique et chèques cadeaux |
-| giftCardSuccess | `content/gift-card-success.yaml` | Page de succès |
-| chequesCadeaux | `content/cheques-cadeaux.yaml` | Configuration chèques |
-| reservation | `content/reservation.yaml` | Page réservation |
+| Nom                      | Fichier                                     | Description                               |
+| ------------------------ | ------------------------------------------- | ----------------------------------------- |
+| hero                     | `content/hero.yaml`                         | Image et sous-titre (3 langues)           |
+| histoire                 | `content/histoire.yaml`                     | "Notre histoire" (8 sections)             |
+| origines                 | `content/origines.yaml`                     | Carte des origines                        |
+| galerie                  | `content/galerie.yaml`                      | Galerie photos                            |
+| contact                  | `content/contact.yaml`                      | Info contact, horaires                    |
+| menu                     | `content/menu.yaml`                         | Menu structure (onglets/catégories/plats) |
+| footer                   | `content/footer.yaml`                       | Footer, réseaux sociaux                   |
+| mentionsLegales          | `content/mentions-legales.mdoc`             | Mentions légales                          |
+| politiqueConfidentialite | `content/politique-de-confidentialite.mdoc` | RGPD                                      |
+| cgv                      | `content/cgv.yaml`                          | CGV                                       |
+| boutique                 | `content/boutique.yaml`                     | Boutique et chèques cadeaux               |
+| giftCardSuccess          | `content/gift-card-success.yaml`            | Page de succès                            |
+| chequesCadeaux           | `content/cheques-cadeaux.yaml`              | Configuration chèques                     |
+| reservation              | `content/reservation.yaml`                  | Page réservation                          |
 
 ### Format YAML
 
 Tous les champs supportent 3 langues :
+
 - `_fr` : français
-- `_en` : anglais  
+- `_en` : anglais
 - `_de` : allemand
 
 ---
@@ -218,6 +223,7 @@ Tous les champs supportent 3 langues :
 Crée une réservation avec Stripe checkout.
 
 **Request body:**
+
 ```json
 {
   "name": "Jean Dupont",
@@ -231,6 +237,7 @@ Crée une réservation avec Stripe checkout.
 ```
 
 **Response:**
+
 ```json
 {
   "url": "https://checkout.stripe.com/...",
@@ -239,6 +246,7 @@ Crée une réservation avec Stripe checkout.
 ```
 
 **Logique :**
+
 1. Validation des données
 2. Vérification des disponibilités via `getSlotsWithAvailability()`
 3. Attribution d'une table via `getAssignTable()`
@@ -251,6 +259,7 @@ Crée une réservation avec Stripe checkout.
 Envoie le message de contact par email.
 
 **Request body:**
+
 ```json
 {
   "name": "Jean",
@@ -265,6 +274,7 @@ Envoie le message de contact par email.
 Crée un chèque cadeau avec Stripe.
 
 **Request body:**
+
 ```json
 {
   "amount": "100€",
@@ -278,6 +288,7 @@ Crée un chèque cadeau avec Stripe.
 Crée une commande boutique.
 
 **Request body:**
+
 ```json
 {
   "productName": "Macarons (24)",
@@ -296,6 +307,7 @@ Crée une commande boutique.
 Webhook Stripe pour les événements de paiement.
 
 **Gestion :**
+
 - `checkout.session.completed` → Confirmation de la réservation
 - Mise à jour du statut de la réservation/gift card
 
@@ -306,6 +318,7 @@ Cron job pour les rappels de réservations.
 **Protection :** Header `x-cron-secret`
 
 **Logique :**
+
 - Envoi de rappels 1 jour avant (email ou SMS)
 - Réservations CONFIRMED uniquement
 - SMS si téléphone renseigné, sinon email
@@ -315,6 +328,7 @@ Cron job pour les rappels de réservations.
 Cron job pour les rappels d'expiration des chèques cadeaux.
 
 **Logique :**
+
 - Envoi 30 jours avant l'expiration
 - Chèques ACTIVE uniquement
 
@@ -338,6 +352,7 @@ getAdminFromCookies() → { id } | null
 ```
 
 **Claims :**
+
 - `sub` : admin ID
 - `role` : "admin"
 
@@ -350,11 +365,13 @@ getAdminFromCookies() → { id } | null
 **Fichier :** `src/middleware.ts`
 
 Protège :
+
 - `/admin/*`
 - `/keystatic/*`
 - `/api/keystatic/*`
 
 **Logique :**
+
 1. Redirection vers `/admin/login` si pas de token
 2. Vérification du token JWT
 3. Redirection si role !== "admin"
@@ -366,6 +383,7 @@ Protège :
 ### Internationalisation (i18n)
 
 **3 langues supportées :**
+
 - `fr` : français (par défaut)
 - `en` : anglais
 - `de` : allemand
@@ -379,6 +397,7 @@ Protège :
 **Context :** `src/context/LanguageContext.tsx`
 
 **Translation files :**
+
 - `src/lib/translations/fr.ts`
 - `src/lib/translations/en.ts`
 - `src/lib/translations/de.ts`
@@ -440,6 +459,7 @@ getAssignTable(db, dateStr, time, guests, mealDuration) → Table | null
 ```
 
 **Logique :**
+
 1. Récupérer les réservations du jour
 2. Calculer les tables occupées (avec `computeBusyTableIds`)
 3. Choisir une table disponible avec `pickTable`
@@ -461,15 +481,19 @@ export const DEPOSIT_PER_GUEST_CENTS = 2000; // 20€
 ### Sessions de paiement
 
 **Chargement de l'image :**
+
 - Image fixe pour les réservations : `https://images.unsplash.com/...`
 
 **Modes :**
+
 - `payment` : paiement direct (deposit, gift card, boutique)
 
 **Metadata :**
+
 - `reservationId`, `giftCardId`, `orderId`
 
 **URLs de callback :**
+
 - `success_url` : `/reservation/succes?session_id=...`
 - `cancel_url` : `/reservation/cancel?token=...`
 
@@ -481,7 +505,7 @@ export const DEPOSIT_PER_GUEST_CENTS = 2000; // 20€
 
 ```typescript
 switch (event.type) {
-  case 'checkout.session.completed':
+  case "checkout.session.completed":
     // Réservation : update status to CONFIRMED
     // Gift card : update status to ACTIVE
     // Product order : update status to CONFIRMED
@@ -499,17 +523,17 @@ switch (event.type) {
 
 #### Templates
 
-| Fonction | Usage |
-|----------|-------|
-| `sendConfirmationEmail()` | Confirmation de réservation |
-| `sendReminderEmail()` | Rappel 1 jour avant |
-| `sendCancellationEmail()` | Annulation |
-| `sendContactNotification()` | Nouveau message de contact |
-| `sendContactConfirmation()` | Confirmation contact |
-| `sendGiftCardEmail()` | Envoi du chèque cadeau |
-| `sendGiftCardExpirationReminder()` | Rappel expiration |
-| `sendProductOrderConfirmation()` | Confirmation commande |
-| `sendProductOrderReady()` | Commande prête/envoyée |
+| Fonction                           | Usage                       |
+| ---------------------------------- | --------------------------- |
+| `sendConfirmationEmail()`          | Confirmation de réservation |
+| `sendReminderEmail()`              | Rappel 1 jour avant         |
+| `sendCancellationEmail()`          | Annulation                  |
+| `sendContactNotification()`        | Nouveau message de contact  |
+| `sendContactConfirmation()`        | Confirmation contact        |
+| `sendGiftCardEmail()`              | Envoi du chèque cadeau      |
+| `sendGiftCardExpirationReminder()` | Rappel expiration           |
+| `sendProductOrderConfirmation()`   | Confirmation commande       |
+| `sendProductOrderReady()`          | Commande prête/envoyée      |
 
 #### Structure des emails
 
@@ -524,17 +548,18 @@ switch (event.type) {
 
 ```typescript
 // Configuration
-TWILO_SID, TWILO_AUTH, TWILO_PHONE_NUMBER
-RESTAURANT_PHONE
+(TWILO_SID, TWILO_AUTH, TWILO_PHONE_NUMBER);
+RESTAURANT_PHONE;
 ```
 
 #### Fonction
 
 ```typescript
-sendSmsReminder({ to, name, date, time, guests, daysBefore })
+sendSmsReminder({ to, name, date, time, guests, daysBefore });
 ```
 
 **Format :**
+
 ```
 ANØV — Bonjour Jean, votre réservation pour 4 personnes est prévue demain, le lundi 20 juillet à 19:00. À bientôt ! Pour nous contacter : +33612345678
 ```
@@ -548,17 +573,20 @@ ANØV — Bonjour Jean, votre réservation pour 4 personnes est prévue demain, 
 **Fichier :** `.env.local`
 
 #### Base de données
+
 ```
 DATABASE_URL=postgresql://... (Neon en prod, Docker en local)
 ```
 
 #### Stripe
+
 ```
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
 
 #### SMTP
+
 ```
 SMTP_HOST=smtp.example.com
 SMTP_PORT=587
@@ -570,6 +598,7 @@ CONTACT_EMAIL=contact@anovrestaurant.fr
 ```
 
 #### Twilio
+
 ```
 TWILO_SID=AC...
 TWILO_AUTH=...
@@ -577,11 +606,13 @@ TWILO_PHONE_NUMBER=+337...
 ```
 
 #### JWT
+
 ```
 NEXTAUTH_SECRET=... (min 32 chars)
 ```
 
 #### Application
+
 ```
 NEXT_PUBLIC_BASE_URL=https://anov.fr
 RESTAURANT_PHONE=+33612345678
@@ -589,6 +620,7 @@ RESTAURANT_ADDRESS=12 Rue de la République, 25000 Besançon
 ```
 
 #### Cron
+
 ```
 CRON_SECRET=... (protège les webhooks)
 ```
@@ -600,10 +632,10 @@ CRON_SECRET=... (protège les webhooks)
 ```typescript
 export default config({
   storage: {
-    kind: "github",  // ou "local" en dev
+    kind: "github", // ou "local" en dev
     repo: "nderousseaux/anov",
   },
-  singletons: { /* ... */ }
+  singletons: {/* ... */},
 });
 ```
 
@@ -674,6 +706,7 @@ subtitle_de: "Ein gastronomisches Erlebnis in Besançon"
 **Frequency :** Tous les jours
 
 **Logique :**
+
 1. Trouver les réservations pour J+1
 2. Envoyer SMS (si téléphone) ou email
 3. Marquer le rappel comme envoyé
@@ -685,6 +718,7 @@ subtitle_de: "Ein gastronomisches Erlebnis in Besançon"
 **Frequency :** Tous les jours
 
 **Logique :**
+
 1. Trouver les chèques expirant dans 30 jours
 2. Envoyer email de rappel
 3. Marquer le rappel comme envoyé

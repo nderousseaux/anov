@@ -25,15 +25,15 @@ export function ProductCard({ product }: { product: Product }) {
   // Check if there's stored form data from a recent purchase (returning from Stripe)
   // If yes, open the popup automatically with pre-filled data
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedData = sessionStorage.getItem('productOrderFormData');
+    if (typeof window !== "undefined") {
+      const storedData = sessionStorage.getItem("productOrderFormData");
       if (storedData) {
         try {
           const parsedData = JSON.parse(storedData);
           // Check if this is the product that was just ordered
           if (parsedData.productId && parsedData.productId === productId) {
             // Clear the sessionStorage so we don't auto-open on future visits
-            sessionStorage.removeItem('productOrderFormData');
+            sessionStorage.removeItem("productOrderFormData");
             // Small delay to ensure component is mounted
             setTimeout(() => {
               setIsOrderOpen(true);

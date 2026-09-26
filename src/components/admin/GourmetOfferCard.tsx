@@ -200,7 +200,9 @@ export function GourmetOfferCard({
                   : ""
               }
             >
-              {gourmetOffer.expiresAt ? formatDate(gourmetOffer.expiresAt) : "N/A"}
+              {gourmetOffer.expiresAt
+                ? formatDate(gourmetOffer.expiresAt)
+                : "N/A"}
             </span>
           </div>
         )}

@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAdminFromCookies } from "@/lib/auth";
-import { sendProductOrderReadyEmail, sendProductOrderCancelledEmail } from "@/lib/email";
+import {
+  sendProductOrderReadyEmail,
+  sendProductOrderCancelledEmail,
+} from "@/lib/email";
 import { stripe } from "@/lib/stripe";
 
 export async function GET(

@@ -5,7 +5,10 @@ import { getAdminFromCookies } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { $Enums } from "@/generated/prisma";
 import { stripe } from "@/lib/stripe";
-import { sendProductOrderReadyEmail, sendProductOrderCancelledEmail } from "@/lib/email";
+import {
+  sendProductOrderReadyEmail,
+  sendProductOrderCancelledEmail,
+} from "@/lib/email";
 
 // Mock at top level - must be before imports
 vi.mock("@/lib/prisma", () => ({

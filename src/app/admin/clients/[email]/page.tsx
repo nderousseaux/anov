@@ -236,9 +236,7 @@ export default function ClientDetailPage({
             {detail?.name || email}
           </h1>
           {detail?.name && (
-            <p className="text-sm text-muted-foreground break-all">
-              {email}
-            </p>
+            <p className="text-sm text-muted-foreground break-all">{email}</p>
           )}
         </div>
 

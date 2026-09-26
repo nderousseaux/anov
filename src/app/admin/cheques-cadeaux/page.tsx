@@ -86,8 +86,8 @@ function GiftCardPageContent() {
 
   // Load stored form data from sessionStorage (when returning from Stripe)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedData = sessionStorage.getItem('giftCardFormData');
+    if (typeof window !== "undefined") {
+      const storedData = sessionStorage.getItem("giftCardFormData");
       if (storedData) {
         try {
           const parsedData = JSON.parse(storedData);

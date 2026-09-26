@@ -55,7 +55,7 @@ const en = {
     guests: "Number of guests",
     specialRequest: "Special request",
     specialRequestPlaceholder:
-      "To optimize your experience, please let us know your specific preferences",
+      "To enhance our service, you can let us know your special requests (e.g., allergies, dietary preferences, special occasions, etc.)",
     submit: "Confirm reservation",
     submitting: "Booking…",
     selectDate: "Select a date",
@@ -146,6 +146,8 @@ const en = {
       offerButton: "Gift it",
       form: {
         title: "Gift {title}",
+        nameLabel: "Your name (optional)",
+        placeholderName: "Your name",
         recipientLabel: "Recipient's email",
         placeholderRecipient: "recipient@example.com",
         messageLabel: "Personal message",

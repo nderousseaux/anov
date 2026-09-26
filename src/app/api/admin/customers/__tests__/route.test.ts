@@ -5,16 +5,19 @@ import { NextRequest } from "next/server";
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     reservation: {
-      groupBy: vi.fn(),
+      findMany: vi.fn(),
     },
     giftCard: {
-      groupBy: vi.fn(),
+      findMany: vi.fn(),
     },
     gourmetOffer: {
-      groupBy: vi.fn(),
+      findMany: vi.fn(),
     },
     contactMessage: {
-      groupBy: vi.fn(),
+      findMany: vi.fn(),
+    },
+    productOrder: {
+      findMany: vi.fn(),
     },
     customerNote: {
       findMany: vi.fn(),
@@ -55,16 +58,18 @@ describe("Admin Customers API", () => {
       (getAdminFromCookies as any).mockResolvedValue({ id: 1 });
 
       const { prisma } = await import("@/lib/prisma");
-      (prisma.reservation.groupBy as any).mockResolvedValue([
+      (prisma.reservation.findMany as any).mockResolvedValue([
         {
           email: "test@example.com",
-          _count: { _all: 3 },
-          _max: { date: new Date("2024-06-15") },
+          name: "Test User",
+          date: new Date("2024-06-15"),
+          createdAt: new Date("2024-06-01"),
         },
       ]);
-      (prisma.giftCard.groupBy as any).mockResolvedValue([]);
-      (prisma.gourmetOffer.groupBy as any).mockResolvedValue([]);
-      (prisma.contactMessage.groupBy as any).mockResolvedValue([]);
+      (prisma.giftCard.findMany as any).mockResolvedValue([]);
+      (prisma.gourmetOffer.findMany as any).mockResolvedValue([]);
+      (prisma.contactMessage.findMany as any).mockResolvedValue([]);
+      (prisma.productOrder.findMany as any).mockResolvedValue([]);
       (prisma.customerNote.findMany as any).mockResolvedValue([]);
 
       const { GET } = await import("../route");
@@ -84,26 +89,29 @@ describe("Admin Customers API", () => {
       expect(data.pageSize).toBe(25);
     });
 
-    it("returns customers with search filter", async () => {
+    it("returns customers with search filter matching email", async () => {
       const { getAdminFromCookies } = await import("@/lib/auth");
       (getAdminFromCookies as any).mockResolvedValue({ id: 1 });
 
       const { prisma } = await import("@/lib/prisma");
-      (prisma.reservation.groupBy as any).mockResolvedValue([
+      (prisma.reservation.findMany as any).mockResolvedValue([
         {
           email: "test@example.com",
-          _count: { _all: 3 },
-          _max: { date: new Date("2024-06-15") },
+          name: "Test User",
+          date: new Date("2024-06-15"),
+          createdAt: new Date("2024-06-01"),
         },
         {
           email: "another@test.com",
-          _count: { _all: 1 },
-          _max: { date: new Date("2024-06-10") },
+          name: "Someone Else",
+          date: new Date("2024-06-10"),
+          createdAt: new Date("2024-06-01"),
         },
       ]);
-      (prisma.giftCard.groupBy as any).mockResolvedValue([]);
-      (prisma.gourmetOffer.groupBy as any).mockResolvedValue([]);
-      (prisma.contactMessage.groupBy as any).mockResolvedValue([]);
+      (prisma.giftCard.findMany as any).mockResolvedValue([]);
+      (prisma.gourmetOffer.findMany as any).mockResolvedValue([]);
+      (prisma.contactMessage.findMany as any).mockResolvedValue([]);
+      (prisma.productOrder.findMany as any).mockResolvedValue([]);
       (prisma.customerNote.findMany as any).mockResolvedValue([]);
 
       const { GET } = await import("../route");
@@ -121,30 +129,84 @@ describe("Admin Customers API", () => {
       expect(data.data[0].email).toBe("test@example.com");
     });
 
-    it("includes gift card and contact message counts", async () => {
+    it("returns customers with search filter matching name", async () => {
       const { getAdminFromCookies } = await import("@/lib/auth");
       (getAdminFromCookies as any).mockResolvedValue({ id: 1 });
 
       const { prisma } = await import("@/lib/prisma");
-      (prisma.reservation.groupBy as any).mockResolvedValue([
+      (prisma.reservation.findMany as any).mockResolvedValue([
         {
           email: "test@example.com",
-          _count: { _all: 3 },
-          _max: { date: new Date("2024-06-15") },
+          name: "Jean Dupont",
+          date: new Date("2024-06-15"),
+          createdAt: new Date("2024-06-01"),
+        },
+        {
+          email: "another@test.com",
+          name: "Marie Curie",
+          date: new Date("2024-06-10"),
+          createdAt: new Date("2024-06-01"),
         },
       ]);
-      (prisma.giftCard.groupBy as any).mockResolvedValue([
+      (prisma.giftCard.findMany as any).mockResolvedValue([]);
+      (prisma.gourmetOffer.findMany as any).mockResolvedValue([]);
+      (prisma.contactMessage.findMany as any).mockResolvedValue([]);
+      (prisma.productOrder.findMany as any).mockResolvedValue([]);
+      (prisma.customerNote.findMany as any).mockResolvedValue([]);
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/admin/customers?search=dupont"),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.data.length).toBe(1);
+      expect(data.data[0].email).toBe("test@example.com");
+    });
+
+    it("includes gift card, contact message and product order counts", async () => {
+      const { getAdminFromCookies } = await import("@/lib/auth");
+      (getAdminFromCookies as any).mockResolvedValue({ id: 1 });
+
+      const { prisma } = await import("@/lib/prisma");
+      (prisma.reservation.findMany as any).mockResolvedValue([
+        {
+          email: "test@example.com",
+          name: "Test User",
+          date: new Date("2024-06-15"),
+          createdAt: new Date("2024-06-01"),
+        },
+      ]);
+      (prisma.giftCard.findMany as any).mockResolvedValue([
         {
           recipientEmail: "test@example.com",
-          _count: { _all: 2 },
-          _max: { createdAt: new Date("2024-06-10") },
+          name: null,
+          createdAt: new Date("2024-06-10"),
+        },
+        {
+          recipientEmail: "test@example.com",
+          name: null,
+          createdAt: new Date("2024-06-02"),
         },
       ]);
-      (prisma.contactMessage.groupBy as any).mockResolvedValue([
+      (prisma.gourmetOffer.findMany as any).mockResolvedValue([]);
+      (prisma.contactMessage.findMany as any).mockResolvedValue([
         {
           email: "test@example.com",
-          _count: { _all: 1 },
-          _max: { createdAt: new Date("2024-06-05") },
+          name: "Test User",
+          createdAt: new Date("2024-06-05"),
+        },
+      ]);
+      (prisma.productOrder.findMany as any).mockResolvedValue([
+        {
+          customerEmail: "test@example.com",
+          customerName: "Test User",
+          createdAt: new Date("2024-06-12"),
         },
       ]);
       (prisma.customerNote.findMany as any).mockResolvedValue([]);
@@ -162,6 +224,7 @@ describe("Admin Customers API", () => {
       const data = await res.json();
       expect(data.data[0].giftCardCount).toBe(2);
       expect(data.data[0].contactCount).toBe(1);
+      expect(data.data[0].productOrderCount).toBe(1);
     });
 
     it("includes note status", async () => {
@@ -169,16 +232,18 @@ describe("Admin Customers API", () => {
       (getAdminFromCookies as any).mockResolvedValue({ id: 1 });
 
       const { prisma } = await import("@/lib/prisma");
-      (prisma.reservation.groupBy as any).mockResolvedValue([
+      (prisma.reservation.findMany as any).mockResolvedValue([
         {
           email: "test@example.com",
-          _count: { _all: 1 },
-          _max: { date: new Date("2024-06-15") },
+          name: "Test User",
+          date: new Date("2024-06-15"),
+          createdAt: new Date("2024-06-01"),
         },
       ]);
-      (prisma.giftCard.groupBy as any).mockResolvedValue([]);
-      (prisma.gourmetOffer.groupBy as any).mockResolvedValue([]);
-      (prisma.contactMessage.groupBy as any).mockResolvedValue([]);
+      (prisma.giftCard.findMany as any).mockResolvedValue([]);
+      (prisma.gourmetOffer.findMany as any).mockResolvedValue([]);
+      (prisma.contactMessage.findMany as any).mockResolvedValue([]);
+      (prisma.productOrder.findMany as any).mockResolvedValue([]);
       (prisma.customerNote.findMany as any).mockResolvedValue([
         { email: "test@example.com" },
       ]);
@@ -202,21 +267,24 @@ describe("Admin Customers API", () => {
       (getAdminFromCookies as any).mockResolvedValue({ id: 1 });
 
       const { prisma } = await import("@/lib/prisma");
-      (prisma.reservation.groupBy as any).mockResolvedValue([
+      (prisma.reservation.findMany as any).mockResolvedValue([
         {
           email: "first@example.com",
-          _count: { _all: 1 },
-          _max: { date: new Date("2024-06-01") },
+          name: "First User",
+          date: new Date("2024-06-01"),
+          createdAt: new Date("2024-05-01"),
         },
         {
           email: "second@example.com",
-          _count: { _all: 1 },
-          _max: { date: new Date("2024-06-15") },
+          name: "Second User",
+          date: new Date("2024-06-15"),
+          createdAt: new Date("2024-05-01"),
         },
       ]);
-      (prisma.giftCard.groupBy as any).mockResolvedValue([]);
-      (prisma.gourmetOffer.groupBy as any).mockResolvedValue([]);
-      (prisma.contactMessage.groupBy as any).mockResolvedValue([]);
+      (prisma.giftCard.findMany as any).mockResolvedValue([]);
+      (prisma.gourmetOffer.findMany as any).mockResolvedValue([]);
+      (prisma.contactMessage.findMany as any).mockResolvedValue([]);
+      (prisma.productOrder.findMany as any).mockResolvedValue([]);
       (prisma.customerNote.findMany as any).mockResolvedValue([]);
 
       const { GET } = await import("../route");
@@ -232,6 +300,77 @@ describe("Admin Customers API", () => {
       const data = await res.json();
       expect(data.data[0].email).toBe("second@example.com");
       expect(data.data[1].email).toBe("first@example.com");
+    });
+
+    it("returns the most recently provided name across all sources", async () => {
+      const { getAdminFromCookies } = await import("@/lib/auth");
+      (getAdminFromCookies as any).mockResolvedValue({ id: 1 });
+
+      const { prisma } = await import("@/lib/prisma");
+      (prisma.reservation.findMany as any).mockResolvedValue([
+        {
+          email: "test@example.com",
+          name: "Old Name",
+          date: new Date("2024-01-15"),
+          createdAt: new Date("2024-01-01"),
+        },
+      ]);
+      (prisma.giftCard.findMany as any).mockResolvedValue([]);
+      (prisma.gourmetOffer.findMany as any).mockResolvedValue([]);
+      (prisma.contactMessage.findMany as any).mockResolvedValue([]);
+      (prisma.productOrder.findMany as any).mockResolvedValue([
+        {
+          customerEmail: "test@example.com",
+          customerName: "New Name",
+          createdAt: new Date("2024-06-01"),
+        },
+      ]);
+      (prisma.customerNote.findMany as any).mockResolvedValue([]);
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/admin/customers"),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.data[0].name).toBe("New Name");
+    });
+
+    it("returns null name if no source ever provided one", async () => {
+      const { getAdminFromCookies } = await import("@/lib/auth");
+      (getAdminFromCookies as any).mockResolvedValue({ id: 1 });
+
+      const { prisma } = await import("@/lib/prisma");
+      (prisma.reservation.findMany as any).mockResolvedValue([]);
+      (prisma.giftCard.findMany as any).mockResolvedValue([
+        {
+          recipientEmail: "test@example.com",
+          name: null,
+          createdAt: new Date("2024-06-10"),
+        },
+      ]);
+      (prisma.gourmetOffer.findMany as any).mockResolvedValue([]);
+      (prisma.contactMessage.findMany as any).mockResolvedValue([]);
+      (prisma.productOrder.findMany as any).mockResolvedValue([]);
+      (prisma.customerNote.findMany as any).mockResolvedValue([]);
+
+      const { GET } = await import("../route");
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/admin/customers"),
+        {
+          method: "GET",
+        },
+      );
+      const res = await GET(req as any);
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.data[0].name).toBeNull();
     });
   });
 });

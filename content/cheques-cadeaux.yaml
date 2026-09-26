@@ -18,6 +18,12 @@ labelRecipient_de: E-Mail des Empfängers
 placeholderRecipient_fr: destinataire@example.com
 placeholderRecipient_en: recipient@example.com
 placeholderRecipient_de: empfaenger@example.com
+labelName_fr: Votre nom (facultatif)
+labelName_en: Your name (optional)
+labelName_de: Ihr Name (optional)
+placeholderName_fr: Votre nom
+placeholderName_en: Your name
+placeholderName_de: Ihr Name
 labelMessage_fr: Message personnel
 labelMessage_en: Personal message
 labelMessage_de: Persönliche Nachricht

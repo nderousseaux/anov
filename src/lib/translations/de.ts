@@ -56,7 +56,7 @@ const de = {
     guests: "Anzahl der Gäste",
     specialRequest: "Besonderer Wunsch",
     specialRequestPlaceholder:
-      "Um Ihre Erfahrung zu optimieren, teilen Sie uns bitte Ihre Wünsche mit",
+      "Um unseren Service zu verbessern, können Sie uns Ihre besonderen Wünsche mitteilen (z. B. Allergien, Ernährungspräferenzen, besondere Anlässe usw.)",
     submit: "Reservierung bestätigen",
     submitting: "Reservierung läuft…",
     selectDate: "Datum auswählen",
@@ -147,6 +147,8 @@ const de = {
       offerButton: "Verschenken",
       form: {
         title: "{title} verschenken",
+        nameLabel: "Ihr Name (optional)",
+        placeholderName: "Ihr Name",
         recipientLabel: "E-Mail des Empfängers",
         placeholderRecipient: "empfaenger@example.com",
         messageLabel: "Persönliche Nachricht",

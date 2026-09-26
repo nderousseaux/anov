@@ -28,6 +28,7 @@ export function GourmetOfferForm({ offer, onClose }: GourmetOfferFormProps) {
   const f = t.boutique.gourmetOffer.form;
 
   const [step, setStep] = useState<"form" | "processing">("form");
+  const [name, setName] = useState("");
   const [recipientEmail, setRecipientEmail] = useState("");
   const [personalMessage, setPersonalMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -63,6 +64,7 @@ export function GourmetOfferForm({ offer, onClose }: GourmetOfferFormProps) {
           offerName: offer.title,
           offerImage: offer.image,
           price: offer.price,
+          name: name.trim() || undefined,
           recipientEmail,
           personalMessage,
         }),
@@ -78,6 +80,7 @@ export function GourmetOfferForm({ offer, onClose }: GourmetOfferFormProps) {
         sessionStorage.setItem(
           "gourmetOfferFormData",
           JSON.stringify({
+            name,
             recipientEmail,
             personalMessage,
             offerId: offer.id,
@@ -163,6 +166,17 @@ export function GourmetOfferForm({ offer, onClose }: GourmetOfferFormProps) {
                 }).format(offer.price)}
               </p>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="gourmet-offer-name">{f.nameLabel}</Label>
+            <Input
+              id="gourmet-offer-name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={f.placeholderName}
+            />
           </div>
 
           <div className="space-y-2">

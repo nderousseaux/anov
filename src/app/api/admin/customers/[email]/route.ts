@@ -40,7 +40,33 @@ export async function GET(
       }),
     ]);
 
+  // Le nom affiché en titre de la fiche est le dernier nom renseigné,
+  // tous formulaires confondus (réservation, commande, contact, bon cadeau, offre gourmande).
+  const namedEvents: { name: string | null | undefined; createdAt: Date }[] = [
+    ...reservations.map((r) => ({ name: r.name, createdAt: r.createdAt })),
+    ...giftCards.map((g) => ({ name: g.name, createdAt: g.createdAt })),
+    ...gourmetOffers.map((o) => ({ name: o.name, createdAt: o.createdAt })),
+    ...contactMessages.map((c) => ({ name: c.name, createdAt: c.createdAt })),
+    ...productOrders.map((p) => ({
+      name: p.customerName,
+      createdAt: p.createdAt,
+    })),
+  ];
+
+  let name: string | null = null;
+  let latestAt = -Infinity;
+  for (const evt of namedEvents) {
+    const trimmed = evt.name?.trim();
+    if (!trimmed) continue;
+    const t = evt.createdAt.getTime();
+    if (t >= latestAt) {
+      latestAt = t;
+      name = trimmed;
+    }
+  }
+
   return NextResponse.json({
+    name,
     reservations,
     giftCards,
     gourmetOffers,

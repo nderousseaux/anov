@@ -7473,6 +7473,7 @@ export namespace Prisma {
     updatedAt: Date | null
     code: string | null
     amount: number | null
+    name: string | null
     recipientEmail: string | null
     personalMessage: string | null
     isPaid: boolean | null
@@ -7490,6 +7491,7 @@ export namespace Prisma {
     updatedAt: Date | null
     code: string | null
     amount: number | null
+    name: string | null
     recipientEmail: string | null
     personalMessage: string | null
     isPaid: boolean | null
@@ -7507,6 +7509,7 @@ export namespace Prisma {
     updatedAt: number
     code: number
     amount: number
+    name: number
     recipientEmail: number
     personalMessage: number
     isPaid: number
@@ -7534,6 +7537,7 @@ export namespace Prisma {
     updatedAt?: true
     code?: true
     amount?: true
+    name?: true
     recipientEmail?: true
     personalMessage?: true
     isPaid?: true
@@ -7551,6 +7555,7 @@ export namespace Prisma {
     updatedAt?: true
     code?: true
     amount?: true
+    name?: true
     recipientEmail?: true
     personalMessage?: true
     isPaid?: true
@@ -7568,6 +7573,7 @@ export namespace Prisma {
     updatedAt?: true
     code?: true
     amount?: true
+    name?: true
     recipientEmail?: true
     personalMessage?: true
     isPaid?: true
@@ -7672,6 +7678,7 @@ export namespace Prisma {
     updatedAt: Date
     code: string
     amount: number
+    name: string | null
     recipientEmail: string | null
     personalMessage: string | null
     isPaid: boolean
@@ -7708,6 +7715,7 @@ export namespace Prisma {
     updatedAt?: boolean
     code?: boolean
     amount?: boolean
+    name?: boolean
     recipientEmail?: boolean
     personalMessage?: boolean
     isPaid?: boolean
@@ -7725,6 +7733,7 @@ export namespace Prisma {
     updatedAt?: boolean
     code?: boolean
     amount?: boolean
+    name?: boolean
     recipientEmail?: boolean
     personalMessage?: boolean
     isPaid?: boolean
@@ -7742,6 +7751,7 @@ export namespace Prisma {
     updatedAt?: boolean
     code?: boolean
     amount?: boolean
+    name?: boolean
     recipientEmail?: boolean
     personalMessage?: boolean
     isPaid?: boolean
@@ -7759,6 +7769,7 @@ export namespace Prisma {
     updatedAt?: boolean
     code?: boolean
     amount?: boolean
+    name?: boolean
     recipientEmail?: boolean
     personalMessage?: boolean
     isPaid?: boolean
@@ -7770,7 +7781,7 @@ export namespace Prisma {
     reminderEmailSent?: boolean
   }
 
-  export type GiftCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "amount" | "recipientEmail" | "personalMessage" | "isPaid" | "status" | "stripeSessionId" | "expiresAt" | "transactionExpireAt" | "usedAt" | "reminderEmailSent", ExtArgs["result"]["giftCard"]>
+  export type GiftCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "amount" | "name" | "recipientEmail" | "personalMessage" | "isPaid" | "status" | "stripeSessionId" | "expiresAt" | "transactionExpireAt" | "usedAt" | "reminderEmailSent", ExtArgs["result"]["giftCard"]>
 
   export type $GiftCardPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GiftCard"
@@ -7781,6 +7792,7 @@ export namespace Prisma {
       updatedAt: Date
       code: string
       amount: number
+      name: string | null
       recipientEmail: string | null
       personalMessage: string | null
       isPaid: boolean
@@ -8218,6 +8230,7 @@ export namespace Prisma {
     readonly updatedAt: FieldRef<"GiftCard", 'DateTime'>
     readonly code: FieldRef<"GiftCard", 'String'>
     readonly amount: FieldRef<"GiftCard", 'Float'>
+    readonly name: FieldRef<"GiftCard", 'String'>
     readonly recipientEmail: FieldRef<"GiftCard", 'String'>
     readonly personalMessage: FieldRef<"GiftCard", 'String'>
     readonly isPaid: FieldRef<"GiftCard", 'Boolean'>
@@ -8627,6 +8640,7 @@ export namespace Prisma {
     offerDescription: string | null
     offerImage: string | null
     price: number | null
+    name: string | null
     recipientEmail: string | null
     personalMessage: string | null
     isPaid: boolean | null
@@ -8647,6 +8661,7 @@ export namespace Prisma {
     offerDescription: string | null
     offerImage: string | null
     price: number | null
+    name: string | null
     recipientEmail: string | null
     personalMessage: string | null
     isPaid: boolean | null
@@ -8667,6 +8682,7 @@ export namespace Prisma {
     offerDescription: number
     offerImage: number
     price: number
+    name: number
     recipientEmail: number
     personalMessage: number
     isPaid: number
@@ -8697,6 +8713,7 @@ export namespace Prisma {
     offerDescription?: true
     offerImage?: true
     price?: true
+    name?: true
     recipientEmail?: true
     personalMessage?: true
     isPaid?: true
@@ -8717,6 +8734,7 @@ export namespace Prisma {
     offerDescription?: true
     offerImage?: true
     price?: true
+    name?: true
     recipientEmail?: true
     personalMessage?: true
     isPaid?: true
@@ -8737,6 +8755,7 @@ export namespace Prisma {
     offerDescription?: true
     offerImage?: true
     price?: true
+    name?: true
     recipientEmail?: true
     personalMessage?: true
     isPaid?: true
@@ -8844,6 +8863,7 @@ export namespace Prisma {
     offerDescription: string | null
     offerImage: string | null
     price: number
+    name: string | null
     recipientEmail: string | null
     personalMessage: string | null
     isPaid: boolean
@@ -8883,6 +8903,7 @@ export namespace Prisma {
     offerDescription?: boolean
     offerImage?: boolean
     price?: boolean
+    name?: boolean
     recipientEmail?: boolean
     personalMessage?: boolean
     isPaid?: boolean
@@ -8903,6 +8924,7 @@ export namespace Prisma {
     offerDescription?: boolean
     offerImage?: boolean
     price?: boolean
+    name?: boolean
     recipientEmail?: boolean
     personalMessage?: boolean
     isPaid?: boolean
@@ -8923,6 +8945,7 @@ export namespace Prisma {
     offerDescription?: boolean
     offerImage?: boolean
     price?: boolean
+    name?: boolean
     recipientEmail?: boolean
     personalMessage?: boolean
     isPaid?: boolean
@@ -8943,6 +8966,7 @@ export namespace Prisma {
     offerDescription?: boolean
     offerImage?: boolean
     price?: boolean
+    name?: boolean
     recipientEmail?: boolean
     personalMessage?: boolean
     isPaid?: boolean
@@ -8954,7 +8978,7 @@ export namespace Prisma {
     reminderEmailSent?: boolean
   }
 
-  export type GourmetOfferOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "offerName" | "offerDescription" | "offerImage" | "price" | "recipientEmail" | "personalMessage" | "isPaid" | "status" | "stripeSessionId" | "expiresAt" | "transactionExpireAt" | "usedAt" | "reminderEmailSent", ExtArgs["result"]["gourmetOffer"]>
+  export type GourmetOfferOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "code" | "offerName" | "offerDescription" | "offerImage" | "price" | "name" | "recipientEmail" | "personalMessage" | "isPaid" | "status" | "stripeSessionId" | "expiresAt" | "transactionExpireAt" | "usedAt" | "reminderEmailSent", ExtArgs["result"]["gourmetOffer"]>
 
   export type $GourmetOfferPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GourmetOffer"
@@ -8968,6 +8992,7 @@ export namespace Prisma {
       offerDescription: string | null
       offerImage: string | null
       price: number
+      name: string | null
       recipientEmail: string | null
       personalMessage: string | null
       isPaid: boolean
@@ -9408,6 +9433,7 @@ export namespace Prisma {
     readonly offerDescription: FieldRef<"GourmetOffer", 'String'>
     readonly offerImage: FieldRef<"GourmetOffer", 'String'>
     readonly price: FieldRef<"GourmetOffer", 'Float'>
+    readonly name: FieldRef<"GourmetOffer", 'String'>
     readonly recipientEmail: FieldRef<"GourmetOffer", 'String'>
     readonly personalMessage: FieldRef<"GourmetOffer", 'String'>
     readonly isPaid: FieldRef<"GourmetOffer", 'Boolean'>
@@ -14276,6 +14302,7 @@ export namespace Prisma {
     updatedAt: 'updatedAt',
     code: 'code',
     amount: 'amount',
+    name: 'name',
     recipientEmail: 'recipientEmail',
     personalMessage: 'personalMessage',
     isPaid: 'isPaid',
@@ -14299,6 +14326,7 @@ export namespace Prisma {
     offerDescription: 'offerDescription',
     offerImage: 'offerImage',
     price: 'price',
+    name: 'name',
     recipientEmail: 'recipientEmail',
     personalMessage: 'personalMessage',
     isPaid: 'isPaid',
@@ -14897,6 +14925,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"GiftCard"> | Date | string
     code?: StringFilter<"GiftCard"> | string
     amount?: FloatFilter<"GiftCard"> | number
+    name?: StringNullableFilter<"GiftCard"> | string | null
     recipientEmail?: StringNullableFilter<"GiftCard"> | string | null
     personalMessage?: StringNullableFilter<"GiftCard"> | string | null
     isPaid?: BoolFilter<"GiftCard"> | boolean
@@ -14914,6 +14943,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     code?: SortOrder
     amount?: SortOrder
+    name?: SortOrderInput | SortOrder
     recipientEmail?: SortOrderInput | SortOrder
     personalMessage?: SortOrderInput | SortOrder
     isPaid?: SortOrder
@@ -14935,6 +14965,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"GiftCard"> | Date | string
     updatedAt?: DateTimeFilter<"GiftCard"> | Date | string
     amount?: FloatFilter<"GiftCard"> | number
+    name?: StringNullableFilter<"GiftCard"> | string | null
     recipientEmail?: StringNullableFilter<"GiftCard"> | string | null
     personalMessage?: StringNullableFilter<"GiftCard"> | string | null
     isPaid?: BoolFilter<"GiftCard"> | boolean
@@ -14951,6 +14982,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     code?: SortOrder
     amount?: SortOrder
+    name?: SortOrderInput | SortOrder
     recipientEmail?: SortOrderInput | SortOrder
     personalMessage?: SortOrderInput | SortOrder
     isPaid?: SortOrder
@@ -14976,6 +15008,7 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"GiftCard"> | Date | string
     code?: StringWithAggregatesFilter<"GiftCard"> | string
     amount?: FloatWithAggregatesFilter<"GiftCard"> | number
+    name?: StringNullableWithAggregatesFilter<"GiftCard"> | string | null
     recipientEmail?: StringNullableWithAggregatesFilter<"GiftCard"> | string | null
     personalMessage?: StringNullableWithAggregatesFilter<"GiftCard"> | string | null
     isPaid?: BoolWithAggregatesFilter<"GiftCard"> | boolean
@@ -14999,6 +15032,7 @@ export namespace Prisma {
     offerDescription?: StringNullableFilter<"GourmetOffer"> | string | null
     offerImage?: StringNullableFilter<"GourmetOffer"> | string | null
     price?: FloatFilter<"GourmetOffer"> | number
+    name?: StringNullableFilter<"GourmetOffer"> | string | null
     recipientEmail?: StringNullableFilter<"GourmetOffer"> | string | null
     personalMessage?: StringNullableFilter<"GourmetOffer"> | string | null
     isPaid?: BoolFilter<"GourmetOffer"> | boolean
@@ -15019,6 +15053,7 @@ export namespace Prisma {
     offerDescription?: SortOrderInput | SortOrder
     offerImage?: SortOrderInput | SortOrder
     price?: SortOrder
+    name?: SortOrderInput | SortOrder
     recipientEmail?: SortOrderInput | SortOrder
     personalMessage?: SortOrderInput | SortOrder
     isPaid?: SortOrder
@@ -15043,6 +15078,7 @@ export namespace Prisma {
     offerDescription?: StringNullableFilter<"GourmetOffer"> | string | null
     offerImage?: StringNullableFilter<"GourmetOffer"> | string | null
     price?: FloatFilter<"GourmetOffer"> | number
+    name?: StringNullableFilter<"GourmetOffer"> | string | null
     recipientEmail?: StringNullableFilter<"GourmetOffer"> | string | null
     personalMessage?: StringNullableFilter<"GourmetOffer"> | string | null
     isPaid?: BoolFilter<"GourmetOffer"> | boolean
@@ -15062,6 +15098,7 @@ export namespace Prisma {
     offerDescription?: SortOrderInput | SortOrder
     offerImage?: SortOrderInput | SortOrder
     price?: SortOrder
+    name?: SortOrderInput | SortOrder
     recipientEmail?: SortOrderInput | SortOrder
     personalMessage?: SortOrderInput | SortOrder
     isPaid?: SortOrder
@@ -15090,6 +15127,7 @@ export namespace Prisma {
     offerDescription?: StringNullableWithAggregatesFilter<"GourmetOffer"> | string | null
     offerImage?: StringNullableWithAggregatesFilter<"GourmetOffer"> | string | null
     price?: FloatWithAggregatesFilter<"GourmetOffer"> | number
+    name?: StringNullableWithAggregatesFilter<"GourmetOffer"> | string | null
     recipientEmail?: StringNullableWithAggregatesFilter<"GourmetOffer"> | string | null
     personalMessage?: StringNullableWithAggregatesFilter<"GourmetOffer"> | string | null
     isPaid?: BoolWithAggregatesFilter<"GourmetOffer"> | boolean
@@ -15779,6 +15817,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     code: string
     amount: number
+    name?: string | null
     recipientEmail?: string | null
     personalMessage?: string | null
     isPaid?: boolean
@@ -15796,6 +15835,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     code: string
     amount: number
+    name?: string | null
     recipientEmail?: string | null
     personalMessage?: string | null
     isPaid?: boolean
@@ -15813,6 +15853,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
     personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -15830,6 +15871,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
     personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -15847,6 +15889,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     code: string
     amount: number
+    name?: string | null
     recipientEmail?: string | null
     personalMessage?: string | null
     isPaid?: boolean
@@ -15864,6 +15907,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
     personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -15881,6 +15925,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
     personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -15901,6 +15946,7 @@ export namespace Prisma {
     offerDescription?: string | null
     offerImage?: string | null
     price: number
+    name?: string | null
     recipientEmail?: string | null
     personalMessage?: string | null
     isPaid?: boolean
@@ -15921,6 +15967,7 @@ export namespace Prisma {
     offerDescription?: string | null
     offerImage?: string | null
     price: number
+    name?: string | null
     recipientEmail?: string | null
     personalMessage?: string | null
     isPaid?: boolean
@@ -15941,6 +15988,7 @@ export namespace Prisma {
     offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
     offerImage?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
     personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -15961,6 +16009,7 @@ export namespace Prisma {
     offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
     offerImage?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
     personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -15981,6 +16030,7 @@ export namespace Prisma {
     offerDescription?: string | null
     offerImage?: string | null
     price: number
+    name?: string | null
     recipientEmail?: string | null
     personalMessage?: string | null
     isPaid?: boolean
@@ -16001,6 +16051,7 @@ export namespace Prisma {
     offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
     offerImage?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
     personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -16021,6 +16072,7 @@ export namespace Prisma {
     offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
     offerImage?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: NullableStringFieldUpdateOperationsInput | string | null
     personalMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -16846,6 +16898,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     code?: SortOrder
     amount?: SortOrder
+    name?: SortOrder
     recipientEmail?: SortOrder
     personalMessage?: SortOrder
     isPaid?: SortOrder
@@ -16867,6 +16920,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     code?: SortOrder
     amount?: SortOrder
+    name?: SortOrder
     recipientEmail?: SortOrder
     personalMessage?: SortOrder
     isPaid?: SortOrder
@@ -16884,6 +16938,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     code?: SortOrder
     amount?: SortOrder
+    name?: SortOrder
     recipientEmail?: SortOrder
     personalMessage?: SortOrder
     isPaid?: SortOrder
@@ -16925,6 +16980,7 @@ export namespace Prisma {
     offerDescription?: SortOrder
     offerImage?: SortOrder
     price?: SortOrder
+    name?: SortOrder
     recipientEmail?: SortOrder
     personalMessage?: SortOrder
     isPaid?: SortOrder
@@ -16949,6 +17005,7 @@ export namespace Prisma {
     offerDescription?: SortOrder
     offerImage?: SortOrder
     price?: SortOrder
+    name?: SortOrder
     recipientEmail?: SortOrder
     personalMessage?: SortOrder
     isPaid?: SortOrder
@@ -16969,6 +17026,7 @@ export namespace Prisma {
     offerDescription?: SortOrder
     offerImage?: SortOrder
     price?: SortOrder
+    name?: SortOrder
     recipientEmail?: SortOrder
     personalMessage?: SortOrder
     isPaid?: SortOrder

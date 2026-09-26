@@ -88,6 +88,8 @@ export interface BoutiqueTranslations {
     offerButton: string;
     form: {
       title: string;
+      nameLabel: string;
+      placeholderName: string;
       recipientLabel: string;
       placeholderRecipient: string;
       messageLabel: string;

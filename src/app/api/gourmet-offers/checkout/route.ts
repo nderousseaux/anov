@@ -36,6 +36,7 @@ export async function POST(req: Request) {
       offerDescription,
       offerImage,
       price,
+      name,
       recipientEmail,
       personalMessage,
     } = body;
@@ -84,6 +85,7 @@ export async function POST(req: Request) {
         offerDescription: offerDescription || null,
         offerImage: offerImage || null,
         price: priceValue,
+        name: name?.trim() || null,
         recipientEmail,
         personalMessage: personalMessage || null,
         isPaid: true,

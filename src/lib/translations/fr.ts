@@ -82,6 +82,8 @@ const fr = {
       offerButton: "Offrir",
       form: {
         title: "Offrir {title}",
+        nameLabel: "Votre nom (facultatif)",
+        placeholderName: "Votre nom",
         recipientLabel: "Email du destinataire",
         placeholderRecipient: "destinataire@example.com",
         messageLabel: "Message personnel",
@@ -137,7 +139,7 @@ const fr = {
     guests: "Nombre de personnes",
     specialRequest: "Demande spéciale",
     specialRequestPlaceholder:
-      "Dans le cadre de l'optimisation de votre moment, veuillez nous donner vos envies particulières",
+      "Afin d'améliorer notre service, vous pouvez nous faire part de vos demandes particulières (ex: allergies, préférences alimentaires, occasions spéciales, etc.)",
     submit: "Confirmer la réservation",
     submitting: "Réservation en cours…",
     selectDate: "Sélectionner une date",

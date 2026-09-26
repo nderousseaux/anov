@@ -4,10 +4,12 @@ import { getAdminFromCookies } from "@/lib/auth";
 
 interface CustomerSummary {
   email: string;
+  name: string | null;
   reservationCount: number;
   giftCardCount: number;
   gourmetOfferCount: number;
   contactCount: number;
+  productOrderCount: number;
   lastEventAt: string;
   hasNote: boolean;
 }
@@ -22,40 +24,32 @@ export async function GET(req: NextRequest) {
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const perPage = 25;
 
-  const [
-    reservationGroups,
-    giftCardGroups,
-    gourmetOfferGroups,
-    contactGroups,
-    notes,
-  ] = await Promise.all([
-    prisma.reservation.groupBy({
-      by: ["email"],
-      _count: { _all: true },
-      _max: { date: true },
-    }),
-    prisma.giftCard.groupBy({
-      by: ["recipientEmail"],
-      where: { recipientEmail: { not: null } },
-      _count: { _all: true },
-      _max: { createdAt: true },
-    }),
-    prisma.gourmetOffer.groupBy({
-      by: ["recipientEmail"],
-      where: { recipientEmail: { not: null } },
-      _count: { _all: true },
-      _max: { createdAt: true },
-    }),
-    prisma.contactMessage.groupBy({
-      by: ["email"],
-      _count: { _all: true },
-      _max: { createdAt: true },
-    }),
-    prisma.customerNote.findMany({ select: { email: true } }),
-  ]);
+  const [reservations, giftCards, gourmetOffers, contactMessages, productOrders, notes] =
+    await Promise.all([
+      prisma.reservation.findMany({
+        select: { email: true, name: true, date: true, createdAt: true },
+      }),
+      prisma.giftCard.findMany({
+        where: { recipientEmail: { not: null } },
+        select: { recipientEmail: true, name: true, createdAt: true },
+      }),
+      prisma.gourmetOffer.findMany({
+        where: { recipientEmail: { not: null } },
+        select: { recipientEmail: true, name: true, createdAt: true },
+      }),
+      prisma.contactMessage.findMany({
+        select: { email: true, name: true, createdAt: true },
+      }),
+      prisma.productOrder.findMany({
+        select: { customerEmail: true, customerName: true, createdAt: true },
+      }),
+      prisma.customerNote.findMany({ select: { email: true } }),
+    ]);
 
   const notesByEmail = new Set(notes.map((n) => n.email.toLowerCase()));
   const customers = new Map<string, CustomerSummary>();
+  // Suit le nom le plus récemment renseigné pour chaque email, tous formulaires confondus
+  const latestNameByEmail = new Map<string, { name: string; createdAt: Date }>();
 
   const getOrCreate = (rawEmail: string): CustomerSummary => {
     const key = rawEmail.toLowerCase();
@@ -63,10 +57,12 @@ export async function GET(req: NextRequest) {
     if (!entry) {
       entry = {
         email: rawEmail,
+        name: null,
         reservationCount: 0,
         giftCardCount: 0,
         gourmetOfferCount: 0,
         contactCount: 0,
+        productOrderCount: 0,
         lastEventAt: new Date(0).toISOString(),
         hasNote: notesByEmail.has(key),
       };
@@ -82,36 +78,69 @@ export async function GET(req: NextRequest) {
     }
   };
 
-  for (const group of reservationGroups) {
-    const entry = getOrCreate(group.email);
-    entry.reservationCount = group._count._all;
-    bumpLastEventAt(entry, group._max.date);
+  const registerName = (
+    rawEmail: string,
+    name: string | null | undefined,
+    createdAt: Date,
+  ) => {
+    const trimmed = name?.trim();
+    if (!trimmed) return;
+    const key = rawEmail.toLowerCase();
+    const current = latestNameByEmail.get(key);
+    if (!current || createdAt.getTime() >= current.createdAt.getTime()) {
+      latestNameByEmail.set(key, { name: trimmed, createdAt });
+    }
+  };
+
+  for (const r of reservations) {
+    const entry = getOrCreate(r.email);
+    entry.reservationCount += 1;
+    bumpLastEventAt(entry, r.date);
+    registerName(r.email, r.name, r.createdAt);
   }
 
-  for (const group of giftCardGroups) {
-    if (!group.recipientEmail) continue;
-    const entry = getOrCreate(group.recipientEmail);
-    entry.giftCardCount = group._count._all;
-    bumpLastEventAt(entry, group._max.createdAt);
+  for (const g of giftCards) {
+    if (!g.recipientEmail) continue;
+    const entry = getOrCreate(g.recipientEmail);
+    entry.giftCardCount += 1;
+    bumpLastEventAt(entry, g.createdAt);
+    registerName(g.recipientEmail, g.name, g.createdAt);
   }
 
-  for (const group of gourmetOfferGroups) {
-    if (!group.recipientEmail) continue;
-    const entry = getOrCreate(group.recipientEmail);
-    entry.gourmetOfferCount = group._count._all;
-    bumpLastEventAt(entry, group._max.createdAt);
+  for (const o of gourmetOffers) {
+    if (!o.recipientEmail) continue;
+    const entry = getOrCreate(o.recipientEmail);
+    entry.gourmetOfferCount += 1;
+    bumpLastEventAt(entry, o.createdAt);
+    registerName(o.recipientEmail, o.name, o.createdAt);
   }
 
-  for (const group of contactGroups) {
-    const entry = getOrCreate(group.email);
-    entry.contactCount = group._count._all;
-    bumpLastEventAt(entry, group._max.createdAt);
+  for (const c of contactMessages) {
+    const entry = getOrCreate(c.email);
+    entry.contactCount += 1;
+    bumpLastEventAt(entry, c.createdAt);
+    registerName(c.email, c.name, c.createdAt);
+  }
+
+  for (const p of productOrders) {
+    const entry = getOrCreate(p.customerEmail);
+    entry.productOrderCount += 1;
+    bumpLastEventAt(entry, p.createdAt);
+    registerName(p.customerEmail, p.customerName, p.createdAt);
+  }
+
+  for (const [key, entry] of customers) {
+    entry.name = latestNameByEmail.get(key)?.name ?? null;
   }
 
   let all = Array.from(customers.values());
 
   if (search) {
-    all = all.filter((c) => c.email.toLowerCase().includes(search));
+    all = all.filter(
+      (c) =>
+        c.email.toLowerCase().includes(search) ||
+        (c.name?.toLowerCase().includes(search) ?? false),
+    );
   }
 
   all.sort(

@@ -18,14 +18,17 @@ import {
   Mail,
   StickyNote,
   UtensilsCrossed,
+  Package,
 } from "lucide-react";
 
 interface CustomerSummary {
   email: string;
+  name: string | null;
   reservationCount: number;
   giftCardCount: number;
   gourmetOfferCount: number;
   contactCount: number;
+  productOrderCount: number;
   lastEventAt: string;
   hasNote: boolean;
 }
@@ -129,7 +132,7 @@ function ClientsContent() {
         <div className="relative mb-6 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Rechercher un email..."
+            placeholder="Rechercher un email ou un nom..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -162,9 +165,16 @@ function ClientsContent() {
                 className="bg-card border border-border rounded-lg p-4 hover:border-gold/30 transition-colors block"
               >
                 <div className="flex items-start justify-between gap-2 mb-3">
-                  <span className="font-medium text-foreground break-all">
-                    {customer.email}
-                  </span>
+                  <div className="min-w-0">
+                    <p className="font-medium text-foreground break-all">
+                      {customer.name || customer.email}
+                    </p>
+                    {customer.name && (
+                      <p className="text-xs text-muted-foreground break-all">
+                        {customer.email}
+                      </p>
+                    )}
+                  </div>
                   {customer.hasNote && (
                     <span title="Note présente">
                       <StickyNote className="w-4 h-4 text-primary shrink-0" />
@@ -185,6 +195,9 @@ function ClientsContent() {
                   </Badge>
                   <Badge variant="secondary" className="gap-1">
                     <Mail className="w-3 h-3" /> {customer.contactCount}
+                  </Badge>
+                  <Badge variant="secondary" className="gap-1">
+                    <Package className="w-3 h-3" /> {customer.productOrderCount}
                   </Badge>
                 </div>
                 <p className="text-xs text-muted-foreground">

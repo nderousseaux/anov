@@ -35,6 +35,7 @@ interface GiftCardRow {
   id: string;
   code: string;
   amount: number;
+  name: string | null;
   recipientEmail: string | null;
   personalMessage: string | null;
   status: string;
@@ -46,6 +47,7 @@ interface GourmetOfferRow {
   id: string;
   code: string;
   offerName: string;
+  name: string | null;
   recipientEmail: string | null;
   personalMessage: string | null;
   status: string;
@@ -73,6 +75,7 @@ interface ProductOrderRow {
 }
 
 interface CustomerDetailResponse {
+  name: string | null;
   reservations: ReservationRow[];
   giftCards: GiftCardRow[];
   gourmetOffers: GourmetOfferRow[];
@@ -228,9 +231,16 @@ export default function ClientDetailPage({
           <ArrowLeft className="w-4 h-4" /> Retour aux fiches client
         </Link>
 
-        <h1 className="text-2xl font-semibold text-foreground mb-6 break-all">
-          {email}
-        </h1>
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold text-foreground break-all">
+            {detail?.name || email}
+          </h1>
+          {detail?.name && (
+            <p className="text-sm text-muted-foreground break-all">
+              {email}
+            </p>
+          )}
+        </div>
 
         {error && (
           <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg p-4 mb-6">
@@ -366,6 +376,7 @@ function TimelineCard({ item }: { item: TimelineItem }) {
           </div>
           <p className="text-xs text-muted-foreground">
             {formatDateTime(g.createdAt)} — {formatCurrency(g.amount)}
+            {g.name ? ` — ${g.name}` : ""}
           </p>
           {g.personalMessage && (
             <p className="text-sm text-muted-foreground mt-2">
@@ -393,6 +404,7 @@ function TimelineCard({ item }: { item: TimelineItem }) {
           </div>
           <p className="text-xs text-muted-foreground">
             {formatDateTime(o.createdAt)} — {o.offerName}
+            {o.name ? ` — ${o.name}` : ""}
           </p>
           {o.personalMessage && (
             <p className="text-sm text-muted-foreground mt-2">

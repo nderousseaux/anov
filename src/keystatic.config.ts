@@ -956,6 +956,18 @@ export default config({
         placeholderRecipient_de: fields.text({
           label: "Placeholder Destinataire 🇩🇪",
         }),
+        labelName_fr: fields.text({ label: "Label Nom (facultatif) 🇫🇷" }),
+        labelName_en: fields.text({ label: "Label Nom (facultatif) 🇬🇧" }),
+        labelName_de: fields.text({ label: "Label Nom (facultatif) 🇩🇪" }),
+        placeholderName_fr: fields.text({
+          label: "Placeholder Nom 🇫🇷",
+        }),
+        placeholderName_en: fields.text({
+          label: "Placeholder Nom 🇬🇧",
+        }),
+        placeholderName_de: fields.text({
+          label: "Placeholder Nom 🇩🇪",
+        }),
         labelMessage_fr: fields.text({ label: "Label Message 🇫🇷" }),
         labelMessage_en: fields.text({ label: "Label Message 🇬🇧" }),
         labelMessage_de: fields.text({ label: "Label Message 🇩🇪" }),

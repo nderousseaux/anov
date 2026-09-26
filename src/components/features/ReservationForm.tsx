@@ -120,7 +120,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
     };
   }, []);
 
-  
+
   const loadSlots = useCallback(async (date: string, guests: string) => {
     if (!date || !guests) return;
     setLoadingSlots(true);
@@ -179,7 +179,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
           ),
         );
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [calendarMonth, formData.guests]);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -576,7 +576,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, specialRequest: e.target.value })
                 }
-                className="w-full bg-background/30 border border-primary/30 text-foreground rounded-md p-3 min-h-[80px] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+                className="w-full bg-background/30 border border-primary/30 text-foreground text-sm rounded-md p-3 min-h-[80px] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                 placeholder={t.reservation.specialRequestPlaceholder}
               />
             </div>

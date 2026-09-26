@@ -39,6 +39,12 @@ interface ChequesCadeauxContent {
   placeholderRecipient_fr?: string;
   placeholderRecipient_en?: string;
   placeholderRecipient_de?: string;
+  labelName_fr?: string;
+  labelName_en?: string;
+  labelName_de?: string;
+  placeholderName_fr?: string;
+  placeholderName_en?: string;
+  placeholderName_de?: string;
   labelMessage_fr?: string;
   labelMessage_en?: string;
   labelMessage_de?: string;
@@ -67,6 +73,7 @@ export function ChequesCadeauxContent({
   const { locale } = useLanguage();
   const [giftCard, setGiftCard] = useState({
     amount: "",
+    name: "",
     recipient: "",
     message: "",
   });
@@ -109,6 +116,7 @@ export function ChequesCadeauxContent({
             const parsedData = JSON.parse(storedData);
             setGiftCard({
               amount: parsedData.amount || "",
+              name: parsedData.name || "",
               recipient: parsedData.recipient || "",
               message: parsedData.message || "",
             });
@@ -214,6 +222,7 @@ export function ChequesCadeauxContent({
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('giftCardFormData', JSON.stringify({
           amount: giftCard.amount,
+          name: giftCard.name,
           recipient: giftCard.recipient,
           message: giftCard.message,
         }));
@@ -227,6 +236,7 @@ export function ChequesCadeauxContent({
         },
         body: JSON.stringify({
           amount: giftCard.amount,
+          name: giftCard.name || undefined,
           recipientEmail: giftCard.recipient,
           personalMessage: giftCard.message,
         }),
@@ -331,6 +341,22 @@ export function ChequesCadeauxContent({
               {errors.amount && (
                 <p className="text-sm text-red-500">{errors.amount}</p>
               )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-foreground">
+                {pickField(c, "labelName", locale)}
+              </Label>
+              <Input
+                id="name"
+                type="text"
+                value={giftCard.name}
+                onChange={(e) =>
+                  setGiftCard({ ...giftCard, name: e.target.value })
+                }
+                className="bg-background/30 border-primary/30 text-foreground focus:border-primary"
+                placeholder={pickField(c, "placeholderName", locale)}
+              />
             </div>
 
             <div className="space-y-2">

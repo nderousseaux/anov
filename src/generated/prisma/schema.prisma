@@ -70,6 +70,7 @@ model GiftCard {
   updatedAt           DateTime       @updatedAt
   code                String         @unique
   amount              Float
+  name                String?
   recipientEmail      String?
   personalMessage     String?
   isPaid              Boolean        @default(false)
@@ -90,6 +91,7 @@ model GourmetOffer {
   offerDescription    String?
   offerImage          String?
   price               Float
+  name                String?
   recipientEmail      String?
   personalMessage     String?
   isPaid              Boolean            @default(false)

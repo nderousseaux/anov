@@ -5,7 +5,7 @@ import { getAdminFromCookies } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { $Enums } from "@/generated/prisma";
 import { stripe } from "@/lib/stripe";
-import { sendProductOrderReadyEmail, sendCancellationEmail } from "@/lib/email";
+import { sendProductOrderReadyEmail, sendProductOrderCancelledEmail } from "@/lib/email";
 
 // Mock at top level - must be before imports
 vi.mock("@/lib/prisma", () => ({
@@ -19,7 +19,7 @@ vi.mock("@/lib/prisma", () => ({
 
 vi.mock("@/lib/email", () => ({
   sendProductOrderReadyEmail: vi.fn().mockResolvedValue({}),
-  sendCancellationEmail: vi.fn().mockResolvedValue({}),
+  sendProductOrderCancelledEmail: vi.fn().mockResolvedValue({}),
 }));
 
 // The stripe module exports stripe as a Stripe instance object
@@ -520,6 +520,78 @@ describe("Admin Order Detail API", () => {
         "cs_test123",
       );
       expect(stripe.refunds.create).toHaveBeenCalled();
+      expect(sendProductOrderCancelledEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: "test@example.com",
+          name: "Test User",
+          orderCode: "ANOV-PO-ABCD1234",
+          refunded: true,
+        }),
+      );
+    });
+
+    it("sends a non-refund cancellation email when no payment was made", async () => {
+      vi.mocked(getAdminFromCookies).mockResolvedValue({ id: 1 });
+
+      const order = {
+        id: "1",
+        code: "ANOV-PO-ABCD1234",
+        productName: "Test Product",
+        quantity: 2,
+        totalPrice: 5000,
+        deliveryMethod: $Enums.DeliveryMethod.PICKUP,
+        customerName: "Test User",
+        customerEmail: "test@example.com",
+        customerPhone: "+33 6 12 34 56 78",
+        status: $Enums.OrderStatus.CANCELLED,
+        createdAt: new Date("2024-06-15"),
+        updatedAt: new Date("2024-06-16"),
+        stripeSessionId: null,
+        transactionExpireAt: null,
+      };
+
+      vi.mocked(prisma.productOrder.findUnique).mockResolvedValue({
+        id: "1",
+        code: "ANOV-PO-ABCD1234",
+        productName: "Test Product",
+        quantity: 2,
+        totalPrice: 5000,
+        deliveryMethod: $Enums.DeliveryMethod.PICKUP,
+        customerName: "Test User",
+        customerEmail: "test@example.com",
+        customerPhone: "+33 6 12 34 56 78",
+        status: $Enums.OrderStatus.PENDING_PAYMENT,
+        createdAt: new Date("2024-06-15"),
+        updatedAt: new Date("2024-06-15"),
+        stripeSessionId: null,
+        transactionExpireAt: null,
+      });
+      vi.mocked(prisma.productOrder.update).mockResolvedValue(order);
+
+      const req = new NextRequest(
+        new URL("http://localhost:3000/api/admin/orders/1"),
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "CANCELLED" }),
+        },
+      );
+      const res = await PATCH(
+        req as any,
+        { params: Promise.resolve({ id: "1" }) } as any,
+      );
+
+      expect(res.status).toBe(200);
+      expect(stripe.checkout.sessions.retrieve).not.toHaveBeenCalled();
+      expect(stripe.refunds.create).not.toHaveBeenCalled();
+      expect(sendProductOrderCancelledEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: "test@example.com",
+          name: "Test User",
+          orderCode: "ANOV-PO-ABCD1234",
+          refunded: false,
+        }),
+      );
     });
   });
 });

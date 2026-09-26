@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAdminFromCookies } from "@/lib/auth";
-import { sendProductOrderReadyEmail, sendCancellationEmail } from "@/lib/email";
+import { sendProductOrderReadyEmail, sendProductOrderCancelledEmail } from "@/lib/email";
 import { stripe } from "@/lib/stripe";
 
 export async function GET(
@@ -152,25 +152,7 @@ export async function PATCH(
 
     // Effectuer un remboursement Stripe si la commande est annulée
     if (targetStatus === "CANCELLED") {
-      // Envoyer l'email de confirmation d'annulation
-      sendCancellationEmail({
-        to: updatedOrder.customerEmail,
-        name: updatedOrder.customerName,
-        date: updatedOrder.createdAt.toLocaleDateString("fr-FR", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-        }),
-        time: updatedOrder.createdAt.toLocaleTimeString("fr-FR", {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      }).catch((err) => {
-        console.error(
-          "[orders/[id]] Erreur lors de l'envoi de l'email d'annulation:",
-          err,
-        );
-      });
+      let refunded = false;
 
       // Effectuer un remboursement Stripe si une session de paiement existe
       if (updatedOrder.stripeSessionId) {
@@ -185,6 +167,7 @@ export async function PATCH(
               payment_intent: paymentIntentId,
               amount: Math.round(updatedOrder.totalPrice * 100),
             });
+            refunded = true;
             console.log(
               `[REFUND] Remboursement de ${updatedOrder.totalPrice}€ créé: ${refund.id}`,
             );
@@ -200,6 +183,22 @@ export async function PATCH(
           );
         }
       }
+
+      // Envoyer l'email d'annulation de la commande (mentionnant le remboursement le cas échéant)
+      sendProductOrderCancelledEmail({
+        to: updatedOrder.customerEmail,
+        name: updatedOrder.customerName,
+        orderCode: updatedOrder.code,
+        productName: updatedOrder.productName,
+        quantity: updatedOrder.quantity,
+        amount: updatedOrder.totalPrice,
+        refunded,
+      }).catch((err) => {
+        console.error(
+          "[orders/[id]] Erreur lors de l'envoi de l'email d'annulation:",
+          err,
+        );
+      });
     }
 
     const formattedOrder = {

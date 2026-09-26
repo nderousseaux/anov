@@ -538,6 +538,63 @@ export async function sendProductOrderReadyEmail({
   });
 }
 
+/**
+ * Envoie un email d'annulation (et remboursement le cas échéant) d'une commande produit
+ */
+export async function sendProductOrderCancelledEmail({
+  to,
+  name,
+  orderCode,
+  productName,
+  quantity,
+  amount,
+  refunded,
+}: {
+  to: string;
+  name: string;
+  orderCode: string;
+  productName: string;
+  quantity: number;
+  amount: number;
+  refunded: boolean;
+}) {
+  const t = getTransporter();
+  if (!t) {
+    // Email service disabled - SMTP not configured
+    return null;
+  }
+
+  const title = refunded
+    ? "Commande annulée et remboursée"
+    : "Commande annulée";
+  const details = refunded
+    ? `Votre commande a été annulée et remboursée. Le montant de <strong>${amount}€</strong> vous sera recrédité sous quelques jours ouvrés.`
+    : "Votre commande a été annulée.";
+
+  return t.sendMail({
+    from: FROM,
+    to,
+    subject: `${title} — l'Anøv`,
+    html: `
+      <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
+        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
+        <h2 style="font-size:20px;font-weight:normal;">${title}</h2>
+        <p>Bonjour ${name},</p>
+        <p>${details}</p>
+        <table style="border-collapse:collapse;width:100%;margin:16px 0;">
+          <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Référence</td><td style="padding:8px;border-bottom:1px solid #eee;">${orderCode}</td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Article</td><td style="padding:8px;border-bottom:1px solid #eee;">${productName}</td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">Quantité</td><td style="padding:8px;border-bottom:1px solid #eee;">${quantity}</td></tr>
+          <tr><td style="padding:8px;font-weight:bold;">Montant</td><td style="padding:8px;">${amount}€</td></tr>
+        </table>
+        <p style="margin-top:16px;">Pour toute information concernant votre commande, appelez-nous au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a>.</p>
+        <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
+        <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
+      </div>
+    `,
+  });
+}
+
 // Fonctions pour les chèques cadeaux
 
 /**

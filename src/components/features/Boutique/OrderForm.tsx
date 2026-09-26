@@ -34,7 +34,9 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
   const [deliveryMethod, setDeliveryMethod] = useState<"PICKUP" | "DELIVERY">(
     "PICKUP",
   );
-  const [quantity, setQuantity] = useState(1);
+  const maxOrder = product.maxOrder ?? 10;
+  // On garde la saisie brute de l'utilisateur (permet de taper librement, y compris temporairement invalide)
+  const [quantityInput, setQuantityInput] = useState("1");
   const [formData, setFormData] = useState({
     customerName: "",
     customerEmail: "",
@@ -67,7 +69,7 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
               setDeliveryMethod(parsedData.deliveryMethod);
             }
             if (parsedData.quantity) {
-              setQuantity(parsedData.quantity);
+              setQuantityInput(String(parsedData.quantity));
             }
             // Don't clear sessionStorage - keep data for potential modifications
           } catch {
@@ -107,15 +109,26 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
   }, [onClose]);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const maxOrder = product.maxOrder ?? 10;
-    const value = Math.max(
-      1,
-      Math.min(maxOrder, parseInt(e.target.value) || 1),
-    );
-    setQuantity(value);
+    // On laisse l'utilisateur taper librement les chiffres qu'il veut (y compris hors
+    // bornes ou en cours de saisie) ; seuls les caractères non numériques sont filtrés.
+    // La validité (bornes min/max) est calculée à part et affichée visuellement
+    // plutôt que de bloquer ou corriger la saisie en direct.
+    const digitsOnly = e.target.value.replace(/[^0-9]/g, "");
+    setQuantityInput(digitsOnly);
   };
 
+  const trimmedQuantityInput = quantityInput.trim();
+  const parsedQuantity = Number(trimmedQuantityInput);
+  const isQuantityValid =
+    trimmedQuantityInput !== "" &&
+    /^\d+$/.test(trimmedQuantityInput) &&
+    parsedQuantity >= 1 &&
+    parsedQuantity <= maxOrder;
+  // Quantité utilisée pour les calculs/la soumission : dernière valeur valide connue
+  const quantity = isQuantityValid ? parsedQuantity : 1;
+
   const validateForm = (): boolean => {
+    if (!isQuantityValid) return false;
     if (!formData.customerName.trim()) return false;
     if (
       !formData.customerEmail.trim() ||
@@ -513,15 +526,26 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
               </Label>
               <Input
                 id="quantity"
-                type="number"
-                min={1}
-                max={product.maxOrder ?? 10}
-                value={quantity}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={quantityInput}
                 onChange={handleQuantityChange}
-                className="bg-background"
+                aria-invalid={!isQuantityValid}
+                className={`bg-background ${
+                  !isQuantityValid
+                    ? "border-red-500 focus-visible:ring-red-500/30"
+                    : ""
+                }`}
               />
-              <p className="text-xs text-muted-foreground">
-                Maximum : {product.maxOrder ?? 10} unités
+              <p
+                className={`text-xs ${
+                  !isQuantityValid ? "text-red-500" : "text-muted-foreground"
+                }`}
+              >
+                {isQuantityValid
+                  ? `Maximum : ${maxOrder} unités`
+                  : `Veuillez entrer un nombre entier entre 1 et ${maxOrder}.`}
               </p>
             </div>
 
@@ -537,6 +561,7 @@ export function OrderForm({ product, onClose }: OrderFormProps) {
               </Button>
               <Button
                 type="submit"
+                disabled={!isQuantityValid}
                 className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 {quantity > 1

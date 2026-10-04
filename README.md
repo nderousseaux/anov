@@ -25,6 +25,7 @@ $ docker compose up -d
 
 ```bash
 $ pnpm prisma migrate dev
+$ pnpm prisma db seed # Optionnel, pour les données de test
 ```
 
 > En cas de problème avec la base de données, il est possible de la réinitialiser avec la commande suivante :

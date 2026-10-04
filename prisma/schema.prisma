@@ -39,13 +39,6 @@ model Table {
   reservations Reservation[]
 }
 
-model Admin {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique
-  passwordHash String
-  createdAt    DateTime @default(now())
-}
-
 model RestaurantSettings {
   id                   Int    @id @default(1)
   maxCovers            Int    @default(20)

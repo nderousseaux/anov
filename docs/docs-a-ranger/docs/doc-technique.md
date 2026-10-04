@@ -654,8 +654,7 @@ export default config({
 pnpm install        # Install dependencies
 pnpm dev            # Start dev server
 pnpm db:start       # Docker (PostgreSQL + Mailcatcher)
-pnpm db:migrate     # Prisma migrations
-pnpm db:reset       # Reset + seed
+pnpm db:migrate     # Prisma migrations (les tables physiques T1-T6 sont insérées par la migration initiale)
 pnpm test           # Vitest tests
 pnpm test:ui        # Tests with UI
 ```

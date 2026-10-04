@@ -37,7 +37,6 @@ anov/
 ├── keystatic.config.ts         # Configuration du CMS
 ├── prisma/
 │   ├── schema.prisma           # Modèle de données
-│   ├── seed.ts                 # Seed initial
 │   └── migrations/
 ├── public/assets/              # Images statiques
 ├── scripts/

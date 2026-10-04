@@ -5,10 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "db:start": "docker compose --env-file .env.local up",
-    "db:migrate": "prisma migrate dev",
-    "db:init": "pnpm db:migrate && tsx prisma/seed.ts",
-    "db:reset": "prisma migrate reset --force && tsx prisma/seed.ts",
+
+
+    "ceQuiEstEnBas": "est à ranger",
     "build": "next build",
     "test": "pnpm test:unit && pnpm test:e2e",
     "test:unit": "vitest run --coverage",

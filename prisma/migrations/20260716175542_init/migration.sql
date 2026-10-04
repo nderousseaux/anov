@@ -1,3 +1,6 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
 -- CreateEnum
 CREATE TYPE "ReservationStatus" AS ENUM ('PENDING_PAYMENT', 'CONFIRMED', 'CANCELLED', 'COMPLETED', 'IN_PROGRESS_PAYMENT', 'EXPIRED');
 
@@ -8,7 +11,34 @@ CREATE TYPE "GiftCardStatus" AS ENUM ('IN_PROGRESS_PAYMENT', 'ACTIVE', 'USED', '
 CREATE TYPE "DeliveryMethod" AS ENUM ('PICKUP', 'DELIVERY');
 
 -- CreateEnum
+CREATE TYPE "GourmetOfferStatus" AS ENUM ('IN_PROGRESS_PAYMENT', 'ACTIVE', 'USED', 'EXPIRED');
+
+-- CreateEnum
 CREATE TYPE "OrderStatus" AS ENUM ('PENDING_PAYMENT', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'READY', 'COMPLETED', 'CANCELLED', 'EXPIRED');
+
+-- CreateTable
+CREATE TABLE "RestaurantSettings" (
+    "id" INTEGER NOT NULL DEFAULT 1,
+    "maxCovers" INTEGER NOT NULL DEFAULT 20,
+    "mealDuration" INTEGER NOT NULL DEFAULT 90,
+    "openingDays" TEXT NOT NULL DEFAULT '[2,3,4,5,6]',
+    "openingSlots" TEXT NOT NULL DEFAULT '["12:00","12:30","13:00","13:30","19:00","19:30","20:00","20:30","21:00","21:30"]',
+    "depositPerGuestCents" INTEGER NOT NULL DEFAULT 2000,
+    "daysBeforeReminder" INTEGER NOT NULL DEFAULT 1,
+
+    CONSTRAINT "RestaurantSettings_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DayOverride" (
+    "id" SERIAL NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
+    "closed" BOOLEAN NOT NULL DEFAULT false,
+    "maxCovers" INTEGER,
+    "openingSlots" TEXT,
+
+    CONSTRAINT "DayOverride_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Reservation" (
@@ -43,42 +73,19 @@ CREATE TABLE "Table" (
     "posX" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "posY" DOUBLE PRECISION NOT NULL DEFAULT 0,
 
-    CONSTRAINT "Table_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Table_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "Table_name_key" UNIQUE ("name")
 );
 
--- CreateTable
-CREATE TABLE "Admin" (
-    "id" SERIAL NOT NULL,
-    "email" TEXT NOT NULL,
-    "passwordHash" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "RestaurantSettings" (
-    "id" INTEGER NOT NULL DEFAULT 1,
-    "maxCovers" INTEGER NOT NULL DEFAULT 20,
-    "mealDuration" INTEGER NOT NULL DEFAULT 90,
-    "openingDays" TEXT NOT NULL DEFAULT '[2,3,4,5,6]',
-    "openingSlots" TEXT NOT NULL DEFAULT '["12:00","12:30","13:00","13:30","19:00","19:30","20:00","20:30","21:00","21:30"]',
-    "depositPerGuestCents" INTEGER NOT NULL DEFAULT 2000,
-    "daysBeforeReminder" INTEGER NOT NULL DEFAULT 1,
-
-    CONSTRAINT "RestaurantSettings_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "DayOverride" (
-    "id" SERIAL NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL,
-    "closed" BOOLEAN NOT NULL DEFAULT false,
-    "maxCovers" INTEGER,
-    "openingSlots" TEXT,
-
-    CONSTRAINT "DayOverride_pkey" PRIMARY KEY ("id")
-);
+-- Seed data: tables physiques de la salle (positions en % pour le plan de salle)
+INSERT INTO "Table" ("name", "capacity", "posX", "posY") VALUES
+    ('T1', 2, 20, 85),
+    ('T2', 2, 80, 85),
+    ('T3', 3, 20, 50),
+    ('T4', 3, 80, 50),
+    ('T5', 4, 20, 15),
+    ('T6', 4, 80, 15)
+ON CONFLICT ("name") DO NOTHING;
 
 -- CreateTable
 CREATE TABLE "GiftCard" (
@@ -87,6 +94,7 @@ CREATE TABLE "GiftCard" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "code" TEXT NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
+    "name" TEXT,
     "recipientEmail" TEXT,
     "personalMessage" TEXT,
     "isPaid" BOOLEAN NOT NULL DEFAULT false,
@@ -98,6 +106,30 @@ CREATE TABLE "GiftCard" (
     "reminderEmailSent" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "GiftCard_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "GourmetOffer" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "code" TEXT NOT NULL,
+    "offerName" TEXT NOT NULL,
+    "offerDescription" TEXT,
+    "offerImage" TEXT,
+    "price" DOUBLE PRECISION NOT NULL,
+    "name" TEXT,
+    "recipientEmail" TEXT,
+    "personalMessage" TEXT,
+    "isPaid" BOOLEAN NOT NULL DEFAULT false,
+    "status" "GourmetOfferStatus" NOT NULL DEFAULT 'IN_PROGRESS_PAYMENT',
+    "stripeSessionId" TEXT,
+    "expiresAt" TIMESTAMP(3),
+    "transactionExpireAt" TIMESTAMP(3),
+    "usedAt" TIMESTAMP(3),
+    "reminderEmailSent" BOOLEAN NOT NULL DEFAULT false,
+
+    CONSTRAINT "GourmetOffer_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -166,12 +198,6 @@ CREATE UNIQUE INDEX "Reservation_stripeSessionId_key" ON "Reservation"("stripeSe
 CREATE UNIQUE INDEX "Reservation_cancelToken_key" ON "Reservation"("cancelToken");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Table_name_key" ON "Table"("name");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Admin_email_key" ON "Admin"("email");
-
--- CreateIndex
 CREATE UNIQUE INDEX "DayOverride_date_key" ON "DayOverride"("date");
 
 -- CreateIndex
@@ -179,6 +205,12 @@ CREATE UNIQUE INDEX "GiftCard_code_key" ON "GiftCard"("code");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "GiftCard_stripeSessionId_key" ON "GiftCard"("stripeSessionId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "GourmetOffer_code_key" ON "GourmetOffer"("code");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "GourmetOffer_stripeSessionId_key" ON "GourmetOffer"("stripeSessionId");
 
 -- CreateIndex
 CREATE INDEX "ContactMessage_email_idx" ON "ContactMessage"("email");

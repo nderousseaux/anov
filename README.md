@@ -10,42 +10,24 @@ Le site est développé avec Next.js, hébergé sur Vercel, et utilise Keystatic
 ## Développement local
 
 ```bash
-git clone <url> && cd anov
-pnpm install
-cp .env.example .env.local
-pnpm dev
+$ pnpm install
+$ cp .env.example .env.local
+$ pnpm dev
+
+# Le hook stripe doit être simulé
+$ stripe listen --forward-to localhost:3000/api/stripe/webhook
+
+# Lancement de la base de données et de Mailcatcher
+$ docker compose up -d
 ```
 
-## Déploiement
+### Base de données
 
-Push sur `pprod` → preview Vercel → merge `pprod` → `main` → build auto.
-
-Les images du CMS sont stockées dans le repository GitHub (`public/assets/`).
-
-## Pages
-
-| Route                       | Description                                       |
-| --------------------------- | ------------------------------------------------- |
-| `/`                         | Page d'accueil (Hero, Histoire, Galerie, Contact) |
-| `/menu`                     | Carte du restaurant                               |
-| `/admin`                    | Racine du dashboard admin                         |
-| `/admin/cms` (`/keystatic`) | Éditeur CMS intégré                               |
-
-## Architecture
-
+```bash
+$ pnpm prisma migrate dev
 ```
-content/              # Fichiers YAML du CMS (source de vérité)
-keystatic.config.ts   # Configuration du CMS (schémas)
-public/assets/        # Images statiques
-src/
-  app/
-    layout.tsx        # Layout racine (fetch CMS + ClientLayout)
-    page.tsx          # Page d'accueil
-    menu/page.tsx     # Page carte
-    admin/            # Dashboard admin (CMS + login)
-    keystatic/        # Interface Keystatic
-    api/              # Routes API
-  components/         # Composants React
-  lib/                # Utilitaires (auth, prisma...)
-  middleware.ts       # Protection routes /admin et /keystatic
+
+> En cas de problème avec la base de données, il est possible de la réinitialiser avec la commande suivante :
+```bash
+$ pnpm prisma migrate reset
 ```

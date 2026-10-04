@@ -71,17 +71,20 @@ async function main() {
 
   const now = new Date();
 
-  // Calcul dynamique des jours d'ouverture pour éviter toute réservation sur un jour fermé
-  const pastOpenDay1 = getPreviousOpenDay(now, 1); // Dernier jour ouvert passé (ex: samedi)
-  const pastOpenDay2 = getPreviousOpenDay(now, 2); // Avant-dernier jour ouvert passé (ex: vendredi)
-  const currentOrNextOpenDay = getNextOpenDay(now, 0); // Aujourd'hui si ouvert, sinon le prochain jour ouvert (ex: mardi)
-  const nextOpenDay1 = getNextOpenDay(currentOrNextOpenDay, 1); // 1er jour ouvert suivant
-  const nextOpenDay2 = getNextOpenDay(currentOrNextOpenDay, 2); // 2ème jour ouvert suivant
-  const nextWeekOpenDay = getNextOpenDay(currentOrNextOpenDay, 4); // Jour ouvert de la semaine suivante
+  // Date d'aujourd'hui à minuit UTC
+  const today = new Date(now);
+  today.setUTCHours(0, 0, 0, 0);
+
+  const isTodayOpen = OPENING_DAYS.includes(today.getUTCDay());
+
+  // Calcul des autres jours d'ouverture relatifs
+  const yesterdayOpen = getPreviousOpenDay(today, 1);
+  const tomorrowOpen = getNextOpenDay(today, 1);
+  const nextWeekOpen = getNextOpenDay(today, 4);
 
   // Jours réservés pour les DayOverrides (pas de réservations dessus)
-  const futureClosedDay = getNextOpenDay(currentOrNextOpenDay, 8); // Jour normalement ouvert, mais fermé exceptionnellement
-  const customHoursDay = getNextOpenDay(currentOrNextOpenDay, 6); // Jour avec horaires spécifiques
+  const futureClosedDay = getNextOpenDay(today, 10);
+  const customHoursDay = getNextOpenDay(today, 8);
 
   // 1. Restaurant Settings
   console.log("⚙️ Upsert RestaurantSettings...");
@@ -158,11 +161,27 @@ async function main() {
   });
 
   await prisma.dayOverride.deleteMany({
-    where: { date: { in: [futureClosedDay, customHoursDay] } }
+    where: { date: { in: [today, futureClosedDay, customHoursDay] } }
   });
 
-  // 3. Réservations de test (uniquement sur des jours ouverts)
-  console.log("📅 Création des Réservations sur les jours d'ouverture...");
+  // Si aujourd'hui est un jour normalement fermé (ex: dimanche ou lundi), on force son ouverture par un DayOverride
+  if (!isTodayOpen) {
+    console.log("🔓 Ajout d'un DayOverride pour forcer l'ouverture d'aujourd'hui (afin de voir les résas par défaut)...");
+    await prisma.dayOverride.create({
+      data: {
+        date: today,
+        closed: false,
+        maxCovers: 20,
+        openingSlots: JSON.stringify([
+          "12:00", "12:30", "13:00", "13:30",
+          "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"
+        ]),
+      }
+    });
+  }
+
+  // 3. Réservations de test (dont plusieurs aujourd'hui pour l'affichage par défaut dans l'admin)
+  console.log("📅 Création des Réservations...");
 
   const reservations = [
     {
@@ -170,7 +189,11 @@ async function main() {
       name: "Jean Dupont",
       email: "jean.dupont@example.com",
       phone: "+33612345678",
-      date: new Date(pastOpenDay1.getFullYear(), pastOpenDay1.getMonth(), pastOpenDay1.getDate(), 12, 30),
+      date: (() => {
+        const d = new Date(yesterdayOpen);
+        d.setUTCHours(12, 30, 0, 0);
+        return d;
+      })(),
       guests: 2,
       specialRequest: "Allergie au gluten",
       status: "COMPLETED" as const,
@@ -183,12 +206,16 @@ async function main() {
       name: "Sophie Martin",
       email: "sophie.martin@example.com",
       phone: "+33698765432",
-      date: new Date(currentOrNextOpenDay.getFullYear(), currentOrNextOpenDay.getMonth(), currentOrNextOpenDay.getDate(), 19, 30),
-      guests: 3,
+      date: (() => {
+        const d = new Date(today);
+        d.setUTCHours(12, 30, 0, 0);
+        return d;
+      })(),
+      guests: 2,
       specialRequest: "Près de la fenêtre si possible",
       status: "CONFIRMED" as const,
-      depositPaidCents: 6000,
-      tableId: 3, // T3
+      depositPaidCents: 4000,
+      tableId: 2, // T2
       cancelToken: "seed-token-2",
     },
     {
@@ -196,7 +223,11 @@ async function main() {
       name: "Michel Durand",
       email: "michel.durand@example.com",
       phone: "+33611223344",
-      date: new Date(currentOrNextOpenDay.getFullYear(), currentOrNextOpenDay.getMonth(), currentOrNextOpenDay.getDate(), 20, 0),
+      date: (() => {
+        const d = new Date(today);
+        d.setUTCHours(20, 0, 0, 0);
+        return d;
+      })(),
       guests: 4,
       status: "CONFIRMED" as const,
       depositPaidCents: 8000,
@@ -208,7 +239,11 @@ async function main() {
       name: "Alice Bernard",
       email: "alice.bernard@example.com",
       phone: "+33655443322",
-      date: new Date(nextOpenDay1.getFullYear(), nextOpenDay1.getMonth(), nextOpenDay1.getDate(), 12, 0),
+      date: (() => {
+        const d = new Date(tomorrowOpen);
+        d.setUTCHours(12, 0, 0, 0);
+        return d;
+      })(),
       guests: 2,
       status: "CONFIRMED" as const,
       depositPaidCents: 4000,
@@ -219,7 +254,11 @@ async function main() {
       id: "seed-res-5",
       name: "Pierre Petit",
       email: "pierre.petit@example.com",
-      date: new Date(nextOpenDay1.getFullYear(), nextOpenDay1.getMonth(), nextOpenDay1.getDate(), 19, 0),
+      date: (() => {
+        const d = new Date(tomorrowOpen);
+        d.setUTCHours(19, 0, 0, 0);
+        return d;
+      })(),
       guests: 2,
       status: "PENDING_PAYMENT" as const,
       depositPaidCents: 4000,
@@ -231,7 +270,11 @@ async function main() {
       id: "seed-res-6",
       name: "Thomas Dubois",
       email: "thomas.dubois@example.com",
-      date: new Date(nextWeekOpenDay.getFullYear(), nextWeekOpenDay.getMonth(), nextWeekOpenDay.getDate(), 20, 30),
+      date: (() => {
+        const d = new Date(nextWeekOpen);
+        d.setUTCHours(20, 30, 0, 0);
+        return d;
+      })(),
       guests: 4,
       status: "CONFIRMED" as const,
       depositPaidCents: 8000,
@@ -242,7 +285,11 @@ async function main() {
       id: "seed-res-7",
       name: "Lucas Roux",
       email: "lucas.roux@example.com",
-      date: new Date(pastOpenDay2.getFullYear(), pastOpenDay2.getMonth(), pastOpenDay2.getDate(), 13, 0),
+      date: (() => {
+        const d = new Date(today);
+        d.setUTCHours(13, 30, 0, 0);
+        return d;
+      })(),
       guests: 2,
       status: "CANCELLED" as const,
       depositPaidCents: 4000,
@@ -257,7 +304,7 @@ async function main() {
     });
   }
 
-  // 4. Day Overrides (créés sur des jours distincts sans réservations)
+  // 4. Day Overrides (autres exceptions futures)
   console.log("📆 Création des exceptions d'horaires...");
 
   // Fermeture exceptionnelle
@@ -309,7 +356,7 @@ async function main() {
       isPaid: true,
       status: "USED",
       expiresAt: expiryGiftCard,
-      usedAt: pastOpenDay1,
+      usedAt: yesterdayOpen,
     }
   });
 
@@ -322,7 +369,7 @@ async function main() {
       recipientEmail: "client.gift3@example.com",
       isPaid: true,
       status: "EXPIRED",
-      expiresAt: pastOpenDay1,
+      expiresAt: yesterdayOpen,
     }
   });
 
@@ -356,7 +403,7 @@ async function main() {
       isPaid: true,
       status: "USED",
       expiresAt: expiryGiftCard,
-      usedAt: pastOpenDay1,
+      usedAt: yesterdayOpen,
     }
   });
 
@@ -435,7 +482,7 @@ async function main() {
       email: "paul.lefevre@example.com",
       subject: "Réservation de groupe",
       message: "Bonjour, j'aimerais réserver pour un groupe de 15 personnes le mois prochain. Est-ce possible de privatiser une partie de la salle ? Merci d'avance.",
-      createdAt: pastOpenDay1,
+      createdAt: yesterdayOpen,
     }
   });
 

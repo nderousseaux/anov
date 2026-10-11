@@ -32,3 +32,8 @@ $ pnpm prisma db seed # Optionnel, pour les données de test
 ```bash
 $ pnpm prisma migrate reset
 ```
+
+## Environnements
+
+Les détails sur les environnements de développement et de production sont disponibles dans le fichier [docs/ENVIRONMENTS.md](docs/ENVIRONMENTS.md).
+Les branches `main` et `staging` sont déployées automatiquement sur Vercel, pour les environnements de production et de staging respectivement.

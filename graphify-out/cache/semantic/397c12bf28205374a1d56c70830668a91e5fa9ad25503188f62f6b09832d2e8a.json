@@ -1,0 +1,1 @@
+{"nodes": [{"id": "origines_origines", "label": "Origins Map", "file_type": "concept", "source_file": "content/origines.yaml"}], "edges": [{"source": "origines_origines", "target": "readme_keystatic", "relation": "conceptually_related_to", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "content/origines.yaml"}], "hyperedges": []}

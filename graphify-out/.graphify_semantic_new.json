@@ -1,0 +1,811 @@
+{
+  "nodes": [
+    {
+      "id": "readme_anov_restaurant",
+      "label": "ANØV Restaurant",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/README.md"
+    },
+    {
+      "id": "readme_nextjs",
+      "label": "Next.js",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/README.md"
+    },
+    {
+      "id": "readme_vercel",
+      "label": "Vercel",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/README.md"
+    },
+    {
+      "id": "readme_keystatic",
+      "label": "Keystatic CMS",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/README.md"
+    },
+    {
+      "id": "boutique_boutique",
+      "label": "Boutique",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/boutique.yaml"
+    },
+    {
+      "id": "cheques-cadeaux_cheques_cadeaux",
+      "label": "Gift Cards",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/cheques-cadeaux.yaml"
+    },
+    {
+      "id": "contact_contact",
+      "label": "Contact",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/contact.yaml"
+    },
+    {
+      "id": "footer_footer",
+      "label": "Footer",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/footer.yaml"
+    },
+    {
+      "id": "galerie_galerie",
+      "label": "Gallery",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/galerie.yaml"
+    },
+    {
+      "id": "gift-card-success_gift_card_success",
+      "label": "Gift Card Success",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/gift-card-success.yaml"
+    },
+    {
+      "id": "hero_hero",
+      "label": "Hero Section",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/hero.yaml"
+    },
+    {
+      "id": "histoire_histoire",
+      "label": "History/Story",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/histoire.yaml"
+    },
+    {
+      "id": "menu_menu",
+      "label": "Menu",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/menu.yaml"
+    },
+    {
+      "id": "origines_origines",
+      "label": "Origins Map",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/origines.yaml"
+    },
+    {
+      "id": "reservation_reservation",
+      "label": "Reservation System",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/content/reservation.yaml"
+    },
+    {
+      "id": "docker-compose_mailcatcher",
+      "label": "Mailcatcher Service",
+      "file_type": "code",
+      "source_file": "/Users/nderousseaux/Dev/anov/docker-compose.yml"
+    },
+    {
+      "id": "docker-compose_postgres",
+      "label": "PostgreSQL Service",
+      "file_type": "code",
+      "source_file": "/Users/nderousseaux/Dev/anov/docker-compose.yml"
+    },
+    {
+      "id": "environments_workflow",
+      "label": "Git/Vercel/Neon Workflow",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/ENVIRONMENTS.md"
+    },
+    {
+      "id": "documentation-technique_architecture",
+      "label": "Application Architecture",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "id": "documentation-technique_keystatic",
+      "label": "Keystatic CMS Configuration",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "id": "documentation-technique_authentication",
+      "label": "Admin Authentication (JWT)",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "id": "documentation-technique_database",
+      "label": "Database Models (Prisma)",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "id": "documentation-technique_availability",
+      "label": "Availability Logic",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "id": "documentation-technique_email",
+      "label": "Email System (Nodemailer)",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "id": "documentation-technique_stripe",
+      "label": "Payment System (Stripe)",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "id": "modernization-plan_audit",
+      "label": "Code Audit and Modernization Plan",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/MODERNIZATION-PLAN.md"
+    },
+    {
+      "id": "draft-readme_development",
+      "label": "Development Instructions",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/draft/README.md"
+    },
+    {
+      "id": "draft-reminder_feature",
+      "label": "Reservation Reminder Feature",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/draft/REMINDER_FEATURE.md"
+    },
+    {
+      "id": "draft-claude_guidance",
+      "label": "Claude Code Guidance",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/draft/claude.md"
+    },
+    {
+      "id": "draft-workflow_workflow",
+      "label": "Git/Vercel/Neon Workflow Documentation",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/draft/workflow.md"
+    },
+    {
+      "id": "bons-cadeaux_documentation",
+      "label": "Gift Cards Documentation",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/bons cadeaux.md"
+    },
+    {
+      "id": "boutique_documentation",
+      "label": "Boutique Documentation",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/boutique.md"
+    },
+    {
+      "id": "acces-services-tiers_credentials",
+      "label": "Third-Party Service Credentials",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/docs/accès-services-tiers.md"
+    },
+    {
+      "id": "doc-fonctionnelle_functional",
+      "label": "Functional Documentation",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/docs/doc-fonctionnelle.md"
+    },
+    {
+      "id": "doc-technique_technical",
+      "label": "Technical Documentation",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/docs/doc-technique.md"
+    },
+    {
+      "id": "draft_doc",
+      "label": "Draft Documentation",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/draft.md"
+    },
+    {
+      "id": "reservation-cas-de-figure_usecases",
+      "label": "Reservation Use Cases",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/reservation-cas-de-figure.md"
+    },
+    {
+      "id": "tests-manquants_analysis",
+      "label": "Missing Tests Analysis",
+      "file_type": "document",
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/tests manquants.md"
+    },
+    {
+      "id": "assets_boutique_cafe_image",
+      "label": "Boutique Café Product Image",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/boutique/cafe.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_boutique_macarons_image",
+      "label": "Boutique Macarons Product Image",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/boutique/macarons.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_boutique_thes_image",
+      "label": "Boutique Thés Product Image",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/boutique/thes.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_hero_image",
+      "label": "Hero Banner Image",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/hero.jpg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_logo_image",
+      "label": "Logo Image (JPG)",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/img-logo.jpg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_logo_svg",
+      "label": "Logo SVG - Letter V",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/img-logo.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_logo_image",
+      "label": "Full Logo Image (JPG)",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/logo.jpg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_logo_svg",
+      "label": "Full Logo SVG with ANOV Text and Flourishes",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/logo.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_text_logo_svg",
+      "label": "Text Logo SVG - ANOV Wordmark",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/text-logo.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_favicon_svg",
+      "label": "Favicon SVG - Letter V",
+      "file_type": "image",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/favicon.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "concept_brand_color_gold",
+      "label": "Brand Color Gold (#AC8F00)",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/logo.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "concept_anov_brand",
+      "label": "ANOV Brand Identity",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/logo.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "concept_boutique_shop",
+      "label": "Boutique Shop Section",
+      "file_type": "concept",
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/boutique/cafe.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "readme_anov_restaurant",
+      "target": "readme_nextjs",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/README.md"
+    },
+    {
+      "source": "readme_anov_restaurant",
+      "target": "readme_vercel",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/README.md"
+    },
+    {
+      "source": "readme_anov_restaurant",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/README.md"
+    },
+    {
+      "source": "boutique_boutique",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/boutique.yaml"
+    },
+    {
+      "source": "cheques-cadeaux_cheques_cadeaux",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/cheques-cadeaux.yaml"
+    },
+    {
+      "source": "contact_contact",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/contact.yaml"
+    },
+    {
+      "source": "footer_footer",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/footer.yaml"
+    },
+    {
+      "source": "galerie_galerie",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/galerie.yaml"
+    },
+    {
+      "source": "gift-card-success_gift_card_success",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/gift-card-success.yaml"
+    },
+    {
+      "source": "hero_hero",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/hero.yaml"
+    },
+    {
+      "source": "histoire_histoire",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/histoire.yaml"
+    },
+    {
+      "source": "menu_menu",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/menu.yaml"
+    },
+    {
+      "source": "origines_origines",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/origines.yaml"
+    },
+    {
+      "source": "reservation_reservation",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/content/reservation.yaml"
+    },
+    {
+      "source": "documentation-technique_architecture",
+      "target": "readme_nextjs",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "source": "documentation-technique_architecture",
+      "target": "readme_vercel",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "source": "documentation-technique_architecture",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "source": "documentation-technique_keystatic",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "source": "documentation-technique_authentication",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "source": "documentation-technique_database",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "source": "documentation-technique_availability",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "source": "documentation-technique_email",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "source": "documentation-technique_stripe",
+      "target": "readme_keystatic",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/DOCUMENTATION-TECHNIQUE.md"
+    },
+    {
+      "source": "modernization-plan_audit",
+      "target": "readme_anov_restaurant",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/MODERNIZATION-PLAN.md"
+    },
+    {
+      "source": "draft-readme_development",
+      "target": "readme_anov_restaurant",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/draft/README.md"
+    },
+    {
+      "source": "draft-reminder_feature",
+      "target": "reservation_reservation",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/draft/REMINDER_FEATURE.md"
+    },
+    {
+      "source": "draft-claude_guidance",
+      "target": "readme_anov_restaurant",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/draft/claude.md"
+    },
+    {
+      "source": "draft-workflow_workflow",
+      "target": "environments_workflow",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/draft/workflow.md"
+    },
+    {
+      "source": "bons-cadeaux_documentation",
+      "target": "cheques-cadeaux_cheques_cadeaux",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/bons cadeaux.md"
+    },
+    {
+      "source": "boutique_documentation",
+      "target": "boutique_boutique",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/boutique.md"
+    },
+    {
+      "source": "doc-fonctionnelle_functional",
+      "target": "readme_anov_restaurant",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/docs/doc-fonctionnelle.md"
+    },
+    {
+      "source": "doc-technique_technical",
+      "target": "documentation-technique_architecture",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/docs/doc-technique.md"
+    },
+    {
+      "source": "reservation-cas-de-figure_usecases",
+      "target": "reservation_reservation",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/reservation-cas-de-figure.md"
+    },
+    {
+      "source": "tests-manquants_analysis",
+      "target": "modernization-plan_audit",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/docs/docs-a-ranger/tests manquants.md"
+    },
+    {
+      "source": "assets_img_logo_svg",
+      "target": "concept_brand_color_gold",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/img-logo.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_logo_svg",
+      "target": "concept_brand_color_gold",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/logo.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_text_logo_svg",
+      "target": "concept_brand_color_gold",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/text-logo.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_favicon_svg",
+      "target": "concept_brand_color_gold",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/favicon.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_logo_svg",
+      "target": "concept_anov_brand",
+      "relation": "represents",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/logo.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_text_logo_svg",
+      "target": "concept_anov_brand",
+      "relation": "represents",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/text-logo.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_logo_svg",
+      "target": "concept_anov_brand",
+      "relation": "represents",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/img-logo.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_favicon_svg",
+      "target": "concept_anov_brand",
+      "relation": "represents",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/favicon.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_favicon_svg",
+      "target": "assets_img_logo_svg",
+      "relation": "derived_from",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/favicon.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_text_logo_svg",
+      "target": "assets_logo_svg",
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/text-logo.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_boutique_cafe_image",
+      "target": "concept_boutique_shop",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/boutique/cafe.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_boutique_macarons_image",
+      "target": "concept_boutique_shop",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/boutique/macarons.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_boutique_thes_image",
+      "target": "concept_boutique_shop",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/boutique/thes.png",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "brand_visual_identity",
+      "label": "Brand Visual Identity System",
+      "nodes": [
+        "assets_logo_svg",
+        "assets_text_logo_svg",
+        "assets_img_logo_svg",
+        "assets_favicon_svg",
+        "concept_brand_color_gold"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/logo.svg"
+    },
+    {
+      "id": "boutique_product_gallery",
+      "label": "Boutique Product Gallery",
+      "nodes": [
+        "assets_boutique_cafe_image",
+        "assets_boutique_macarons_image",
+        "assets_boutique_thes_image"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/nderousseaux/Dev/anov/public/assets/boutique/cafe.png"
+    }
+  ],
+  "input_tokens": 138568,
+  "output_tokens": 0
+}

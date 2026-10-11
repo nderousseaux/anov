@@ -1,0 +1,1 @@
+{"nodes": [{"id": "reservation_reservation", "label": "Reservation System", "file_type": "concept", "source_file": "content/reservation.yaml"}], "edges": [{"source": "reservation_reservation", "target": "readme_keystatic", "relation": "conceptually_related_to", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "content/reservation.yaml"}], "hyperedges": []}

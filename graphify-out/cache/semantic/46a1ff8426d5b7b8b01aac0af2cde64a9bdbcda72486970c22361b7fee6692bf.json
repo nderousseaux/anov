@@ -1,0 +1,1 @@
+{"nodes": [{"id": "draft-readme_development", "label": "Development Instructions", "file_type": "document", "source_file": "draft/README.md"}], "edges": [{"source": "draft-readme_development", "target": "readme_anov_restaurant", "relation": "conceptually_related_to", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "draft/README.md"}], "hyperedges": []}

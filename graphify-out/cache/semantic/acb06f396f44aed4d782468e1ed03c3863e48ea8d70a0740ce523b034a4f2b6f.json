@@ -1,0 +1,1 @@
+{"nodes": [{"id": "histoire_histoire", "label": "History/Story", "file_type": "concept", "source_file": "content/histoire.yaml"}], "edges": [{"source": "histoire_histoire", "target": "readme_keystatic", "relation": "conceptually_related_to", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "content/histoire.yaml"}], "hyperedges": []}

@@ -1,0 +1,1 @@
+{"nodes": [{"id": "footer_footer", "label": "Footer", "file_type": "concept", "source_file": "content/footer.yaml"}], "edges": [{"source": "footer_footer", "target": "readme_keystatic", "relation": "conceptually_related_to", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "content/footer.yaml"}], "hyperedges": []}

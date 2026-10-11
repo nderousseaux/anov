@@ -5,6 +5,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
 function expandEnv(value: string): string {
+  if (!value) return "";
   return value.replace(/\$\{([^}]+)\}/g, (_, name) => process.env[name] ?? "");
 }
 

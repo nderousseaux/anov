@@ -82,6 +82,81 @@ export async function GET(req: NextRequest) {
     resByDate[d].count += 1;
   }
 
+  // Events in range
+  const events = await prisma.event.findMany({
+    where: {
+      isActive: true,
+      startDate: { lt: toDate },
+      endDate: { gte: fromDate },
+    },
+    select: {
+      id: true,
+      titleFr: true,
+      titleEn: true,
+      titleDe: true,
+      descriptionFr: true,
+      descriptionEn: true,
+      descriptionDe: true,
+      startDate: true,
+      endDate: true,
+      startService: true,
+      endService: true,
+    },
+  });
+
+  // Group events by date with service granularity
+  const eventsByDate: Record<string,
+    {
+      id: string;
+      titleFr: string;
+      titleEn: string;
+      titleDe: string;
+      descriptionFr: string;
+      descriptionEn: string;
+      descriptionDe: string;
+      startDate: Date;
+      endDate: Date;
+      lunch: boolean;
+      dinner: boolean
+    }[]> = {};
+  for (const e of events) {
+    const start = new Date(e.startDate);
+    const end = new Date(e.endDate);
+    // Determine start and end service indices
+    const startServiceIndex = e.startService === "lunch" ? 0 : e.startService === "dinner" ? 1 : 0; // null treated as lunch (start of day)
+    const endServiceIndex = e.endService === "lunch" ? 0 : e.endService === "dinner" ? 1 : 1; // null treated as dinner (end of day)
+    const startSlot = start.getTime() / (24 * 60 * 60 * 1000) * 2 + startServiceIndex;
+    const endSlot = end.getTime() / (24 * 60 * 60 * 1000) * 2 + endServiceIndex;
+    // Iterate over each slot from startSlot to endSlot inclusive
+    for (let slot = Math.floor(startSlot); slot <= Math.floor(endSlot); slot++) {
+      const dayNum = Math.floor(slot / 2);
+      const slotIndex = slot % 2; // 0 = lunch, 1 = dinner
+      const date = new Date(dayNum * 24 * 60 * 60 * 1000); // midnight of that day
+      const dateStr = date.toISOString().split("T")[0];
+      if (!eventsByDate[dateStr]) eventsByDate[dateStr] = [];
+      // Mark which services this event covers for this date
+      let existing = eventsByDate[dateStr].find(ev => ev.id === e.id);
+      if (!existing) {
+        existing = {
+          id: e.id,
+          titleFr: e.titleFr,
+          titleEn: e.titleEn,
+          titleDe: e.titleDe,
+          descriptionFr: e.descriptionFr,
+          descriptionEn: e.descriptionEn,
+          descriptionDe: e.descriptionDe,
+          startDate: e.startDate,
+          endDate: e.endDate,
+          lunch: false,
+          dinner: false
+        };
+        eventsByDate[dateStr].push(existing);
+      }
+      if (slotIndex === 0) existing.lunch = true;
+      else existing.dinner = true;
+    }
+  }
+
   const result = [];
 
   for (let i = 0; i < days; i++) {
@@ -128,6 +203,21 @@ export async function GET(req: NextRequest) {
     const totalCapacity = totalTableCapacity * (lunchTurns + dinnerTurns);
     const dayStats = resByDate[dateStr] ?? { guests: 0, count: 0 };
 
+    const dayEvents = eventsByDate[dateStr] ?? [];
+    const formattedEvents = dayEvents.map((e) => ({
+      id: e.id,
+      titleFr: e.titleFr,
+      titleEn: e.titleEn,
+      titleDe: e.titleDe,
+      descriptionFr: e.descriptionFr,
+      descriptionEn: e.descriptionEn,
+      descriptionDe: e.descriptionDe,
+      startDate: e.startDate.toISOString(),
+      endDate: e.endDate.toISOString(),
+      lunch: e.lunch,
+      dinner: e.dinner,
+    }));
+
     result.push({
       date: dateStr,
       dayOfWeek: dow,
@@ -151,6 +241,7 @@ export async function GET(req: NextRequest) {
       totalCapacity,
       reservedGuests: dayStats.guests,
       reservationCount: dayStats.count,
+      events: formattedEvents,
     });
   }
 

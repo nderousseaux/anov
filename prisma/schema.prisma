@@ -57,6 +57,25 @@ model DayOverride {
   openingSlots String?
 }
 
+model Event {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  titleFr     String
+  titleEn     String
+  titleDe     String
+  descriptionFr String
+  descriptionEn String
+  descriptionDe String
+  startDate   DateTime
+  endDate     DateTime
+  startService String? // "lunch" | "dinner" | null (null = toute la journée)
+  endService   String?
+  isActive    Boolean  @default(true)
+
+  @@index([startDate, endDate])
+}
+
 model GiftCard {
   id                  String         @id @default(cuid())
   createdAt           DateTime       @default(now())

@@ -514,6 +514,31 @@ async function main() {
     }
   });
 
+  // 10. Événements de test
+  console.log("🎉 Création des Événements de test...");
+
+  // Événement sur 2 jours : demain et après-demain (jours ouvrés)
+  const dayAfterTomorrowOpen = getNextOpenDay(tomorrowOpen, 1);
+
+  await prisma.event.upsert({
+    where: { id: "seed-event-1" },
+    update: {},
+    create: {
+      id: "seed-event-1",
+      titleFr: "Festival Gastronomique",
+      titleEn: "Gastronomy Festival",
+      titleDe: "Gastronomie Festival",
+      descriptionFr: "Deux jours de découverte culinaire avec menus spéciaux",
+      descriptionEn: "Two days of culinary discovery with special menus",
+      descriptionDe: "Zwei Tage kulinarische Entdeckung mit speziellen Menüs",
+      startDate: tomorrowOpen,
+      endDate: dayAfterTomorrowOpen,
+      startService: null, // Toute la journée
+      endService: null,   // Toute la journée
+      isActive: true,
+    }
+  });
+
   console.log("✨ Seed terminé avec succès !");
 }
 

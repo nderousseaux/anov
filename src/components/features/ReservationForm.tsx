@@ -20,6 +20,7 @@ import {
   User,
   MessageSquare,
   Loader2,
+  CalendarDays,
 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import type { Locale } from "date-fns";
@@ -66,6 +67,9 @@ export function ReservationForm({ content }: ReservationFormProps) {
   const [todaySlots, setTodaySlots] = useState<SlotInfo[] | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
+  // Events
+  const [events, setEvents] = useState<{ title: string; description: string }[]>([]);
+  const [loadingEvents, setLoadingEvents] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -162,6 +166,26 @@ export function ReservationForm({ content }: ReservationFormProps) {
     if (formData.date && formData.guests)
       loadSlots(formData.date, formData.guests);
   }, [formData.date, formData.guests, loadSlots]);
+
+  // Load events when date changes
+  useEffect(() => {
+    if (!formData.date) {
+      setEvents([]);
+      return;
+    }
+    setLoadingEvents(true);
+    fetch(`/api/events?date=${formData.date}&locale=${locale}`)
+      .then((r) => r.json())
+      .then((data) => {
+        setEvents(data.events ?? []);
+      })
+      .catch(() => {
+        setEvents([]);
+      })
+      .finally(() => {
+        setLoadingEvents(false);
+      });
+  }, [formData.date, locale]);
 
   useEffect(() => {
     if (!formData.guests) return;
@@ -456,6 +480,40 @@ export function ReservationForm({ content }: ReservationFormProps) {
                 </PopoverContent>
               </Popover>
             </div>
+
+            {/* Events banner - displays when selected date has events */}
+            {(events.length > 0 || loadingEvents) && (
+              <div className="space-y-2">
+                {loadingEvents ? (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 size={14} className="animate-spin text-primary" />
+                    Chargement des événements...
+                  </div>
+                ) : events.length > 0 && (
+                  <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4 space-y-3">
+                    <div className="flex items-center gap-2 text-purple-400">
+                      <CalendarDays size={16} />
+                      <span className="font-semibold text-purple-300">
+                        {locale === "fr" ? "Événement spécial" : locale === "en" ? "Special Event" : "Spezial-Event"}
+                      </span>
+                    </div>
+                    {events.map((event, idx) => (
+                      <div key={idx} className="bg-purple-500/5 border border-purple-500/20 rounded-md p-3 space-y-1">
+                        <h4 className="font-medium text-purple-200 text-sm">{event.title}</h4>
+                        <p className="text-purple-300/90 text-sm">{event.description}</p>
+                      </div>
+                    ))}
+                    <p className="text-xs text-purple-400/70 italic">
+                      {locale === "fr"
+                        ? "Le menu et la décoration pourront être modifiés pour l'occasion."
+                        : locale === "en"
+                          ? "Menu and decor may be changed for the occasion."
+                          : "Menü und Dekoration können für den Anlass angepasst werden."}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Créneaux */}
             <div className="space-y-3">

@@ -18,7 +18,16 @@ import {
   RotateCcw,
   AlertTriangle,
   House,
+  Trash2,
+  CalendarDays,
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type ReservationStatus =
@@ -63,6 +72,16 @@ interface RestaurantSettings {
   daysBeforeReminder: number;
 }
 
+interface EventInfo {
+  id: string;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  startService: string | null;
+  endService: string | null;
+}
+
 interface DayInfo {
   date: string;
   dayOfWeek: number;
@@ -79,6 +98,7 @@ interface DayInfo {
   totalCapacity: number;
   reservedGuests: number;
   reservationCount: number;
+  events: EventInfo[];
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -359,6 +379,22 @@ export default function AdminReservationsPage() {
   const [overrideSaved, setOverrideSaved] = useState(false);
   // Tables (vue Schéma)
   const [tables, setTables] = useState<TableInfo[]>([]);
+  // Events
+  const [events, setEvents] = useState<EventInfo[]>([]);
+  // Events panel
+  const [showEvents, setShowEvents] = useState(false);
+  const [savingEvent, setSavingEvent] = useState(false);
+  const [eventSaved, setEventSaved] = useState(false);
+  const [eventTitleFr, setEventTitleFr] = useState("");
+  const [eventTitleEn, setEventTitleEn] = useState("");
+  const [eventTitleDe, setEventTitleDe] = useState("");
+  const [eventDescriptionFr, setEventDescriptionFr] = useState("");
+  const [eventDescriptionEn, setEventDescriptionEn] = useState("");
+  const [eventDescriptionDe, setEventDescriptionDe] = useState("");
+  const [eventStartDate, setEventStartDate] = useState("");
+  const [eventEndDate, setEventEndDate] = useState("");
+  const [eventStartService, setEventStartService] = useState<string>("all");
+  const [eventEndService, setEventEndService] = useState<string>("all");
   // ── Fetchers ─────────────────────────────────────────────────────────────────
   const fetchSettings = useCallback(async () => {
     const res = await fetch("/api/admin/settings");
@@ -393,6 +429,79 @@ export default function AdminReservationsPage() {
     if (res.ok) setTables(await res.json());
   }, []);
 
+  const fetchEvents = useCallback(async () => {
+    const res = await fetch("/api/admin/events");
+    if (res.ok) {
+      const data: Array<{ id: string; titleFr: string; descriptionFr: string; startDate: string; endDate: string; startService: string | null; endService: string | null }> = await res.json();
+      // Transform to include localized fields for admin (French by default)
+      setEvents(data.map((e) => ({
+        id: e.id,
+        title: e.titleFr,
+        description: e.descriptionFr,
+        startDate: e.startDate,
+        endDate: e.endDate,
+        startService: e.startService,
+        endService: e.endService,
+      })));
+    }
+  }, []);
+
+  const handleCreateEvent = async () => {
+    setSavingEvent(true);
+    try {
+      const res = await fetch("/api/admin/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          titleFr: eventTitleFr,
+          titleEn: eventTitleEn,
+          titleDe: eventTitleDe,
+          descriptionFr: eventDescriptionFr,
+          descriptionEn: eventDescriptionEn,
+          descriptionDe: eventDescriptionDe,
+          startDate: eventStartDate,
+          endDate: eventEndDate,
+        }),
+      });
+      if (res.ok) {
+        setEventSaved(true);
+        setTimeout(() => setEventSaved(false), 2000);
+        // Reset form
+        setEventTitleFr("");
+        setEventTitleEn("");
+        setEventTitleDe("");
+        setEventDescriptionFr("");
+        setEventDescriptionEn("");
+        setEventDescriptionDe("");
+        setEventStartDate("");
+        setEventEndDate("");
+        fetchEvents();
+      } else {
+        const data = await res.json();
+        alert(data.error || "Erreur lors de la création");
+      }
+    } catch (err) {
+      console.error("Create event error:", err);
+      alert("Erreur serveur");
+    }
+    setSavingEvent(false);
+  };
+
+  const handleDeleteEvent = async (id: string) => {
+    if (!window.confirm("Supprimer cet événement ?")) return;
+    try {
+      const res = await fetch(`/api/admin/events/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        fetchEvents();
+      } else {
+        alert("Erreur lors de la suppression");
+      }
+    } catch (err) {
+      console.error("Delete event error:", err);
+      alert("Erreur serveur");
+    }
+  };
+
   const fetchDayReservations = useCallback(async (date: string) => {
     setDayLoading(true);
     const res = await fetch(`/api/admin/reservations?date=${date}&page=1`);
@@ -410,6 +519,9 @@ export default function AdminReservationsPage() {
   useEffect(() => {
     fetchTables();
   }, [fetchTables]);
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   // Fetch day reservations when selected date changes
   useEffect(() => {
@@ -627,6 +739,19 @@ export default function AdminReservationsPage() {
             >
               <Settings size={14} className="mr-1" />
               Paramètres
+            </Button>
+            <Button
+              variant={showEvents ? "default" : "outline"}
+              size="sm"
+              onClick={() => setShowEvents((v) => !v)}
+              className={
+                showEvents
+                  ? "bg-primary/20 text-primary border-primary/40"
+                  : "border-primary/30 text-foreground"
+              }
+            >
+              <CalendarDays size={14} className="mr-1" />
+              Événements
             </Button>
           </div>
         </div>
@@ -893,6 +1018,146 @@ export default function AdminReservationsPage() {
           </div>
         )}
 
+        {/* ── Events panel ── */}
+        {showEvents && (
+          <div className="bg-card border border-primary/20 rounded-xl p-6 space-y-6">
+            <div className="flex items-center justify-between">
+              <h2
+                className="text-base font-semibold text-primary"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                Gestion des événements
+              </h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowEvents(false)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X size={14} />
+              </Button>
+            </div>
+
+            {/* List existing events */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-primary">Événements existants</h3>
+              {events.length === 0 ? (
+                <p className="text-xs text-muted-foreground italic">Aucun événement pour le moment</p>
+              ) : (
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {events.map((event) => (
+                    <div
+                      key={event.id}
+                      className="bg-background/30 border border-primary/10 rounded-lg p-3 flex flex-col gap-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium text-sm">{event.title}</div>
+                          <div className="text-xs text-muted-foreground line-clamp-1">{event.description}</div>
+                        </div>
+                        <div className="text-xs text-muted-foreground flex items-center gap-2">
+                          <span>{new Date(event.startDate).toLocaleDateString("fr-FR")} → {new Date(event.endDate).toLocaleDateString("fr-FR")}</span>
+                          <Button variant="ghost" size="sm" onClick={() => handleDeleteEvent(event.id)} className="text-destructive hover:bg-destructive/10 p-1">
+                            <Trash2 size={12} />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Create new event form */}
+            <div className="border-t border-primary/10 pt-6 space-y-4">
+              <h3 className="text-sm font-medium text-primary">Créer un nouvel événement</h3>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium">Titre 🇫🇷</label>
+                  <Input value={eventTitleFr} onChange={(e) => setEventTitleFr(e.target.value)} placeholder="Ex: Saint-Valentin" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-medium">Titre 🇬🇧</label>
+                  <Input value={eventTitleEn} onChange={(e) => setEventTitleEn(e.target.value)} placeholder="Ex: Valentine's Day" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-medium">Titre 🇩🇪</label>
+                  <Input value={eventTitleDe} onChange={(e) => setEventTitleDe(e.target.value)} placeholder="Ex: Valentinstag" />
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-xs font-medium">Description 🇫🇷</label>
+                  <textarea value={eventDescriptionFr} onChange={(e) => setEventDescriptionFr(e.target.value)} placeholder="Le menu sera changé et la salle décorée pour l'occasion..." className="w-full min-h-[80px] bg-background/30 border border-primary/30 text-foreground text-sm rounded-md p-2" />
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-xs font-medium">Description 🇬🇧</label>
+                  <textarea value={eventDescriptionEn} onChange={(e) => setEventDescriptionEn(e.target.value)} placeholder="The menu will be changed and the room decorated for the occasion..." className="w-full min-h-[80px] bg-background/30 border border-primary/30 text-foreground text-sm rounded-md p-2" />
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-xs font-medium">Description 🇩🇪</label>
+                  <textarea value={eventDescriptionDe} onChange={(e) => setEventDescriptionDe(e.target.value)} placeholder="Das Menü wird geändert und der Raum für den Anlass dekoriert..." className="w-full min-h-[80px] bg-background/30 border border-primary/30 text-foreground text-sm rounded-md p-2" />
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium">Date de début</label>
+                  <Input type="date" value={eventStartDate} onChange={(e) => setEventStartDate(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-medium">Service de début</label>
+                  <Select value={eventStartService} onValueChange={(v) => setEventStartService(v)}>
+                    <SelectTrigger className="bg-background/30 border-primary/30 text-foreground">
+                      <SelectValue placeholder="Service de début" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-secondary border-primary/30">
+                      <SelectItem value="all">Toute la journée</SelectItem>
+                      <SelectItem value="lunch">Midi seulement</SelectItem>
+                      <SelectItem value="dinner">Soir seulement</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium">Date de fin</label>
+                  <Input type="date" value={eventEndDate} onChange={(e) => setEventEndDate(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-medium">Service de fin</label>
+                  <Select value={eventEndService} onValueChange={(v) => setEventEndService(v)}>
+                    <SelectTrigger className="bg-background/30 border-primary/30 text-foreground">
+                      <SelectValue placeholder="Service de fin" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-secondary border-primary/30">
+                      <SelectItem value="all">Toute la journée</SelectItem>
+                      <SelectItem value="lunch">Midi seulement</SelectItem>
+                      <SelectItem value="dinner">Soir seulement</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <Button
+                onClick={handleCreateEvent}
+                disabled={savingEvent || !eventTitleFr || !eventTitleEn || !eventTitleDe || !eventDescriptionFr || !eventDescriptionEn || !eventDescriptionDe || !eventStartDate || !eventEndDate}
+                className="w-full bg-primary/20 text-primary border border-primary/40 hover:bg-primary/30"
+                size="sm"
+              >
+                {savingEvent ? (
+                  <Loader2 size={14} className="mr-1.5 animate-spin" />
+                ) : (
+                  <Save size={14} className="mr-1.5" />
+                )}
+                {eventSaved ? "Enregistré ✓" : "Créer l'événement"}
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* ══ Calendar View ══════════════════════════════════════════════════════ */}
         <div className="space-y-4 mt-6">
           {/* Navigation */}
@@ -1024,6 +1289,11 @@ export default function AdminReservationsPage() {
                           {day.hasOverride && (
                             <span className="text-[9px] px-1 py-0.5 rounded bg-amber-600/20 text-amber-400 border border-amber-600/30 leading-none">
                               &#10033;
+                            </span>
+                          )}
+                          {day.events && day.events.length > 0 && (
+                            <span className="text-[9px] px-1 py-0.5 rounded bg-purple-600/20 text-purple-400 border border-purple-600/30 leading-none" title={day.events.map(e => e.title).join(", ")}>
+                              <CalendarDays size={9} className="inline mr-0.5" /> {day.events.length}
                             </span>
                           )}
                         </div>

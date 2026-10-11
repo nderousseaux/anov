@@ -1,0 +1,1 @@
+{"nodes": [{"id": "menu_menu", "label": "Menu", "file_type": "concept", "source_file": "content/menu.yaml"}], "edges": [{"source": "menu_menu", "target": "readme_keystatic", "relation": "conceptually_related_to", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "content/menu.yaml"}], "hyperedges": []}

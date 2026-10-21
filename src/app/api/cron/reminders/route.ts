@@ -104,6 +104,9 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
+    // Résa téléphone / passage sans email : rien à envoyer
+    if (!r.email) continue;
+
     try {
       await sendReminderEmail({
         to: r.email,

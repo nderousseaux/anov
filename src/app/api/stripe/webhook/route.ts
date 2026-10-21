@@ -250,6 +250,7 @@ async function handleReservationPayment(session: any, meta: any) {
       timeZone: "UTC",
     });
     try {
+      if (!reservation.email) return;
       await sendConfirmationEmail({
         to: reservation.email,
         name: reservation.name,

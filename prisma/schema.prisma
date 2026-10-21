@@ -12,7 +12,7 @@ model Reservation {
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
   name                String
-  email               String
+  email               String?
   phone               String?
   date                DateTime
   guests              Int
@@ -26,8 +26,12 @@ model Reservation {
   cancelToken         String            @unique @default(cuid())
   transactionExpireAt DateTime?
   depositPaidCents    Int?
+  // Déprécié : ancien modèle (table figée à la création). Plus lu depuis le modèle par service.
   tableId             Int?
   table               Table?            @relation(fields: [tableId], references: [id])
+  source              ReservationSource @default(WEB)
+  // Vide = placée par l'algo ; sinon tables imposées par le restaurateur (sans clé étrangère).
+  pinnedTableIds      Int[]             @default([])
 }
 
 model Table {
@@ -36,7 +40,17 @@ model Table {
   capacity     Int
   posX         Float         @default(0)
   posY         Float         @default(0)
+  // Réservée au walk-in : exclue du pool de la réservation en ligne.
+  walkIn       Boolean       @default(false)
   reservations Reservation[]
+}
+
+model TableCombo {
+  id               Int   @id @default(autoincrement())
+  // v1 : exactement 2 tables (MAX_COMBO_SIZE), validé côté application.
+  tableIds         Int[]
+  // null = somme des capacités des tables.
+  capacityOverride Int?
 }
 
 model RestaurantSettings {
@@ -173,6 +187,12 @@ enum ReservationStatus {
   COMPLETED
   IN_PROGRESS_PAYMENT
   EXPIRED
+}
+
+enum ReservationSource {
+  WEB
+  PHONE
+  WALK_IN
 }
 
 enum GiftCardStatus {

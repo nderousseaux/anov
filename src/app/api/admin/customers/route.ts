@@ -102,6 +102,7 @@ export async function GET(req: NextRequest) {
   };
 
   for (const r of reservations) {
+    if (!r.email) continue;
     const entry = getOrCreate(r.email);
     entry.reservationCount += 1;
     bumpLastEventAt(entry, r.date);

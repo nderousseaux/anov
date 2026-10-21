@@ -334,7 +334,28 @@ test.describe("API /api/reservations - Création", () => {
     expect(data.error).toBe("Nombre de couverts invalide");
   });
 
-  test("Erreur - Guests = 5", async ({ request }) => {
+  test("Création réussie avec 8 guests (maximum en ligne)", async ({
+    request,
+  }) => {
+    const date = new Date();
+    date.setDate(date.getDate() + 125);
+    const dateStr = date.toISOString().split("T")[0];
+
+    const response = await request.post("/api/reservations", {
+      data: {
+        name: "Test User",
+        email: "test@example.com",
+        date: dateStr,
+        time: "19:00",
+        guests: "8",
+      },
+    });
+
+    // 8 est accepté : 200 si une combinaison de tables convient, 409 sinon (jamais 400)
+    expect([200, 409]).toContain(response.status());
+  });
+
+  test("Erreur - Guests = 9", async ({ request }) => {
     const date = new Date();
     date.setDate(date.getDate() + 120);
     const dateStr = date.toISOString().split("T")[0];
@@ -345,7 +366,7 @@ test.describe("API /api/reservations - Création", () => {
         email: "test@example.com",
         date: dateStr,
         time: "19:00",
-        guests: "5",
+        guests: "9",
       },
     });
 
@@ -460,6 +481,13 @@ test.describe("API /api/reservations/availability", () => {
     const data = await response.json();
     expect(data).toHaveProperty("slots");
     expect(Array.isArray(data.slots)).toBe(true);
+    // Disponibilité par service : midi et/ou soir, avec leurs créneaux
+    expect(Array.isArray(data.services)).toBe(true);
+    for (const service of data.services) {
+      expect(["lunch", "dinner"]).toContain(service.key);
+      expect(typeof service.available).toBe("boolean");
+      expect(service.slots.length).toBeGreaterThan(0);
+    }
     expect(data.slots.length).toBeGreaterThan(0);
   });
 
@@ -515,20 +543,20 @@ test.describe("API /api/reservations/availability", () => {
     );
     expect(response.status()).toBe(400);
     const data = await response.json();
-    expect(data.error).toBe("guests invalide (1 à 4)");
+    expect(data.error).toBe("guests invalide (1 à 8)");
   });
 
-  test("Erreur - Guests = 5", async ({ request }) => {
+  test("Erreur - Guests = 9", async ({ request }) => {
     const date = new Date();
     date.setDate(date.getDate() + 120);
     const dateStr = date.toISOString().split("T")[0];
 
     const response = await request.get(
-      `/api/reservations/availability?date=${dateStr}&guests=5`,
+      `/api/reservations/availability?date=${dateStr}&guests=9`,
     );
     expect(response.status()).toBe(400);
     const data = await response.json();
-    expect(data.error).toBe("guests invalide (1 à 4)");
+    expect(data.error).toBe("guests invalide (1 à 8)");
   });
 
   test("Erreur - Guests invalide (abc)", async ({ request }) => {
@@ -541,7 +569,7 @@ test.describe("API /api/reservations/availability", () => {
     );
     expect(response.status()).toBe(400);
     const data = await response.json();
-    expect(data.error).toBe("guests invalide (1 à 4)");
+    expect(data.error).toBe("guests invalide (1 à 8)");
   });
 
   test("Erreur - Date format invalide", async ({ request }) => {
@@ -712,32 +740,19 @@ test.describe("Processus de réservation complet", () => {
     }
     await page.waitForTimeout(500);
 
-    // Sélectionner un créneau (soirée)
-    // Attendre que les créneaux soient chargés, puis cliquer sur un créneau disponible
-    // Le créneau est chargé après que la date soit sélectionnée
+    // Choisir un service disponible (midi ou soir), puis l'heure d'arrivée dans ce service
     await page.waitForTimeout(1000);
-
-    // Sélectionner le premier créneau disponible (pas disabled)
-    const availableSlots = page.locator(
-      'button:has-text("12:00"):not([disabled]), button:has-text("19:00"):not([disabled])',
-    );
-    const count = await availableSlots.count();
-    if (count > 0) {
-      await availableSlots.first().click();
-    } else {
-      // Si pas de créneau disponible, essayer tous les créneaux
-      const allSlots = page.locator(
-        'button:has-text("12:00"), button:has-text("19:00")',
-      );
-      const allCount = await allSlots.count();
-      for (let i = 0; i < allCount; i++) {
-        const btn = allSlots.nth(i);
-        if (!(await btn.isDisabled())) {
-          await btn.click();
-          break;
-        }
-      }
-    }
+    await page
+      .locator(
+        'button[aria-pressed]:not([disabled]):has-text("Déjeuner"), button[aria-pressed]:not([disabled]):has-text("Dîner")',
+      )
+      .first()
+      .click();
+    await page
+      .locator("button[aria-pressed]:not([disabled])")
+      .filter({ hasText: /^\d{2}:\d{2}$/ })
+      .first()
+      .click();
     await page.waitForTimeout(500);
 
     // Vérifier que le bouton de validation est enabled
@@ -763,6 +778,58 @@ test.describe("Processus de réservation complet", () => {
     await page.waitForURL("**/checkout.stripe.com**", { timeout: 30000 });
     const currentUrl = page.url();
     expect(currentUrl).toContain("https://checkout.stripe.com");
+  });
+
+  test("Plus de 8 personnes : invite à appeler, sans réservation en ligne", async ({
+    page,
+  }) => {
+    await page.goto("/reservation?lang=fr");
+    await waitForSplashScreenToFade(page);
+
+    await page.locator('button[role="combobox"]').click();
+    await page.locator('[role="listbox"] >> text=Plus de 8 personnes').click();
+
+    await expect(page.locator('[role="note"]')).toContainText("appelez-nous");
+    // Plus de choix de date ni de service pour un grand groupe
+    await expect(page.locator('button:has-text("Sélectionner")')).toHaveCount(
+      0,
+    );
+    await expect(
+      page.locator('button:has-text("Confirmer la réservation")'),
+    ).toHaveCount(0);
+  });
+
+  test("Choix du service puis de l'heure d'arrivée", async ({ page }) => {
+    await page.goto("/reservation?lang=fr");
+    await waitForSplashScreenToFade(page);
+
+    await page.locator('button[role="combobox"]').click();
+    await page.locator('[role="listbox"] >> text=8 personnes').first().click();
+    await page.locator('button:has-text("Sélectionner")').click();
+    await page.waitForTimeout(500);
+    const day = page
+      .locator('button[type="button"][role="gridcell"]:not([disabled])')
+      .first();
+    await day.click({ force: true });
+
+    // Les services sont proposés ; l'heure n'apparaît qu'une fois un service choisi
+    const service = page
+      .locator(
+        'button[aria-pressed]:has-text("Déjeuner"), button[aria-pressed]:has-text("Dîner")',
+      )
+      .first();
+    await expect(service).toBeVisible();
+    await expect(page.locator("text=Heure d'arrivée")).toHaveCount(0);
+
+    const open = page
+      .locator(
+        'button[aria-pressed]:not([disabled]):has-text("Déjeuner"), button[aria-pressed]:not([disabled]):has-text("Dîner")',
+      )
+      .first();
+    if ((await open.count()) > 0) {
+      await open.click();
+      await expect(page.locator("text=Heure d'arrivée")).toBeVisible();
+    }
   });
 
   test("Resto complet (409) - Tentative de réservation impossible", async ({
@@ -935,7 +1002,7 @@ test.describe("Edge Cases - Réservation", () => {
     expect(availabilityData.slots.length).toBeGreaterThan(0);
   });
 
-  test("3 guests avec fallback sur table de 4", async ({ request }) => {
+  test("3 guests", async ({ request }) => {
     const date = new Date();
     date.setDate(date.getDate() + 15);
     const dateStr = date.toISOString().split("T")[0];

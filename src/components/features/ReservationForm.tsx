@@ -32,15 +32,28 @@ import {
 import { toast } from "sonner";
 import { useLanguage } from "@/context/LanguageContext";
 import { pickField } from "@/lib/langs";
+import { MAX_GROUP_SIZE, type ServiceKey } from "@/lib/seating";
 
-type SlotInfo = { time: string; available: boolean };
-const MAX_GUESTS = 4;
+type ServiceInfo = {
+  key: ServiceKey;
+  slots: string[];
+  started: boolean;
+  available: boolean;
+};
+const MAX_GUESTS = MAX_GROUP_SIZE;
+/** Valeur du sélecteur pour « plus de MAX_GUESTS personnes » : réservation par téléphone. */
+const LARGE_GROUP = "more";
 
 interface ReservationFormProps {
   content?: Record<string, unknown> | null;
+  /** Numéro affiché pour les grands groupes (variable d'environnement RESTAURANT_PHONE). */
+  restaurantPhone?: string;
 }
 
-export function ReservationForm({ content }: ReservationFormProps) {
+export function ReservationForm({
+  content,
+  restaurantPhone,
+}: ReservationFormProps) {
   const { locale, t } = useLanguage();
   const c = (content ?? {}) as Record<string, unknown>;
 
@@ -55,8 +68,9 @@ export function ReservationForm({ content }: ReservationFormProps) {
     specialRequest: "",
   });
 
-  const [slots, setSlots] = useState<SlotInfo[]>([]);
-  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [services, setServices] = useState<ServiceInfo[]>([]);
+  const [service, setService] = useState<ServiceKey | null>(null);
+  const [loadingServices, setLoadingServices] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(() => {
@@ -64,12 +78,15 @@ export function ReservationForm({ content }: ReservationFormProps) {
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
   const [unavailableDates, setUnavailableDates] = useState<Date[]>([]);
-  const [todaySlots, setTodaySlots] = useState<SlotInfo[] | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   // Events
-  const [events, setEvents] = useState<{ title: string; description: string }[]>([]);
+  const [events, setEvents] = useState<
+    { title: string; description: string }[]
+  >([]);
   const [loadingEvents, setLoadingEvents] = useState(false);
+
+  const isLargeGroup = formData.guests === LARGE_GROUP;
 
   useEffect(() => {
     setIsClient(true);
@@ -124,48 +141,28 @@ export function ReservationForm({ content }: ReservationFormProps) {
     };
   }, []);
 
-  const loadSlots = useCallback(async (date: string, guests: string) => {
-    if (!date || !guests) return;
-    setLoadingSlots(true);
+  const loadServices = useCallback(async (date: string, guests: string) => {
+    if (!date || !guests || guests === LARGE_GROUP) return;
+    setLoadingServices(true);
+    setService(null);
     setFormData((prev) => ({ ...prev, time: "" }));
     try {
       const res = await fetch(
         `/api/reservations/availability?date=${date}&guests=${guests}`,
       );
       const data = await res.json();
-      setSlots(data.slots ?? []);
+      setServices(data.services ?? []);
     } catch {
-      setSlots([]);
+      setServices([]);
     } finally {
-      setLoadingSlots(false);
+      setLoadingServices(false);
     }
   }, []);
 
-  // Charger les slots de la date du jour au montage (pour désactiver si plus de créneaux)
   useEffect(() => {
-    if (isClient && formData.guests) {
-      const today = new Date();
-      const y = today.getFullYear();
-      const m = String(today.getMonth() + 1).padStart(2, "0");
-      const d = String(today.getDate()).padStart(2, "0");
-      const todayStr = `${y}-${m}-${d}`;
-      fetch(
-        `/api/reservations/availability?date=${todayStr}&guests=${formData.guests}`,
-      )
-        .then((r) => r.json())
-        .then((data) => {
-          setTodaySlots(data.slots ?? null);
-        })
-        .catch(() => {
-          setTodaySlots(null);
-        });
-    }
-  }, [isClient, formData.guests]);
-
-  useEffect(() => {
-    if (formData.date && formData.guests)
-      loadSlots(formData.date, formData.guests);
-  }, [formData.date, formData.guests, loadSlots]);
+    if (formData.date && formData.guests && !isLargeGroup)
+      loadServices(formData.date, formData.guests);
+  }, [formData.date, formData.guests, isLargeGroup, loadServices]);
 
   // Load events when date changes
   useEffect(() => {
@@ -188,7 +185,7 @@ export function ReservationForm({ content }: ReservationFormProps) {
   }, [formData.date, locale]);
 
   useEffect(() => {
-    if (!formData.guests) return;
+    if (!formData.guests || isLargeGroup) return;
     const y = calendarMonth.getFullYear();
     const m = String(calendarMonth.getMonth() + 1).padStart(2, "0");
     fetch(
@@ -203,10 +200,11 @@ export function ReservationForm({ content }: ReservationFormProps) {
         );
       })
       .catch(() => {});
-  }, [calendarMonth, formData.guests]);
+  }, [calendarMonth, formData.guests, isLargeGroup]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (isLargeGroup) return;
     if (!formData.phone) {
       toast.error(t.reservation.errorPhone);
       return;
@@ -253,8 +251,11 @@ export function ReservationForm({ content }: ReservationFormProps) {
     }
   };
 
-  const lunchSlots = slots.filter((s) => parseInt(s.time) < 15);
-  const dinnerSlots = slots.filter((s) => parseInt(s.time) >= 15);
+  // Un service déjà entamé aujourd'hui n'est plus proposé ; un service complet est grisé.
+  const openServices = services.filter((s) => !s.started);
+  const selectedService = openServices.find(
+    (s) => s.key === service && s.available,
+  );
 
   const heroImageUrl = (c.image as string | undefined) ?? "/assets/hero.jpg";
   const title = pickField(c, "title", locale);
@@ -385,278 +386,314 @@ export function ReservationForm({ content }: ReservationFormProps) {
                       </SelectItem>
                     ),
                   )}
+                  <SelectItem
+                    value={LARGE_GROUP}
+                    className="text-foreground focus:bg-primary/20 data-[highlighted]:text-primary"
+                  >
+                    {t.reservation.moreThanMax}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            {/* Date */}
-            <div className="space-y-2">
-              <Label className="text-foreground flex items-center gap-2">
-                <CalendarIcon size={16} className="text-primary" />
-                {t.reservation.date}
-              </Label>
-              <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                <PopoverTrigger asChild>
-                  <button
-                    type="button"
-                    className="w-full flex items-center gap-2 h-10 px-3 rounded-md border border-primary/30 bg-background/30 text-sm text-left hover:border-primary/60 transition-colors"
+            {isLargeGroup ? (
+              <div
+                role="note"
+                className="rounded-lg border border-primary/30 bg-primary/10 p-4 space-y-1 text-sm text-foreground"
+              >
+                <p>{t.reservation.largeGroup}</p>
+                {restaurantPhone && (
+                  <a
+                    href={`tel:${restaurantPhone.replace(/\s/g, "")}`}
+                    className="inline-flex items-center gap-2 text-lg font-semibold text-primary"
                   >
-                    <CalendarIcon size={14} className="text-primary shrink-0" />
-                    {formData.date ? (
-                      <span className="text-foreground">
-                        {new Date(
-                          formData.date + "T00:00:00",
-                        ).toLocaleDateString("fr-FR", {
-                          weekday: "long",
-                          day: "numeric",
-                          month: "long",
-                        })}
-                      </span>
-                    ) : (
-                      <span className="text-muted-foreground">
-                        {t.reservation.selectDate}
-                      </span>
-                    )}
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-auto p-0 border-primary/30 bg-card"
-                  align="start"
-                >
-                  <Calendar
-                    mode="single"
-                    selected={
-                      formData.date
-                        ? new Date(formData.date + "T00:00:00")
-                        : undefined
-                    }
-                    onSelect={(date: Date | null | undefined) => {
-                      if (!date) return;
-                      const y = date.getFullYear();
-                      const mo = String(date.getMonth() + 1).padStart(2, "0");
-                      const d = String(date.getDate()).padStart(2, "0");
-                      setFormData((prev) => ({
-                        ...prev,
-                        date: `${y}-${mo}-${d}`,
-                      }));
-                      setCalendarOpen(false);
-                    }}
-                    month={calendarMonth}
-                    onMonthChange={setCalendarMonth}
-                    weekStartsOn={1}
-                    locale={locale as string & Locale}
-                    disabled={(date: Date) => {
-                      const today = new Date();
-                      today.setHours(0, 0, 0, 0);
-                      if (date < today) return true;
-                      // Vérifier si la date est dans unavailableDates (incluant aujourd'hui si plus de créneaux)
-                      if (
-                        unavailableDates.some(
-                          (u) =>
-                            u.getFullYear() === date.getFullYear() &&
-                            u.getMonth() === date.getMonth() &&
-                            u.getDate() === date.getDate(),
-                        )
-                      ) {
-                        return true;
-                      }
-                      // Pour la date du jour, vérifier s'il reste des créneaux futurs
-                      if (date.getTime() === today.getTime()) {
-                        // Si on ne connaît pas encore la disponibilité d'aujourd'hui, ne pas désactiver la date
-                        if (todaySlots === null) return false;
-                        const currentMin =
-                          today.getHours() * 60 + today.getMinutes();
-                        const hasFutureSlots = todaySlots.some((s) => {
-                          const [hours, minutes] = s.time
-                            .split(":")
-                            .map(Number);
-                          return hours * 60 + minutes > currentMin;
-                        });
-                        return !hasFutureSlots;
-                      }
-                      return false;
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            {/* Events banner - displays when selected date has events */}
-            {(events.length > 0 || loadingEvents) && (
-              <div className="space-y-2">
-                {loadingEvents ? (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 size={14} className="animate-spin text-primary" />
-                    Chargement des événements...
-                  </div>
-                ) : events.length > 0 && (
-                  <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4 space-y-3">
-                    <div className="flex items-center gap-2 text-purple-400">
-                      <CalendarDays size={16} />
-                      <span className="font-semibold text-purple-300">
-                        {locale === "fr" ? "Événement spécial" : locale === "en" ? "Special Event" : "Spezial-Event"}
-                      </span>
-                    </div>
-                    {events.map((event, idx) => (
-                      <div key={idx} className="bg-purple-500/5 border border-purple-500/20 rounded-md p-3 space-y-1">
-                        <h4 className="font-medium text-purple-200 text-sm">{event.title}</h4>
-                        <p className="text-purple-300/90 text-sm">{event.description}</p>
-                      </div>
-                    ))}
-                    <p className="text-xs text-purple-400/70 italic">
-                      {locale === "fr"
-                        ? "Le menu et la décoration pourront être modifiés pour l'occasion."
-                        : locale === "en"
-                          ? "Menu and decor may be changed for the occasion."
-                          : "Menü und Dekoration können für den Anlass angepasst werden."}
-                    </p>
-                  </div>
+                    <Phone size={16} />
+                    {restaurantPhone}
+                  </a>
                 )}
               </div>
-            )}
+            ) : (
+              <>
+                {/* Date */}
+                <div className="space-y-2">
+                  <Label className="text-foreground flex items-center gap-2">
+                    <CalendarIcon size={16} className="text-primary" />
+                    {t.reservation.date}
+                  </Label>
+                  <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="w-full flex items-center gap-2 h-10 px-3 rounded-md border border-primary/30 bg-background/30 text-sm text-left hover:border-primary/60 transition-colors"
+                      >
+                        <CalendarIcon
+                          size={14}
+                          className="text-primary shrink-0"
+                        />
+                        {formData.date ? (
+                          <span className="text-foreground">
+                            {new Date(
+                              formData.date + "T00:00:00",
+                            ).toLocaleDateString("fr-FR", {
+                              weekday: "long",
+                              day: "numeric",
+                              month: "long",
+                            })}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">
+                            {t.reservation.selectDate}
+                          </span>
+                        )}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-auto p-0 border-primary/30 bg-card"
+                      align="start"
+                    >
+                      <Calendar
+                        mode="single"
+                        selected={
+                          formData.date
+                            ? new Date(formData.date + "T00:00:00")
+                            : undefined
+                        }
+                        onSelect={(date: Date | null | undefined) => {
+                          if (!date) return;
+                          const y = date.getFullYear();
+                          const mo = String(date.getMonth() + 1).padStart(
+                            2,
+                            "0",
+                          );
+                          const d = String(date.getDate()).padStart(2, "0");
+                          setFormData((prev) => ({
+                            ...prev,
+                            date: `${y}-${mo}-${d}`,
+                          }));
+                          setCalendarOpen(false);
+                        }}
+                        month={calendarMonth}
+                        onMonthChange={setCalendarMonth}
+                        weekStartsOn={1}
+                        locale={locale as string & Locale}
+                        disabled={(date: Date) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          if (date < today) return true;
+                          // Aucun service disponible (fermé, complet, ou déjà entamé aujourd'hui)
+                          if (
+                            unavailableDates.some(
+                              (u) =>
+                                u.getFullYear() === date.getFullYear() &&
+                                u.getMonth() === date.getMonth() &&
+                                u.getDate() === date.getDate(),
+                            )
+                          ) {
+                            return true;
+                          }
+                          return false;
+                        }}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
 
-            {/* Créneaux */}
-            <div className="space-y-3">
-              <Label className="text-foreground flex items-center gap-2">
-                <Clock size={16} className="text-primary" />
-                {t.reservation.time}
-                {loadingSlots && (
-                  <Loader2
-                    size={14}
-                    className="animate-spin text-primary ml-1"
-                  />
+                {/* Events banner - displays when selected date has events */}
+                {(events.length > 0 || loadingEvents) && (
+                  <div className="space-y-2">
+                    {loadingEvents ? (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Loader2
+                          size={14}
+                          className="animate-spin text-primary"
+                        />
+                        Chargement des événements...
+                      </div>
+                    ) : (
+                      events.length > 0 && (
+                        <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4 space-y-3">
+                          <div className="flex items-center gap-2 text-purple-400">
+                            <CalendarDays size={16} />
+                            <span className="font-semibold text-purple-300">
+                              {locale === "fr"
+                                ? "Événement spécial"
+                                : locale === "en"
+                                  ? "Special Event"
+                                  : "Spezial-Event"}
+                            </span>
+                          </div>
+                          {events.map((event, idx) => (
+                            <div
+                              key={idx}
+                              className="bg-purple-500/5 border border-purple-500/20 rounded-md p-3 space-y-1"
+                            >
+                              <h4 className="font-medium text-purple-200 text-sm">
+                                {event.title}
+                              </h4>
+                              <p className="text-purple-300/90 text-sm">
+                                {event.description}
+                              </p>
+                            </div>
+                          ))}
+                          <p className="text-xs text-purple-400/70 italic">
+                            {locale === "fr"
+                              ? "Le menu et la décoration pourront être modifiés pour l'occasion."
+                              : locale === "en"
+                                ? "Menu and decor may be changed for the occasion."
+                                : "Menü und Dekoration können für den Anlass angepasst werden."}
+                          </p>
+                        </div>
+                      )
+                    )}
+                  </div>
                 )}
-              </Label>
 
-              {!formData.date ? (
-                <p className="text-sm text-muted-foreground">
-                  {t.reservation.pleaseSelectDate}
-                </p>
-              ) : loadingSlots ? (
-                <p className="text-sm text-muted-foreground">
-                  {t.reservation.loading}
-                </p>
-              ) : slots.length === 0 ? (
-                <p className="text-sm text-destructive">
-                  {t.reservation.noSlots}
-                </p>
-              ) : (
-                <div className="space-y-4">
-                  {lunchSlots.length > 0 && (
-                    <div className="space-y-2">
-                      <p className="text-xs font-semibold text-primary uppercase tracking-wider">
-                        {t.reservation.lunch}
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {lunchSlots.map((slot) => {
-                          const disabled = !slot.available;
-                          const selected = formData.time === slot.time;
-                          return (
-                            <button
-                              key={slot.time}
-                              type="button"
-                              disabled={disabled}
-                              onClick={() => {
-                                if (disabled) return;
-                                setFormData({ ...formData, time: slot.time });
-                              }}
-                              className={[
-                                "flex items-center justify-center w-16 h-12 rounded border text-sm font-medium transition-all",
-                                selected
-                                  ? "bg-primary border-primary text-primary-foreground shadow-md"
-                                  : disabled
-                                    ? "bg-background/10 border-primary/10 text-muted-foreground/40 cursor-not-allowed line-through"
-                                    : "bg-background/30 border-primary/30 text-foreground hover:border-primary/70 hover:bg-primary/10",
-                              ].join(" ")}
-                            >
-                              <span>{slot.time}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
+                {/* Service */}
+                <div className="space-y-3">
+                  <Label className="text-foreground flex items-center gap-2">
+                    <Clock size={16} className="text-primary" />
+                    {t.reservation.service}
+                    {loadingServices && (
+                      <Loader2
+                        size={14}
+                        className="animate-spin text-primary ml-1"
+                      />
+                    )}
+                  </Label>
 
-                  {dinnerSlots.length > 0 && (
-                    <div className="space-y-2">
-                      <p className="text-xs font-semibold text-primary uppercase tracking-wider">
-                        {t.reservation.dinner}
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {dinnerSlots.map((slot) => {
-                          const disabled = !slot.available;
-                          const selected = formData.time === slot.time;
-                          return (
-                            <button
-                              key={slot.time}
-                              type="button"
-                              disabled={disabled}
-                              onClick={() => {
-                                if (disabled) return;
-                                setFormData({ ...formData, time: slot.time });
-                              }}
-                              className={[
-                                "flex items-center justify-center w-16 h-12 rounded border text-sm font-medium transition-all",
-                                selected
-                                  ? "bg-primary border-primary text-primary-foreground shadow-md"
-                                  : disabled
-                                    ? "bg-background/10 border-primary/10 text-muted-foreground/40 cursor-not-allowed line-through"
-                                    : "bg-background/30 border-primary/30 text-foreground hover:border-primary/70 hover:bg-primary/10",
-                              ].join(" ")}
-                            >
-                              <span>{slot.time}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
+                  {!formData.date ? (
+                    <p className="text-sm text-muted-foreground">
+                      {t.reservation.pleaseSelectDate}
+                    </p>
+                  ) : loadingServices ? (
+                    <p className="text-sm text-muted-foreground">
+                      {t.reservation.loading}
+                    </p>
+                  ) : openServices.length === 0 ? (
+                    <p className="text-sm text-destructive">
+                      {t.reservation.noServices}
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {openServices.map((s) => {
+                        const disabled = !s.available;
+                        const selected = service === s.key;
+                        return (
+                          <button
+                            key={s.key}
+                            type="button"
+                            disabled={disabled}
+                            aria-pressed={selected}
+                            onClick={() => {
+                              setService(s.key);
+                              setFormData((prev) => ({
+                                ...prev,
+                                time: s.slots.length === 1 ? s.slots[0] : "",
+                              }));
+                            }}
+                            className={[
+                              "flex flex-col items-center justify-center h-14 rounded border text-sm font-medium transition-all",
+                              selected
+                                ? "bg-primary border-primary text-primary-foreground shadow-md"
+                                : disabled
+                                  ? "bg-background/10 border-primary/10 text-muted-foreground/40 cursor-not-allowed"
+                                  : "bg-background/30 border-primary/30 text-foreground hover:border-primary/70 hover:bg-primary/10",
+                            ].join(" ")}
+                          >
+                            <span>
+                              {s.key === "lunch"
+                                ? t.reservation.lunch
+                                : t.reservation.dinner}
+                            </span>
+                            {disabled && (
+                              <span className="text-xs">
+                                {t.reservation.full}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
-              )}
-            </div>
 
-            {/* Demandes spéciales */}
-            <div className="space-y-2">
-              <Label
-                htmlFor="specialRequest"
-                className="text-foreground flex items-center gap-2"
-              >
-                <MessageSquare size={16} className="text-primary" />
-                {t.reservation.specialRequest}{" "}
-                <span className="text-muted-foreground text-xs">
-                  (optionnel)
-                </span>
-              </Label>
-              <textarea
-                id="specialRequest"
-                value={formData.specialRequest}
-                onChange={(e) =>
-                  setFormData({ ...formData, specialRequest: e.target.value })
-                }
-                className="w-full bg-background/30 border border-primary/30 text-foreground text-sm rounded-md p-3 min-h-[80px] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
-                placeholder={t.reservation.specialRequestPlaceholder}
-              />
-            </div>
+                {/* Heure d'arrivée, dans le service choisi (information : elle ne change pas la disponibilité) */}
+                {selectedService && (
+                  <div className="space-y-3">
+                    <Label className="text-foreground">
+                      {t.reservation.arrivalTime}
+                    </Label>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedService.slots.map((time) => {
+                        const selected = formData.time === time;
+                        return (
+                          <button
+                            key={time}
+                            type="button"
+                            aria-pressed={selected}
+                            onClick={() => setFormData({ ...formData, time })}
+                            className={[
+                              "flex items-center justify-center w-16 h-12 rounded border text-sm font-medium transition-all",
+                              selected
+                                ? "bg-primary border-primary text-primary-foreground shadow-md"
+                                : "bg-background/30 border-primary/30 text-foreground hover:border-primary/70 hover:bg-primary/10",
+                            ].join(" ")}
+                          >
+                            <span>{time}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
-            {/* Bouton submit */}
-            <Button
-              type="submit"
-              disabled={submitting || !formData.time || !formData.phone}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 text-base transition-all duration-300 disabled:opacity-50"
-            >
-              {redirecting ? (
-                <span className="text-sm">
-                  {t.reservation.redirectingPayment}
-                </span>
-              ) : submitting ? (
-                <span className="flex items-center gap-2">
-                  <Loader2 size={18} className="animate-spin" />
-                  {t.reservation.submitSubmitting}
-                </span>
-              ) : (
-                t.reservation.submit
-              )}
-            </Button>
+                {/* Demandes spéciales */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="specialRequest"
+                    className="text-foreground flex items-center gap-2"
+                  >
+                    <MessageSquare size={16} className="text-primary" />
+                    {t.reservation.specialRequest}{" "}
+                    <span className="text-muted-foreground text-xs">
+                      (optionnel)
+                    </span>
+                  </Label>
+                  <textarea
+                    id="specialRequest"
+                    value={formData.specialRequest}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        specialRequest: e.target.value,
+                      })
+                    }
+                    className="w-full bg-background/30 border border-primary/30 text-foreground text-sm rounded-md p-3 min-h-[80px] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    placeholder={t.reservation.specialRequestPlaceholder}
+                  />
+                </div>
+
+                {/* Bouton submit */}
+                <Button
+                  type="submit"
+                  disabled={submitting || !formData.time || !formData.phone}
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 text-base transition-all duration-300 disabled:opacity-50"
+                >
+                  {redirecting ? (
+                    <span className="text-sm">
+                      {t.reservation.redirectingPayment}
+                    </span>
+                  ) : submitting ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 size={18} className="animate-spin" />
+                      {t.reservation.submitSubmitting}
+                    </span>
+                  ) : (
+                    t.reservation.submit
+                  )}
+                </Button>
+              </>
+            )}
           </form>
         </div>
       </section>

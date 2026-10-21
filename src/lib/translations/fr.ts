@@ -159,6 +159,13 @@ const fr = {
     placeholderPhone: "+33 6 12 34 56 78",
     placeholderEmail: "jean@example.com",
     placeholderName: "Jean Dupont",
+    service: "Service",
+    arrivalTime: "Heure d'arrivée",
+    full: "Complet",
+    noServices: "Aucun service disponible ce jour",
+    moreThanMax: "Plus de 8 personnes",
+    largeGroup:
+      "Pour une réservation de plus de 8 personnes, appelez-nous directement :",
     lunch: "Déjeuner",
     dinner: "Dîner",
     errorSelectDate: "Veuillez choisir une date",

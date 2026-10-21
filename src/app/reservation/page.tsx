@@ -17,6 +17,7 @@ export default async function ReservationPage() {
     >
       <ReservationForm
         content={reservationContent as Record<string, unknown> | null}
+        restaurantPhone={process.env.RESTAURANT_PHONE}
       />
     </Suspense>
   );

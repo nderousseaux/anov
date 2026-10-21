@@ -162,6 +162,12 @@ export interface ReservationTranslations {
   placeholderPhone: string;
   placeholderEmail: string;
   placeholderName: string;
+  service: string;
+  arrivalTime: string;
+  full: string;
+  noServices: string;
+  moreThanMax: string;
+  largeGroup: string;
   lunch: string;
   dinner: string;
   errorSelectDate: string;

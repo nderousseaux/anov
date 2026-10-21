@@ -8,6 +8,26 @@ import type {
   TableId,
 } from "./types";
 
+/**
+ * Effet d'un (dés)épinglage sur le service : réservations qui perdent leur table
+ * (`newlyUnplaced`), hors celles qui n'en avaient déjà pas. `tableIds` vide = désépingler.
+ */
+export function evaluatePin(
+  groups: SeatingGroup[],
+  configs: ConfigsBySize,
+  groupId: string,
+  tableIds: TableId[],
+): { newlyUnplaced: string[] } {
+  const before = planService(groups, configs).unplaced;
+  const after = planService(
+    groups.map((g) =>
+      g.id === groupId ? { ...g, pinnedTableIds: tableIds } : g,
+    ),
+    configs,
+  ).unplaced;
+  return { newlyUnplaced: after.filter((id) => !before.includes(id)) };
+}
+
 export type PlanningTable = SeatingTable & { walkIn: boolean };
 
 export interface ServiceSummary {

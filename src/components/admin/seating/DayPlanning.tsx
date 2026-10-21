@@ -1,14 +1,24 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AlertTriangle, Loader2, Plus } from "lucide-react";
+import { toast } from "sonner";
+import { AlertTriangle, Loader2, Pin, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AddReservationDialog,
   type WalkInPreset,
 } from "./AddReservationDialog";
 import { FloorPlan } from "./FloorPlan";
+import { MovePanel } from "./MovePanel";
 import {
   SERVICE_LABELS,
   SOURCE_LABELS,
@@ -16,6 +26,7 @@ import {
   STATUS_LABELS,
   formatTime,
   type DayPlanningData,
+  type PlanningCombo,
   type PlanningReservation,
   type PlanningTable,
   type ServiceKey,
@@ -121,6 +132,9 @@ function ReservationRow({
                     : "Table attribuée automatiquement"
                 }
               >
+                {r.pinnedTableIds.length > 0 && (
+                  <Pin size={9} className="inline mr-0.5" />
+                )}
                 {assigned}
               </span>
             ) : (
@@ -173,11 +187,21 @@ function ReservationRow({
 function ServicePanel({
   service,
   tables,
+  combos,
+  selectedId,
+  onSelect,
+  onMove,
   onCancel,
   onAddWalkIn,
 }: {
   service: ServicePlanning;
   tables: PlanningTable[];
+  combos: PlanningCombo[];
+  /** Réservation sélectionnée dans le plan (à déplacer). */
+  selectedId: string | null;
+  onSelect: (id: string | null) => void;
+  /** Déplacer / épingler (`tableIds`), ou désépingler (liste vide). */
+  onMove: (r: PlanningReservation, tableIds: number[]) => void;
   onCancel: (r: PlanningReservation) => void;
   /** Absent : on ne propose pas d'ajouter un client de passage (jour autre qu'aujourd'hui). */
   onAddWalkIn?: (table: PlanningTable) => void;
@@ -186,6 +210,7 @@ function ServicePanel({
   const { reservations, summary } = service;
   const nameById = new Map(reservations.map((r) => [r.id, r.name]));
   const unplacedNames = summary.unplaced.map((id) => nameById.get(id) ?? id);
+  const selected = reservations.find((r) => r.id === selectedId && r.counting);
 
   return (
     <div className="space-y-4">
@@ -231,7 +256,48 @@ function ServicePanel({
         </TabsContent>
 
         <TabsContent value="plan" className="mt-4">
-          <FloorPlan tables={tables} reservations={reservations} />
+          <FloorPlan
+            tables={tables}
+            reservations={reservations}
+            selectedId={selected?.id ?? null}
+            onSelect={onSelect}
+            onTableClick={(table) => selected && onMove(selected, [table.id])}
+          />
+          {summary.unplaced.length > 0 && (
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+              <span className="text-red-300">Sans table :</span>
+              {reservations
+                .filter((r) => summary.unplaced.includes(r.id))
+                .map((r) => (
+                  <Button
+                    key={r.id}
+                    size="sm"
+                    variant="outline"
+                    aria-pressed={r.id === selected?.id}
+                    className={`h-7 px-2 text-xs ${r.id === selected?.id ? "bg-primary/20" : ""}`}
+                    onClick={() =>
+                      onSelect(r.id === selected?.id ? null : r.id)
+                    }
+                  >
+                    {r.name} ({r.guests})
+                  </Button>
+                ))}
+            </div>
+          )}
+          {selected ? (
+            <MovePanel
+              reservation={selected}
+              tables={tables}
+              combos={combos}
+              onMove={(tableIds) => onMove(selected, tableIds)}
+              onClose={() => onSelect(null)}
+            />
+          ) : (
+            <p className="mt-2 text-xs text-muted-foreground/60 italic">
+              Cliquez sur une réservation du plan pour la déplacer ou
+              l&apos;épingler.
+            </p>
+          )}
         </TabsContent>
       </Tabs>
 
@@ -297,9 +363,16 @@ export function DayPlanning({
   const [tab, setTab] = useState<ServiceKey>(() => defaultService(date));
   const [dialogOpen, setDialogOpen] = useState(false);
   const [walkIn, setWalkIn] = useState<WalkInPreset | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [pendingMove, setPendingMove] = useState<{
+    reservation: PlanningReservation;
+    tableIds: number[];
+    warnings: string[];
+  } | null>(null);
 
   useEffect(() => {
     setTab(defaultService(date));
+    setSelectedId(null);
   }, [date]);
 
   const load = useCallback(async () => {
@@ -334,6 +407,42 @@ export function DayPlanning({
     }
     onChanged();
     load();
+  };
+
+  const move = async (
+    r: PlanningReservation,
+    tableIds: number[],
+    force = false,
+  ) => {
+    try {
+      const res = await fetch(`/api/admin/reservations/${r.id}/tables`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tableIds, force }),
+      });
+      const body = await res.json().catch(() => null);
+      if (res.status === 409 && body?.canForce) {
+        setPendingMove({ reservation: r, tableIds, warnings: body.warnings });
+        return;
+      }
+      if (!res.ok) {
+        toast.error(body?.error ?? "Impossible de déplacer la réservation");
+        return;
+      }
+      setPendingMove(null);
+      setSelectedId(null);
+      const names = tableNames(tableIds, data?.tables ?? []);
+      const message =
+        tableIds.length === 0
+          ? `${r.name} rendue à l'algorithme`
+          : `${r.name} épinglée sur ${names}`;
+      if (body.warnings?.length > 0)
+        toast.warning(`${message} (${body.warnings.join(" · ")})`);
+      else toast.success(message);
+      load();
+    } catch {
+      toast.error("Erreur réseau, veuillez réessayer");
+    }
   };
 
   if (error) return <p className="text-sm text-destructive">{error}</p>;
@@ -379,6 +488,10 @@ export function DayPlanning({
             <ServicePanel
               service={s}
               tables={data.tables}
+              combos={data.combos}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+              onMove={(r, tableIds) => move(r, tableIds)}
               onCancel={cancel}
               onAddWalkIn={
                 isToday(date)
@@ -392,6 +505,52 @@ export function DayPlanning({
           </TabsContent>
         ))}
       </Tabs>
+
+      <Dialog
+        open={pendingMove !== null}
+        onOpenChange={(open) => !open && setPendingMove(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Déplacer quand même ?</DialogTitle>
+            <DialogDescription>
+              {pendingMove &&
+                `${pendingMove.reservation.name} · ${tableNames(pendingMove.tableIds, data.tables) || "algorithme"}`}
+            </DialogDescription>
+          </DialogHeader>
+          <div
+            role="alert"
+            className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-200 space-y-1"
+          >
+            <p className="flex items-center gap-2 font-medium">
+              <AlertTriangle className="w-4 h-4" />
+              Ce déplacement pose problème
+            </p>
+            <ul className="list-disc pl-6">
+              {pendingMove?.warnings.map((w) => (
+                <li key={w}>{w}</li>
+              ))}
+            </ul>
+            <p className="text-xs text-muted-foreground">
+              Aucune réservation n&apos;est annulée.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPendingMove(null)}>
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() =>
+                pendingMove &&
+                move(pendingMove.reservation, pendingMove.tableIds, true)
+              }
+            >
+              Déplacer quand même
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <AddReservationDialog
         open={dialogOpen}

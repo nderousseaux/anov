@@ -3,6 +3,7 @@ import {
   buildConfigs,
   canSeat,
   comboCapacity,
+  evaluatePin,
   dailyCapacity,
   generateConfigs,
   groupSlotsByService,
@@ -341,5 +342,33 @@ describe("summarizeService", () => {
       unplaced: [],
       assignments: {},
     });
+  });
+});
+
+describe("evaluatePin", () => {
+  const configs = buildConfigs(TABLES, []);
+
+  it("aucune conséquence quand tout le monde reste placé", () => {
+    expect(
+      evaluatePin([g("a", 2), g("b", 3)], configs, "a", [2]).newlyUnplaced,
+    ).toEqual([]);
+  });
+
+  it("signale la réservation qui perd sa table quand on en prend une indispensable", () => {
+    // 4 sur la seule table de 4 ; on épingle la 2 sur cette table : le 4 n'a plus de place
+    expect(
+      evaluatePin([g("deux", 2), g("quatre", 4)], configs, "deux", [4])
+        .newlyUnplaced,
+    ).toEqual(["quatre"]);
+  });
+
+  it("ne reproche pas un service qui était déjà sur-réservé", () => {
+    const groups = [g("a", 4), g("b", 4)]; // b n'a déjà pas de table
+    expect(evaluatePin(groups, configs, "a", [4]).newlyUnplaced).toEqual([]);
+  });
+
+  it("désépingler (liste vide) peut aussi être évalué", () => {
+    const groups = [g("deux", 2, [4]), g("quatre", 4)]; // quatre est déjà sans table
+    expect(evaluatePin(groups, configs, "deux", []).newlyUnplaced).toEqual([]);
   });
 });

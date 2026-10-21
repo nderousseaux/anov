@@ -3,7 +3,8 @@ import type { Prisma } from "../../generated/prisma";
 import { buildConfigs, comboCapacity } from "./configs";
 import { isAvailable, planService } from "./canSeat";
 import { onlinePool, serviceOf } from "./service";
-import { summarizeService, type ServiceSummary } from "./planning";
+import { MAX_COMBO_SIZE } from "./types";
+import { evaluatePin, summarizeService, type ServiceSummary } from "./planning";
 import type { ConfigsBySize, SeatingGroup, ServiceKey } from "./types";
 
 type DbClient = typeof prisma | Prisma.TransactionClient;
@@ -58,16 +59,27 @@ export async function loadConfigs(
   db: DbClient,
   pool: "online" | "all" = "online",
 ): Promise<ConfigsBySize> {
-  const [tables, dbCombos] = await Promise.all([
+  const [tables, combos] = await Promise.all([
     db.table.findMany({ select: { id: true, capacity: true, walkIn: true } }),
-    db.tableCombo.findMany(),
+    loadCombos(db),
+  ]);
+  return buildConfigs(pool === "online" ? onlinePool(tables) : tables, combos);
+}
+
+/** Combinaisons autorisées avec leur capacité effective (réglée, sinon somme des tables). */
+export async function loadCombos(
+  db: DbClient,
+): Promise<{ id: number; tableIds: number[]; capacity: number }[]> {
+  const [tables, dbCombos] = await Promise.all([
+    db.table.findMany({ select: { id: true, capacity: true } }),
+    db.tableCombo.findMany({ orderBy: { id: "asc" } }),
   ]);
   const capacityById = new Map(tables.map((t) => [t.id, t.capacity]));
-  const combos = dbCombos.map((c) => ({
+  return dbCombos.map((c) => ({
+    id: c.id,
     tableIds: c.tableIds,
     capacity: comboCapacity(c.tableIds, c.capacityOverride, capacityById),
   }));
-  return buildConfigs(pool === "online" ? onlinePool(tables) : tables, combos);
 }
 
 /** Groupes déjà présents dans un service (hors `excludeReservationId`). */
@@ -209,6 +221,7 @@ export interface PlanningReservation {
 }
 
 export interface DayPlanning {
+  combos: { id: number; tableIds: number[]; capacity: number }[];
   tables: {
     id: number;
     name: string;
@@ -239,7 +252,7 @@ export async function loadDayPlanning(
   const dayStart = new Date(`${dateStr}T00:00:00.000Z`);
   const dayEnd = new Date(dayStart.getTime() + 86_400_000);
 
-  const [tables, configs, reservations] = await Promise.all([
+  const [tables, combos, configs, reservations] = await Promise.all([
     db.table.findMany({
       orderBy: [{ capacity: "asc" }, { id: "asc" }],
       select: {
@@ -251,6 +264,7 @@ export async function loadDayPlanning(
         walkIn: true,
       },
     }),
+    loadCombos(db),
     loadConfigs(db),
     db.reservation.findMany({
       where: {
@@ -304,5 +318,113 @@ export async function loadDayPlanning(
     };
   });
 
-  return { tables, services };
+  return { tables, combos, services };
+}
+
+export type PinResult =
+  | { kind: "ok"; pinnedTableIds: number[]; warnings: string[] }
+  | { kind: "not_found" }
+  | { kind: "invalid"; error: string }
+  /** Le changement a des conséquences : à confirmer (`force`) avant de l'appliquer. */
+  | { kind: "warnings"; warnings: string[] };
+
+/**
+ * Place une réservation sur des tables précises (épinglage), ou la rend à l'algo
+ * (`tableIds` vide). Une table seule, ou une combinaison autorisée. Sous verrou
+ * (date, service). Si le changement fait perdre sa table à une réservation, ou si les
+ * tables sont trop petites, rien n'est appliqué sans `force` : on retourne les avertissements.
+ */
+export async function pinReservation(
+  tx: Prisma.TransactionClient,
+  reservationId: string,
+  tableIds: number[],
+  force: boolean,
+): Promise<PinResult> {
+  const reservation = await tx.reservation.findUnique({
+    where: { id: reservationId },
+    select: { id: true, name: true, date: true, guests: true },
+  });
+  if (!reservation) return { kind: "not_found" };
+
+  const dateStr = reservation.date.toISOString().split("T")[0];
+  const service = serviceOf(reservation.date);
+  await lockService(tx, dateStr, service);
+
+  const groups = await loadServiceGroups(tx, dateStr, service);
+  if (!groups.some((g) => g.id === reservationId)) {
+    return {
+      kind: "invalid",
+      error:
+        "Cette réservation n'occupe plus de place dans le service (annulée, expirée…)",
+    };
+  }
+
+  let targetCapacity = 0;
+  if (tableIds.length > 0) {
+    if (
+      tableIds.length > MAX_COMBO_SIZE ||
+      new Set(tableIds).size !== tableIds.length
+    ) {
+      return {
+        kind: "invalid",
+        error: `Une table seule ou une combinaison de ${MAX_COMBO_SIZE} tables`,
+      };
+    }
+    const [tables, combos] = await Promise.all([
+      tx.table.findMany({
+        where: { id: { in: tableIds } },
+        select: { id: true, capacity: true },
+      }),
+      loadCombos(tx),
+    ]);
+    if (tables.length !== tableIds.length)
+      return { kind: "invalid", error: "Table introuvable" };
+    if (tableIds.length === 1) {
+      targetCapacity = tables[0].capacity;
+    } else {
+      const key = [...tableIds].sort((a, b) => a - b).join(",");
+      const combo = combos.find(
+        (c) => [...c.tableIds].sort((a, b) => a - b).join(",") === key,
+      );
+      if (!combo)
+        return {
+          kind: "invalid",
+          error: "Cette combinaison n'est pas autorisée",
+        };
+      targetCapacity = combo.capacity;
+    }
+  }
+
+  const warnings: string[] = [];
+  if (tableIds.length > 0 && reservation.guests > targetCapacity) {
+    warnings.push(
+      `${reservation.guests} couverts sur ${targetCapacity} place${targetCapacity > 1 ? "s" : ""}`,
+    );
+  }
+
+  const { newlyUnplaced } = evaluatePin(
+    groups,
+    await loadConfigs(tx),
+    reservationId,
+    tableIds,
+  );
+  if (newlyUnplaced.length > 0) {
+    const names = (
+      await tx.reservation.findMany({
+        where: { id: { in: newlyUnplaced } },
+        select: { name: true },
+      })
+    ).map((r) => r.name);
+    warnings.push(
+      `le service devient sur-réservé : ${names.join(", ")} n'aurait plus de table`,
+    );
+  }
+
+  if (warnings.length > 0 && !force) return { kind: "warnings", warnings };
+
+  await tx.reservation.update({
+    where: { id: reservationId },
+    data: { pinnedTableIds: tableIds },
+  });
+  return { kind: "ok", pinnedTableIds: tableIds, warnings };
 }

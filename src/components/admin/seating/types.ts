@@ -50,7 +50,14 @@ export interface ServicePlanning {
   summary: ServiceSummary;
 }
 
+export interface PlanningCombo {
+  id: number;
+  tableIds: number[];
+  capacity: number;
+}
+
 export interface DayPlanningData {
+  combos: PlanningCombo[];
   tables: PlanningTable[];
   services: ServicePlanning[];
 }

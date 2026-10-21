@@ -30,13 +30,10 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
-// Mock the availability module with mock functions
-vi.mock("@/lib/availability", () => ({
-  getSlotsWithAvailability: vi.fn().mockResolvedValue([
-    { time: "12:00", available: true },
-    { time: "19:00", available: true },
-  ]),
-  getUnavailableDatesForMonth: vi.fn().mockResolvedValue([]),
+vi.mock("@/lib/availability", async (importOriginal) => ({
+  ...(await importOriginal()),
+  getServicesAvailability: vi.fn(),
+  getMonthServiceAvailability: vi.fn(),
 }));
 
 describe("Reservations Availability API", () => {
@@ -53,7 +50,7 @@ describe("Reservations Availability API", () => {
 
       expect(res.status).toBe(400);
       const data = await res.json();
-      expect(data.error).toBe("guests invalide (1 à 4)");
+      expect(data.error).toBe("guests invalide (1 à 8)");
     });
 
     it("returns 400 if guests is less than 1", async () => {
@@ -69,10 +66,10 @@ describe("Reservations Availability API", () => {
       expect(res.status).toBe(400);
     });
 
-    it("returns 400 if guests is more than 4", async () => {
+    it("returns 400 if guests is more than 8", async () => {
       const { GET } = await import("../route");
       const req = new NextRequest(
-        new URL("http://localhost:3000/api/reservations/availability?guests=5"),
+        new URL("http://localhost:3000/api/reservations/availability?guests=9"),
         {
           method: "GET",
         },
@@ -97,30 +94,43 @@ describe("Reservations Availability API", () => {
       expect(res.status).toBe(400);
     });
 
-    it("returns unavailable dates for month", async () => {
-      vi.resetAllMocks();
-      const { getSlotsWithAvailability, getUnavailableDatesForMonth } =
+    it("returns unavailable dates and available services for month", async () => {
+      const { getMonthServiceAvailability } =
         await import("@/lib/availability");
-      getSlotsWithAvailability.mockResolvedValue([]);
-      getUnavailableDatesForMonth.mockResolvedValue([
-        "2024-06-15",
-        "2024-06-16",
-      ]);
+      getMonthServiceAvailability.mockResolvedValue({
+        "2024-06-15": [],
+        "2024-06-16": [],
+        "2024-06-17": ["lunch"],
+      });
 
       const { GET } = await import("../route");
       const req = new NextRequest(
         new URL(
           "http://localhost:3000/api/reservations/availability?month=2024-06&guests=2",
         ),
-        {
-          method: "GET",
-        },
+        { method: "GET" },
       );
       const res = await GET(req as any);
 
       expect(res.status).toBe(200);
       const data = await res.json();
       expect(data.unavailableDates).toEqual(["2024-06-15", "2024-06-16"]);
+      expect(data.availableServices["2024-06-17"]).toEqual(["lunch"]);
+    });
+
+    it("accepts groups up to 8", async () => {
+      const { getMonthServiceAvailability } =
+        await import("@/lib/availability");
+      getMonthServiceAvailability.mockResolvedValue({});
+      const { GET } = await import("../route");
+      const res = await GET(
+        new NextRequest(
+          new URL(
+            "http://localhost:3000/api/reservations/availability?month=2030-01&guests=8",
+          ),
+        ) as any,
+      );
+      expect(res.status).toBe(200);
     });
 
     it("returns 400 for invalid month format", async () => {
@@ -140,34 +150,33 @@ describe("Reservations Availability API", () => {
       expect(data.error).toBe("month invalide");
     });
 
-    it("returns slots for specific date", async () => {
-      const { getSlotsWithAvailability, getUnavailableDatesForMonth } =
-        await import("@/lib/availability");
-      getSlotsWithAvailability.mockResolvedValue([
-        { time: "12:00", available: true },
-        { time: "19:00", available: true },
+    it("returns services and their slots for a specific date", async () => {
+      const { getServicesAvailability } = await import("@/lib/availability");
+      getServicesAvailability.mockResolvedValue([
+        { key: "lunch", slots: ["12:00"], started: false, available: true },
+        { key: "dinner", slots: ["19:00"], started: false, available: false },
       ]);
-      getUnavailableDatesForMonth.mockResolvedValue([]);
 
       const { GET } = await import("../route");
-      const today = new Date();
-      const tomorrow = new Date(today);
+      const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const tomorrowStr = tomorrow.toISOString().split("T")[0];
 
-      const req = new NextRequest(
-        new URL(
-          `http://localhost:3000/api/reservations/availability?date=${tomorrowStr}&guests=2`,
-        ),
-        {
-          method: "GET",
-        },
+      const res = await GET(
+        new NextRequest(
+          new URL(
+            `http://localhost:3000/api/reservations/availability?date=${tomorrowStr}&guests=2`,
+          ),
+        ) as any,
       );
-      const res = await GET(req as any);
 
       expect(res.status).toBe(200);
       const data = await res.json();
-      expect(data.slots).toHaveLength(2);
+      expect(data.services).toHaveLength(2);
+      expect(data.slots).toEqual([
+        { time: "12:00", available: true },
+        { time: "19:00", available: false },
+      ]);
     });
 
     it("returns empty slots for past dates", async () => {
@@ -217,30 +226,27 @@ describe("Reservations Availability API", () => {
       expect(res.status).toBe(400);
     });
 
-    it("returns slots for today if date is today", async () => {
-      const today = new Date();
-      const todayStr = today.toISOString().split("T")[0];
+    it("hides services already started today from slots", async () => {
+      const todayStr = new Date().toISOString().split("T")[0];
 
-      vi.resetAllMocks();
-      const { getSlotsWithAvailability } = await import("@/lib/availability");
-      getSlotsWithAvailability.mockResolvedValue([
-        { time: "19:00", available: true },
+      const { getServicesAvailability } = await import("@/lib/availability");
+      getServicesAvailability.mockResolvedValue([
+        { key: "lunch", slots: ["12:00"], started: true, available: false },
+        { key: "dinner", slots: ["19:00"], started: false, available: true },
       ]);
 
       const { GET } = await import("../route");
-      const req = new NextRequest(
-        new URL(
-          `http://localhost:3000/api/reservations/availability?date=${todayStr}&guests=2`,
-        ),
-        {
-          method: "GET",
-        },
+      const res = await GET(
+        new NextRequest(
+          new URL(
+            `http://localhost:3000/api/reservations/availability?date=${todayStr}&guests=2`,
+          ),
+        ) as any,
       );
-      const res = await GET(req as any);
 
       expect(res.status).toBe(200);
       const data = await res.json();
-      expect(data.slots).toHaveLength(1);
+      expect(data.slots).toEqual([{ time: "19:00", available: true }]);
     });
   });
 });

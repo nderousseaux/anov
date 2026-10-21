@@ -1,10 +1,15 @@
 import { prisma } from "./prisma";
 import {
-  getTables,
-  getDayReservationsForTables,
-  computeBusyTableIds,
-  pickTable,
-} from "./tables";
+  groupSlotsByService,
+  isAvailable,
+  serviceOf,
+  type ServiceKey,
+} from "./seating";
+import {
+  activeReservationWhere,
+  isServiceAvailable,
+  loadConfigs,
+} from "./seating/db";
 
 const DEFAULT_SLOTS = [
   "12:00",
@@ -30,9 +35,7 @@ const DEFAULT_SLOTS = [
 
 const DEFAULT_OPENING_DAYS = [2, 3, 4, 5, 6]; // Mar–Sam
 
-const DEFAULT_MEAL_DURATION = 90; // minutes
-
-type EffectiveConfig = { effectiveSlots: string[]; mealDuration: number };
+type EffectiveConfig = { effectiveSlots: string[] };
 
 async function getEffectiveConfig(
   dateStr: string,
@@ -45,8 +48,6 @@ async function getEffectiveConfig(
     prisma.dayOverride.findUnique({ where: { date: dateObj } }),
   ]);
 
-  const mealDuration: number =
-    dbSettings?.mealDuration ?? DEFAULT_MEAL_DURATION;
   const globalOpeningDays: number[] = dbSettings
     ? (JSON.parse(dbSettings.openingDays) as number[])
     : DEFAULT_OPENING_DAYS;
@@ -60,77 +61,99 @@ async function getEffectiveConfig(
       effectiveSlots: override.openingSlots
         ? (JSON.parse(override.openingSlots) as string[])
         : globalSlots,
-      mealDuration,
     };
   }
 
   if (!globalOpeningDays.includes(dow)) return null;
-  return { effectiveSlots: globalSlots, mealDuration };
+  return { effectiveSlots: globalSlots };
+}
+
+function localDateStr(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function firstSlotMinutes(slots: string[]): number {
+  const [h, m] = slots[0].split(":").map(Number);
+  return h * 60 + m;
+}
+
+export interface ServiceAvailability {
+  key: ServiceKey;
+  slots: string[];
+  /** Service déjà entamé aujourd'hui (premier créneau passé) : plus réservable. */
+  started: boolean;
+  available: boolean;
 }
 
 /**
- * Returns all configured slots for a given date with a boolean indicating whether a
- * suitable table is available for the requested number of guests (table-based logic,
- * see src/lib/tables.ts). Closed days / slots return an empty array.
+ * Disponibilité par service (midi / soir) d'une date pour `guests` personnes : existe-t-il
+ * une répartition valide de tous les groupes sur les tables du pool en ligne ?
+ * Jour fermé -> tableau vide. L'heure d'arrivée n'entre pas dans le calcul.
+ */
+export async function getServicesAvailability(
+  dateStr: string,
+  guests: number,
+): Promise<ServiceAvailability[]> {
+  const config = await getEffectiveConfig(dateStr);
+  if (!config) return [];
+
+  const now = new Date();
+  const isToday = dateStr === localDateStr(now);
+  const currentMin = now.getHours() * 60 + now.getMinutes();
+
+  const bySlots = groupSlotsByService(config.effectiveSlots);
+  const result: ServiceAvailability[] = [];
+  for (const key of ["lunch", "dinner"] as const) {
+    const slots = bySlots[key];
+    if (slots.length === 0) continue;
+    const started = isToday && firstSlotMinutes(slots) <= currentMin;
+    const available =
+      !started &&
+      (await isServiceAvailable(prisma, {
+        dateStr,
+        service: key,
+        size: guests,
+      }));
+    result.push({ key, slots, started, available });
+  }
+  return result;
+}
+
+/**
+ * Créneaux d'une date, avec `available` = le service du créneau a de la place.
+ * Les services déjà entamés aujourd'hui ne sont pas retournés. Jour fermé -> [].
  */
 export async function getSlotsWithAvailability(
   dateStr: string,
   guests: number,
 ): Promise<{ time: string; available: boolean }[]> {
-  const config = await getEffectiveConfig(dateStr);
-  if (!config) return [];
-  let { effectiveSlots } = config;
+  return servicesToSlots(await getServicesAvailability(dateStr, guests));
+}
 
-  // Pour le jour J : supprimer les services déjà entamés
-  const now = new Date();
-  const localToday = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  if (dateStr === localToday) {
-    const currentMin = now.getHours() * 60 + now.getMinutes();
-    // Grouper les créneaux en services (pause > 2h = nouveau service)
-    const sorted = [...effectiveSlots].sort();
-    const services: string[][] = sorted.length ? [[sorted[0]]] : [];
-    for (let i = 1; i < sorted.length; i++) {
-      const [ph, pm] = sorted[i - 1].split(":").map(Number);
-      const [ch, cm] = sorted[i].split(":").map(Number);
-      if (ch * 60 + cm - (ph * 60 + pm) > 120) services.push([]);
-      services[services.length - 1].push(sorted[i]);
-    }
-    // Garder uniquement les services dont le premier créneau est dans le futur
-    effectiveSlots = services
-      .filter((svc) => {
-        const [h, m] = svc[0].split(":").map(Number);
-        return h * 60 + m > currentMin;
-      })
-      .flat();
-  }
-
-  const isToday = dateStr === localToday;
-  const [tables, reservations] = await Promise.all([
-    getTables(),
-    getDayReservationsForTables(prisma, dateStr),
-  ]);
-
-  return effectiveSlots.map((slot) => {
-    const busy = computeBusyTableIds(reservations, slot, config.mealDuration);
-    const table = pickTable(tables, busy, guests, isToday);
-    return { time: slot, available: table !== null };
-  });
+export function servicesToSlots(
+  services: ServiceAvailability[],
+): { time: string; available: boolean }[] {
+  return services
+    .filter((s) => !s.started)
+    .flatMap((s) => s.slots.map((time) => ({ time, available: s.available })));
 }
 
 /**
- * Returns the list of date strings (YYYY-MM-DD) in a given month that have no availability.
- * Only 3 DB queries regardless of the number of days in the month.
+ * Services disponibles pour `guests` personnes, par date (YYYY-MM-DD) du mois, à partir
+ * d'aujourd'hui. Une date sans service disponible (fermée, complète, entamée) a un
+ * tableau vide. Peu de requêtes quel que soit le nombre de jours.
  */
-export async function getUnavailableDatesForMonth(
+export async function getMonthServiceAvailability(
   monthStr: string,
   guests: number,
-): Promise<string[]> {
+): Promise<Record<string, ServiceKey[]>> {
   const [year, month] = monthStr.split("-").map(Number);
-  // new Date(year, month, 0) → last day of the 1-indexed month (JS month index is month-1, day 0 = last day of month-1)
+  // new Date(year, month, 0) → dernier jour du mois (month est 1-indexé ici)
   const daysInMonth = new Date(year, month, 0).getDate();
 
   const now = new Date();
-  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  const todayStr = localDateStr(now);
+  const currentMin = now.getHours() * 60 + now.getMinutes();
 
   const paddedMonth = String(month).padStart(2, "0");
   const monthStart = new Date(`${year}-${paddedMonth}-01T00:00:00.000Z`);
@@ -138,37 +161,21 @@ export async function getUnavailableDatesForMonth(
     `${year}-${paddedMonth}-${String(daysInMonth).padStart(2, "0")}T23:59:59.999Z`,
   );
 
-  const [dbSettings, overrides, reservations, tables] = await Promise.all([
+  const [dbSettings, overrides, reservations, configs] = await Promise.all([
     prisma.restaurantSettings.findFirst({ where: { id: 1 } }),
     prisma.dayOverride.findMany({
       where: { date: { gte: monthStart, lte: monthEnd } },
     }),
-    // Compter les réservations CONFIRMED et PENDING_PAYMENT non expirés
     prisma.reservation.findMany({
       where: {
         date: { gte: monthStart, lte: monthEnd },
-        OR: [
-          { status: "CONFIRMED" },
-          {
-            AND: [
-              { status: "PENDING_PAYMENT" },
-              {
-                OR: [
-                  { transactionExpireAt: { gt: now } },
-                  { transactionExpireAt: null },
-                ],
-              },
-            ],
-          },
-        ],
+        ...activeReservationWhere(now),
       },
-      select: { date: true, tableId: true },
+      select: { id: true, date: true, guests: true, pinnedTableIds: true },
     }),
-    getTables(),
+    loadConfigs(prisma),
   ]);
 
-  const mealDuration: number =
-    dbSettings?.mealDuration ?? DEFAULT_MEAL_DURATION;
   const globalOpeningDays: number[] = dbSettings
     ? (JSON.parse(dbSettings.openingDays) as number[])
     : DEFAULT_OPENING_DAYS;
@@ -181,17 +188,19 @@ export async function getUnavailableDatesForMonth(
     overrideByDate.set(o.date.toISOString().split("T")[0], o);
   }
 
-  const resByDate = new Map<string, { date: Date; tableId: number | null }[]>();
+  // Groupes déjà présents, par "date service"
+  const groupsByService = new Map<
+    string,
+    { id: string; size: number; pinnedTableIds: number[] }[]
+  >();
   for (const r of reservations) {
-    const d = r.date.toISOString().split("T")[0];
-    if (!resByDate.has(d)) resByDate.set(d, []);
-    resByDate.get(d)!.push(r);
+    const key = `${r.date.toISOString().split("T")[0]} ${serviceOf(r.date)}`;
+    const list = groupsByService.get(key) ?? [];
+    list.push({ id: r.id, size: r.guests, pinnedTableIds: r.pinnedTableIds });
+    groupsByService.set(key, list);
   }
 
-  const today = new Date();
-  const currentMin = today.getHours() * 60 + today.getMinutes();
-
-  const unavailable: string[] = [];
+  const result: Record<string, ServiceKey[]> = {};
 
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = `${year}-${paddedMonth}-${String(day).padStart(2, "0")}`;
@@ -201,10 +210,9 @@ export async function getUnavailableDatesForMonth(
     const override = overrideByDate.get(dateStr);
 
     let effectiveSlots: string[];
-
     if (override) {
       if (override.closed) {
-        unavailable.push(dateStr);
+        result[dateStr] = [];
         continue;
       }
       effectiveSlots = override.openingSlots
@@ -212,29 +220,43 @@ export async function getUnavailableDatesForMonth(
         : globalSlots;
     } else {
       if (!globalOpeningDays.includes(dow)) {
-        unavailable.push(dateStr);
+        result[dateStr] = [];
         continue;
       }
       effectiveSlots = globalSlots;
     }
 
-    // Pour aujourd'hui, filtrer les créneaux déjà passés
-    let filteredSlots = effectiveSlots;
+    const bySlots = groupSlotsByService(effectiveSlots);
     const isToday = dateStr === todayStr;
-    if (isToday) {
-      filteredSlots = effectiveSlots.filter((slot) => {
-        const [h, m] = slot.split(":").map(Number);
-        return h * 60 + m > currentMin;
-      });
-    }
-
-    const dayReservations = resByDate.get(dateStr) ?? [];
-    const hasAvailability = filteredSlots.some((slot) => {
-      const busy = computeBusyTableIds(dayReservations, slot, mealDuration);
-      return pickTable(tables, busy, guests, isToday) !== null;
+    result[dateStr] = (["lunch", "dinner"] as const).filter((key) => {
+      const slots = bySlots[key];
+      if (slots.length === 0) return false;
+      if (isToday && firstSlotMinutes(slots) <= currentMin) return false;
+      return isAvailable(
+        groupsByService.get(`${dateStr} ${key}`) ?? [],
+        guests,
+        configs,
+      );
     });
-    if (!hasAvailability) unavailable.push(dateStr);
   }
 
-  return unavailable;
+  return result;
+}
+
+/**
+ * Dates (YYYY-MM-DD) du mois, aujourd'hui ou plus tard, sans aucun service disponible.
+ */
+export async function getUnavailableDatesForMonth(
+  monthStr: string,
+  guests: number,
+): Promise<string[]> {
+  return unavailableDates(await getMonthServiceAvailability(monthStr, guests));
+}
+
+export function unavailableDates(
+  byDate: Record<string, ServiceKey[]>,
+): string[] {
+  return Object.entries(byDate)
+    .filter(([, services]) => services.length === 0)
+    .map(([dateStr]) => dateStr);
 }

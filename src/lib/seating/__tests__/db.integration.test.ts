@@ -1,0 +1,240 @@
+import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { prisma } from "@/lib/prisma";
+import {
+  isServiceAvailable,
+  lockAndCheckAvailability,
+  lockService,
+  serviceRange,
+} from "../db";
+
+// Vraie base (anov_test) : voir vitest.integration.config.ts
+const DATE = "2030-06-04";
+const SERVICE = "dinner" as const;
+const AT = new Date(`${DATE}T19:00:00.000Z`);
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const inMinutes = (n: number) => new Date(Date.now() + n * 60_000);
+
+async function addReservation(
+  overrides: Partial<
+    Parameters<typeof prisma.reservation.create>[0]["data"]
+  > = {},
+) {
+  return prisma.reservation.create({
+    data: {
+      name: "Client",
+      email: "client@example.com",
+      date: AT,
+      guests: 2,
+      status: "PENDING_PAYMENT",
+      transactionExpireAt: inMinutes(30),
+      ...overrides,
+    },
+  });
+}
+
+/** Création telle que dans POST /api/reservations : verrou + test + create dans une transaction. */
+async function reserve(size: number, { lock = true } = {}) {
+  return prisma.$transaction(async (tx) => {
+    const ok = lock
+      ? await lockAndCheckAvailability(tx, {
+          dateStr: DATE,
+          service: SERVICE,
+          size,
+        })
+      : await isServiceAvailable(tx, {
+          dateStr: DATE,
+          service: SERVICE,
+          size,
+        });
+    if (!ok) return null;
+    // Laisse les autres transactions lire avant qu'on écrive : sans verrou, elles voient toutes « libre »
+    await sleep(80);
+    return tx.reservation.create({
+      data: {
+        name: "Client",
+        email: "client@example.com",
+        date: AT,
+        guests: size,
+        status: "PENDING_PAYMENT",
+        transactionExpireAt: inMinutes(30),
+      },
+    });
+  });
+}
+
+const countReservations = () => prisma.reservation.count();
+
+describe.skipIf(!process.env.DATABASE_URL_TEST)(
+  "attribution par service (Postgres réel)",
+  () => {
+    beforeEach(async () => {
+      await prisma.reservation.deleteMany();
+      await prisma.tableCombo.deleteMany();
+      await prisma.table.deleteMany();
+    });
+
+    afterAll(async () => {
+      await prisma.reservation.deleteMany();
+      await prisma.tableCombo.deleteMany();
+      await prisma.table.deleteMany();
+      await prisma.$disconnect();
+    });
+
+    it("deux créations simultanées sur la dernière place : une seule réussit", async () => {
+      await prisma.table.create({ data: { name: "T1", capacity: 2 } });
+
+      const results = await Promise.all([reserve(2), reserve(2)]);
+
+      expect(results.filter(Boolean)).toHaveLength(1);
+      expect(await countReservations()).toBe(1);
+    });
+
+    it("même chose avec beaucoup de requêtes concurrentes", async () => {
+      await prisma.table.createMany({
+        data: [
+          { name: "T1", capacity: 2 },
+          { name: "T2", capacity: 2 },
+        ],
+      });
+
+      const results = await Promise.all(
+        Array.from({ length: 6 }, () => reserve(2)),
+      );
+
+      expect(results.filter(Boolean)).toHaveLength(2); // 2 tables, 2 places
+      expect(await countReservations()).toBe(2);
+    });
+
+    it("sans le verrou, la même course produit des doublons (le test a des dents)", async () => {
+      await prisma.table.create({ data: { name: "T1", capacity: 2 } });
+
+      const results = await Promise.all([
+        reserve(2, { lock: false }),
+        reserve(2, { lock: false }),
+      ]);
+
+      expect(results.filter(Boolean).length).toBeGreaterThan(1);
+    });
+
+    it("le verrou est par (date, service) : un autre service n'attend pas", async () => {
+      await prisma.table.create({ data: { name: "T1", capacity: 2 } });
+      await addReservation({ date: new Date(`${DATE}T12:00:00.000Z`) }); // midi complet
+
+      expect(
+        await isServiceAvailable(prisma, {
+          dateStr: DATE,
+          service: "lunch",
+          size: 2,
+        }),
+      ).toBe(false);
+      expect(
+        await isServiceAvailable(prisma, {
+          dateStr: DATE,
+          service: "dinner",
+          size: 2,
+        }),
+      ).toBe(true);
+    });
+
+    it("service complet → faux ; supprimer une réservation → vrai", async () => {
+      await prisma.table.create({ data: { name: "T1", capacity: 2 } });
+      const booking = await addReservation();
+
+      const check = () =>
+        isServiceAvailable(prisma, {
+          dateStr: DATE,
+          service: SERVICE,
+          size: 2,
+        });
+      expect(await check()).toBe(false);
+
+      await prisma.reservation.delete({ where: { id: booking.id } });
+      expect(await check()).toBe(true);
+    });
+
+    it("un hold expiré ne compte pas, un hold valide et une résa confirmée oui", async () => {
+      await prisma.table.createMany({
+        data: [
+          { name: "T1", capacity: 2 },
+          { name: "T2", capacity: 2 },
+        ],
+      });
+      await addReservation({ transactionExpireAt: inMinutes(-1) }); // expiré
+      await addReservation({ status: "CONFIRMED", transactionExpireAt: null });
+
+      const check = () =>
+        isServiceAvailable(prisma, {
+          dateStr: DATE,
+          service: SERVICE,
+          size: 2,
+        });
+      expect(await check()).toBe(true); // reste une table
+
+      await addReservation({ transactionExpireAt: inMinutes(10) }); // hold valide
+      expect(await check()).toBe(false);
+    });
+
+    it("les tables walk-in sont exclues du web mais utilisables par le restaurateur", async () => {
+      await prisma.table.create({
+        data: { name: "W1", capacity: 4, walkIn: true },
+      });
+
+      const check = (pool: "online" | "all") =>
+        isServiceAvailable(prisma, {
+          dateStr: DATE,
+          service: SERVICE,
+          size: 4,
+          pool,
+        });
+      expect(await check("online")).toBe(false);
+      expect(await check("all")).toBe(true);
+    });
+
+    it("une combinaison déclarée permet un groupe de 6, sa capacité modifiée le limite", async () => {
+      const [a, b] = await Promise.all([
+        prisma.table.create({ data: { name: "T1", capacity: 3 } }),
+        prisma.table.create({ data: { name: "T2", capacity: 3 } }),
+      ]);
+      const check = (size: number) =>
+        isServiceAvailable(prisma, { dateStr: DATE, service: SERVICE, size });
+
+      expect(await check(6)).toBe(false); // pas de combinaison déclarée
+
+      const combo = await prisma.tableCombo.create({
+        data: { tableIds: [a.id, b.id] },
+      });
+      expect(await check(6)).toBe(true); // somme par défaut
+
+      await prisma.tableCombo.update({
+        where: { id: combo.id },
+        data: { capacityOverride: 5 },
+      });
+      expect(await check(6)).toBe(false);
+      expect(await check(5)).toBe(true);
+    });
+
+    it("respecte une réservation épinglée", async () => {
+      const [t2, t4] = await Promise.all([
+        prisma.table.create({ data: { name: "T1", capacity: 2 } }),
+        prisma.table.create({ data: { name: "T2", capacity: 4 } }),
+      ]);
+      await addReservation({ guests: 2, pinnedTableIds: [t4.id] });
+
+      const check = (size: number) =>
+        isServiceAvailable(prisma, { dateStr: DATE, service: SERVICE, size });
+      expect(await check(4)).toBe(false); // la table de 4 est épinglée
+      expect(await check(2)).toBe(true); // la table de 2 reste libre
+      expect(t2.id).toBeDefined();
+    });
+
+    it("lockService est réentrant dans une même transaction et couvre la plage du service", async () => {
+      await prisma.$transaction(async (tx) => {
+        await lockService(tx, DATE, SERVICE);
+        await lockService(tx, DATE, SERVICE);
+      });
+      const { gte, lt } = serviceRange(DATE, SERVICE);
+      expect(gte.toISOString()).toBe(`${DATE}T15:00:00.000Z`);
+      expect(lt.toISOString()).toBe("2030-06-05T00:00:00.000Z");
+    });
+  },
+);

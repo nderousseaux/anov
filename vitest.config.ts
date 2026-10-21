@@ -7,6 +7,8 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
     include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
+    // Base réelle : voir vitest.integration.config.ts (pnpm test:integration)
+    exclude: ["**/node_modules/**", "**/*.integration.test.ts"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],

@@ -1,17 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  getSlotsWithAvailability,
-  getUnavailableDatesForMonth,
+  getMonthServiceAvailability,
+  getServicesAvailability,
+  servicesToSlots,
+  unavailableDates,
 } from "@/lib/availability";
+import { MAX_GROUP_SIZE } from "@/lib/seating";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
 
   const guestsParam = searchParams.get("guests");
   const guests = parseInt(guestsParam ?? "", 10);
-  if (!guestsParam || isNaN(guests) || guests < 1 || guests > 4) {
+  if (!guestsParam || isNaN(guests) || guests < 1 || guests > MAX_GROUP_SIZE) {
     return NextResponse.json(
-      { error: "guests invalide (1 à 4)" },
+      { error: `guests invalide (1 à ${MAX_GROUP_SIZE})` },
       { status: 400 },
     );
   }
@@ -21,8 +24,11 @@ export async function GET(req: NextRequest) {
     if (!/^\d{4}-\d{2}$/.test(month)) {
       return NextResponse.json({ error: "month invalide" }, { status: 400 });
     }
-    const unavailableDates = await getUnavailableDatesForMonth(month, guests);
-    return NextResponse.json({ unavailableDates });
+    const availableServices = await getMonthServiceAvailability(month, guests);
+    return NextResponse.json({
+      unavailableDates: unavailableDates(availableServices),
+      availableServices,
+    });
   }
 
   const date = searchParams.get("date");
@@ -33,9 +39,9 @@ export async function GET(req: NextRequest) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   if (new Date(date) < today) {
-    return NextResponse.json({ slots: [] });
+    return NextResponse.json({ slots: [], services: [] });
   }
 
-  const slots = await getSlotsWithAvailability(date, guests);
-  return NextResponse.json({ slots });
+  const services = await getServicesAvailability(date, guests);
+  return NextResponse.json({ slots: servicesToSlots(services), services });
 }

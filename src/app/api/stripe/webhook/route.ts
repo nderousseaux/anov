@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import type { Reservation } from "@/generated/prisma";
+import { lockAndCheckAvailability } from "@/lib/seating/db";
+import { serviceOf } from "@/lib/seating";
 import {
+  sendCancellationEmail,
   sendConfirmationEmail,
   sendGiftCardEmail,
   sendGourmetOfferEmail,
@@ -62,7 +66,13 @@ export async function POST(req: NextRequest) {
         meta.reservation_date &&
         meta.reservation_guests) // nouveau format
     ) {
-      await handleReservationPayment(session, meta);
+      try {
+        await handleReservationPayment(session, meta);
+      } catch (err) {
+        // 500 : Stripe rejoue l'événement (le traitement est idempotent)
+        console.error("[WEBHOOK] Échec du traitement de la réservation:", err);
+        return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+      }
     } else {
       // Log metadata issue (for monitoring)
       return NextResponse.json(
@@ -206,16 +216,17 @@ async function handleReservationPayment(session: any, meta: any) {
 
     let reservation;
 
-    // Si on a un reservationId, on met à jour l'existant
+    // Si on a un reservationId, on confirme l'existante (avec re-test si le hold a expiré)
     if (reservationId) {
-      reservation = await prisma.reservation.update({
-        where: { id: reservationId },
-        data: {
-          status: "CONFIRMED",
-          stripeSessionId: session.id,
-          transactionExpireAt: null, // La transaction est terminée
-        },
-      });
+      const outcome = await confirmPaidReservation(reservationId, session.id);
+      if (outcome.kind === "already") return;
+      if (outcome.kind !== "confirmed") {
+        await refundSession(session);
+        if (outcome.kind === "rejected")
+          await notifyRejected(outcome.reservation);
+        return;
+      }
+      reservation = outcome.reservation;
     } else {
       // Ancien format: créer la réservation
       reservation = await prisma.reservation.create({
@@ -275,6 +286,103 @@ async function handleReservationPayment(session: any, meta: any) {
     // Reservation confirmed (for monitoring)
   } catch (error) {
     console.error("[WEBHOOK] Erreur dans handleReservationPayment:", error);
+    throw error;
+  }
+}
+
+type ConfirmOutcome =
+  | { kind: "confirmed"; reservation: Reservation }
+  | { kind: "already" }
+  | { kind: "missing" }
+  | { kind: "rejected"; reservation: Reservation };
+
+/**
+ * Confirme une réservation payée. Tant que son hold est valide, sa place est déjà comptée
+ * dans la disponibilité : on confirme sans rien retester. Si le hold a expiré (ou si la
+ * réservation a été annulée entre-temps), la place a pu être reprise : on rejoue le test
+ * sous verrou (date, service) en excluant cette réservation ; s'il échoue, on l'annule.
+ */
+async function confirmPaidReservation(
+  reservationId: string,
+  sessionId: string,
+): Promise<ConfirmOutcome> {
+  return prisma.$transaction(async (tx): Promise<ConfirmOutcome> => {
+    const existing = await tx.reservation.findUnique({
+      where: { id: reservationId },
+    });
+    if (!existing) return { kind: "missing" };
+    // Événement Stripe rejoué : déjà traité
+    if (existing.status === "CONFIRMED") return { kind: "already" };
+
+    const holdValid =
+      existing.status === "PENDING_PAYMENT" &&
+      (!existing.transactionExpireAt ||
+        existing.transactionExpireAt > new Date());
+
+    if (!holdValid) {
+      const stillFits = await lockAndCheckAvailability(tx, {
+        dateStr: existing.date.toISOString().split("T")[0],
+        service: serviceOf(existing.date),
+        size: existing.guests,
+        excludeReservationId: existing.id,
+      });
+      if (!stillFits) {
+        await tx.reservation.update({
+          where: { id: existing.id },
+          data: { status: "CANCELLED", stripeSessionId: sessionId },
+        });
+        return { kind: "rejected", reservation: existing };
+      }
+    }
+
+    const reservation = await tx.reservation.update({
+      where: { id: existing.id },
+      data: {
+        status: "CONFIRMED",
+        stripeSessionId: sessionId,
+        transactionExpireAt: null, // La transaction est terminée
+      },
+    });
+    return { kind: "confirmed", reservation };
+  });
+}
+
+/** Remboursement intégral du paiement d'une session (idempotent côté Stripe). */
+async function refundSession(session: any) {
+  const paymentIntent =
+    typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : session.payment_intent?.id;
+  if (!paymentIntent) {
+    console.warn(
+      `[WEBHOOK] Aucun payment_intent à rembourser pour ${session.id}`,
+    );
+    return;
+  }
+  await stripe.refunds.create(
+    { payment_intent: paymentIntent },
+    { idempotencyKey: `refund-${session.id}` },
+  );
+  console.warn(`[WEBHOOK] Paiement ${paymentIntent} remboursé (place perdue)`);
+}
+
+async function notifyRejected(reservation: Reservation) {
+  if (!reservation.email) return;
+  const d = new Date(reservation.date);
+  try {
+    await sendCancellationEmail({
+      to: reservation.email,
+      name: reservation.name,
+      date: d.toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        timeZone: "UTC",
+      }),
+      time: `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`,
+    });
+  } catch (emailError) {
+    console.error("[WEBHOOK] Email d'annulation non envoyé:", emailError);
   }
 }
 

@@ -1,207 +1,235 @@
 // @ts-nocheck
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { prisma } from "@/lib/prisma";
+import { buildConfigs } from "@/lib/seating";
+import { isServiceAvailable, loadConfigs } from "@/lib/seating/db";
 import {
-  getTables,
-  getDayReservationsForTables,
-  computeBusyTableIds,
-  pickTable,
-} from "@/lib/tables";
+  getMonthServiceAvailability,
+  getServicesAvailability,
+  getSlotsWithAvailability,
+  getUnavailableDatesForMonth,
+} from "../availability";
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    restaurantSettings: {
-      findFirst: vi.fn(),
-    },
-    dayOverride: {
-      findUnique: vi.fn(),
-      findMany: vi.fn(),
-    },
-    reservation: {
-      findMany: vi.fn(),
-    },
+    restaurantSettings: { findFirst: vi.fn() },
+    dayOverride: { findUnique: vi.fn(), findMany: vi.fn() },
+    reservation: { findMany: vi.fn() },
   },
 }));
 
-vi.mock("@/lib/tables", () => ({
-  getTables: vi.fn(),
-  getDayReservationsForTables: vi.fn(),
-  computeBusyTableIds: vi.fn(),
-  pickTable: vi.fn(),
+vi.mock("@/lib/seating/db", async (importOriginal) => ({
+  ...(await importOriginal()),
+  isServiceAvailable: vi.fn(),
+  loadConfigs: vi.fn(),
 }));
+
+const SETTINGS = {
+  id: 1,
+  openingDays: JSON.stringify([2, 3, 4, 5, 6]), // mar–sam
+  openingSlots: JSON.stringify(["12:00", "12:30", "19:00", "19:30"]),
+};
 
 describe("availability", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Lundi 2 novembre 2026, 10h (heure locale)
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 10, 2, 10, 0));
+    vi.mocked(prisma.restaurantSettings.findFirst).mockResolvedValue(SETTINGS);
+    vi.mocked(prisma.dayOverride.findUnique).mockResolvedValue(null);
+    vi.mocked(prisma.dayOverride.findMany).mockResolvedValue([]);
+    vi.mocked(prisma.reservation.findMany).mockResolvedValue([]);
   });
 
-  it("exports getSlotsWithAvailability function", async () => {
-    const { getSlotsWithAvailability } = await import("../availability");
-    expect(typeof getSlotsWithAvailability).toBe("function");
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
-  it("exports getUnavailableDatesForMonth function", async () => {
-    const { getUnavailableDatesForMonth } = await import("../availability");
-    expect(typeof getUnavailableDatesForMonth).toBe("function");
+  describe("getServicesAvailability", () => {
+    it("returns nothing for a closed day", async () => {
+      expect(await getServicesAvailability("2026-11-08", 2)).toEqual([]); // dimanche
+    });
+
+    it("returns nothing for an overridden closed day", async () => {
+      vi.mocked(prisma.dayOverride.findUnique).mockResolvedValue({
+        closed: true,
+        openingSlots: null,
+      });
+      expect(await getServicesAvailability("2026-11-03", 2)).toEqual([]);
+    });
+
+    it("splits slots into lunch and dinner with per-service availability", async () => {
+      vi.mocked(isServiceAvailable).mockImplementation(
+        async (_db, { service }) => service === "lunch",
+      );
+
+      const services = await getServicesAvailability("2026-11-03", 2);
+
+      expect(services).toEqual([
+        {
+          key: "lunch",
+          slots: ["12:00", "12:30"],
+          started: false,
+          available: true,
+        },
+        {
+          key: "dinner",
+          slots: ["19:00", "19:30"],
+          started: false,
+          available: false,
+        },
+      ]);
+      expect(isServiceAvailable).toHaveBeenCalledWith(
+        prisma,
+        expect.objectContaining({ dateStr: "2026-11-03", size: 2 }),
+      );
+    });
+
+    it("does not offer a service already started today", async () => {
+      vi.setSystemTime(new Date(2026, 10, 3, 12, 15)); // mardi, midi entamé
+      vi.mocked(isServiceAvailable).mockResolvedValue(true);
+
+      const services = await getServicesAvailability("2026-11-03", 2);
+
+      expect(services.find((s) => s.key === "lunch")).toMatchObject({
+        started: true,
+        available: false,
+      });
+      expect(services.find((s) => s.key === "dinner").available).toBe(true);
+    });
   });
 
   describe("getSlotsWithAvailability", () => {
-    it("returns empty array for closed days", async () => {
-      vi.mocked(prisma.restaurantSettings.findFirst).mockResolvedValue({
-        id: 1,
-        openingDays: JSON.stringify([1, 2, 3]),
-        openingSlots: JSON.stringify(["12:00", "19:00"]),
-      });
-      vi.mocked(prisma.dayOverride.findUnique).mockResolvedValue(null);
-      vi.mocked(getTables).mockResolvedValue([]);
-      vi.mocked(getDayReservationsForTables).mockResolvedValue([]);
-      vi.mocked(computeBusyTableIds).mockReturnValue(new Set());
-      vi.mocked(pickTable).mockReturnValue({ id: 1, capacity: 2 });
+    it("flattens services into slots sharing their service availability", async () => {
+      vi.mocked(isServiceAvailable).mockImplementation(
+        async (_db, { service }) => service === "dinner",
+      );
 
-      const { getSlotsWithAvailability } = await import("../availability");
-
-      // Test with a day that's not in openingDays
-      const result = await getSlotsWithAvailability("2024-06-16", 2); // Sunday
-      expect(result).toEqual([]);
-    });
-
-    it("returns slots with availability status", async () => {
-      vi.mocked(prisma.restaurantSettings.findFirst).mockResolvedValue({
-        id: 1,
-        openingDays: JSON.stringify([2, 3, 4, 5, 6]),
-        openingSlots: JSON.stringify(["12:00", "19:00"]),
-      });
-      vi.mocked(prisma.dayOverride.findUnique).mockResolvedValue(null);
-      vi.mocked(getTables).mockResolvedValue([
-        { id: 1, name: "Table 1", capacity: 2, posX: 0, posY: 0 },
-        { id: 2, name: "Table 2", capacity: 4, posX: 1, posY: 0 },
+      expect(await getSlotsWithAvailability("2026-11-03", 2)).toEqual([
+        { time: "12:00", available: false },
+        { time: "12:30", available: false },
+        { time: "19:00", available: true },
+        { time: "19:30", available: true },
       ]);
-      vi.mocked(getDayReservationsForTables).mockResolvedValue([]);
-      vi.mocked(computeBusyTableIds).mockReturnValue(new Set());
-      vi.mocked(pickTable).mockReturnValue({ id: 1, capacity: 2 });
-
-      const { getSlotsWithAvailability } = await import("../availability");
-
-      const result = await getSlotsWithAvailability("2024-06-18", 2); // Tuesday
-      expect(result).toBeInstanceOf(Array);
-      expect(result.length).toBeGreaterThan(0);
-      expect(result[0]).toHaveProperty("time");
-      expect(result[0]).toHaveProperty("available");
     });
 
-    it("filters out past slots for today", async () => {
-      const now = new Date();
-      const todayStr = now.toISOString().split("T")[0];
+    it("drops started services", async () => {
+      vi.setSystemTime(new Date(2026, 10, 3, 12, 15));
+      vi.mocked(isServiceAvailable).mockResolvedValue(true);
 
-      vi.mocked(prisma.restaurantSettings.findFirst).mockResolvedValue({
-        id: 1,
-        openingDays: JSON.stringify([now.getDay()]),
-        openingSlots: JSON.stringify(["08:00", "12:00", "19:00"]),
-      });
-      vi.mocked(prisma.dayOverride.findUnique).mockResolvedValue(null);
-      vi.mocked(getTables).mockResolvedValue([]);
-      vi.mocked(getDayReservationsForTables).mockResolvedValue([]);
-      vi.mocked(computeBusyTableIds).mockReturnValue(new Set());
-      vi.mocked(pickTable).mockReturnValue({ id: 1 });
-
-      const { getSlotsWithAvailability } = await import("../availability");
-
-      const result = await getSlotsWithAvailability(todayStr, 2);
-      expect(Array.isArray(result)).toBe(true);
+      const slots = await getSlotsWithAvailability("2026-11-03", 2);
+      expect(slots.map((s) => s.time)).toEqual(["19:00", "19:30"]);
     });
   });
 
-  describe("getUnavailableDatesForMonth", () => {
-    it("returns list of unavailable dates", async () => {
-      vi.mocked(prisma.restaurantSettings.findFirst).mockResolvedValue({
-        id: 1,
-        openingDays: JSON.stringify([2, 3, 4, 5, 6]),
-        openingSlots: JSON.stringify(["12:00", "19:00"]),
-      });
-      vi.mocked(prisma.dayOverride.findMany).mockResolvedValue([]);
-      vi.mocked(prisma.reservation.findMany).mockResolvedValue([]);
-      vi.mocked(getTables).mockResolvedValue([
-        { id: 1, name: "Table 1", capacity: 2, posX: 0, posY: 0 },
-      ]);
-
-      const { getUnavailableDatesForMonth } = await import("../availability");
-
-      const result = await getUnavailableDatesForMonth("2024-06", 2);
-      expect(Array.isArray(result)).toBe(true);
+  describe("getMonthServiceAvailability", () => {
+    beforeEach(() => {
+      // Une seule table de 2 : un seul groupe par service
+      vi.mocked(loadConfigs).mockResolvedValue(
+        buildConfigs([{ id: 1, capacity: 2 }], []),
+      );
     });
 
-    it("excludes past dates from results", async () => {
-      const now = new Date();
-      const pastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-
-      vi.mocked(prisma.restaurantSettings.findFirst).mockResolvedValue({
-        id: 1,
-        openingDays: JSON.stringify([2, 3, 4, 5, 6]),
-        openingSlots: JSON.stringify(["12:00", "19:00"]),
-      });
-      vi.mocked(prisma.dayOverride.findMany).mockResolvedValue([]);
-      vi.mocked(prisma.reservation.findMany).mockResolvedValue([]);
-      vi.mocked(getTables).mockResolvedValue([
-        { id: 1, name: "Table 1", capacity: 2, posX: 0, posY: 0 },
-      ]);
-
-      const { getUnavailableDatesForMonth } = await import("../availability");
-
-      const monthStr = `${pastMonth.getFullYear()}-${String(pastMonth.getMonth() + 1).padStart(2, "0")}`;
-      const result = await getUnavailableDatesForMonth(monthStr, 2);
-
-      // Past dates should not be included in results
-      const todayStr = now.toISOString().split("T")[0];
-      result.forEach((dateStr) => {
-        expect(dateStr >= todayStr).toBe(true);
-      });
+    const booking = (iso: string, guests = 2) => ({
+      id: `r-${iso}`,
+      date: new Date(iso),
+      guests,
+      pinnedTableIds: [],
     });
 
-    it("marks closed days as unavailable", async () => {
-      const now = new Date();
-      const futureDate = new Date(now);
-      futureDate.setDate(futureDate.getDate() + 10);
-      const dateStr = futureDate.toISOString().split("T")[0];
+    it("computes available services per date from reservations", async () => {
+      vi.mocked(prisma.reservation.findMany).mockResolvedValue([
+        booking("2026-11-03T12:00:00.000Z"), // mardi midi complet
+        booking("2026-11-03T19:00:00.000Z"), // mardi soir complet
+        booking("2026-11-04T12:30:00.000Z"), // mercredi midi complet
+      ]);
 
-      vi.mocked(prisma.restaurantSettings.findFirst).mockResolvedValue({
-        id: 1,
-        openingDays: JSON.stringify([2, 3, 4, 5, 6]),
-        openingSlots: JSON.stringify(["12:00", "19:00"]),
-      });
+      const result = await getMonthServiceAvailability("2026-11", 2);
+
+      expect(result["2026-11-03"]).toEqual([]);
+      expect(result["2026-11-04"]).toEqual(["dinner"]);
+      expect(result["2026-11-05"]).toEqual(["lunch", "dinner"]);
+    });
+
+    it("excludes closed days, overrides and non-opening days", async () => {
       vi.mocked(prisma.dayOverride.findMany).mockResolvedValue([
         {
-          date: futureDate,
+          date: new Date("2026-11-05T00:00:00.000Z"),
           closed: true,
           openingSlots: null,
         },
       ]);
-      vi.mocked(prisma.reservation.findMany).mockResolvedValue([]);
-      vi.mocked(getTables).mockResolvedValue([]);
 
-      const { getUnavailableDatesForMonth } = await import("../availability");
+      const result = await getMonthServiceAvailability("2026-11", 2);
 
-      const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-      const result = await getUnavailableDatesForMonth(monthStr, 2);
-      expect(result).toContain(dateStr);
+      expect(result["2026-11-05"]).toEqual([]);
+      expect(result["2026-11-08"]).toEqual([]); // dimanche
     });
 
-    it("marks non-opening days as unavailable", async () => {
-      vi.mocked(prisma.restaurantSettings.findFirst).mockResolvedValue({
-        id: 1,
-        openingDays: JSON.stringify([2, 3, 4, 5, 6]),
-        openingSlots: JSON.stringify(["12:00", "19:00"]),
-      });
-      vi.mocked(prisma.dayOverride.findMany).mockResolvedValue([]);
-      vi.mocked(prisma.reservation.findMany).mockResolvedValue([]);
-      vi.mocked(getTables).mockResolvedValue([]);
+    it("ignores past dates", async () => {
+      const result = await getMonthServiceAvailability("2026-11", 2);
+      expect(result["2026-11-01"]).toBeUndefined();
+      expect(result["2026-11-02"]).toEqual([]); // lundi, fermé
+    });
 
-      const { getUnavailableDatesForMonth } = await import("../availability");
+    it("hides services already started today", async () => {
+      vi.setSystemTime(new Date(2026, 10, 3, 12, 15));
+      const result = await getMonthServiceAvailability("2026-11", 2);
+      expect(result["2026-11-03"]).toEqual(["dinner"]);
+    });
 
-      // Test with a Sunday (day 0), which is not in openingDays
-      const monthStr = "2024-06";
-      const result = await getUnavailableDatesForMonth(monthStr, 2);
-      // Some Sundays in June 2024 should be in the unavailable list
-      expect(Array.isArray(result)).toBe(true);
+    it("a group larger than any table or combination is never available", async () => {
+      const result = await getMonthServiceAvailability("2026-11", 6);
+      expect(result["2026-11-03"]).toEqual([]);
+    });
+
+    it("counts a pinned reservation against its table", async () => {
+      vi.mocked(loadConfigs).mockResolvedValue(
+        buildConfigs(
+          [
+            { id: 1, capacity: 2 },
+            { id: 2, capacity: 4 },
+          ],
+          [],
+        ),
+      );
+      vi.mocked(prisma.reservation.findMany).mockResolvedValue([
+        { ...booking("2026-11-03T12:00:00.000Z"), pinnedTableIds: [2] },
+      ]);
+
+      const result = await getMonthServiceAvailability("2026-11", 4);
+
+      expect(result["2026-11-03"]).toEqual(["dinner"]); // la seule table de 4 est prise le midi
+    });
+  });
+
+  describe("getUnavailableDatesForMonth", () => {
+    it("lists the dates from today on without any available service", async () => {
+      vi.mocked(loadConfigs).mockResolvedValue(
+        buildConfigs([{ id: 1, capacity: 2 }], []),
+      );
+      vi.mocked(prisma.reservation.findMany).mockResolvedValue([
+        {
+          id: "a",
+          date: new Date("2026-11-03T12:00:00.000Z"),
+          guests: 2,
+          pinnedTableIds: [],
+        },
+        {
+          id: "b",
+          date: new Date("2026-11-03T19:00:00.000Z"),
+          guests: 2,
+          pinnedTableIds: [],
+        },
+      ]);
+
+      const result = await getUnavailableDatesForMonth("2026-11", 2);
+
+      expect(result).toContain("2026-11-03"); // complet
+      expect(result).toContain("2026-11-08"); // dimanche
+      expect(result).not.toContain("2026-11-04");
+      expect(result).not.toContain("2026-11-01"); // passé
     });
   });
 });

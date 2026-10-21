@@ -8,6 +8,18 @@ import {
   type SeatingTable,
 } from "./types";
 
+/** Capacité d'une combinaison : celle fixée par le restaurateur, sinon la somme de ses tables. */
+export function comboCapacity(
+  tableIds: number[],
+  capacityOverride: number | null,
+  capacityById: Map<number, number>,
+): number {
+  return (
+    capacityOverride ??
+    tableIds.reduce((sum, id) => sum + (capacityById.get(id) ?? 0), 0)
+  );
+}
+
 /**
  * Configs possibles pour un groupe de `groupSize` : une table seule ou une combinaison
  * autorisée de capacité suffisante, **minimale** (retirer une table la rendrait

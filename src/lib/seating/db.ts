@@ -1,8 +1,8 @@
 import { prisma } from "../prisma";
 import type { Prisma } from "../../generated/prisma";
-import { buildConfigs } from "./configs";
-import { isAvailable } from "./canSeat";
-import { onlinePool } from "./service";
+import { buildConfigs, comboCapacity } from "./configs";
+import { isAvailable, planService } from "./canSeat";
+import { onlinePool, serviceOf } from "./service";
 import type { ConfigsBySize, SeatingGroup, ServiceKey } from "./types";
 
 type DbClient = typeof prisma | Prisma.TransactionClient;
@@ -64,9 +64,7 @@ export async function loadConfigs(
   const capacityById = new Map(tables.map((t) => [t.id, t.capacity]));
   const combos = dbCombos.map((c) => ({
     tableIds: c.tableIds,
-    capacity:
-      c.capacityOverride ??
-      c.tableIds.reduce((sum, id) => sum + (capacityById.get(id) ?? 0), 0),
+    capacity: comboCapacity(c.tableIds, c.capacityOverride, capacityById),
   }));
   return buildConfigs(pool === "online" ? onlinePool(tables) : tables, combos);
 }
@@ -124,4 +122,64 @@ export async function lockAndCheckAvailability(
 ): Promise<boolean> {
   await lockService(tx, params.dateStr, params.service);
   return isServiceAvailable(tx, params);
+}
+
+export interface InfeasibleService {
+  dateStr: string;
+  service: ServiceKey;
+  /** Réservations qui n'ont plus de table dans le pool en ligne. */
+  unplaced: { id: string; name: string; guests: number }[];
+}
+
+/**
+ * Services futurs dont les réservations ne tiennent plus (ou pas) sur les tables du pool
+ * en ligne : anciennes rotations, table passée en walk-in, combinaison supprimée…
+ * Lecture seule : on avertit le restaurateur, on n'annule jamais rien.
+ */
+export async function findInfeasibleServices(
+  db: DbClient,
+  now: Date = new Date(),
+): Promise<InfeasibleService[]> {
+  const [configs, reservations] = await Promise.all([
+    loadConfigs(db),
+    db.reservation.findMany({
+      where: { date: { gte: now }, ...activeReservationWhere(now) },
+      select: {
+        id: true,
+        name: true,
+        date: true,
+        guests: true,
+        pinnedTableIds: true,
+      },
+      orderBy: { date: "asc" },
+    }),
+  ]);
+
+  const byService = new Map<string, typeof reservations>();
+  for (const r of reservations) {
+    const key = `${r.date.toISOString().split("T")[0]} ${serviceOf(r.date)}`;
+    byService.set(key, [...(byService.get(key) ?? []), r]);
+  }
+
+  const result: InfeasibleService[] = [];
+  for (const [key, group] of byService) {
+    const { unplaced } = planService(
+      group.map((r) => ({
+        id: r.id,
+        size: r.guests,
+        pinnedTableIds: r.pinnedTableIds,
+      })),
+      configs,
+    );
+    if (unplaced.length === 0) continue;
+    const [dateStr, service] = key.split(" ") as [string, ServiceKey];
+    result.push({
+      dateStr,
+      service,
+      unplaced: group
+        .filter((r) => unplaced.includes(r.id))
+        .map((r) => ({ id: r.id, name: r.name, guests: r.guests })),
+    });
+  }
+  return result;
 }

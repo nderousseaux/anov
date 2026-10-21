@@ -11,10 +11,12 @@ import {
   Users,
   Package,
   UtensilsCrossed,
+  LayoutGrid,
 } from "lucide-react";
 
 const navLinks = [
   { href: "/admin/reservation", label: "Réservations", icon: CalendarDays },
+  { href: "/admin/tables", label: "Tables", icon: LayoutGrid },
   { href: "/admin/cheques-cadeaux", label: "Chèques Cadeaux", icon: Gift },
   {
     href: "/admin/offres-gourmandes",

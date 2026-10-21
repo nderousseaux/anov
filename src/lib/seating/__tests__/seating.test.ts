@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   buildConfigs,
   canSeat,
+  comboCapacity,
   dailyCapacity,
   generateConfigs,
   groupSlotsByService,
@@ -217,5 +218,20 @@ describe("service", () => {
   it("capacité journalière = places du pool × services", () => {
     expect(dailyCapacity(TABLES, 2)).toBe(24);
     expect(dailyCapacity(TABLES, 0)).toBe(0);
+  });
+});
+
+describe("comboCapacity", () => {
+  const capacityById = new Map([
+    [1, 2],
+    [4, 4],
+  ]);
+
+  it("vaut la somme des tables par défaut", () => {
+    expect(comboCapacity([1, 4], null, capacityById)).toBe(6);
+  });
+
+  it("utilise la capacité fixée par le restaurateur", () => {
+    expect(comboCapacity([1, 4], 5, capacityById)).toBe(5);
   });
 });

@@ -1,6 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { prisma } from "@/lib/prisma";
 import {
+  findInfeasibleServices,
   isServiceAvailable,
   lockAndCheckAvailability,
   lockService,
@@ -235,6 +236,48 @@ describe.skipIf(!process.env.DATABASE_URL_TEST)(
       const { gte, lt } = serviceRange(DATE, SERVICE);
       expect(gte.toISOString()).toBe(`${DATE}T15:00:00.000Z`);
       expect(lt.toISOString()).toBe("2030-06-05T00:00:00.000Z");
+    });
+
+    it("findInfeasibleServices signale les services qui ne tiennent plus", async () => {
+      const [t1, t2] = await Promise.all([
+        prisma.table.create({ data: { name: "T1", capacity: 2 } }),
+        prisma.table.create({ data: { name: "T2", capacity: 2 } }),
+      ]);
+      await addReservation();
+      await addReservation();
+      expect(await findInfeasibleServices(prisma)).toEqual([]);
+
+      // T2 passe en walk-in : un des deux groupes n'a plus de table dans le pool en ligne
+      await prisma.table.update({
+        where: { id: t2.id },
+        data: { walkIn: true },
+      });
+      const result = await findInfeasibleServices(prisma);
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({ dateStr: DATE, service: SERVICE });
+      expect(result[0].unplaced).toHaveLength(1);
+
+      // épinglée sur la table walk-in, la résa est placée : plus d'alerte
+      const [first] = await prisma.reservation.findMany();
+      await prisma.reservation.update({
+        where: { id: first.id },
+        data: { pinnedTableIds: [t2.id] },
+      });
+      expect(await findInfeasibleServices(prisma)).toEqual([]);
+      expect(t1.id).toBeDefined();
+    });
+
+    it("findInfeasibleServices ignore le passé et les holds expirés", async () => {
+      await prisma.table.create({ data: { name: "T1", capacity: 2 } });
+      await addReservation();
+      await addReservation({ transactionExpireAt: inMinutes(-1) }); // expiré
+      await addReservation({
+        date: new Date("2020-06-04T19:00:00.000Z"), // passé
+        status: "CONFIRMED",
+        transactionExpireAt: null,
+      });
+
+      expect(await findInfeasibleServices(prisma)).toEqual([]);
     });
   },
 );

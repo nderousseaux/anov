@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAdminFromCookies } from "@/lib/auth";
-import {
-  getTables,
-  getTotalTableCapacity,
-  computeServiceTurns,
-} from "@/lib/tables";
+import { dailyCapacity, groupSlotsByService, onlinePool } from "@/lib/seating";
 
 function addMinutes(time: string, mins: number): string {
   const [h, m] = time.split(":").map(Number);
@@ -34,9 +30,12 @@ export async function GET(req: NextRequest) {
   const globalOpeningDays: number[] = JSON.parse(settings.openingDays);
   const globalSlots: string[] = JSON.parse(settings.openingSlots);
 
-  // Couverts disponibles = calculés à partir des tables, de la durée d'un repas et des horaires
-  const tables = await getTables();
-  const totalTableCapacity = getTotalTableCapacity(tables);
+  // Capacité d'un service = places des tables du pool en ligne (hors tables walk-in)
+  const poolTables = onlinePool(
+    await prisma.table.findMany({
+      select: { id: true, capacity: true, walkIn: true },
+    }),
+  );
 
   const fromDate = new Date(fromStr + "T00:00:00.000Z");
   const toDate = new Date(fromDate.getTime() + days * 86_400_000);
@@ -105,7 +104,8 @@ export async function GET(req: NextRequest) {
   });
 
   // Group events by date with service granularity
-  const eventsByDate: Record<string,
+  const eventsByDate: Record<
+    string,
     {
       id: string;
       titleFr: string;
@@ -117,25 +117,34 @@ export async function GET(req: NextRequest) {
       startDate: Date;
       endDate: Date;
       lunch: boolean;
-      dinner: boolean
-    }[]> = {};
+      dinner: boolean;
+    }[]
+  > = {};
   for (const e of events) {
     const start = new Date(e.startDate);
     const end = new Date(e.endDate);
     // Determine start and end service indices
-    const startServiceIndex = e.startService === "lunch" ? 0 : e.startService === "dinner" ? 1 : 0; // null treated as lunch (start of day)
-    const endServiceIndex = e.endService === "lunch" ? 0 : e.endService === "dinner" ? 1 : 1; // null treated as dinner (end of day)
-    const startSlot = start.getTime() / (24 * 60 * 60 * 1000) * 2 + startServiceIndex;
-    const endSlot = end.getTime() / (24 * 60 * 60 * 1000) * 2 + endServiceIndex;
+    const startServiceIndex =
+      e.startService === "lunch" ? 0 : e.startService === "dinner" ? 1 : 0; // null treated as lunch (start of day)
+    const endServiceIndex =
+      e.endService === "lunch" ? 0 : e.endService === "dinner" ? 1 : 1; // null treated as dinner (end of day)
+    const startSlot =
+      (start.getTime() / (24 * 60 * 60 * 1000)) * 2 + startServiceIndex;
+    const endSlot =
+      (end.getTime() / (24 * 60 * 60 * 1000)) * 2 + endServiceIndex;
     // Iterate over each slot from startSlot to endSlot inclusive
-    for (let slot = Math.floor(startSlot); slot <= Math.floor(endSlot); slot++) {
+    for (
+      let slot = Math.floor(startSlot);
+      slot <= Math.floor(endSlot);
+      slot++
+    ) {
       const dayNum = Math.floor(slot / 2);
       const slotIndex = slot % 2; // 0 = lunch, 1 = dinner
       const date = new Date(dayNum * 24 * 60 * 60 * 1000); // midnight of that day
       const dateStr = date.toISOString().split("T")[0];
       if (!eventsByDate[dateStr]) eventsByDate[dateStr] = [];
       // Mark which services this event covers for this date
-      let existing = eventsByDate[dateStr].find(ev => ev.id === e.id);
+      let existing = eventsByDate[dateStr].find((ev) => ev.id === e.id);
       if (!existing) {
         existing = {
           id: e.id,
@@ -148,7 +157,7 @@ export async function GET(req: NextRequest) {
           startDate: e.startDate,
           endDate: e.endDate,
           lunch: false,
-          dinner: false
+          dinner: false,
         };
         eventsByDate[dateStr].push(existing);
       }
@@ -181,8 +190,8 @@ export async function GET(req: NextRequest) {
 
     const slots = effectiveOpen ? effectiveSlots : [];
     // Lunch = slots before 15h, dinner = 15h and after
-    const lunchSlots = slots.filter((s) => parseInt(s) < 15);
-    const dinnerSlots = slots.filter((s) => parseInt(s) >= 15);
+    const { lunch: lunchSlots, dinner: dinnerSlots } =
+      groupSlotsByService(slots);
 
     const lunchOpen = lunchSlots.length > 0 ? lunchSlots[0] : null;
     // La fermeture = dernier créneau + durée d'un repas
@@ -196,11 +205,11 @@ export async function GET(req: NextRequest) {
         ? addMinutes(dinnerSlots[dinnerSlots.length - 1], globalMealDuration)
         : null;
 
-    // Capacité journalière = couverts totaux des tables × nombre de tours possibles par service
-    // (basé sur l'amplitude des créneaux du service et la durée d'un repas)
-    const lunchTurns = computeServiceTurns(lunchSlots, globalMealDuration);
-    const dinnerTurns = computeServiceTurns(dinnerSlots, globalMealDuration);
-    const totalCapacity = totalTableCapacity * (lunchTurns + dinnerTurns);
+    // Capacité journalière = places du pool en ligne × nombre de services ouverts
+    // (un seul groupe par table et par service : plus de rotation)
+    const serviceCount =
+      (lunchSlots.length > 0 ? 1 : 0) + (dinnerSlots.length > 0 ? 1 : 0);
+    const totalCapacity = dailyCapacity(poolTables, serviceCount);
     const dayStats = resByDate[dateStr] ?? { guests: 0, count: 0 };
 
     const dayEvents = eventsByDate[dateStr] ?? [];

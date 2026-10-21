@@ -206,7 +206,6 @@ describe("Admin Settings API", () => {
           phone: null,
           specialRequest: null,
           depositPaidCents: null,
-          tableId: null,
           stripeSessionId: null,
           expiresAt: null,
           transactionExpireAt: null,

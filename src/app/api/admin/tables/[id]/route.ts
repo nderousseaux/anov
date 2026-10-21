@@ -66,7 +66,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
 /**
  * Supprime une table (et les combinaisons qui l'utilisent). Refusé tant qu'une réservation
- * à venir est épinglée dessus. L'ancien lien `tableId` des réservations est effacé.
+ * à venir est épinglée dessus ; une réservation passée peut garder l'id d'une table
+ * supprimée dans `pinnedTableIds` (sans effet, c'est de l'historique).
  */
 export async function DELETE(_req: NextRequest, { params }: Params) {
   const admin = await getAdminFromCookies();
@@ -103,10 +104,6 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
 
   await prisma.$transaction([
     prisma.tableCombo.deleteMany({ where: { tableIds: { has: id } } }),
-    prisma.reservation.updateMany({
-      where: { tableId: id },
-      data: { tableId: null },
-    }),
     prisma.table.delete({ where: { id } }),
   ]);
 

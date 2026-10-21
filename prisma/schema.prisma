@@ -26,9 +26,6 @@ model Reservation {
   cancelToken         String            @unique @default(cuid())
   transactionExpireAt DateTime?
   depositPaidCents    Int?
-  // Déprécié : ancien modèle (table figée à la création). Plus lu depuis le modèle par service.
-  tableId             Int?
-  table               Table?            @relation(fields: [tableId], references: [id])
   source              ReservationSource @default(WEB)
   // Vide = placée par l'algo ; sinon tables imposées par le restaurateur (sans clé étrangère).
   pinnedTableIds      Int[]             @default([])
@@ -42,7 +39,6 @@ model Table {
   posY         Float         @default(0)
   // Réservée au walk-in : exclue du pool de la réservation en ligne.
   walkIn       Boolean       @default(false)
-  reservations Reservation[]
 }
 
 model TableCombo {

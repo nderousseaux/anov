@@ -15,7 +15,7 @@ vi.mock("@/lib/prisma", () => ({
       delete: vi.fn(),
     },
     tableCombo: { deleteMany: vi.fn() },
-    reservation: { count: vi.fn(), updateMany: vi.fn() },
+    reservation: { count: vi.fn() },
   },
 }));
 
@@ -126,7 +126,7 @@ describe("Admin tables CRUD", () => {
       expect(prisma.$transaction).not.toHaveBeenCalled();
     });
 
-    it("deletes the table, its combos, and clears the legacy tableId", async () => {
+    it("deletes the table and the combos that use it", async () => {
       vi.mocked(prisma.table.findUnique).mockResolvedValue({ id: 3 });
       vi.mocked(prisma.reservation.count).mockResolvedValue(0);
       const { DELETE } = await import("../[id]/route");
@@ -136,10 +136,6 @@ describe("Admin tables CRUD", () => {
       expect(res.status).toBe(200);
       expect(prisma.tableCombo.deleteMany).toHaveBeenCalledWith({
         where: { tableIds: { has: 3 } },
-      });
-      expect(prisma.reservation.updateMany).toHaveBeenCalledWith({
-        where: { tableId: 3 },
-        data: { tableId: null },
       });
       expect(prisma.table.delete).toHaveBeenCalledWith({ where: { id: 3 } });
       expect(prisma.$transaction).toHaveBeenCalledTimes(1);

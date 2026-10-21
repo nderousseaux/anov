@@ -71,7 +71,6 @@ describe("Admin Customer Details API", () => {
           status: "CONFIRMED" as const,
           createdAt: new Date(),
           updatedAt: new Date(),
-          tableId: null,
           phone: null,
           specialRequest: null,
           depositPaidCents: null,

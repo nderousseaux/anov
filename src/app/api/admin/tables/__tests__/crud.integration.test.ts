@@ -82,18 +82,18 @@ describe.skipIf(!process.env.DATABASE_URL_TEST)(
       expect(listed.capacity).toBe(5);
     });
 
-    it("supprimer une table supprime ses combinaisons et efface l'ancien tableId", async () => {
+    it("supprimer une table supprime ses combinaisons ; une réservation passée épinglée dessus n'empêche rien", async () => {
       const a = await prisma.table.create({ data: { name: "A", capacity: 3 } });
       const b = await prisma.table.create({ data: { name: "B", capacity: 3 } });
       await prisma.tableCombo.create({ data: { tableIds: [a.id, b.id] } });
-      const legacy = await prisma.reservation.create({
+      const past = await prisma.reservation.create({
         data: {
           name: "Ancien",
           email: "a@example.com",
           date: new Date("2020-01-01T19:00:00.000Z"),
           guests: 2,
           status: "COMPLETED",
-          tableId: a.id,
+          pinnedTableIds: [a.id],
         },
       });
 
@@ -103,10 +103,10 @@ describe.skipIf(!process.env.DATABASE_URL_TEST)(
       expect(res.status).toBe(200);
       expect(await prisma.tableCombo.count()).toBe(0);
       expect(await prisma.table.count()).toBe(1);
+      // l'historique est conservé tel quel
       expect(
-        (await prisma.reservation.findUnique({ where: { id: legacy.id } }))
-          ?.tableId,
-      ).toBeNull();
+        await prisma.reservation.findUnique({ where: { id: past.id } }),
+      ).not.toBeNull();
     });
 
     it("refuse de supprimer une table où une réservation à venir est épinglée", async () => {

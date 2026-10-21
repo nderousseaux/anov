@@ -198,7 +198,6 @@ async function main() {
       specialRequest: "Allergie au gluten",
       status: "COMPLETED" as const,
       depositPaidCents: 4000,
-      tableId: 1, // T1
       cancelToken: "seed-token-1",
     },
     {
@@ -215,7 +214,6 @@ async function main() {
       specialRequest: "Près de la fenêtre si possible",
       status: "CONFIRMED" as const,
       depositPaidCents: 4000,
-      tableId: 2, // T2
       cancelToken: "seed-token-2",
     },
     {
@@ -231,7 +229,6 @@ async function main() {
       guests: 4,
       status: "CONFIRMED" as const,
       depositPaidCents: 8000,
-      tableId: 5, // T5
       cancelToken: "seed-token-3",
     },
     {
@@ -247,7 +244,6 @@ async function main() {
       guests: 2,
       status: "CONFIRMED" as const,
       depositPaidCents: 4000,
-      tableId: 2, // T2
       cancelToken: "seed-token-4",
     },
     {
@@ -263,7 +259,6 @@ async function main() {
       status: "PENDING_PAYMENT" as const,
       depositPaidCents: 4000,
       transactionExpireAt: new Date(now.getTime() + 10 * 60 * 1000), // Expiration dans 10 minutes
-      tableId: 1, // T1
       cancelToken: "seed-token-5",
     },
     {
@@ -278,7 +273,6 @@ async function main() {
       guests: 4,
       status: "CONFIRMED" as const,
       depositPaidCents: 8000,
-      tableId: 6, // T6
       cancelToken: "seed-token-6",
     },
     {
@@ -293,7 +287,6 @@ async function main() {
       guests: 2,
       status: "CANCELLED" as const,
       depositPaidCents: 4000,
-      tableId: 1,
       cancelToken: "seed-token-7",
     }
   ];

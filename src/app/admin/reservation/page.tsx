@@ -46,7 +46,6 @@ interface ReservationRow {
   depositPaidCents: number | null;
   transactionExpireAt: string | null;
   createdAt: string;
-  tableId: number | null;
 }
 
 interface ApiResponse {

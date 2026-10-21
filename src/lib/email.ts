@@ -332,6 +332,62 @@ export async function sendCancellationEmail({
   });
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/**
+ * Email envoyé quand un paiement est arrivé mais que la place n'était plus disponible
+ * (cas limite : traitement du paiement tardif, place prise entre-temps). La réservation est
+ * annulée et le paiement remboursé : à n'envoyer qu'une fois le remboursement effectué.
+ */
+export async function sendReservationUnavailableEmail({
+  to,
+  name,
+  date,
+  time,
+  refundedCents,
+}: {
+  to: string;
+  name: string;
+  date: string;
+  time: string;
+  /** Montant remboursé, en centimes (omis du message s'il est inconnu). */
+  refundedCents?: number | null;
+}) {
+  const t = getTransporter();
+  if (!t) {
+    return null;
+  }
+
+  const amount =
+    refundedCents && refundedCents > 0
+      ? ` de <strong>${(refundedCents / 100).toFixed(2).replace(".", ",")}&nbsp;€</strong>`
+      : "";
+
+  return t.sendMail({
+    from: FROM,
+    to,
+    subject: `Votre réservation n'a pas pu être confirmée — l'Anøv`,
+    html: `
+      <div style="font-family:Georgia,serif;max-width:600px;margin:auto;color:#1a1a1a;">
+        <h1 style="font-size:28px;color:#e3cb6b;margin-bottom:8px;">l'Anøv</h1>
+        <h2 style="font-size:20px;font-weight:normal;">Nous sommes désolés, votre réservation n&apos;a pas pu être confirmée</h2>
+        <p>Bonjour ${escapeHtml(name)},</p>
+        <p>La table que nous vous avions réservée pour le <strong>${date} à ${time}</strong> n&apos;était plus disponible au moment où votre paiement a été validé. Nous n&apos;avons donc pas pu confirmer votre réservation.</p>
+        <p>Votre paiement a été <strong>intégralement remboursé</strong>${amount}. Selon votre banque, le montant apparaîtra sur votre compte sous quelques jours ouvrés.</p>
+        <p>Vous pouvez réserver un autre créneau sur notre site, ou nous appeler au <a href="tel:${RESTAURANT_PHONE}" style="color:#e3cb6b;">${RESTAURANT_PHONE}</a> : nous ferons tout notre possible pour vous accueillir.</p>
+        <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
+        <p style="color:#888;font-size:13px;">l'Anøv — · Besançon</p>
+      </div>
+    `,
+  });
+}
+
 // Fonction pour les commandes produits
 export async function sendProductOrderConfirmationEmail({
   to,

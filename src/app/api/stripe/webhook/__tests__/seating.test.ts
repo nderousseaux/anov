@@ -4,7 +4,10 @@ import { NextRequest } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { lockAndCheckAvailability } from "@/lib/seating/db";
-import { sendCancellationEmail, sendConfirmationEmail } from "@/lib/email";
+import {
+  sendReservationUnavailableEmail,
+  sendConfirmationEmail,
+} from "@/lib/email";
 
 vi.mock("@/lib/stripe", () => ({
   stripe: {
@@ -29,7 +32,7 @@ vi.mock("@/lib/seating/db", () => ({
 
 vi.mock("@/lib/email", () => ({
   sendConfirmationEmail: vi.fn().mockResolvedValue({}),
-  sendCancellationEmail: vi.fn().mockResolvedValue({}),
+  sendReservationUnavailableEmail: vi.fn().mockResolvedValue({}),
 }));
 
 const minutes = (n: number) => new Date(Date.now() + n * 60_000);
@@ -40,6 +43,7 @@ const reservation = (overrides = {}) => ({
   email: "test@example.com",
   date: new Date("2026-11-03T19:00:00.000Z"),
   guests: 4,
+  depositPaidCents: 8000,
   status: "PENDING_PAYMENT",
   transactionExpireAt: minutes(10),
   cancelToken: "tok",
@@ -50,7 +54,7 @@ describe("stripe webhook — confirmation d'une réservation payée", () => {
   let txFindUnique: vi.Mock;
   let txUpdate: vi.Mock;
 
-  async function callWebhook() {
+  async function callWebhook(sessionOverrides = {}) {
     process.env.STRIPE_WEBHOOK_SECRET = "whsec_test";
     vi.mocked(stripe.webhooks.constructEvent).mockReturnValue({
       type: "checkout.session.completed",
@@ -58,6 +62,7 @@ describe("stripe webhook — confirmation d'une réservation payée", () => {
         object: {
           id: "cs_1",
           payment_intent: "pi_1",
+          ...sessionOverrides,
           metadata: {
             name: "Test User",
             email: "test@example.com",
@@ -144,10 +149,39 @@ describe("stripe webhook — confirmation d'une réservation payée", () => {
       { payment_intent: "pi_1" },
       { idempotencyKey: "refund-cs_1" },
     );
-    expect(sendCancellationEmail).toHaveBeenCalledWith(
-      expect.objectContaining({ to: "test@example.com", time: "19:00" }),
-    );
+    expect(sendReservationUnavailableEmail).toHaveBeenCalledWith({
+      to: "test@example.com",
+      name: "Test User",
+      date: "mardi 3 novembre",
+      time: "19:00",
+      refundedCents: 8000,
+    });
     expect(sendConfirmationEmail).not.toHaveBeenCalled();
+  });
+
+  it("does not tell the customer they were refunded when nothing could be refunded", async () => {
+    txFindUnique.mockResolvedValue(
+      reservation({ transactionExpireAt: minutes(-5) }),
+    );
+    vi.mocked(lockAndCheckAvailability).mockResolvedValue(false);
+
+    const res = await callWebhook({ payment_intent: null });
+
+    expect(res.status).toBe(200);
+    expect(stripe.refunds.create).not.toHaveBeenCalled();
+    expect(sendReservationUnavailableEmail).not.toHaveBeenCalled();
+  });
+
+  it("does not email when the reservation had no email address", async () => {
+    txFindUnique.mockResolvedValue(
+      reservation({ transactionExpireAt: minutes(-5), email: null }),
+    );
+    vi.mocked(lockAndCheckAvailability).mockResolvedValue(false);
+
+    await callWebhook();
+
+    expect(stripe.refunds.create).toHaveBeenCalledTimes(1);
+    expect(sendReservationUnavailableEmail).not.toHaveBeenCalled();
   });
 
   it("ignores a replayed event for an already confirmed reservation", async () => {

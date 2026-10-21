@@ -5,11 +5,11 @@ import type { Reservation } from "@/generated/prisma";
 import { lockAndCheckAvailability } from "@/lib/seating/db";
 import { serviceOf } from "@/lib/seating";
 import {
-  sendCancellationEmail,
   sendConfirmationEmail,
   sendGiftCardEmail,
   sendGourmetOfferEmail,
   sendProductOrderConfirmationEmail,
+  sendReservationUnavailableEmail,
 } from "@/lib/email";
 
 // Désactiver le body parser de Next.js pour lire le corps brut (requis par Stripe)
@@ -221,8 +221,9 @@ async function handleReservationPayment(session: any, meta: any) {
       const outcome = await confirmPaidReservation(reservationId, session.id);
       if (outcome.kind === "already") return;
       if (outcome.kind !== "confirmed") {
-        await refundSession(session);
-        if (outcome.kind === "rejected")
+        const refunded = await refundSession(session);
+        // On n'écrit « remboursé » au client que si c'est vrai
+        if (outcome.kind === "rejected" && refunded)
           await notifyRejected(outcome.reservation);
         return;
       }
@@ -347,8 +348,11 @@ async function confirmPaidReservation(
   });
 }
 
-/** Remboursement intégral du paiement d'une session (idempotent côté Stripe). */
-async function refundSession(session: any) {
+/**
+ * Remboursement intégral du paiement d'une session (idempotent côté Stripe).
+ * Retourne false si rien n'a pu être remboursé (pas de payment_intent).
+ */
+async function refundSession(session: any): Promise<boolean> {
   const paymentIntent =
     typeof session.payment_intent === "string"
       ? session.payment_intent
@@ -357,20 +361,21 @@ async function refundSession(session: any) {
     console.warn(
       `[WEBHOOK] Aucun payment_intent à rembourser pour ${session.id}`,
     );
-    return;
+    return false;
   }
   await stripe.refunds.create(
     { payment_intent: paymentIntent },
     { idempotencyKey: `refund-${session.id}` },
   );
   console.warn(`[WEBHOOK] Paiement ${paymentIntent} remboursé (place perdue)`);
+  return true;
 }
 
 async function notifyRejected(reservation: Reservation) {
   if (!reservation.email) return;
   const d = new Date(reservation.date);
   try {
-    await sendCancellationEmail({
+    await sendReservationUnavailableEmail({
       to: reservation.email,
       name: reservation.name,
       date: d.toLocaleDateString("fr-FR", {
@@ -380,9 +385,10 @@ async function notifyRejected(reservation: Reservation) {
         timeZone: "UTC",
       }),
       time: `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`,
+      refundedCents: reservation.depositPaidCents,
     });
   } catch (emailError) {
-    console.error("[WEBHOOK] Email d'annulation non envoyé:", emailError);
+    console.error("[WEBHOOK] Email d'excuse non envoyé:", emailError);
   }
 }
 

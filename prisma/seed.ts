@@ -129,6 +129,23 @@ async function main() {
     });
   }
 
+  // 2 bis. Combinaisons de tables (collables), pour les groupes de 5 à 8 personnes.
+  // Déduites du plan de salle : tables voisines d'une même colonne (T1-T3-T5 à gauche,
+  // T2-T4-T6 à droite), plus T5+T6 pour atteindre 8 couverts. À adapter au vrai plan dans
+  // /admin/tables. On n'écrase pas des combinaisons déjà déclarées.
+  if ((await prisma.tableCombo.count()) === 0) {
+    console.log("🔗 Création des combinaisons de tables...");
+    await prisma.tableCombo.createMany({
+      data: [
+        { tableIds: [1, 3] }, // 2 + 3 = 5
+        { tableIds: [2, 4] }, // 2 + 3 = 5
+        { tableIds: [3, 5] }, // 3 + 4 = 7
+        { tableIds: [4, 6] }, // 3 + 4 = 7
+        { tableIds: [5, 6] }, // 4 + 4 = 8
+      ],
+    });
+  }
+
   // Nettoyage des anciennes données de seed
   console.log("🧹 Nettoyage des anciennes données de seed...");
 

@@ -1,16 +1,16 @@
-# Graph Report - anov  (2026-10-11)
+# Graph Report - anov  (2026-10-21)
 
 ## Corpus Check
-- 274 files · ~445,910 words
+- 274 files · ~446,093 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1753 nodes · 2596 edges · 180 communities (166 shown, 14 thin omitted)
+- 1753 nodes · 2602 edges · 181 communities (166 shown, 15 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 20 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `68c42965`
+- Built from commit: `89e93dcc`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -34,8 +34,11 @@
 - [[_COMMUNITY_System Module 16|System Module 16]]
 - [[_COMMUNITY_System Module 17|System Module 17]]
 - [[_COMMUNITY_System Module 18|System Module 18]]
+- [[_COMMUNITY_Community 19|Community 19]]
+- [[_COMMUNITY_Community 20|Community 20]]
 - [[_COMMUNITY_System Module 21|System Module 21]]
 - [[_COMMUNITY_System Module 22|System Module 22]]
+- [[_COMMUNITY_Community 23|Community 23]]
 - [[_COMMUNITY_System Module 26|System Module 26]]
 - [[_COMMUNITY_System Module 27|System Module 27]]
 - [[_COMMUNITY_System Module 29|System Module 29]]
@@ -54,7 +57,6 @@
 - [[_COMMUNITY_System Module 46|System Module 46]]
 - [[_COMMUNITY_System Module 47|System Module 47]]
 - [[_COMMUNITY_System Module 48|System Module 48]]
-- [[_COMMUNITY_System Module 49|System Module 49]]
 - [[_COMMUNITY_System Module 50|System Module 50]]
 - [[_COMMUNITY_System Module 51|System Module 51]]
 - [[_COMMUNITY_System Module 52|System Module 52]]
@@ -146,7 +148,6 @@
 - [[_COMMUNITY_Community 210|Community 210]]
 - [[_COMMUNITY_Community 211|Community 211]]
 - [[_COMMUNITY_Community 212|Community 212]]
-- [[_COMMUNITY_Community 213|Community 213]]
 - [[_COMMUNITY_Community 214|Community 214]]
 - [[_COMMUNITY_Community 217|Community 217]]
 - [[_COMMUNITY_Community 218|Community 218]]
@@ -185,15 +186,15 @@
 - **Brand Visual Identity System** — assets_logo_svg, assets_text_logo_svg, assets_img_logo_svg, assets_favicon_svg, concept_brand_color_gold [INFERRED 0.85]
 - **Boutique Product Gallery** — assets_boutique_cafe_image, assets_boutique_macarons_image, assets_boutique_thes_image [INFERRED 0.85]
 
-## Communities (180 total, 14 thin omitted)
+## Communities (181 total, 15 thin omitted)
 
 ### Community 0 - "Prisma Client Schema & Types"
 Cohesion: 0.12
 Nodes (11): Menubar(), MenubarCheckboxItem(), MenubarContent(), MenubarItem(), MenubarLabel(), MenubarRadioItem(), MenubarSeparator(), MenubarShortcut() (+3 more)
 
 ### Community 1 - "Prisma Client Runtime Types"
-Cohesion: 0.15
-Nodes (6): AdminNav(), navLinks, Order, OrderListResponse, STATUS_COLORS, STATUS_LABELS
+Cohesion: 0.22
+Nodes (4): Order, OrderListResponse, STATUS_COLORS, STATUS_LABELS
 
 ### Community 2 - "WASM Query Compiler Engine"
 Cohesion: 0.17
@@ -216,16 +217,16 @@ Cohesion: 0.05
 Nodes (40): checkIsExpired(), GiftCardCard(), GiftCardCardProps, GiftCardFilters(), GiftCardFiltersProps, formatCurrency(), GiftCardStats(), GiftCardStatsProps (+32 more)
 
 ### Community 7 - "Prisma Transaction & Client Core"
-Cohesion: 0.38
-Nodes (5): generateAdminGiftCardCode(), GET(), PATCH(), POST(), sendGiftCardEmail()
+Cohesion: 0.22
+Nodes (8): Hero(), HeroProps, Contact(), Gallery(), History(), MobileCarousel(), PropType, pickField()
 
 ### Community 8 - "Package Dependencies & External Libraries"
 Cohesion: 0.03
 Nodes (61): dependencies, class-variance-authority, clsx, cmdk, d3, date-fns, dotenv, embla-carousel-react (+53 more)
 
 ### Community 9 - "Admin Core Views & Form UI"
-Cohesion: 0.20
-Nodes (10): GiftCardButton(), GourmetOfferForm(), GourmetOfferFormOffer, GourmetOfferFormProps, OrderForm(), OrderFormProps, Product, Button() (+2 more)
+Cohesion: 0.24
+Nodes (8): GourmetOfferFormOffer, GourmetOfferFormProps, OrderFormProps, Product, Button(), Input(), Label(), Textarea()
 
 ### Community 10 - "WASM Compiler Internal Handlers"
 Cohesion: 0.60
@@ -236,24 +237,20 @@ Cohesion: 0.09
 Nodes (21): CustomerSummary, GET(), DELETE(), PUT(), GET(), POST(), fetchOrderData(), OrderDetailPage() (+13 more)
 
 ### Community 12 - "WASM Memory & Buffer Management"
-Cohesion: 0.53
-Nodes (4): sendProductOrderCancelledEmail(), sendProductOrderReadyEmail(), GET(), PATCH()
+Cohesion: 0.18
+Nodes (6): DrawerContent(), DrawerDescription(), DrawerFooter(), DrawerHeader(), DrawerOverlay(), DrawerTitle()
 
 ### Community 13 - "WASM Field & Query Transformers"
 Cohesion: 0.40
 Nodes (5): peerDependenciesMeta, react, react-dom, optional, optional
-
-### Community 14 - "Admin Reservation & Customer Details UI"
-Cohesion: 0.08
-Nodes (17): ALL_SLOTS, ApiResponse, DayInfo, DAYS_FULL, DAYS_SHORT, EventInfo, MONTHS_ABBR, MONTHS_FULL (+9 more)
 
 ### Community 15 - "Prisma Query Compiler WASM Binding"
 Cohesion: 0.50
 Nodes (4): ⚠️ Différence importante : Expiration transaction vs Expiration naturelle, Définition des statuts, Schéma de base de données (Prisma), État du bon cadeau
 
 ### Community 16 - "System Module 16"
-Cohesion: 0.67
-Nodes (3): Cas de Figure - Pagination, GET `/api/admin/reservations`, Pagination avec filtres
+Cohesion: 0.47
+Nodes (5): generateAdminGourmetOfferCode(), GET(), PATCH(), POST(), sendGourmetOfferEmail()
 
 ### Community 17 - "System Module 17"
 Cohesion: 0.14
@@ -263,6 +260,14 @@ Nodes (19): GET(), DEFAULT_OPENING_DAYS, DEFAULT_SLOTS, EffectiveConfig, getEffe
 Cohesion: 0.67
 Nodes (3): Authentication, JWT (jose), Middleware de protection
 
+### Community 19 - "Community 19"
+Cohesion: 0.67
+Nodes (3): sendCancellationEmail(), GET(), PATCH()
+
+### Community 20 - "Community 20"
+Cohesion: 0.67
+Nodes (3): Caractères utilisés, Format des codes, Gestion des codes
+
 ### Community 21 - "System Module 21"
 Cohesion: 0.10
 Nodes (12): Checkbox(), HoverCardContent(), Progress(), ResizableHandle(), ResizablePanelGroup(), Slider(), Switch(), ToggleGroup() (+4 more)
@@ -271,25 +276,29 @@ Nodes (12): Checkbox(), HoverCardContent(), Progress(), ResizableHandle(), Resiz
 Cohesion: 0.07
 Nodes (32): Gift Cards Documentation, Boutique, Boutique Documentation, Gift Cards, Contact, Functional Documentation, Technical Documentation, Application Architecture (+24 more)
 
+### Community 23 - "Community 23"
+Cohesion: 0.67
+Nodes (3): Cas de Figure - Back Button (Navigateur), Scénario 1: Utilisateur revient en arrière après Stripe, Scénario 2: Cancel URL de Stripe
+
 ### Community 26 - "System Module 26"
-Cohesion: 0.15
-Nodes (17): POST(), GET(), GET(), createTransporter(), generateICS(), getTransporter(), RESTAURANT_ADDRESS_RAW, RESTAURANT_PHONE (+9 more)
+Cohesion: 0.14
+Nodes (18): POST(), GET(), GET(), createTransporter(), generateICS(), getTransporter(), RESTAURANT_ADDRESS_RAW, RESTAURANT_PHONE (+10 more)
 
 ### Community 27 - "System Module 27"
-Cohesion: 0.07
-Nodes (34): AccordionContent(), AccordionItem(), AccordionTrigger(), Avatar(), AvatarFallback(), AvatarImage(), BreadcrumbEllipsis(), BreadcrumbItem() (+26 more)
+Cohesion: 0.06
+Nodes (37): AccordionContent(), AccordionItem(), AccordionTrigger(), Avatar(), AvatarFallback(), AvatarImage(), BreadcrumbEllipsis(), BreadcrumbItem() (+29 more)
 
 ### Community 29 - "System Module 29"
 Cohesion: 0.13
-Nodes (18): BoutiqueTranslations, CommonTranslations, ContactTranslations, detectBrowserLocale(), FooterTranslations, GalleryTranslations, getLocaleFromString(), HeroTranslations (+10 more)
+Nodes (17): BoutiqueTranslations, CommonTranslations, ContactTranslations, detectBrowserLocale(), FooterTranslations, GalleryTranslations, getLocaleFromString(), HeroTranslations (+9 more)
 
 ### Community 30 - "System Module 30"
 Cohesion: 0.10
 Nodes (18): AlertDialogAction(), AlertDialogCancel(), AlertDialogContent(), AlertDialogDescription(), AlertDialogFooter(), AlertDialogHeader(), AlertDialogOverlay(), AlertDialogTitle() (+10 more)
 
 ### Community 32 - "System Module 32"
-Cohesion: 0.13
-Nodes (10): ClientLayout(), metadata, LanguageProvider(), FooterContent, Navbar(), DropdownItem, NavbarDropdown(), SplashScreen() (+2 more)
+Cohesion: 0.12
+Nodes (12): ClientLayout(), metadata, LanguageProvider(), Footer(), FooterContent, LanguageSelector(), Navbar(), DropdownItem (+4 more)
 
 ### Community 33 - "System Module 33"
 Cohesion: 0.16
@@ -300,20 +309,20 @@ Cohesion: 0.09
 Nodes (23): devDependencies, eslint, eslint-config-next, js-yaml, jsdom, pg, @playwright/test, prisma (+15 more)
 
 ### Community 36 - "System Module 36"
-Cohesion: 0.23
-Nodes (12): generateAdminGourmetOfferCode(), GET(), PATCH(), POST(), sendGourmetOfferEmail(), sendProductOrderConfirmationEmail(), config, handleGiftCardPayment() (+4 more)
+Cohesion: 0.21
+Nodes (12): generateAdminGiftCardCode(), GET(), PATCH(), POST(), sendGiftCardEmail(), sendProductOrderConfirmationEmail(), config, handleGiftCardPayment() (+4 more)
 
 ### Community 38 - "System Module 38"
 Cohesion: 0.12
 Nodes (14): Command(), CommandGroup(), CommandInput(), CommandItem(), CommandList(), CommandSeparator(), CommandShortcut(), Dialog() (+6 more)
 
 ### Community 39 - "System Module 39"
-Cohesion: 0.15
-Nodes (9): BoutiqueSuccessClient(), PostPaymentAction, PostPaymentLoading(), PostPaymentScreen(), PostPaymentScreenProps, PostPaymentTone, TONE_CLASSNAMES, GiftCardSuccessContentProps (+1 more)
+Cohesion: 0.14
+Nodes (10): BoutiqueSuccessClient(), PostPaymentAction, PostPaymentLoading(), PostPaymentScreen(), PostPaymentScreenProps, PostPaymentTone, TONE_CLASSNAMES, GiftCardSuccessContent (+2 more)
 
 ### Community 40 - "System Module 40"
-Cohesion: 0.12
-Nodes (16): ReservationForm(), ReservationFormProps, SlotInfo, ChequesCadeauxContent, Popover(), PopoverContent(), PopoverTrigger(), Select() (+8 more)
+Cohesion: 0.05
+Nodes (33): ReservationForm(), ReservationFormProps, SlotInfo, ALL_SLOTS, ApiResponse, DayInfo, DAYS_FULL, DAYS_SHORT (+25 more)
 
 ### Community 42 - "System Module 42"
 Cohesion: 0.10
@@ -321,7 +330,7 @@ Nodes (19): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModu
 
 ### Community 43 - "System Module 43"
 Cohesion: 0.12
-Nodes (20): BoutiqueSectionClient(), BoutiqueSectionClientBoutiqueContent, BoutiqueSectionClientGourmetOffer, BoutiqueSectionClientProduct, GourmetOffer, GourmetOfferCard(), GourmetOfferGrid(), GourmetOfferGridProps (+12 more)
+Nodes (24): BoutiqueSectionClient(), BoutiqueSectionClientBoutiqueContent, BoutiqueSectionClientGourmetOffer, BoutiqueSectionClientProduct, GiftCardButton(), GourmetOffer, GourmetOfferCard(), GourmetOfferForm() (+16 more)
 
 ### Community 44 - "System Module 44"
 Cohesion: 0.16
@@ -340,12 +349,8 @@ Cohesion: 0.17
 Nodes (11): name, @types/react, peerDependencies, react, react-dom, pnpm, onlyBuiltDependencies, overrides (+3 more)
 
 ### Community 48 - "System Module 48"
-Cohesion: 0.12
-Nodes (22): Hero(), HeroProps, useLanguage(), Contact(), Gallery(), History(), MobileCarousel(), PropType (+14 more)
-
-### Community 49 - "System Module 49"
-Cohesion: 0.12
-Nodes (9): ContextMenuCheckboxItem(), ContextMenuContent(), ContextMenuItem(), ContextMenuLabel(), ContextMenuRadioItem(), ContextMenuSeparator(), ContextMenuShortcut(), ContextMenuSubContent() (+1 more)
+Cohesion: 0.20
+Nodes (11): HoveredPoint, OriginsMap(), OriginsMapProps, PointData, BoutiqueContent, ContactContent, FooterContent, GalleryContent (+3 more)
 
 ### Community 50 - "System Module 50"
 Cohesion: 0.12
@@ -380,8 +385,8 @@ Cohesion: 0.22
 Nodes (8): ChartConfig, ChartContainer(), ChartContext, ChartContextProps, ChartLegendContent(), ChartTooltipContent(), THEMES, useChart()
 
 ### Community 64 - "System Module 64"
-Cohesion: 0.16
-Nodes (12): ContactMessageRow, CustomerDetailResponse, formatCurrency(), formatDateTime(), GiftCardRow, GourmetOfferRow, ProductOrderRow, ReservationRow (+4 more)
+Cohesion: 0.18
+Nodes (11): ContactMessageRow, CustomerDetailResponse, formatCurrency(), formatDateTime(), GiftCardRow, GourmetOfferRow, ProductOrderRow, ReservationRow (+3 more)
 
 ### Community 65 - "System Module 65"
 Cohesion: 0.24
@@ -449,7 +454,7 @@ Nodes (26): Checklist de validation, Console.log à nettoyer, Estimation de l'ef
 
 ### Community 154 - "Community 154"
 Cohesion: 0.08
-Nodes (25): API Tests, Cas 1: Pas de tableId, Cas 1: Réservation same-day (aujourd'hui), Cas 2: Same-day avec slots déjà passés, Cas de Figure - API d'Admin `/api/admin/tables`, Cas de Figure - API Public `/api/reservations/cancel`, Cas de Figure - API Public `/api/reservations/[id]`, Cas de Figure - Back Button (Navigateur) (+17 more)
+Nodes (25): API Tests, Cas 1: Pas de tableId, Cas 1: Réservation same-day (aujourd'hui), Cas 2: Same-day avec slots déjà passés, Cas de Figure - API d'Admin `/api/admin/tables`, Cas de Figure - API Public `/api/reservations/cancel`, Cas de Figure - API Public `/api/reservations/[id]`, Cas de Figure - Pagination (+17 more)
 
 ### Community 156 - "Community 156"
 Cohesion: 0.09
@@ -457,7 +462,7 @@ Nodes (21): Base de données, Choix du canal (SMS ou email), Comment configurer,
 
 ### Community 157 - "Community 157"
 Cohesion: 0.13
-Nodes (14): Caractères utilisés, Documentation Système de Bons Cadeaux - ANØV, Fichier de configuration Stripe, Format des codes, Gestion des codes, Gestion des paiements Stripe, Recommandations pour les tests e2e Playwright, Références (+6 more)
+Nodes (14): Documentation Système de Bons Cadeaux - ANØV, Fichier de configuration Stripe, Fonctionnalités désactivées, Fonctionnalités non implémentées, Gestion des paiements Stripe, Limitations actuelles, Recommandations pour les tests e2e Playwright, Références (+6 more)
 
 ### Community 159 - "Community 159"
 Cohesion: 0.14
@@ -473,7 +478,7 @@ Nodes (11): Avant de déployer, Checklist de développement, Contact, Cron Jobs,
 
 ### Community 162 - "Community 162"
 Cohesion: 0.14
-Nodes (12): LanguageSelector(), DropdownMenu(), DropdownMenuCheckboxItem(), DropdownMenuContent(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuRadioItem(), DropdownMenuSeparator() (+4 more)
+Nodes (12): LOCALE_NAMES, DropdownMenu(), DropdownMenuCheckboxItem(), DropdownMenuContent(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuRadioItem(), DropdownMenuSeparator() (+4 more)
 
 ### Community 163 - "Community 163"
 Cohesion: 0.18
@@ -663,10 +668,6 @@ Nodes (4): Paiements, Sessions de paiement, Stripe Integration, Webhook Stripe
 Cohesion: 0.50
 Nodes (3): ANOV, Commandes de gestion de la base de données, Développement
 
-### Community 213 - "Community 213"
-Cohesion: 0.67
-Nodes (3): Fonctionnalités désactivées, Fonctionnalités non implémentées, Limitations actuelles
-
 ### Community 214 - "Community 214"
 Cohesion: 0.67
 Nodes (3): Calcul du dépôt, Cas de Figure - Dépôt et Acompte, Modification du dépôt
@@ -682,16 +683,16 @@ Nodes (3): Fichiers YAML, Images, Structure du contenu CMS
 ## Knowledge Gaps
 - **775 isolated node(s):** `extends`, `parser`, `plugins`, `@typescript-eslint/no-unused-vars`, `no-console` (+770 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `cn()` connect `System Module 27` to `Prisma Client Schema & Types`, `WASM Query Compiler Engine`, `Prisma Client Core Implementation`, `Radix UI & Component Library`, `Admin Core Views & Form UI`, `System Module 21`, `System Module 30`, `Community 162`, `System Module 38`, `System Module 39`, `System Module 40`, `System Module 43`, `System Module 49`, `System Module 51`, `System Module 57`, `System Module 62`, `System Module 64`, `System Module 66`, `System Module 90`?**
-  _High betweenness centrality (0.093) - this node is a cross-community bridge._
+- **Why does `cn()` connect `System Module 27` to `Prisma Client Schema & Types`, `Community 162`, `Prisma Client Core Implementation`, `System Module 66`, `Radix UI & Component Library`, `System Module 38`, `System Module 39`, `System Module 40`, `Admin Core Views & Form UI`, `WASM Query Compiler Engine`, `System Module 43`, `WASM Memory & Buffer Management`, `System Module 51`, `System Module 21`, `System Module 62`, `System Module 57`, `System Module 90`, `System Module 30`?**
+  _High betweenness centrality (0.092) - this node is a cross-community bridge._
 - **Why does `Button()` connect `Admin Core Views & Form UI` to `System Module 64`, `Prisma Client Runtime Types`, `Community 162`, `Prisma Client Core Implementation`, `System Module 32`, `Radix UI & Component Library`, `System Module 39`, `System Module 40`, `System Module 43`, `Admin Reservation & Customer Details UI`, `System Module 51`, `System Module 53`, `System Module 27`, `System Module 30`?**
-  _High betweenness centrality (0.048) - this node is a cross-community bridge._
-- **Why does `getAdminFromCookies()` connect `Admin & Reservation API Endpoints` to `System Module 36`, `Prisma Transaction & Client Core`, `WASM Compiler Internal Handlers`, `WASM Memory & Buffer Management`, `System Module 26`?**
+  _High betweenness centrality (0.047) - this node is a cross-community bridge._
+- **Why does `getAdminFromCookies()` connect `Admin & Reservation API Endpoints` to `System Module 36`, `WASM Compiler Internal Handlers`, `System Module 16`, `Community 19`, `System Module 26`?**
   _High betweenness centrality (0.018) - this node is a cross-community bridge._
 - **Are the 10 inferred relationships involving `getAdminFromCookies()` (e.g. with `POST()` and `DELETE()`) actually correct?**
   _`getAdminFromCookies()` has 10 INFERRED edges - model-reasoned connections that need verification._

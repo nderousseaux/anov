@@ -73,3 +73,98 @@ export function validateComboTableIds(value: unknown): string | null {
     return `Une combinaison associe ${MAX_COMBO_SIZE} tables distinctes`;
   return null;
 }
+
+export type AdminReservationSource = "PHONE" | "WALK_IN";
+
+export interface AdminReservationInput {
+  name: string;
+  phone: string | null;
+  email: string | null;
+  /** YYYY-MM-DD */
+  date: string;
+  /** HH:mm */
+  time: string;
+  guests: number;
+  source: AdminReservationSource;
+  specialRequest: string | null;
+  /** Table imposée (réservation épinglée) : typiquement une table walk-in. */
+  tableId: number | null;
+  /** Ajouter même si le service est complet. */
+  force: boolean;
+}
+
+export const MAX_ADMIN_GUESTS = 20;
+
+const PHONE_RE = /^\+?[\d\s\-().]{6,20}$/;
+const EMAIL_RE = /^[\w.+\-]+@[\w\-]+\.[a-z]{2,}$/i;
+
+const optionalString = (v: unknown): string | null =>
+  typeof v === "string" && v.trim() ? v.trim() : null;
+
+/** Valide le corps d'une réservation saisie par le restaurateur (téléphone ou passage). */
+export function parseAdminReservation(
+  body: unknown,
+): { error: string } | { value: AdminReservationInput } {
+  const b = (body ?? {}) as Record<string, unknown>;
+
+  const source = b.source;
+  if (source !== "PHONE" && source !== "WALK_IN")
+    return { error: "source invalide (PHONE ou WALK_IN)" };
+
+  const name =
+    optionalString(b.name) ?? (source === "WALK_IN" ? "Passage" : null);
+  if (!name || name.length > 100) return { error: "Nom invalide" };
+
+  const { date, time } = b;
+  if (
+    typeof date !== "string" ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+    isNaN(new Date(`${date}T00:00:00.000Z`).getTime())
+  )
+    return { error: "Date invalide" };
+  if (typeof time !== "string" || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time))
+    return { error: "Heure invalide" };
+
+  const guests = b.guests;
+  if (
+    !Number.isInteger(guests) ||
+    (guests as number) < 1 ||
+    (guests as number) > MAX_ADMIN_GUESTS
+  )
+    return { error: `Nombre de couverts invalide (1 à ${MAX_ADMIN_GUESTS})` };
+
+  const phone = optionalString(b.phone);
+  if (phone && !PHONE_RE.test(phone))
+    return { error: "Numéro de téléphone invalide" };
+  const email = optionalString(b.email)?.toLowerCase() ?? null;
+  if (email && !EMAIL_RE.test(email)) return { error: "Email invalide" };
+
+  const specialRequest = optionalString(b.specialRequest);
+  if (specialRequest && specialRequest.length > 500)
+    return { error: "Demande spéciale trop longue" };
+
+  const tableId = b.tableId ?? null;
+  if (
+    tableId !== null &&
+    (!Number.isInteger(tableId) || (tableId as number) < 1)
+  )
+    return { error: "tableId invalide" };
+
+  if (b.force !== undefined && typeof b.force !== "boolean")
+    return { error: "force invalide" };
+
+  return {
+    value: {
+      name,
+      phone,
+      email,
+      date,
+      time,
+      guests: guests as number,
+      source,
+      specialRequest,
+      tableId: tableId as number | null,
+      force: b.force === true,
+    },
+  };
+}

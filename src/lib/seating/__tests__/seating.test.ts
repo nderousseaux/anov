@@ -154,6 +154,57 @@ describe("canSeat / isAvailable", () => {
   });
 });
 
+describe("isAvailable avec table imposée", () => {
+  const configs = buildConfigs(TABLES, []);
+
+  it("accepte un groupe imposé sur une table libre", () => {
+    expect(isAvailable([g("a", 2)], 3, configs, [4])).toBe(true);
+  });
+
+  it("refuse une table déjà épinglée par un autre groupe", () => {
+    expect(isAvailable([g("pin", 2, [4])], 3, configs, [4])).toBe(false);
+  });
+
+  it("refuse si les autres groupes ne tiennent plus autour de la table imposée", () => {
+    // 4 groupes de 3 sur 4 tables (2,3,3,4) : impossible dès qu'on impose 1 groupe sur la table de 2
+    expect(
+      isAvailable([g("a", 3), g("b", 3), g("c", 4)], 2, configs, [1]),
+    ).toBe(true);
+    expect(
+      isAvailable([g("a", 3), g("b", 3), g("c", 3)], 2, configs, [2]),
+    ).toBe(false);
+  });
+});
+
+describe("isAvailable sur une table hors pool (walk-in)", () => {
+  const pool = [T2, T3a];
+  const configs = buildConfigs(pool, []);
+  const WALK_IN_ID = 9;
+
+  it("accepte un client de passage sur une table walk-in libre", () => {
+    expect(isAvailable([], 2, configs, [WALK_IN_ID])).toBe(true);
+  });
+
+  it("même quand le service du pool est déjà sur-réservé", () => {
+    const overbooked = [g("a", 4), g("b", 4)]; // impossible sur 2 + 3 places
+    expect(canSeat(overbooked, configs)).toBeNull();
+    expect(isAvailable(overbooked, 2, configs, [WALK_IN_ID])).toBe(true);
+    // alors qu'une réservation ordinaire est refusée
+    expect(isAvailable(overbooked, 2, configs)).toBe(false);
+  });
+
+  it("refuse une table walk-in déjà occupée par une réservation épinglée", () => {
+    expect(
+      isAvailable([g("p", 2, [WALK_IN_ID])], 2, configs, [WALK_IN_ID]),
+    ).toBe(false);
+  });
+
+  it("reste soumis au placement global pour une table du pool", () => {
+    const overbooked = [g("a", 4), g("b", 4)];
+    expect(isAvailable(overbooked, 2, configs, [1])).toBe(false);
+  });
+});
+
 describe("tables walk-in", () => {
   const all = [...TABLES.map((t) => ({ ...t, walkIn: false }))];
   all[3] = { ...T4, walkIn: true };

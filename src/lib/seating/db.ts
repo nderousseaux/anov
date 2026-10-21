@@ -98,6 +98,8 @@ export interface ServiceAvailabilityParams {
   size: number;
   excludeReservationId?: string;
   pool?: "online" | "all";
+  /** Tables imposées au nouveau groupe (réservation épinglée). */
+  pinnedTableIds?: number[];
 }
 
 /** Existe-t-il une répartition valide du service avec un groupe de `size` en plus ? */
@@ -105,12 +107,13 @@ export async function isServiceAvailable(
   db: DbClient,
   params: ServiceAvailabilityParams,
 ): Promise<boolean> {
-  const { dateStr, service, size, excludeReservationId, pool } = params;
+  const { dateStr, service, size, excludeReservationId, pool, pinnedTableIds } =
+    params;
   const [configs, groups] = await Promise.all([
     loadConfigs(db, pool),
     loadServiceGroups(db, dateStr, service, excludeReservationId),
   ]);
-  return isAvailable(groups, size, configs);
+  return isAvailable(groups, size, configs, pinnedTableIds);
 }
 
 /**

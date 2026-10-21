@@ -1416,6 +1416,7 @@ export default function AdminReservationsPage() {
 
                       <DayPlanning
                         date={selectedDayInfo.date}
+                        slots={selectedDayInfo.effectiveSlots}
                         onChanged={() => {
                           fetchDayReservations(selectedDayInfo.date);
                           fetchCalendar();

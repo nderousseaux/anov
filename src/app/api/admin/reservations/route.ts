@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { getAdminFromCookies } from "@/lib/auth";
 import { sendCancellationEmail } from "@/lib/email";
 import { stripe } from "@/lib/stripe";
+import { parseAdminReservation } from "@/lib/seating/admin";
+import { serviceOf } from "@/lib/seating";
+import { lockAndCheckAvailability } from "@/lib/seating/db";
 
 export async function GET(req: NextRequest) {
   const admin = await getAdminFromCookies();
@@ -117,6 +120,80 @@ export async function GET(req: NextRequest) {
     page,
     pageSize: perPage,
   });
+}
+
+/**
+ * Réservation saisie par le restaurateur (client au téléphone, client de passage).
+ * Même validation que le web : le test de disponibilité est rejoué sous verrou
+ * (date, service). Si le service est complet : 409 avec `canForce` ; avec `force: true`
+ * la réservation est ajoutée quand même (elle apparaîtra « sans table »). Pas de paiement :
+ * la réservation est directement confirmée.
+ */
+export async function POST(req: NextRequest) {
+  const admin = await getAdminFromCookies();
+  if (!admin)
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+
+  const parsed = parseAdminReservation(await req.json().catch(() => null));
+  if ("error" in parsed)
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
+  const v = parsed.value;
+
+  const table =
+    v.tableId === null
+      ? null
+      : await prisma.table.findUnique({ where: { id: v.tableId } });
+  if (v.tableId !== null && !table)
+    return NextResponse.json({ error: "Table introuvable" }, { status: 404 });
+  if (table && v.guests > table.capacity && !v.force) {
+    return NextResponse.json(
+      {
+        error: `La table ${table.name} n'a que ${table.capacity} place(s) pour ${v.guests} couverts`,
+        canForce: true,
+      },
+      { status: 409 },
+    );
+  }
+
+  const reservationDate = new Date(`${v.date}T${v.time}:00.000Z`);
+
+  const result = await prisma.$transaction(async (tx) => {
+    const available = await lockAndCheckAvailability(tx, {
+      dateStr: v.date,
+      service: serviceOf(reservationDate),
+      size: v.guests,
+      pinnedTableIds: table ? [table.id] : undefined,
+    });
+    if (!available && !v.force) return null;
+
+    const reservation = await tx.reservation.create({
+      data: {
+        name: v.name,
+        email: v.email,
+        phone: v.phone,
+        date: reservationDate,
+        guests: v.guests,
+        specialRequest: v.specialRequest,
+        status: "CONFIRMED",
+        source: v.source,
+        pinnedTableIds: table ? [table.id] : [],
+      },
+      select: { id: true, name: true, date: true, guests: true, source: true },
+    });
+    return { reservation, forced: !available };
+  });
+
+  if (!result) {
+    return NextResponse.json(
+      {
+        error: `Service complet pour ${v.guests} couvert${v.guests > 1 ? "s" : ""}`,
+        canForce: true,
+      },
+      { status: 409 },
+    );
+  }
+
+  return NextResponse.json(result, { status: 201 });
 }
 
 export async function PATCH(req: NextRequest) {

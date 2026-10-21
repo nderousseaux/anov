@@ -1,9 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  AddReservationDialog,
+  type WalkInPreset,
+} from "./AddReservationDialog";
 import { FloorPlan } from "./FloorPlan";
 import {
   SERVICE_LABELS,
@@ -24,11 +28,17 @@ function tableNames(ids: number[] | null, tables: PlanningTable[]): string {
   return ids.map((id) => byId.get(id) ?? `#${id}`).join(" + ");
 }
 
+function isToday(date: string): boolean {
+  const now = new Date();
+  return (
+    date ===
+    `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`
+  );
+}
+
 /** Midi par défaut ; pour aujourd'hui, le soir une fois le service du midi passé. */
 function defaultService(date: string): ServiceKey {
-  const now = new Date();
-  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  return date === today && now.getHours() >= 15 ? "dinner" : "lunch";
+  return isToday(date) && new Date().getHours() >= 15 ? "dinner" : "lunch";
 }
 
 function FillIndicator({ service }: { service: ServicePlanning }) {
@@ -164,10 +174,13 @@ function ServicePanel({
   service,
   tables,
   onCancel,
+  onAddWalkIn,
 }: {
   service: ServicePlanning;
   tables: PlanningTable[];
   onCancel: (r: PlanningReservation) => void;
+  /** Absent : on ne propose pas d'ajouter un client de passage (jour autre qu'aujourd'hui). */
+  onAddWalkIn?: (table: PlanningTable) => void;
 }) {
   const walkInTables = tables.filter((t) => t.walkIn);
   const { reservations, summary } = service;
@@ -235,10 +248,24 @@ function ServicePanel({
               return (
                 <span
                   key={t.id}
-                  className={`text-xs px-2 py-1 rounded border border-dashed ${occupant ? "border-primary/40 bg-primary/10 text-primary" : "border-muted-foreground/30 text-muted-foreground"}`}
+                  className={`inline-flex items-center gap-2 text-xs px-2 py-1 rounded border border-dashed ${occupant ? "border-primary/40 bg-primary/10 text-primary" : "border-muted-foreground/30 text-muted-foreground"}`}
                 >
-                  {t.name} · {t.capacity} pl. ·{" "}
-                  {occupant ? `occupée (${occupant.name})` : "libre"}
+                  <span>
+                    {t.name} · {t.capacity} pl. ·{" "}
+                    {occupant ? `occupée (${occupant.name})` : "libre"}
+                  </span>
+                  {!occupant && onAddWalkIn && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-6 px-2 text-xs"
+                      aria-label={`Ajouter un client de passage sur la table ${t.name}`}
+                      onClick={() => onAddWalkIn(t)}
+                    >
+                      <Plus className="w-3 h-3 mr-1" />
+                      Passage
+                    </Button>
+                  )}
                 </span>
               );
             })}
@@ -255,16 +282,21 @@ function ServicePanel({
  */
 export function DayPlanning({
   date,
+  slots,
   onChanged,
 }: {
   date: string;
-  /** Appelé après une modification (annulation) pour rafraîchir le reste de la page. */
+  /** Créneaux d'ouverture du jour (proposent l'heure par défaut d'un nouvel ajout). */
+  slots: string[];
+  /** Appelé après une modification (annulation, ajout) pour rafraîchir le reste de la page. */
   onChanged: () => void;
 }) {
   const [data, setData] = useState<DayPlanningData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<ServiceKey>(() => defaultService(date));
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [walkIn, setWalkIn] = useState<WalkInPreset | null>(null);
 
   useEffect(() => {
     setTab(defaultService(date));
@@ -314,26 +346,65 @@ export function DayPlanning({
   }
 
   return (
-    <Tabs
-      value={tab}
-      onValueChange={(v) => setTab(v as ServiceKey)}
-      className={loading ? "opacity-70 transition-opacity" : undefined}
-    >
-      <TabsList>
+    <>
+      <Tabs
+        value={tab}
+        onValueChange={(v) => setTab(v as ServiceKey)}
+        className={loading ? "opacity-70 transition-opacity" : undefined}
+      >
+        <div className="flex items-center justify-between gap-3">
+          <TabsList>
+            {data.services.map((s) => (
+              <TabsTrigger key={s.key} value={s.key}>
+                {SERVICE_LABELS[s.key]}
+                <span className="ml-1.5 text-xs text-muted-foreground">
+                  {s.reservations.filter((r) => r.counting).length}
+                </span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <Button
+            size="sm"
+            onClick={() => {
+              setWalkIn(null);
+              setDialogOpen(true);
+            }}
+          >
+            <Plus className="w-4 h-4 mr-1.5" />
+            Réservation
+          </Button>
+        </div>
         {data.services.map((s) => (
-          <TabsTrigger key={s.key} value={s.key}>
-            {SERVICE_LABELS[s.key]}
-            <span className="ml-1.5 text-xs text-muted-foreground">
-              {s.reservations.filter((r) => r.counting).length}
-            </span>
-          </TabsTrigger>
+          <TabsContent key={s.key} value={s.key} className="mt-4">
+            <ServicePanel
+              service={s}
+              tables={data.tables}
+              onCancel={cancel}
+              onAddWalkIn={
+                isToday(date)
+                  ? (table) => {
+                      setWalkIn({ table });
+                      setDialogOpen(true);
+                    }
+                  : undefined
+              }
+            />
+          </TabsContent>
         ))}
-      </TabsList>
-      {data.services.map((s) => (
-        <TabsContent key={s.key} value={s.key} className="mt-4">
-          <ServicePanel service={s} tables={data.tables} onCancel={cancel} />
-        </TabsContent>
-      ))}
-    </Tabs>
+      </Tabs>
+
+      <AddReservationDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        date={date}
+        service={tab}
+        slots={slots}
+        preset={walkIn}
+        onCreated={() => {
+          onChanged();
+          load();
+        }}
+      />
+    </>
   );
 }

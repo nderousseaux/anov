@@ -55,11 +55,19 @@ export function canSeat(
   return place(0) ? assignment : null;
 }
 
-/** Peut-on ajouter un groupe de `newSize` aux `groups` déjà présents dans le service ? */
+/**
+ * Peut-on ajouter un groupe de `newSize` aux `groups` déjà présents dans le service ?
+ * Avec `pinnedTableIds`, le nouveau groupe est imposé sur ces tables (ex. client de passage
+ * sur une table walk-in) : elles doivent être libres, et les autres groupes se placent autour.
+ * Si toutes ces tables sont hors du pool (walk-in), elles n'interfèrent pas avec le placement
+ * des autres groupes : il suffit qu'aucune autre réservation n'y soit épinglée. Un service
+ * déjà sur-réservé n'empêche donc pas d'asseoir un client de passage sur une table libre.
+ */
 export function isAvailable(
   groups: SeatingGroup[],
   newSize: number,
   configsBySize: ConfigsBySize,
+  pinnedTableIds?: TableId[],
 ): boolean {
   if (
     !Number.isInteger(newSize) ||
@@ -68,9 +76,20 @@ export function isAvailable(
   ) {
     return false;
   }
+  if (pinnedTableIds && pinnedTableIds.length > 0) {
+    const poolIds = new Set(
+      (configsBySize.get(1) ?? []).flatMap((config) => config.tableIds),
+    );
+    if (pinnedTableIds.every((id) => !poolIds.has(id))) {
+      const taken = new Set(groups.flatMap((g) => g.pinnedTableIds ?? []));
+      return pinnedTableIds.every((id) => !taken.has(id));
+    }
+  }
   return (
-    canSeat([...groups, { id: NEW_GROUP_ID, size: newSize }], configsBySize) !==
-    null
+    canSeat(
+      [...groups, { id: NEW_GROUP_ID, size: newSize, pinnedTableIds }],
+      configsBySize,
+    ) !== null
   );
 }
 

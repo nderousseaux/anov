@@ -7,8 +7,14 @@ export async function GET() {
   if (!admin)
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   const events = await prisma.event.findMany({
-    where: { isActive: true },
+    where: {
+      isActive: true,
+      endDate: { gte: today },
+    },
     orderBy: { startDate: "asc" },
   });
 

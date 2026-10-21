@@ -10,6 +10,7 @@ import {
   onlinePool,
   planService,
   serviceOf,
+  summarizeService,
   type SeatingCombo,
   type SeatingGroup,
   type SeatingTable,
@@ -233,5 +234,61 @@ describe("comboCapacity", () => {
 
   it("utilise la capacité fixée par le restaurateur", () => {
     expect(comboCapacity([1, 4], 5, capacityById)).toBe(5);
+  });
+});
+
+describe("summarizeService", () => {
+  const withWalkIn = [
+    { ...T2, walkIn: false },
+    { ...T3a, walkIn: false },
+    { ...T3b, walkIn: false },
+    { ...T4, walkIn: true }, // la table de 4 est réservée au walk-in
+  ];
+  const poolConfigs = buildConfigs(onlinePool(withWalkIn), []);
+
+  it("compte couverts, capacité du pool et tables libres", () => {
+    const summary = summarizeService(withWalkIn, poolConfigs, [
+      g("a", 2),
+      g("b", 3),
+    ]);
+
+    expect(summary.covers).toBe(5);
+    expect(summary.capacity).toBe(8); // 2 + 3 + 3, sans la table walk-in
+    expect(summary.tablesTotal).toBe(3);
+    expect(summary.tablesFree).toBe(1);
+    expect(summary.unplaced).toEqual([]);
+    expect(summary.walkInOccupied).toEqual([]);
+  });
+
+  it("signale les tables walk-in occupées par une résa épinglée, sans toucher au pool", () => {
+    const summary = summarizeService(withWalkIn, poolConfigs, [
+      g("walkin", 4, [4]),
+    ]);
+
+    expect(summary.walkInOccupied).toEqual([4]);
+    expect(summary.tablesFree).toBe(3);
+    expect(summary.assignments.walkin).toEqual([4]);
+  });
+
+  it("remonte les réservations sans table quand le service est plein", () => {
+    const summary = summarizeService(withWalkIn, poolConfigs, [
+      g("a", 3),
+      g("b", 3),
+      g("c", 3),
+    ]);
+
+    expect(summary.unplaced).toEqual(["c"]);
+    expect(summary.covers).toBe(9);
+    expect(summary.tablesFree).toBe(1);
+  });
+
+  it("service vide : tout est libre", () => {
+    const summary = summarizeService(withWalkIn, poolConfigs, []);
+    expect(summary).toMatchObject({
+      covers: 0,
+      tablesFree: 3,
+      unplaced: [],
+      assignments: {},
+    });
   });
 });

@@ -3,6 +3,7 @@ import type { Prisma } from "../../generated/prisma";
 import { buildConfigs, comboCapacity } from "./configs";
 import { isAvailable, planService } from "./canSeat";
 import { onlinePool, serviceOf } from "./service";
+import { summarizeService, type ServiceSummary } from "./planning";
 import type { ConfigsBySize, SeatingGroup, ServiceKey } from "./types";
 
 type DbClient = typeof prisma | Prisma.TransactionClient;
@@ -182,4 +183,123 @@ export async function findInfeasibleServices(
     });
   }
   return result;
+}
+
+export interface PlanningReservation {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  date: Date;
+  guests: number;
+  status: string;
+  source: string;
+  specialRequest: string | null;
+  depositPaidCents: number | null;
+  transactionExpireAt: Date | null;
+  createdAt: Date;
+  pinnedTableIds: number[];
+  /** La réservation occupe une place dans le service (faux : annulée, etc.). */
+  counting: boolean;
+  /** Tables calculées par l'algo ; null si elle ne compte pas, ou si elle n'a pas pu être placée. */
+  assignedTableIds: number[] | null;
+}
+
+export interface DayPlanning {
+  tables: {
+    id: number;
+    name: string;
+    capacity: number;
+    posX: number;
+    posY: number;
+    walkIn: boolean;
+  }[];
+  services: {
+    key: ServiceKey;
+    reservations: PlanningReservation[];
+    summary: ServiceSummary;
+  }[];
+}
+
+/** Statuts qui occupent une place dans le service (un hold expiré est exclu en amont). */
+const COUNTING_STATUSES = ["CONFIRMED", "COMPLETED", "PENDING_PAYMENT"];
+
+/**
+ * Planning d'une journée : réservations par service, tables attribuées (recalculées par
+ * l'algo, les épinglées restant en place) et indicateurs de remplissage.
+ */
+export async function loadDayPlanning(
+  db: DbClient,
+  dateStr: string,
+  now: Date = new Date(),
+): Promise<DayPlanning> {
+  const dayStart = new Date(`${dateStr}T00:00:00.000Z`);
+  const dayEnd = new Date(dayStart.getTime() + 86_400_000);
+
+  const [tables, configs, reservations] = await Promise.all([
+    db.table.findMany({
+      orderBy: [{ capacity: "asc" }, { id: "asc" }],
+      select: {
+        id: true,
+        name: true,
+        capacity: true,
+        posX: true,
+        posY: true,
+        walkIn: true,
+      },
+    }),
+    loadConfigs(db),
+    db.reservation.findMany({
+      where: {
+        date: { gte: dayStart, lt: dayEnd },
+        // Les holds expirés ne sont pas affichés (ils restent PENDING_PAYMENT en base)
+        OR: [
+          { status: { not: "PENDING_PAYMENT" } },
+          { transactionExpireAt: { gt: now } },
+          { transactionExpireAt: null },
+        ],
+      },
+      orderBy: { date: "asc" },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        date: true,
+        guests: true,
+        status: true,
+        source: true,
+        specialRequest: true,
+        depositPaidCents: true,
+        transactionExpireAt: true,
+        createdAt: true,
+        pinnedTableIds: true,
+      },
+    }),
+  ]);
+
+  const services = (["lunch", "dinner"] as const).map((key) => {
+    const own = reservations.filter((r) => serviceOf(r.date) === key);
+    const counting = own.filter((r) => COUNTING_STATUSES.includes(r.status));
+    const summary = summarizeService(
+      tables,
+      configs,
+      counting.map((r) => ({
+        id: r.id,
+        size: r.guests,
+        pinnedTableIds: r.pinnedTableIds,
+      })),
+    );
+    return {
+      key,
+      summary,
+      reservations: own.map((r) => ({
+        ...r,
+        counting: COUNTING_STATUSES.includes(r.status),
+        assignedTableIds: summary.assignments[r.id] ?? null,
+      })),
+    };
+  });
+
+  return { tables, services };
 }

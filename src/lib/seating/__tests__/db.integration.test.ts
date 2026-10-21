@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import {
   findInfeasibleServices,
   isServiceAvailable,
+  loadDayPlanning,
   lockAndCheckAvailability,
   lockService,
   serviceRange,
@@ -278,6 +279,82 @@ describe.skipIf(!process.env.DATABASE_URL_TEST)(
       });
 
       expect(await findInfeasibleServices(prisma)).toEqual([]);
+    });
+
+    it("loadDayPlanning : réservations par service, tables attribuées et remplissage", async () => {
+      const t1 = await prisma.table.create({
+        data: { name: "T1", capacity: 2 },
+      });
+      await prisma.table.create({ data: { name: "T2", capacity: 2 } });
+      const walk = await prisma.table.create({
+        data: { name: "W1", capacity: 4, walkIn: true },
+      });
+      const lunch = new Date(`${DATE}T12:00:00.000Z`);
+      const pinned = await addReservation({
+        name: "Épinglée",
+        guests: 3,
+        status: "CONFIRMED",
+        transactionExpireAt: null,
+        pinnedTableIds: [walk.id],
+      });
+      await addReservation({
+        name: "Midi",
+        date: lunch,
+        status: "CONFIRMED",
+        transactionExpireAt: null,
+      });
+      await addReservation({
+        name: "Dîner",
+        status: "CONFIRMED",
+        transactionExpireAt: null,
+      });
+      await addReservation({
+        name: "Annulée",
+        status: "CANCELLED",
+        transactionExpireAt: null,
+      });
+      await addReservation({
+        name: "Expirée",
+        transactionExpireAt: inMinutes(-5),
+      });
+      await addReservation({
+        name: "Autre jour",
+        date: new Date("2030-06-05T19:00:00.000Z"),
+        status: "CONFIRMED",
+        transactionExpireAt: null,
+      });
+
+      const planning = await loadDayPlanning(prisma, DATE);
+
+      expect(planning.tables.map((t) => t.name)).toEqual(["T1", "T2", "W1"]);
+      const [lunchService, dinnerService] = planning.services;
+      expect(lunchService.key).toBe("lunch");
+      expect(lunchService.reservations.map((r) => r.name)).toEqual(["Midi"]);
+      expect(lunchService.summary).toMatchObject({
+        covers: 2,
+        tablesTotal: 2,
+        tablesFree: 1,
+      });
+
+      // dîner : l'annulée est listée mais ne compte pas ; l'expirée et l'autre jour sont absentes
+      const names = dinnerService.reservations.map((r) => r.name).sort();
+      expect(names).toEqual(["Annulée", "Dîner", "Épinglée"]);
+      expect(dinnerService.summary).toMatchObject({
+        covers: 5,
+        tablesFree: 1,
+        unplaced: [],
+        walkInOccupied: [walk.id],
+      });
+      const byName = Object.fromEntries(
+        dinnerService.reservations.map((r) => [r.name, r]),
+      );
+      expect(byName["Épinglée"].assignedTableIds).toEqual([walk.id]);
+      expect(byName["Annulée"].assignedTableIds).toBeNull();
+      expect(byName["Annulée"].counting).toBe(false);
+      expect(byName["Dîner"].counting).toBe(true);
+      expect(byName["Dîner"].assignedTableIds).toHaveLength(1);
+      expect(pinned.id).toBe(byName["Épinglée"].id);
+      expect(t1.id).toBeDefined();
     });
   },
 );

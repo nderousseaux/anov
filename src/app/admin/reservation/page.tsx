@@ -3,9 +3,9 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { AdminNav } from "@/components/admin/AdminNav";
+import { DayPlanning } from "@/components/admin/seating/DayPlanning";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Loader2,
   ChevronLeft,
@@ -47,14 +47,6 @@ interface ReservationRow {
   transactionExpireAt: string | null;
   createdAt: string;
   tableId: number | null;
-}
-
-interface TableInfo {
-  id: number;
-  name: string;
-  capacity: number;
-  posX: number;
-  posY: number;
 }
 
 interface ApiResponse {
@@ -102,20 +94,6 @@ interface DayInfo {
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
-const STATUS_LABELS: Record<ReservationStatus, string> = {
-  PENDING_PAYMENT: "En attente",
-  CONFIRMED: "Confirmé",
-  CANCELLED: "Annulé",
-  COMPLETED: "Terminé",
-};
-
-const STATUS_COLORS: Record<ReservationStatus, string> = {
-  PENDING_PAYMENT: "bg-yellow-600/20 text-yellow-400 border-yellow-600/30",
-  CONFIRMED: "bg-green-600/20 text-green-400 border-green-600/30",
-  CANCELLED: "bg-red-600/20 text-red-400 border-red-600/30",
-  COMPLETED: "bg-blue-600/20 text-blue-400 border-blue-600/30",
-};
-
 const ALL_SLOTS: Record<string, string[]> = {
   Déjeuner: [
     "11:00",
@@ -211,119 +189,6 @@ function isPast(dateStr: string): boolean {
   return d < today;
 }
 
-function formatTime(iso: string) {
-  const d = new Date(iso);
-  return `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
-}
-
-// ── Table floor plan (vue Schéma) ──────────────────────────────────────────────
-const TABLE_SIZE_CLASSES: Record<number, string> = {
-  2: "w-20 h-20",
-  3: "w-24 h-24",
-  4: "w-28 h-28",
-};
-
-// Table de réserve : élément purement visuel affiché uniquement dans le schéma
-// (aucune donnée en base, aucun impact sur l'algorithme d'attribution de table).
-const RESERVE_TABLE = { name: "Réserve", posX: 50, posY: 85 };
-
-function TableFloorPlan({
-  label,
-  tables,
-  reservations,
-}: {
-  label: string;
-  tables: TableInfo[];
-  reservations: ReservationRow[];
-}) {
-  const reservationsByTable = useMemo(() => {
-    const map = new Map<number, ReservationRow[]>();
-    for (const r of reservations) {
-      if (r.tableId == null) continue;
-      if (!map.has(r.tableId)) map.set(r.tableId, []);
-      map.get(r.tableId)!.push(r);
-    }
-    for (const list of map.values())
-      list.sort((a, b) => a.date.localeCompare(b.date));
-    return map;
-  }, [reservations]);
-
-  return (
-    <div className="space-y-2">
-      <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-        {label}
-      </h4>
-      <div className="relative w-full aspect-[4/3] bg-background/20 border border-primary/10 rounded-xl">
-        {tables.map((table) => {
-          const tableReservations = reservationsByTable.get(table.id) ?? [];
-          const occupied = tableReservations.length > 0;
-          return (
-            <div
-              key={table.id}
-              style={{ left: `${table.posX}%`, top: `${table.posY}%` }}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 ${TABLE_SIZE_CLASSES[table.capacity] ?? "w-20 h-20"} rounded-lg border p-1.5 flex flex-col gap-0.5 overflow-hidden ${
-                occupied
-                  ? "bg-primary/10 border-primary/40"
-                  : "bg-background/40 border-primary/15"
-              }`}
-            >
-              <div className="flex items-center justify-between shrink-0">
-                <span className="text-xs font-semibold text-primary">
-                  {table.name}
-                </span>
-                <span className="text-[10px] text-muted-foreground">
-                  {table.capacity}p
-                </span>
-              </div>
-              {occupied ? (
-                <div className="space-y-0.5 overflow-y-auto text-[10px] leading-tight">
-                  {tableReservations.map((r) => (
-                    <div
-                      key={r.id}
-                      className="truncate"
-                      title={`${r.name} · ${r.guests} cvrt${r.guests > 1 ? "s" : ""}`}
-                    >
-                      <span className="font-medium text-primary/90">
-                        {formatTime(r.date)}
-                      </span>{" "}
-                      {r.name}
-                      <span
-                        className={`ml-1 px-1 rounded border text-[9px] ${STATUS_COLORS[r.status]}`}
-                      >
-                        {STATUS_LABELS[r.status]}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <span className="text-[10px] text-muted-foreground/40 italic">
-                  Libre
-                </span>
-              )}
-            </div>
-          );
-        })}
-        {/* Table de réserve — visuelle uniquement, non géolocalisée en base et non prise en compte par l'algorithme */}
-        <div
-          style={{
-            left: `${RESERVE_TABLE.posX}%`,
-            top: `${RESERVE_TABLE.posY}%`,
-          }}
-          className="absolute -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-lg border border-dashed border-muted-foreground/40 bg-muted/10 flex flex-col items-center justify-center gap-0.5"
-          title="Table de réserve (appoint) — non gérée par l'algorithme de réservation"
-        >
-          <span className="text-xs font-semibold text-muted-foreground">
-            {RESERVE_TABLE.name}
-          </span>
-          <span className="text-[9px] text-muted-foreground/60 italic">
-            appoint
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function AdminReservationsPage() {
   const router = useRouter();
@@ -370,7 +235,6 @@ export default function AdminReservationsPage() {
   // Day detail
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [dayReservations, setDayReservations] = useState<ReservationRow[]>([]);
-  const [dayLoading, setDayLoading] = useState(false);
   const [overrideMode, setOverrideMode] = useState<
     "global" | "closed" | "custom"
   >("global");
@@ -378,7 +242,6 @@ export default function AdminReservationsPage() {
   const [savingOverride, setSavingOverride] = useState(false);
   const [overrideSaved, setOverrideSaved] = useState(false);
   // Tables (vue Schéma)
-  const [tables, setTables] = useState<TableInfo[]>([]);
   // Events
   const [events, setEvents] = useState<EventInfo[]>([]);
   // Events panel
@@ -423,11 +286,6 @@ export default function AdminReservationsPage() {
     if (res.ok) setCalendarDays(await res.json());
     setCalendarLoading(false);
   }, [calendarStart, calendarDaysCount, router]);
-
-  const fetchTables = useCallback(async () => {
-    const res = await fetch("/api/admin/tables");
-    if (res.ok) setTables(await res.json());
-  }, []);
 
   const fetchEvents = useCallback(async () => {
     const res = await fetch("/api/admin/events");
@@ -503,10 +361,8 @@ export default function AdminReservationsPage() {
   };
 
   const fetchDayReservations = useCallback(async (date: string) => {
-    setDayLoading(true);
     const res = await fetch(`/api/admin/reservations?date=${date}&page=1`);
     if (res.ok) setDayReservations(((await res.json()) as ApiResponse).data);
-    setDayLoading(false);
   }, []);
 
   // ── Effects ──────────────────────────────────────────────────────────────────
@@ -516,9 +372,6 @@ export default function AdminReservationsPage() {
   useEffect(() => {
     fetchCalendar();
   }, [fetchCalendar]);
-  useEffect(() => {
-    fetchTables();
-  }, [fetchTables]);
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
@@ -641,34 +494,6 @@ export default function AdminReservationsPage() {
     setTimeout(() => setOverrideSaved(false), 2000);
     setSavingOverride(false);
     fetchCalendar();
-  };
-
-  const updateStatus = async (
-    id: string,
-    status: ReservationStatus,
-    refreshDay?: string,
-  ) => {
-    // Ne pas autoriser la modification des réservations EXPIRED (PENDING_PAYMENT avec transactionExpireAt dépassé)
-    const reservation = dayReservations.find((r) => r.id === id);
-    const isExpired =
-      reservation?.status === "PENDING_PAYMENT" &&
-      reservation?.transactionExpireAt &&
-      new Date(reservation.transactionExpireAt) < new Date();
-    if (isExpired && status !== "CANCELLED") {
-      alert(
-        "Impossible de modifier une réservation expirée. Elle doit être annulée.",
-      );
-      return;
-    }
-    await fetch("/api/admin/reservations", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status }),
-    });
-    if (refreshDay) {
-      fetchDayReservations(refreshDay);
-      fetchCalendar();
-    }
   };
 
   const toggleSlot = (slot: string) =>
@@ -1589,349 +1414,13 @@ export default function AdminReservationsPage() {
                         Réservations ({selectedDayInfo.reservationCount})
                       </h3>
 
-                      <Tabs defaultValue="liste">
-                        <TabsList>
-                          <TabsTrigger value="liste">Liste</TabsTrigger>
-                          <TabsTrigger value="schema">Schéma</TabsTrigger>
-                        </TabsList>
-
-                        <TabsContent value="liste" className="space-y-4 mt-4">
-                          {/* Midi section */}
-                          <div>
-                            <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">
-                              Déjeuner
-                            </h4>
-                            {dayLoading ? (
-                              <div className="flex justify-center py-4">
-                                <Loader2
-                                  size={18}
-                                  className="animate-spin text-primary"
-                                />
-                              </div>
-                            ) : (
-                              <div className="space-y-2">
-                                {dayReservations.filter((r) => {
-                                  const d = new Date(r.date);
-                                  const hour = d.getUTCHours();
-                                  return hour >= 12 && hour < 15;
-                                }).length === 0 ? (
-                                  <p className="text-xs text-muted-foreground/50 py-3 text-center italic">
-                                    Aucune réservation à midi
-                                  </p>
-                                ) : (
-                                  <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-                                    {dayReservations
-                                      .filter((r) => {
-                                        const d = new Date(r.date);
-                                        const hour = d.getUTCHours();
-                                        return hour >= 12 && hour < 15;
-                                      })
-                                      .map((r) => (
-                                        <div
-                                          key={r.id}
-                                          className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3"
-                                        >
-                                          <div className="flex flex-col items-center gap-1">
-                                            <div
-                                              className="text-sm font-semibold text-primary tabular-nums min-w-[38px]"
-                                              title="Créneau réservé"
-                                            >
-                                              {formatTime(r.date)}
-                                            </div>
-                                            <div
-                                              className="text-[10px] text-muted-foreground/70"
-                                              title="Heure de réservation"
-                                            >
-                                              {formatTime(r.createdAt)}
-                                            </div>
-                                          </div>
-                                          <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-1.5 flex-wrap">
-                                              <span className="font-medium text-sm">
-                                                {r.name}
-                                              </span>
-                                              <span className="text-xs text-muted-foreground">
-                                                {r.guests} cvrt
-                                                {r.guests > 1 ? "s" : ""}
-                                              </span>
-                                              {r.status === "PENDING_PAYMENT" &&
-                                              r.transactionExpireAt &&
-                                              new Date(r.transactionExpireAt) <
-                                                new Date() ? (
-                                                <span
-                                                  className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}
-                                                >
-                                                  Expirée
-                                                </span>
-                                              ) : (
-                                                <span
-                                                  className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}
-                                                >
-                                                  {STATUS_LABELS[r.status]}
-                                                </span>
-                                              )}
-                                            </div>
-                                            <div className="text-xs text-muted-foreground truncate">
-                                              {r.phone} &middot; {r.email}
-                                            </div>
-                                            {r.depositPaidCents && (
-                                              <div className="text-xs text-green-400 font-medium mt-0.5">
-                                                &#10004; Acompte:{" "}
-                                                {(
-                                                  r.depositPaidCents / 100
-                                                ).toFixed(2)}
-                                                €
-                                              </div>
-                                            )}
-                                            {r.specialRequest && (
-                                              <div className="text-xs text-amber-400/70 truncate mt-0.5">
-                                                &#8627; {r.specialRequest}
-                                              </div>
-                                            )}
-                                          </div>
-                                          <div className="flex gap-1 flex-shrink-0">
-                                            {r.status === "CONFIRMED" && (
-                                              <Button
-                                                size="sm"
-                                                variant="outline"
-                                                onClick={() => {
-                                                  if (
-                                                    !window.confirm(
-                                                      "Êtes-vous sûr de vouloir annuler cette réservation ?",
-                                                    )
-                                                  )
-                                                    return;
-                                                  updateStatus(
-                                                    r.id,
-                                                    "CANCELLED",
-                                                    selectedDate ?? undefined,
-                                                  );
-                                                }}
-                                                className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs"
-                                              >
-                                                Annuler
-                                              </Button>
-                                            )}
-                                            {r.status === "PENDING_PAYMENT" &&
-                                              !r.transactionExpireAt && (
-                                                <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
-                                                  En attente
-                                                </span>
-                                              )}
-                                            {r.status === "PENDING_PAYMENT" &&
-                                              r.transactionExpireAt && (
-                                                <span
-                                                  className={`text-[10px] px-2 py-1 rounded border leading-none ${
-                                                    new Date(
-                                                      r.transactionExpireAt,
-                                                    ) < new Date()
-                                                      ? "bg-red-900/20 text-red-600 border-red-900/30"
-                                                      : "bg-amber-900/20 text-amber-600 border-amber-900/30"
-                                                  }`}
-                                                >
-                                                  {new Date(
-                                                    r.transactionExpireAt,
-                                                  ) < new Date()
-                                                    ? "Expirée"
-                                                    : "Expiration: " +
-                                                      new Date(
-                                                        r.transactionExpireAt,
-                                                      ).toLocaleTimeString(
-                                                        "fr-FR",
-                                                        {
-                                                          hour: "2-digit",
-                                                          minute: "2-digit",
-                                                        },
-                                                      )}
-                                                </span>
-                                              )}
-                                          </div>
-                                        </div>
-                                      ))}
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Soir section */}
-                          <div>
-                            <h4 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider text-xs">
-                              Dîner
-                            </h4>
-                            {dayLoading ? (
-                              <div className="flex justify-center py-4">
-                                <Loader2
-                                  size={18}
-                                  className="animate-spin text-primary"
-                                />
-                              </div>
-                            ) : (
-                              <div className="space-y-2">
-                                {dayReservations.filter((r) => {
-                                  const d = new Date(r.date);
-                                  const hour = d.getUTCHours();
-                                  return hour >= 19 && hour <= 23;
-                                }).length === 0 ? (
-                                  <p className="text-xs text-muted-foreground/50 py-3 text-center italic">
-                                    Aucune réservation au dîner
-                                  </p>
-                                ) : (
-                                  <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-                                    {dayReservations
-                                      .filter((r) => {
-                                        const d = new Date(r.date);
-                                        const hour = d.getUTCHours();
-                                        return hour >= 19 && hour <= 23;
-                                      })
-                                      .map((r) => (
-                                        <div
-                                          key={r.id}
-                                          className="bg-background/30 border border-primary/10 rounded-lg px-3 py-2.5 flex items-start gap-3"
-                                        >
-                                          <div className="flex flex-col items-center gap-1">
-                                            <div
-                                              className="text-sm font-semibold text-primary tabular-nums min-w-[38px]"
-                                              title="Créneau réservé"
-                                            >
-                                              {formatTime(r.date)}
-                                            </div>
-                                            <div
-                                              className="text-[10px] text-muted-foreground/70"
-                                              title="Heure de réservation"
-                                            >
-                                              {formatTime(r.createdAt)}
-                                            </div>
-                                          </div>
-                                          <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-1.5 flex-wrap">
-                                              <span className="font-medium text-sm">
-                                                {r.name}
-                                              </span>
-                                              <span className="text-xs text-muted-foreground">
-                                                {r.guests} cvrt
-                                                {r.guests > 1 ? "s" : ""}
-                                              </span>
-                                              {r.status === "PENDING_PAYMENT" &&
-                                              r.transactionExpireAt &&
-                                              new Date(r.transactionExpireAt) <
-                                                new Date() ? (
-                                                <span
-                                                  className={`text-[10px] px-1.5 py-0.5 rounded border leading-none bg-red-900/20 text-red-600 border-red-900/30`}
-                                                >
-                                                  Expirée
-                                                </span>
-                                              ) : (
-                                                <span
-                                                  className={`text-[10px] px-1.5 py-0.5 rounded border leading-none ${STATUS_COLORS[r.status]}`}
-                                                >
-                                                  {STATUS_LABELS[r.status]}
-                                                </span>
-                                              )}
-                                            </div>
-                                            <div className="text-xs text-muted-foreground truncate">
-                                              {r.phone} &middot; {r.email}
-                                            </div>
-                                            {r.depositPaidCents && (
-                                              <div className="text-xs text-green-400 font-medium mt-0.5">
-                                                &#10004; Acompte:{" "}
-                                                {(
-                                                  r.depositPaidCents / 100
-                                                ).toFixed(2)}
-                                                €
-                                              </div>
-                                            )}
-                                            {r.specialRequest && (
-                                              <div className="text-xs text-amber-400/70 truncate mt-0.5">
-                                                &#8627; {r.specialRequest}
-                                              </div>
-                                            )}
-                                          </div>
-                                          <div className="flex gap-1 flex-shrink-0">
-                                            {r.status === "CONFIRMED" && (
-                                              <Button
-                                                size="sm"
-                                                variant="outline"
-                                                onClick={() => {
-                                                  if (
-                                                    !window.confirm(
-                                                      "Êtes-vous sûr de vouloir annuler cette réservation ?",
-                                                    )
-                                                  )
-                                                    return;
-                                                  updateStatus(
-                                                    r.id,
-                                                    "CANCELLED",
-                                                    selectedDate ?? undefined,
-                                                  );
-                                                }}
-                                                className="text-red-400 border-red-600/30 hover:bg-red-600/10 px-3 text-xs"
-                                              >
-                                                Annuler
-                                              </Button>
-                                            )}
-                                            {r.status === "PENDING_PAYMENT" &&
-                                              !r.transactionExpireAt && (
-                                                <span className="text-[10px] px-2 py-1 rounded border bg-yellow-900/20 text-yellow-600 border-yellow-900/30 leading-none">
-                                                  En attente
-                                                </span>
-                                              )}
-                                            {r.status === "PENDING_PAYMENT" &&
-                                              r.transactionExpireAt && (
-                                                <span
-                                                  className={`text-[10px] px-2 py-1 rounded border leading-none ${
-                                                    new Date(
-                                                      r.transactionExpireAt,
-                                                    ) < new Date()
-                                                      ? "bg-red-900/20 text-red-600 border-red-900/30"
-                                                      : "bg-amber-900/20 text-amber-600 border-amber-900/30"
-                                                  }`}
-                                                >
-                                                  {new Date(
-                                                    r.transactionExpireAt,
-                                                  ) < new Date()
-                                                    ? "Expirée"
-                                                    : "Expiration: " +
-                                                      new Date(
-                                                        r.transactionExpireAt,
-                                                      ).toLocaleTimeString(
-                                                        "fr-FR",
-                                                        {
-                                                          hour: "2-digit",
-                                                          minute: "2-digit",
-                                                        },
-                                                      )}
-                                                </span>
-                                              )}
-                                          </div>
-                                        </div>
-                                      ))}
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        </TabsContent>
-
-                        <TabsContent value="schema" className="space-y-6 mt-4">
-                          <TableFloorPlan
-                            label="Déjeuner"
-                            tables={tables}
-                            reservations={dayReservations.filter((r) => {
-                              const hour = new Date(r.date).getUTCHours();
-                              return hour >= 12 && hour < 15;
-                            })}
-                          />
-                          <TableFloorPlan
-                            label="Dîner"
-                            tables={tables}
-                            reservations={dayReservations.filter((r) => {
-                              const hour = new Date(r.date).getUTCHours();
-                              return hour >= 19 && hour <= 23;
-                            })}
-                          />
-                        </TabsContent>
-                      </Tabs>
+                      <DayPlanning
+                        date={selectedDayInfo.date}
+                        onChanged={() => {
+                          fetchDayReservations(selectedDayInfo.date);
+                          fetchCalendar();
+                        }}
+                      />
                     </div>
                   </div>
                 </div>

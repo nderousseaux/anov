@@ -13,9 +13,6 @@ const TABLE_SIZE_CLASSES: Record<number, string> = {
   4: "w-28 h-28",
 };
 
-// Table de réserve : élément purement visuel (aucune donnée en base, ignorée par l'algorithme).
-const RESERVE_TABLE = { name: "Réserve", posX: 50, posY: 85 };
-
 /**
  * Plan de salle d'un service. Les tables affichées sont celles calculées par l'algo
  * (`assignedTableIds`) ; les tables walk-in sont en pointillés ; une réservation sur
@@ -128,21 +125,6 @@ export function FloorPlan({
           </div>
         );
       })}
-      <div
-        style={{
-          left: `${RESERVE_TABLE.posX}%`,
-          top: `${RESERVE_TABLE.posY}%`,
-        }}
-        className="absolute -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-lg border border-dashed border-muted-foreground/40 bg-muted/10 flex flex-col items-center justify-center gap-0.5"
-        title="Table de réserve (appoint) — non gérée par l'algorithme de réservation"
-      >
-        <span className="text-xs font-semibold text-muted-foreground">
-          {RESERVE_TABLE.name}
-        </span>
-        <span className="text-[9px] text-muted-foreground/60 italic">
-          appoint
-        </span>
-      </div>
     </div>
   );
 }

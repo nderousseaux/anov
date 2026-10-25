@@ -108,12 +108,13 @@ async function main() {
   // 2. Tables
   console.log("🪑 Upsert des Tables de T1 à T6...");
   const tablesData = [
-    { id: 1, name: "T1", capacity: 2, posX: 20, posY: 85 },
-    { id: 2, name: "T2", capacity: 2, posX: 80, posY: 85 },
-    { id: 3, name: "T3", capacity: 3, posX: 20, posY: 50 },
-    { id: 4, name: "T4", capacity: 3, posX: 80, posY: 50 },
-    { id: 5, name: "T5", capacity: 4, posX: 20, posY: 15 },
-    { id: 6, name: "T6", capacity: 4, posX: 80, posY: 15 },
+    { id: 1, name: "T1", capacity: 2, posX: 20, posY: 85, walkIn: false },
+    { id: 2, name: "T2", capacity: 2, posX: 80, posY: 85, walkIn: false },
+    { id: 3, name: "T3", capacity: 3, posX: 20, posY: 50, walkIn: false },
+    { id: 4, name: "T4", capacity: 3, posX: 80, posY: 50, walkIn: false },
+    { id: 5, name: "T5", capacity: 4, posX: 20, posY: 15, walkIn: false },
+    { id: 6, name: "T6", capacity: 4, posX: 80, posY: 15, walkIn: false },
+    { id: 7, name: "T7", capacity: 4, posX: 50, posY: 15, walkIn: true },
   ];
 
   for (const table of tablesData) {
@@ -124,6 +125,7 @@ async function main() {
         capacity: table.capacity,
         posX: table.posX,
         posY: table.posY,
+        walkIn: table.walkIn
       },
       create: table,
     });

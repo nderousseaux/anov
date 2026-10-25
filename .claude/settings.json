@@ -20,5 +20,11 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(graphify query *)",
+      "Bash(graphify update *)"
+    ]
   }
 }

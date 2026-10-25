@@ -24,11 +24,12 @@ export default async function RootLayout({
 }) {
   const reader = createReader(process.cwd(), config);
   const footerContent = await reader.singletons.footer.read();
+  const isStaging = process.env.NEXT_PUBLIC_APP_ENV === "staging";
 
   return (
     <html lang="fr">
       <body>
-        <ClientLayout footerContent={footerContent}>{children}</ClientLayout>
+        <ClientLayout footerContent={footerContent} isStaging={isStaging}>{children}</ClientLayout>
       </body>
     </html>
   );

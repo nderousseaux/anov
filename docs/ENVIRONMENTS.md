@@ -8,7 +8,7 @@ Trois environnements sont utilisés pour le développement et la production de l
 - Base de données PostgreSQL locale (container Docker).
 - Stripe en mode sandbox, capturé avec un hook local.
 - Mails capturés par Mailcatcher (container Docker).
-- APP_ENV=development
+- NEXT_PUBLIC_APP_ENV=development
 - Toutes les branches autres que `main` et `staging`.
 
 Les commandes pour le développement explicitées dans le [README](../README.md).

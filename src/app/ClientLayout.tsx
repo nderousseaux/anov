@@ -11,13 +11,15 @@ import { LanguageProvider } from "@/context/LanguageContext";
 export default function ClientLayout({
   children,
   footerContent,
+  isStaging,
 }: {
   children: ReactNode;
   footerContent?: Record<string, unknown> | null;
+  isStaging?: boolean;
 }) {
   return (
     <LanguageProvider>
-      <ClientLayoutInner footerContent={footerContent}>
+      <ClientLayoutInner footerContent={footerContent} isStaging={isStaging}>
         {children}
       </ClientLayoutInner>
     </LanguageProvider>
@@ -27,9 +29,11 @@ export default function ClientLayout({
 function ClientLayoutInner({
   children,
   footerContent,
+  isStaging,
 }: {
   children: ReactNode;
   footerContent?: Record<string, unknown> | null;
+  isStaging?: boolean;
 }) {
   const pathname = usePathname();
   const isAdmin =
@@ -110,6 +114,15 @@ function ClientLayoutInner({
       </div>
 
       {showSplash && <SplashScreen isFading={isSplashFading} />}
+
+      {isStaging && (
+        <div
+          className="fixed bottom-0 left-0 right-0 bg-amber-600 text-white text-center py-3 text-sm z-50"
+          aria-label="Environnement staging"
+        >
+          <span>Environnement de test (staging)</span>
+        </div>
+      )}
     </>
   );
 }

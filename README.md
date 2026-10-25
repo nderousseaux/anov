@@ -19,7 +19,7 @@ $ stripe listen --forward-to localhost:3000/api/stripe/webhook
 
 # Lancement de la base de données et de Mailcatcher
 $ docker compose up -d
-```
+``
 
 ### Base de données
 

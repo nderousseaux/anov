@@ -12,7 +12,7 @@ const MODE_ALIASES: Record<string, "development" | "preview" | "production"> = {
 };
 
 function resolveAppMode() {
-  const rawMode = (process.env.APP_ENV ?? "development").toLowerCase();
+  const rawMode = (process.env.NEXT_PUBLIC_APP_ENV ?? "development").toLowerCase();
   return MODE_ALIASES[rawMode] ?? "development";
 }
 
